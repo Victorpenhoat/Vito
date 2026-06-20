@@ -5,7 +5,12 @@
     "signup": "Créer un compte",
     "email": "E-mail",
     "password": "Mot de passe",
-    "submit": "Valider"
+    "submit": "Valider",
+    "errors": {
+      "invalidCredentials": "Identifiants invalides",
+      "signInFailed": "Connexion échouée",
+      "signUpFailed": "Inscription échouée"
+    }
   },
   "restos": {
     "title": "Mes restos",
