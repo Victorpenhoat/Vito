@@ -68,7 +68,7 @@ src/
       layout.tsx, (auth)/login/page.tsx, (auth)/signup/page.tsx
       (app)/layout.tsx, (app)/restos/page.tsx, (app)/restos/[id]/page.tsx
     api/places/photo/route.ts       # proxy photo (à la volée)
-  middleware.ts                     # session + locale
+  proxy.ts                          # session + locale (ex-middleware.ts, renommé en Next 16.2)
 messages/fr.json
 public/manifest.webmanifest, public/sw.js
 e2e/restos.spec.ts
@@ -1159,19 +1159,21 @@ git add -A && git commit -m "feat: clients Supabase typés (browser/server/admin
 
 # PHASE C — Auth + RBAC
 
-### Task 12: Middleware avec refresh de session Supabase
+### Task 12: Proxy avec refresh de session Supabase
+
+> Note : Next.js 16.2 a renommé `middleware.ts` en `proxy.ts` (l'ancien nom est déprécié, warning au build). On utilise donc `src/proxy.ts`. Le proxy tourne sur le runtime Node.js, ce qui convient à `@supabase/ssr`.
 
 **Files:**
-- Modify: `src/middleware.ts`
-- Create: `src/lib/supabase/middleware.ts`
+- Modify: `src/proxy.ts`
+- Create: `src/lib/supabase/session.ts`
 
 **Interfaces:**
 - Consumes: `env`, `Database`.
 - Produces: session Supabase rafraîchie sur chaque requête + locale next-intl. Cookies à jour pour les Server Components.
 
-- [ ] **Step 1: Helper de session middleware**
+- [ ] **Step 1: Helper de session proxy**
 
-`src/lib/supabase/middleware.ts` :
+`src/lib/supabase/session.ts` :
 
 ```ts
 import { createServerClient } from "@supabase/ssr";
@@ -1201,18 +1203,18 @@ export async function updateSession(request: NextRequest, response: NextResponse
 
 - [ ] **Step 2: Composer i18n + session**
 
-`src/middleware.ts` :
+`src/proxy.ts` :
 
 ```ts
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest } from "next/server";
 import { routing } from "@/lib/i18n/routing";
-import { updateSession } from "@/lib/supabase/middleware";
+import { updateSession } from "@/lib/supabase/session";
 
-const intlMiddleware = createMiddleware(routing);
+const intlProxy = createMiddleware(routing);
 
-export default async function middleware(request: NextRequest) {
-  const response = intlMiddleware(request);
+export default async function proxy(request: NextRequest) {
+  const response = intlProxy(request);
   return updateSession(request, response);
 }
 
@@ -1224,12 +1226,12 @@ export const config = {
 - [ ] **Step 3: Vérifier**
 
 Run: `npm run dev` puis charger `/fr`
-Expected: pas d'erreur middleware ; cookies Supabase posés.
+Expected: pas d'erreur proxy ni warning de dépréciation ; cookies Supabase posés.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add -A && git commit -m "feat: middleware refresh session Supabase + locale"
+git add -A && git commit -m "feat: proxy refresh session Supabase + locale"
 ```
 
 ---
