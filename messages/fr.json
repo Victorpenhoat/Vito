@@ -1,0 +1,19 @@
+{
+  "app": { "name": "Vito" },
+  "auth": {
+    "login": "Connexion",
+    "signup": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit": "Valider"
+  },
+  "restos": {
+    "title": "Mes restos",
+    "add": "Ajouter un resto",
+    "search": "Rechercher un établissement",
+    "favorite": "Favori",
+    "statut": { "a_faire": "À faire", "visite": "Visité" },
+    "avis": "Mes avis",
+    "addAvis": "Ajouter un avis"
+  }
+}
