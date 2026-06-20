@@ -2,23 +2,28 @@
 -- (le rôle n'est jamais lu depuis raw_user_meta_data — anti-escalade). Les rôles
 -- agence/admin sont attribués juste après par UPDATE privilégié (le seed tourne en superuser).
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
-  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  email_change_token_current, reauthentication_token, phone_change, phone_change_token)
 values
   ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'client@vito.test',
    crypt('password123', gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
-   '{"display_name":"Victor (client)","role":"client"}', now(), now()),
+   '{"display_name":"Victor (client)","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', ''),
   ('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'agence@vito.test',
    crypt('password123', gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
-   '{"display_name":"Agence Démo","role":"agence"}', now(), now()),
+   '{"display_name":"Agence Démo","role":"agence"}', now(), now(),
+   '', '', '', '', '', '', '', ''),
   ('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'admin@vito.test',
    crypt('password123', gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
-   '{"display_name":"Admin","role":"admin"}', now(), now());
+   '{"display_name":"Admin","role":"admin"}', now(), now(),
+   '', '', '', '', '', '', '', '');
 
 -- Identities (requis pour le login email/password)
 insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
