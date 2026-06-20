@@ -581,8 +581,8 @@ create type public.app_role as enum ('client', 'agence', 'admin');
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   role public.app_role not null default 'client',
-  display_name text,
-  locale text not null default 'fr',
+  display_name text check (display_name is null or char_length(display_name) <= 100),
+  locale text not null default 'fr' check (locale ~ '^[a-z]{2}(-[A-Z]{2})?$'),
   created_at timestamptz not null default now()
 );
 
@@ -598,6 +598,9 @@ create policy "profiles_select_self_or_admin" on public.profiles
 create policy "profiles_update_self" on public.profiles
   for update using (id = auth.uid()) with check (id = auth.uid());
 
+-- Pas de policy INSERT : les profils sont créés exclusivement par le trigger
+-- handle_new_user (security definer). Tout INSERT direct via l'API est volontairement bloqué.
+
 -- Création automatique du profil à l'inscription
 create function public.handle_new_user()
 returns trigger
@@ -606,12 +609,11 @@ security definer
 set search_path = ''
 as $$
 begin
-  insert into public.profiles (id, display_name, role)
-  values (
-    new.id,
-    new.raw_user_meta_data ->> 'display_name',
-    coalesce((new.raw_user_meta_data ->> 'role')::public.app_role, 'client')
-  );
+  -- SÉCURITÉ : le rôle n'est jamais lu depuis raw_user_meta_data (contrôlé par le client).
+  -- Tout nouvel utilisateur est 'client' (défaut de colonne). Les rôles agence/admin sont
+  -- attribués uniquement par une opération privilégiée (seed SQL, ou RPC admin du back-office).
+  insert into public.profiles (id, display_name)
+  values (new.id, new.raw_user_meta_data ->> 'display_name');
   return new;
 end;
 $$;
@@ -621,7 +623,7 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 ```
 
-> Note : `role` provient des `user_meta_data` au seed (admin/agence). En production, le rôle ne doit jamais être auto-attribué par un utilisateur final — un signup public force `client`. Voir Task 13 (le signup public ne transmet pas `role`).
+> Sécurité : le rôle n'est **jamais** attribué depuis `raw_user_meta_data` (contrôlé par le client) — sinon un signup public pourrait se déclarer `admin`. Le trigger crée tout en `client` ; agence/admin sont posés par le seed (UPDATE privilégié) ou une RPC admin du back-office. `display_name` est borné (≤100) et `locale` validé par contrainte.
 
 - [ ] **Step 3: Appliquer**
 
@@ -928,7 +930,9 @@ git add -A && git commit -m "feat(db): schéma restos (etablissements/tags/liste
 `supabase/seed.sql` :
 
 ```sql
--- Comptes de dev. Le trigger handle_new_user crée le profil avec le rôle issu de raw_user_meta_data.
+-- Comptes de dev. Le trigger handle_new_user crée TOUS les profils en 'client'
+-- (le rôle n'est jamais lu depuis raw_user_meta_data — anti-escalade). Les rôles
+-- agence/admin sont attribués juste après par UPDATE privilégié (le seed tourne en superuser).
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
   email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
 values
@@ -957,6 +961,10 @@ values
    '{"sub":"22222222-2222-2222-2222-222222222222","email":"agence@vito.test"}', 'email', now(), now()),
   (gen_random_uuid(), '33333333-3333-3333-3333-333333333333', '33333333-3333-3333-3333-333333333333',
    '{"sub":"33333333-3333-3333-3333-333333333333","email":"admin@vito.test"}', 'email', now(), now());
+
+-- Attribution des rôles privilégiés (le trigger a tout créé en 'client').
+update public.profiles set role = 'agence' where id = '22222222-2222-2222-2222-222222222222';
+update public.profiles set role = 'admin'  where id = '33333333-3333-3333-3333-333333333333';
 
 -- Tags système d'ambiance
 insert into public.tags (slug, label, categorie) values
