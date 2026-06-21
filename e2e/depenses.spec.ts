@@ -1,5 +1,18 @@
 import { test, expect, type Page } from "@playwright/test";
 
+const SUPABASE_URL = "http://127.0.0.1:54321";
+const SERVICE_ROLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
+const SEED_GROUPE_ID = "66666666-6666-4666-8666-666666666666";
+
+/** Wipe all remboursements from the seed groupe so test 2 is idempotent. */
+async function resetSeedGroupe(request: import("@playwright/test").APIRequestContext) {
+  await request.delete(
+    `${SUPABASE_URL}/rest/v1/remboursements?groupe_id=eq.${SEED_GROUPE_ID}`,
+    { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } },
+  );
+}
+
 async function login(page: Page, email: string) {
   await page.goto("/fr/login");
   await page.getByLabel("E-mail").fill(email);
@@ -35,7 +48,10 @@ test("créer un compte partagé, partager, ajouter une dépense égale, vérifie
   await expect(page.getByTestId("soldes-panel")).toContainText("15,00");
 });
 
-test("l'agence voit le compte partagé du seed, ajoute un remboursement, le compte est soldé", async ({ page }) => {
+test("l'agence voit le compte partagé du seed, ajoute un remboursement, le compte est soldé", async ({ page, request }) => {
+  // Reset seed groupe state so this test is idempotent across re-runs.
+  await resetSeedGroupe(request);
+
   await login(page, "agence@vito.test");
   await page.goto("/fr/depenses");
 
