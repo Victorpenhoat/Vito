@@ -47,7 +47,8 @@
     "banner": "Complète tes goûts pour des recommandations sur mesure.",
     "bannerCta": "Renseigner mes goûts",
     "bannerSearch": "Rechercher",
-    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
+    "errors": { "invalid": "Goûts invalides", "notAuth": "Non authentifié", "saveFailed": "Enregistrement des goûts échoué" }
   },
   "recherche": {
     "title": "Recherche",

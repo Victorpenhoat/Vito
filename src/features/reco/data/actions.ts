@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { goutsInputSchema } from "../domain/schemas";
 
@@ -9,17 +10,18 @@ function parseList(raw: FormDataEntryValue[] | undefined): string[] {
 }
 
 export async function saveGouts(_prev: unknown, formData: FormData) {
+  const t = await getTranslations("gouts.errors");
   const parsed = goutsInputSchema.safeParse({
     ambiances: parseList(formData.getAll("ambiances")),
     typesPreferes: parseList(formData.getAll("typesPreferes")),
     zones: parseList(formData.getAll("zones")),
     budgetMax: formData.get("budgetMax") || undefined,
   });
-  if (!parsed.success) return { error: "Goûts invalides" };
+  if (!parsed.success) return { error: t("invalid") };
 
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Non authentifié" };
+  if (!auth.user) return { error: t("notAuth") };
 
   const { error } = await supabase.from("profil_gouts").upsert(
     {
@@ -32,7 +34,7 @@ export async function saveGouts(_prev: unknown, formData: FormData) {
     },
     { onConflict: "user_id" },
   );
-  if (error) return { error: "Enregistrement des goûts échoué" };
+  if (error) return { error: t("saveFailed") };
 
   revalidatePath("/gouts");
   revalidatePath("/recherche");

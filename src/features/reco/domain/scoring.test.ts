@@ -26,4 +26,18 @@ describe("scoreEtablissement", () => {
       { typesPreferes: [], zones: [], budgetMax: null }, { types: { bistrot: 3 }, zones: { "17e": 2 } });
     expect(avecImplicite).toBeGreaterThan(sansImplicite);
   });
+  it("score budget : price_level proche du tier budget > price_level éloigné", () => {
+    // budgetMax=40 => tier 2 ; price_level 2 est pile, price_level 4 est à distance 2
+    const proche = scoreEtablissement(
+      { type: null, arrondissement: null, price_level: 2 },
+      { typesPreferes: [], zones: [], budgetMax: 40 },
+      noImplicit,
+    );
+    const loin = scoreEtablissement(
+      { type: null, arrondissement: null, price_level: 4 },
+      { typesPreferes: [], zones: [], budgetMax: 40 },
+      noImplicit,
+    );
+    expect(proche).toBeGreaterThan(loin);
+  });
 });

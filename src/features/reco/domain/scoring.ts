@@ -11,6 +11,11 @@ export type ScoringGouts = {
   budgetMax: number | null;
 };
 
+// euros -> tier price_level (aligné sur la recherche)
+function budgetToTier(budgetMax: number): number {
+  return budgetMax <= 20 ? 1 : budgetMax <= 40 ? 2 : budgetMax <= 80 ? 3 : 4;
+}
+
 // Score déterministe : préférences explicites (poids forts) + signaux implicites (poids doux).
 export function scoreEtablissement(
   etab: ScoringEtab,
@@ -20,9 +25,10 @@ export function scoreEtablissement(
   let score = 0;
   if (etab.type && gouts.typesPreferes.includes(etab.type)) score += 3;
   if (etab.arrondissement && gouts.zones.includes(etab.arrondissement)) score += 2;
-  // price_level (0-4) vs budget : un price_level plus bas que le budget est neutre/positif.
-  if (gouts.budgetMax != null && etab.price_level != null && etab.price_level <= 4) {
-    score += 1;
+  // price_level (0-4) vs budget : proximité au tier de budget (2 si pile, dégressif).
+  if (gouts.budgetMax != null && etab.price_level != null) {
+    const tier = budgetToTier(gouts.budgetMax);
+    score += Math.max(0, 2 - Math.abs(etab.price_level - tier)); // proximité : 2 si pile, dégressif
   }
   // Signaux implicites : ajout doux et borné.
   if (etab.type) {
