@@ -39,14 +39,8 @@ values
 update public.profiles set role = 'agence' where id = '22222222-2222-2222-2222-222222222222';
 update public.profiles set role = 'admin'  where id = '33333333-3333-3333-3333-333333333333';
 
--- Tags système d'ambiance
-insert into public.tags (slug, label, categorie) values
-  ('en_amoureux', 'En amoureux', 'ambiance'),
-  ('entre_amis', 'Entre amis', 'ambiance'),
-  ('terrasse', 'Terrasse', 'ambiance'),
-  ('avec_vue', 'Avec vue', 'ambiance'),
-  ('en_famille', 'En famille', 'ambiance'),
-  ('business', 'Business', 'ambiance');
+-- (Les tags système d'ambiance sont désormais dans la migration 00004_system_tags.sql
+-- — données de référence livrées avec le schéma, présentes aussi en prod.)
 
 -- Établissement démo (référentiel)
 insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source)
