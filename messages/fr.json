@@ -71,6 +71,7 @@
     "avis": "Mes avis",
     "addAvis": "Ajouter un avis",
     "saveTags": "Enregistrer les tags",
+    "tagsSaved": "Tags enregistrés",
     "notFound": "Introuvable",
     "photoAlt": "Photo de {nom}",
     "addError": "Impossible d'ajouter le restaurant",
