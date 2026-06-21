@@ -1,0 +1,34 @@
+{
+  "app": { "name": "Vito" },
+  "auth": {
+    "login": "Connexion",
+    "signup": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit": "Valider",
+    "errors": {
+      "invalidCredentials": "Identifiants invalides",
+      "signInFailed": "Connexion échouée",
+      "signUpFailed": "Inscription échouée"
+    }
+  },
+  "restos": {
+    "title": "Mes restos",
+    "add": "Ajouter un resto",
+    "search": "Rechercher un établissement",
+    "favorite": "Favori",
+    "statut": { "a_faire": "À faire", "visite": "Visité" },
+    "avis": "Mes avis",
+    "addAvis": "Ajouter un avis",
+    "saveTags": "Enregistrer les tags",
+    "notFound": "Introuvable",
+    "photoAlt": "Photo de {nom}",
+    "addError": "Impossible d'ajouter le restaurant",
+    "notePlaceholder": "Note (1-5)",
+    "commentairePlaceholder": "Mon avis…",
+    "error": {
+      "title": "Une erreur est survenue",
+      "retry": "Réessayer"
+    }
+  }
+}
