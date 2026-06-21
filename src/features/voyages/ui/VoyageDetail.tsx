@@ -3,6 +3,7 @@ import { getVoyageDetail } from "../data/queries";
 import { ReservationForm } from "./ReservationForm";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
+import { openVoyageGroupe } from "@/features/depenses/data/actions";
 
 export async function VoyageDetail({ id }: { id: string }) {
   const t = await getTranslations("voyages");
@@ -35,6 +36,13 @@ export async function VoyageDetail({ id }: { id: string }) {
         <h2 className="font-semibold">{t("membres")}</h2>
         <MembersList voyageId={voyage.id} membres={membres} isOwner={isOwner} />
         {isOwner && <ShareForm voyageId={voyage.id} />}
+      </section>
+
+      <section>
+        <form action={openVoyageGroupe}>
+          <input type="hidden" name="voyageId" value={voyage.id} />
+          <button type="submit" className="underline">{t("ouvrirCompte")}</button>
+        </form>
       </section>
     </article>
   );

@@ -84,3 +84,31 @@ on conflict (voyage_id, profile_id) do nothing;
 insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien)
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'hotel',
   'Hotel Roma', 'CONF-123', '2026-09-12', '2026-09-15', '+39 06 0000 0000', 'concierge@hotelroma.test', 'https://airbnb.example/rome');
+
+-- Comptes partagés : groupe lié au voyage Rome, partagé client <-> agence (UUID v4 valides)
+insert into public.depense_groupes (id, owner_id, voyage_id, titre, devise)
+values ('66666666-6666-4666-8666-666666666666', '11111111-1111-1111-1111-111111111111',
+  '11111111-2222-4333-8444-555555555555', 'Dépenses Rome', 'EUR');
+
+-- Le trigger on_groupe_created insère déjà la ligne 'owner' (client). On ajoute l'agence.
+insert into public.depense_groupe_membres (groupe_id, profile_id, role) values
+  ('66666666-6666-4666-8666-666666666666', '22222222-2222-2222-2222-222222222222', 'membre')
+on conflict (groupe_id, profile_id) do nothing;
+
+-- Dépense 1 : hôtel 200,00 € payé par le client, split égal (100/100)
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by)
+values ('66666666-6666-4666-8666-aaaaaaaaaaaa', '66666666-6666-4666-8666-666666666666',
+  '11111111-1111-1111-1111-111111111111', 'Hôtel', 20000, '2026-09-12', 'egal',
+  '11111111-1111-1111-1111-111111111111');
+insert into public.depense_parts (depense_id, profile_id, part_cents) values
+  ('66666666-6666-4666-8666-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 10000),
+  ('66666666-6666-4666-8666-aaaaaaaaaaaa', '22222222-2222-2222-2222-222222222222', 10000);
+
+-- Dépense 2 : dîner 90,00 € payé par l'agence, exact (client 50,00 / agence 40,00)
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by)
+values ('66666666-6666-4666-8666-bbbbbbbbbbbb', '66666666-6666-4666-8666-666666666666',
+  '22222222-2222-2222-2222-222222222222', 'Dîner', 9000, '2026-09-13', 'exact',
+  '22222222-2222-2222-2222-222222222222');
+insert into public.depense_parts (depense_id, profile_id, part_cents) values
+  ('66666666-6666-4666-8666-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 5000),
+  ('66666666-6666-4666-8666-bbbbbbbbbbbb', '22222222-2222-2222-2222-222222222222', 4000);
