@@ -54,6 +54,19 @@ create function public.can_access_voyage(v_id uuid) returns boolean
       or exists (select 1 from public.voyage_membres where voyage_id = v_id and profile_id = auth.uid());
 $$;
 
+-- Trigger : owner_id immuable (anti-escalade de privilèges)
+create function public.voyages_lock_owner() returns trigger
+  language plpgsql security definer set search_path = '' as $$
+begin
+  if new.owner_id <> old.owner_id then
+    raise exception 'owner_id immuable';
+  end if;
+  return new;
+end;
+$$;
+create trigger voyages_owner_immutable before update on public.voyages
+  for each row execute function public.voyages_lock_owner();
+
 -- RLS voyages (une policy par commande)
 alter table public.voyages enable row level security;
 create policy "voyages_select" on public.voyages for select using (public.can_access_voyage(id));
@@ -70,7 +83,8 @@ create policy "reservations_all" on public.reservations for all
 alter table public.voyage_membres enable row level security;
 create policy "voyage_membres_select" on public.voyage_membres for select using (public.can_access_voyage(voyage_id));
 create policy "voyage_membres_insert" on public.voyage_membres for insert with check (public.is_voyage_owner(voyage_id));
-create policy "voyage_membres_delete" on public.voyage_membres for delete using (public.is_voyage_owner(voyage_id));
+create policy "voyage_membres_delete" on public.voyage_membres for delete
+  using (public.is_voyage_owner(voyage_id) and role <> 'owner');
 
 -- Trigger : auto-insertion du propriétaire dans voyage_membres à la création
 create function public.add_voyage_owner_membre() returns trigger
