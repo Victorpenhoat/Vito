@@ -37,6 +37,6 @@ export type RemboursementInput = z.infer<typeof remboursementInputSchema>;
 
 export const shareGroupeSchema = z.object({
   groupeId: z.guid(),
-  email: z.string().email(),
+  email: z.email(),
 });
 export type ShareGroupeInput = z.infer<typeof shareGroupeSchema>;

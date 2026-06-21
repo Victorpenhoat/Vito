@@ -115,6 +115,7 @@
   },
   "depenses": {
     "title": "Comptes partagés",
+    "roleOwner": "propriétaire",
     "create": "Créer un compte partagé",
     "titre": "Titre",
     "devise": "Devise",
