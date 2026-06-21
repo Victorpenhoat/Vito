@@ -81,3 +81,24 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   const firstCheckboxReloaded = tagPickerReloaded.locator("label").first().locator("input[type='checkbox']");
   await expect(firstCheckboxReloaded).toBeChecked();
 });
+
+test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)", async ({ page }) => {
+  await login(page);
+
+  // Ajouter "Le Bistrot du Coin" (idempotent — upsert) qui a photoRefs dans le mock provider
+  await page.getByTestId("add-resto-search").fill("bistrot");
+  await expect(page.getByTestId("search-result").first()).toBeVisible();
+  await page.getByTestId("search-result").first().getByRole("button").click();
+  await expect(page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
+
+  // Ouvrir sa fiche
+  await page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
+
+  // La photo proxy doit être visible (FicheResto récupère photoRefs via getPlacesProvider().details())
+  const photo = page.getByTestId("resto-photo").first();
+  await expect(photo).toBeVisible();
+  // L'URL doit passer par le proxy same-origin (jamais une URL externe ou clé exposée).
+  // next/image sert l'image via /_next/image?url=<encoded-proxy-path>.
+  const src = await photo.getAttribute("src");
+  expect(src).toMatch(/api%2Fplaces%2Fphoto|\/api\/places\/photo/);
+});

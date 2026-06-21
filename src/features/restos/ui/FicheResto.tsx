@@ -1,8 +1,10 @@
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { getFiche, getTags } from "../data/queries";
 import { FavoriteToggle } from "./FavoriteToggle";
 import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
+import { getPlacesProvider } from "@/lib/services/places";
 
 export async function FicheResto({ etablissementId }: { etablissementId: string }) {
   const t = await getTranslations("restos");
@@ -11,6 +13,17 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
     getTags(),
   ]);
   if (!etab) return <p>{t("notFound")}</p>;
+
+  let photoRefs: string[] = [];
+  if (etab.place_id) {
+    try {
+      const details = await getPlacesProvider().details(etab.place_id);
+      photoRefs = (details?.photoRefs ?? []).slice(0, 3);
+    } catch {
+      photoRefs = [];
+    }
+  }
+
   return (
     <article className="flex flex-col gap-4">
       <header>
@@ -18,6 +31,21 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
         <p className="text-gray-600">{etab.type} — {etab.adresse} {etab.arrondissement ?? ""}</p>
         {etab.telephone && <p>{etab.telephone}</p>}
       </header>
+      {photoRefs.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto">
+          {photoRefs.map((ref) => (
+            <Image
+              key={ref}
+              src={`/api/places/photo?ref=${encodeURIComponent(ref)}&w=400`}
+              alt={etab.nom}
+              width={400}
+              height={267}
+              className="rounded object-cover"
+              data-testid="resto-photo"
+            />
+          ))}
+        </div>
+      )}
       {item && <FavoriteToggle listeItemId={item.id} isFavorite={item.is_favorite} />}
       {item && tags.length > 0 && (
         <TagPicker tags={tags} appliedTagIds={appliedTagIds} listeItemId={item.id} />

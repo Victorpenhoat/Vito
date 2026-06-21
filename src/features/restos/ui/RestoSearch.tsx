@@ -7,6 +7,7 @@ import type { PlaceSummary } from "@/lib/services/places/types";
 export function RestoSearch() {
   const t = useTranslations("restos");
   const [results, setResults] = useState<PlaceSummary[]>([]);
+  const [addError, setAddError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
   return (
@@ -20,11 +21,28 @@ export function RestoSearch() {
           start(async () => setResults(await searchPlaces(q)));
         }}
       />
+      {addError && (
+        <p role="alert" className="text-red-600 text-sm" data-testid="add-resto-error">
+          {addError}
+        </p>
+      )}
       <ul>
         {results.map((r) => (
           <li key={r.placeId} data-testid="search-result" className="flex justify-between border-b py-2">
             <span>{r.nom} — {r.adresse}</span>
-            <form action={(fd) => start(async () => { await addResto(undefined, fd); setResults([]); })}>
+            <form
+              action={(fd) =>
+                start(async () => {
+                  const res = await addResto(undefined, fd);
+                  if (res?.error) {
+                    setAddError(res.error);
+                  } else {
+                    setAddError(null);
+                    setResults([]);
+                  }
+                })
+              }
+            >
               <input type="hidden" name="placeId" value={r.placeId} />
               <button type="submit" disabled={pending} className="underline">{t("add")}</button>
             </form>

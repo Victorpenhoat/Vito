@@ -22,6 +22,8 @@
     "addAvis": "Ajouter un avis",
     "saveTags": "Enregistrer les tags",
     "notFound": "Introuvable",
+    "photoAlt": "Photo de {nom}",
+    "addError": "Impossible d'ajouter le restaurant",
     "notePlaceholder": "Note (1-5)",
     "commentairePlaceholder": "Mon avis…",
     "error": {
