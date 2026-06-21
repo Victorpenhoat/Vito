@@ -95,7 +95,11 @@ create trigger on_groupe_created after insert on public.depense_groupes
 
 -- RLS depense_groupes (une policy par commande)
 alter table public.depense_groupes enable row level security;
-create policy "depense_groupes_select" on public.depense_groupes for select using (public.can_access_groupe(id));
+-- Note: owner_id = auth.uid() is required as a direct check so that INSERT ... RETURNING works:
+-- the newly inserted row is not visible to can_access_groupe() within the same INSERT statement
+-- (PostgreSQL row visibility rules), so without the direct owner check, INSERT ... select().single()
+-- would fail with an RLS violation on the RETURNING clause.
+create policy "depense_groupes_select" on public.depense_groupes for select using (owner_id = auth.uid() or public.can_access_groupe(id));
 create policy "depense_groupes_insert" on public.depense_groupes for insert with check (owner_id = auth.uid());
 create policy "depense_groupes_update" on public.depense_groupes for update using (public.can_access_groupe(id)) with check (public.can_access_groupe(id));
 create policy "depense_groupes_delete" on public.depense_groupes for delete using (public.is_groupe_owner(id));
