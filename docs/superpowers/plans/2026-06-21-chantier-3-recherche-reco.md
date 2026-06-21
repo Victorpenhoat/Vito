@@ -618,12 +618,12 @@ git commit -m "feat(reco): getGouts + rechercheRestos (ta liste + recos scorées
 ## Task 8: UI — formulaire de goûts + route
 
 **Files:**
-- Create: `src/features/reco/ui/GoutsForm.tsx`, `src/app/[locale]/(app)/gouts/page.tsx`, `src/app/[locale]/(app)/gouts/error.tsx`
-- Modify: `messages/fr.json` (namespace `gouts.*`)
+- Create: `src/features/reco/ui/GoutsForm.tsx`, `src/features/reco/ui/GoutsBanner.tsx`, `src/app/[locale]/(app)/gouts/page.tsx`, `src/app/[locale]/(app)/gouts/error.tsx`
+- Modify: `messages/fr.json` (namespace `gouts.*`), `src/app/[locale]/(app)/restos/page.tsx` (monter le bandeau)
 
 **Interfaces:**
 - Consumes: `saveGouts` (Task 6), `getGouts` (Task 7), `getTags` (existant `@/features/restos/data/queries`).
-- Produces: route `/gouts`. `data-testid="gouts-form"`.
+- Produces: route `/gouts`. `data-testid="gouts-form"`. Composant serveur `GoutsBanner` (bandeau non bloquant → `/gouts` et `/recherche`) monté en tête de la page restos, affiché seulement si `getGouts()` est null. `data-testid="gouts-banner"`.
 
 - [ ] **Step 1: Ajouter les clés i18n**
 
@@ -640,8 +640,45 @@ Dans `messages/fr.json`, ajouter sous la racine :
   "zones": "Zones préférées (séparées par des virgules)",
   "save": "Enregistrer mes goûts",
   "saved": "Goûts enregistrés",
+  "banner": "Complète tes goûts pour des recommandations sur mesure.",
+  "bannerCta": "Renseigner mes goûts",
+  "bannerSearch": "Rechercher",
   "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
 }
+```
+
+- [ ] **Step 1b: `GoutsBanner` (server, non bloquant)**
+
+`src/features/reco/ui/GoutsBanner.tsx` :
+
+```tsx
+import { getTranslations } from "next-intl/server";
+import { getGouts } from "../data/queries";
+import { Link } from "@/lib/i18n/routing";
+
+// Bandeau non bloquant : affiché seulement si l'utilisateur n'a pas encore de profil de goûts.
+export async function GoutsBanner() {
+  const gouts = await getGouts();
+  if (gouts) return null;
+  const t = await getTranslations("gouts");
+  return (
+    <div data-testid="gouts-banner" className="flex items-center justify-between gap-3 border rounded p-3 bg-amber-50">
+      <span>{t("banner")}</span>
+      <span className="flex gap-3">
+        <Link href="/gouts" className="underline">{t("bannerCta")}</Link>
+        <Link href="/recherche" className="underline">{t("bannerSearch")}</Link>
+      </span>
+    </div>
+  );
+}
+```
+
+Monter en tête de `src/app/[locale]/(app)/restos/page.tsx` (au-dessus de `<RestoSearch />`), de façon additive (ne rien retirer du contenu existant) :
+
+```tsx
+import { GoutsBanner } from "@/features/reco/ui/GoutsBanner";
+// dans le <main>, avant <RestoSearch /> :
+<GoutsBanner />
 ```
 
 - [ ] **Step 2: `GoutsForm` (client)**
