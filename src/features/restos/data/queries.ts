@@ -21,7 +21,19 @@ export async function getFiche(etablissementId: string) {
   if (etabRes.error) throw etabRes.error;
   if (itemRes.error) throw itemRes.error;
   if (avisRes.error) throw avisRes.error;
-  return { etab: etabRes.data, item: itemRes.data, avis: avisRes.data ?? [] };
+
+  // Récupère les tags appliqués à l'item de l'utilisateur (si l'item existe).
+  let appliedTagIds: string[] = [];
+  if (itemRes.data) {
+    const { data: tagRows, error: tagErr } = await supabase
+      .from("liste_item_tags")
+      .select("tag_id")
+      .eq("liste_item_id", itemRes.data.id);
+    if (tagErr) throw tagErr;
+    appliedTagIds = (tagRows ?? []).map((r) => r.tag_id);
+  }
+
+  return { etab: etabRes.data, item: itemRes.data, avis: avisRes.data ?? [], appliedTagIds };
 }
 
 export async function getTags() {

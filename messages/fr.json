@@ -19,6 +19,14 @@
     "favorite": "Favori",
     "statut": { "a_faire": "À faire", "visite": "Visité" },
     "avis": "Mes avis",
-    "addAvis": "Ajouter un avis"
+    "addAvis": "Ajouter un avis",
+    "saveTags": "Enregistrer les tags",
+    "notFound": "Introuvable",
+    "notePlaceholder": "Note (1-5)",
+    "commentairePlaceholder": "Mon avis…",
+    "error": {
+      "title": "Une erreur est survenue",
+      "retry": "Réessayer"
+    }
   }
 }
