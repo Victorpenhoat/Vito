@@ -341,6 +341,69 @@ export type Database = {
         }
         Relationships: []
       }
+      reservations: {
+        Row: {
+          conciergerie_mail: string | null
+          conciergerie_tel: string | null
+          created_at: string
+          created_by: string
+          date_debut: string | null
+          date_fin: string | null
+          fournisseur: string | null
+          id: string
+          lien: string | null
+          notes: string | null
+          reference: string | null
+          type: Database["public"]["Enums"]["reservation_type"]
+          voyage_id: string
+        }
+        Insert: {
+          conciergerie_mail?: string | null
+          conciergerie_tel?: string | null
+          created_at?: string
+          created_by: string
+          date_debut?: string | null
+          date_fin?: string | null
+          fournisseur?: string | null
+          id?: string
+          lien?: string | null
+          notes?: string | null
+          reference?: string | null
+          type?: Database["public"]["Enums"]["reservation_type"]
+          voyage_id: string
+        }
+        Update: {
+          conciergerie_mail?: string | null
+          conciergerie_tel?: string | null
+          created_at?: string
+          created_by?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          fournisseur?: string | null
+          id?: string
+          lien?: string | null
+          notes?: string | null
+          reference?: string | null
+          type?: Database["public"]["Enums"]["reservation_type"]
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tags: {
         Row: {
           categorie: string
@@ -415,20 +478,109 @@ export type Database = {
           },
         ]
       }
+      voyage_membres: {
+        Row: {
+          added_at: string
+          profile_id: string
+          role: string
+          voyage_id: string
+        }
+        Insert: {
+          added_at?: string
+          profile_id: string
+          role?: string
+          voyage_id: string
+        }
+        Update: {
+          added_at?: string
+          profile_id?: string
+          role?: string
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_membres_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_membres_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voyages: {
+        Row: {
+          created_at: string
+          date_debut: string | null
+          date_fin: string | null
+          destination: string | null
+          id: string
+          owner_id: string
+          statut: Database["public"]["Enums"]["voyage_statut"]
+          titre: string
+        }
+        Insert: {
+          created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          destination?: string | null
+          id?: string
+          owner_id: string
+          statut?: Database["public"]["Enums"]["voyage_statut"]
+          titre: string
+        }
+        Update: {
+          created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          destination?: string | null
+          id?: string
+          owner_id?: string
+          statut?: Database["public"]["Enums"]["voyage_statut"]
+          titre?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyages_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
+      share_voyage: {
+        Args: { p_email: string; p_voyage_id: string }
+        Returns: string
+      }
+      unshare_voyage: {
+        Args: { p_profile_id: string; p_voyage_id: string }
+        Returns: undefined
+      }
       upsert_etablissement: { Args: { p: Json }; Returns: string }
     }
     Enums: {
       app_role: "client" | "agence" | "admin"
       etablissement_categorie: "resto" | "hotel"
       liste_statut: "a_faire" | "visite"
+      reservation_type: "hotel" | "vol" | "voiture" | "hebergement" | "autre"
       vin_couleur: "rouge" | "blanc" | "rose" | "petillant" | "autre"
+      voyage_statut: "planifie" | "confirme" | "en_cours" | "termine"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -562,7 +714,9 @@ export const Constants = {
       app_role: ["client", "agence", "admin"],
       etablissement_categorie: ["resto", "hotel"],
       liste_statut: ["a_faire", "visite"],
+      reservation_type: ["hotel", "vol", "voiture", "hebergement", "autre"],
       vin_couleur: ["rouge", "blanc", "rose", "petillant", "autre"],
+      voyage_statut: ["planifie", "confirme", "en_cours", "termine"],
     },
   },
 } as const
