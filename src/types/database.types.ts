@@ -147,6 +147,175 @@ export type Database = {
           },
         ]
       }
+      depense_groupe_membres: {
+        Row: {
+          added_at: string
+          groupe_id: string
+          profile_id: string
+          role: string
+        }
+        Insert: {
+          added_at?: string
+          groupe_id: string
+          profile_id: string
+          role?: string
+        }
+        Update: {
+          added_at?: string
+          groupe_id?: string
+          profile_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depense_groupe_membres_groupe_id_fkey"
+            columns: ["groupe_id"]
+            isOneToOne: false
+            referencedRelation: "depense_groupes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "depense_groupe_membres_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      depense_groupes: {
+        Row: {
+          created_at: string
+          devise: string
+          id: string
+          owner_id: string
+          titre: string
+          voyage_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          devise?: string
+          id?: string
+          owner_id: string
+          titre: string
+          voyage_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          devise?: string
+          id?: string
+          owner_id?: string
+          titre?: string
+          voyage_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depense_groupes_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "depense_groupes_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      depense_parts: {
+        Row: {
+          depense_id: string
+          part_cents: number
+          profile_id: string
+        }
+        Insert: {
+          depense_id: string
+          part_cents: number
+          profile_id: string
+        }
+        Update: {
+          depense_id?: string
+          part_cents?: number
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depense_parts_depense_id_fkey"
+            columns: ["depense_id"]
+            isOneToOne: false
+            referencedRelation: "depenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "depense_parts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      depenses: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string | null
+          groupe_id: string
+          id: string
+          libelle: string
+          mode: Database["public"]["Enums"]["depense_mode"]
+          montant_cents: number
+          paye_par: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          date?: string | null
+          groupe_id: string
+          id?: string
+          libelle: string
+          mode?: Database["public"]["Enums"]["depense_mode"]
+          montant_cents: number
+          paye_par: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string | null
+          groupe_id?: string
+          id?: string
+          libelle?: string
+          mode?: Database["public"]["Enums"]["depense_mode"]
+          montant_cents?: number
+          paye_par?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depenses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "depenses_groupe_id_fkey"
+            columns: ["groupe_id"]
+            isOneToOne: false
+            referencedRelation: "depense_groupes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "depenses_paye_par_fkey"
+            columns: ["paye_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       etablissements: {
         Row: {
           adresse: string | null
@@ -340,6 +509,68 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
         }
         Relationships: []
+      }
+      remboursements: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string | null
+          de_profile_id: string
+          groupe_id: string
+          id: string
+          montant_cents: number
+          vers_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          date?: string | null
+          de_profile_id: string
+          groupe_id: string
+          id?: string
+          montant_cents: number
+          vers_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string | null
+          de_profile_id?: string
+          groupe_id?: string
+          id?: string
+          montant_cents?: number
+          vers_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remboursements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remboursements_de_profile_id_fkey"
+            columns: ["de_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remboursements_groupe_id_fkey"
+            columns: ["groupe_id"]
+            isOneToOne: false
+            referencedRelation: "depense_groupes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "remboursements_vers_profile_id_fkey"
+            columns: ["vers_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reservations: {
         Row: {
@@ -560,13 +791,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
+      share_groupe: {
+        Args: { p_email: string; p_groupe_id: string }
+        Returns: string
+      }
       share_voyage: {
         Args: { p_email: string; p_voyage_id: string }
         Returns: string
+      }
+      unshare_groupe: {
+        Args: { p_groupe_id: string; p_profile_id: string }
+        Returns: undefined
       }
       unshare_voyage: {
         Args: { p_profile_id: string; p_voyage_id: string }
@@ -576,6 +817,7 @@ export type Database = {
     }
     Enums: {
       app_role: "client" | "agence" | "admin"
+      depense_mode: "egal" | "exact"
       etablissement_categorie: "resto" | "hotel"
       liste_statut: "a_faire" | "visite"
       reservation_type: "hotel" | "vol" | "voiture" | "hebergement" | "autre"
@@ -712,6 +954,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["client", "agence", "admin"],
+      depense_mode: ["egal", "exact"],
       etablissement_categorie: ["resto", "hotel"],
       liste_statut: ["a_faire", "visite"],
       reservation_type: ["hotel", "vol", "voiture", "hebergement", "autre"],
