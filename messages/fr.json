@@ -34,6 +34,21 @@
     "quantite": "Quantité",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
+  "gouts": {
+    "title": "Mes goûts",
+    "intro": "Renseigne tes préférences pour affiner tes recommandations.",
+    "ambiances": "Ambiances préférées",
+    "budget": "Budget par personne (€)",
+    "types": "Types préférés",
+    "typesList": { "etoile": "Étoilé", "bistrot": "Bistrot", "brasserie": "Brasserie", "cafe": "Café", "restaurant": "Restaurant" },
+    "zones": "Zones préférées (séparées par des virgules)",
+    "save": "Enregistrer mes goûts",
+    "saved": "Goûts enregistrés",
+    "banner": "Complète tes goûts pour des recommandations sur mesure.",
+    "bannerCta": "Renseigner mes goûts",
+    "bannerSearch": "Rechercher",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
   "restos": {
     "title": "Mes restos",
     "add": "Ajouter un resto",
