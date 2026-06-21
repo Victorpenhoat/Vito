@@ -12,7 +12,7 @@ export function MembersList({ groupeId, membres, isOwner }: { groupeId: string; 
     <ul className="flex flex-col gap-1">
       {membres.map((m) => (
         <li key={m.profile_id} data-testid="member-row" className="flex items-center gap-2">
-          <span>{m.display_name ?? m.profile_id} {m.role === "owner" ? "(owner)" : ""}</span>
+          <span>{m.display_name ?? m.profile_id} {m.role === "owner" ? `(${t("roleOwner")})` : ""}</span>
           {isOwner && m.role !== "owner" && (
             <form action={action}>
               <input type="hidden" name="groupeId" value={groupeId} />

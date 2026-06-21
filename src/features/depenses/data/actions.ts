@@ -47,11 +47,14 @@ export async function updateGroupe(_prev: unknown, formData: FormData) {
   if (!parsed.success) return { error: "Groupe invalide" };
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("depense_groupes")
     .update({ titre: parsed.data.titre, devise: parsed.data.devise ?? "EUR" })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: "Mise à jour échouée" };
+  if (!data) return { error: "Mise à jour non autorisée" };
   revalidatePath(`/depenses/${id}`);
   return { ok: true as const };
 }

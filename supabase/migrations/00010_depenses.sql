@@ -67,6 +67,11 @@ create function public.can_access_groupe(g_id uuid) returns boolean
       or exists (select 1 from public.depense_groupe_membres where groupe_id = g_id and profile_id = auth.uid());
 $$;
 
+create function public.is_groupe_membre(g_id uuid, p_id uuid) returns boolean
+  language sql security definer set search_path = '' stable as $$
+  select exists (select 1 from public.depense_groupe_membres where groupe_id = g_id and profile_id = p_id);
+$$;
+
 -- Trigger : owner_id immuable (anti-escalade de privilèges, leçon C4)
 create function public.depense_groupes_lock_owner() returns trigger
   language plpgsql security definer set search_path = '' as $$
@@ -114,18 +119,27 @@ create policy "depense_groupe_membres_delete" on public.depense_groupe_membres f
 -- RLS depenses (collaboratif)
 alter table public.depenses enable row level security;
 create policy "depenses_all" on public.depenses for all
-  using (public.can_access_groupe(groupe_id)) with check (public.can_access_groupe(groupe_id));
+  using (public.can_access_groupe(groupe_id))
+  with check (public.can_access_groupe(groupe_id) and public.is_groupe_membre(groupe_id, paye_par));
 
 -- RLS depense_parts (gardé via le groupe de la dépense parente)
 alter table public.depense_parts enable row level security;
 create policy "depense_parts_all" on public.depense_parts for all
   using (public.can_access_groupe((select groupe_id from public.depenses where id = depense_id)))
-  with check (public.can_access_groupe((select groupe_id from public.depenses where id = depense_id)));
+  with check (
+    public.can_access_groupe((select groupe_id from public.depenses where id = depense_id))
+    and public.is_groupe_membre((select groupe_id from public.depenses where id = depense_id), profile_id)
+  );
 
 -- RLS remboursements (collaboratif)
 alter table public.remboursements enable row level security;
 create policy "remboursements_all" on public.remboursements for all
-  using (public.can_access_groupe(groupe_id)) with check (public.can_access_groupe(groupe_id));
+  using (public.can_access_groupe(groupe_id))
+  with check (
+    public.can_access_groupe(groupe_id)
+    and public.is_groupe_membre(groupe_id, de_profile_id)
+    and public.is_groupe_membre(groupe_id, vers_profile_id)
+  );
 
 -- Grants explicites
 grant select, insert, update, delete on public.depense_groupes to authenticated;
@@ -169,3 +183,5 @@ revoke execute on function public.is_groupe_owner(uuid) from anon, public;
 revoke execute on function public.can_access_groupe(uuid) from anon, public;
 grant execute on function public.is_groupe_owner(uuid) to authenticated;
 grant execute on function public.can_access_groupe(uuid) to authenticated;
+revoke execute on function public.is_groupe_membre(uuid, uuid) from anon, public;
+grant execute on function public.is_groupe_membre(uuid, uuid) to authenticated;
