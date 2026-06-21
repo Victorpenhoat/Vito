@@ -80,5 +80,34 @@
       "title": "Une erreur est survenue",
       "retry": "Réessayer"
     }
+  },
+  "voyages": {
+    "title": "Mes voyages",
+    "create": "Créer un voyage",
+    "titre": "Titre",
+    "destination": "Destination",
+    "dateDebut": "Date de début",
+    "dateFin": "Date de fin",
+    "statut": "Statut",
+    "statuts": { "planifie": "Planifié", "confirme": "Confirmé", "en_cours": "En cours", "termine": "Terminé" },
+    "vide": "Aucun voyage pour l'instant.",
+    "partage": "Partagé avec vous",
+    "reservations": "Réservations",
+    "addReservation": "Ajouter une réservation",
+    "type": "Type",
+    "types": { "hotel": "Hôtel", "vol": "Vol", "voiture": "Voiture", "hebergement": "Hébergement", "autre": "Autre" },
+    "fournisseur": "Fournisseur",
+    "reference": "Référence",
+    "lien": "Lien (Airbnb, PAP…)",
+    "conciergerieTel": "Téléphone conciergerie",
+    "conciergerieMail": "E-mail conciergerie",
+    "notes": "Notes",
+    "membres": "Membres",
+    "partager": "Partager",
+    "partagerEmail": "E-mail de la personne",
+    "retirer": "Retirer",
+    "supprimer": "Supprimer le voyage",
+    "save": "Enregistrer",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   }
 }
