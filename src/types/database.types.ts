@@ -386,6 +386,7 @@ export type Database = {
     }
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      find_or_create_vin: { Args: { p: Json }; Returns: string }
       upsert_etablissement: { Args: { p: Json }; Returns: string }
     }
     Enums: {
