@@ -50,9 +50,9 @@ insert into public.tags (slug, label, categorie) values
 
 -- Établissement démo (référentiel)
 insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source)
-values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistrot',
+values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistrot',
   'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed');
 
 -- Le client a déjà un resto dans sa liste
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
-values ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'a_faire', true);
+values ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true);
