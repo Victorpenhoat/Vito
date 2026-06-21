@@ -35,6 +35,9 @@ export function TagPicker({ tags, appliedTagIds, listeItemId }: TagPickerProps) 
         ))}
       </div>
       {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "ok" in state && state.ok && (
+        <p data-testid="tags-saved" className="text-green-700">{t("tagsSaved")}</p>
+      )}
       <button type="submit" disabled={pending} className="underline self-start">
         {t("saveTags")}
       </button>

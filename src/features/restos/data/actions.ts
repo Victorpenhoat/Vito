@@ -103,5 +103,5 @@ export async function setTags(_prev: unknown, formData: FormData) {
     if (error) return { error: "Tags non enregistrés" };
   }
   revalidatePath("/restos");
-  return {};
+  return { ok: true as const };
 }

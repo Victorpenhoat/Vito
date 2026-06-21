@@ -60,8 +60,8 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   if (isChecked) {
     await firstCheckbox.uncheck();
     await tagPicker.getByRole("button").click();
-    // Attendre que le serveur confirme la mise à jour
-    await page.waitForLoadState("networkidle");
+    // Signal serveur déterministe : la sauvegarde est confirmée par le composant.
+    await expect(page.getByTestId("tags-saved")).toBeVisible();
     await page.reload();
     await expect(page.getByTestId("tag-picker")).toBeVisible();
   }
@@ -69,8 +69,8 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   // Cocher le premier tag et soumettre
   await page.getByTestId("tag-picker").locator("label").first().locator("input[type='checkbox']").check();
   await page.getByTestId("tag-picker").getByRole("button").click();
-  // Attendre la réponse du serveur avant de recharger
-  await page.waitForLoadState("networkidle");
+  // Attendre la confirmation serveur (commit garanti) avant de recharger.
+  await expect(page.getByTestId("tags-saved")).toBeVisible();
 
   // Recharger la page pour vérifier la persistance
   await page.reload();
