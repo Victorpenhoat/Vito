@@ -5,9 +5,11 @@ import { FavoriteToggle } from "./FavoriteToggle";
 import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
 import { getPlacesProvider } from "@/lib/services/places";
+import { DegustationForm } from "@/features/vins/ui/DegustationForm";
 
 export async function FicheResto({ etablissementId }: { etablissementId: string }) {
   const t = await getTranslations("restos");
+  const tv = await getTranslations("vins");
   const [{ etab, item, avis, appliedTagIds }, tags] = await Promise.all([
     getFiche(etablissementId),
     getTags(),
@@ -54,6 +56,10 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
         <h2 className="font-semibold">{t("avis")}</h2>
         <ul>{avis.map((a) => <li key={a.id} className="border-b py-1">{a.note ? `${a.note}/5 — ` : ""}{a.commentaire}</li>)}</ul>
         <AvisForm etablissementId={etab.id} />
+      </section>
+      <section>
+        <h2 className="font-semibold">{tv("degustesIci")}</h2>
+        <DegustationForm etablissementId={etab.id} />
       </section>
     </article>
   );

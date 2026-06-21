@@ -6,6 +6,7 @@ const schema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   GOOGLE_PLACES_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
+  MERCHANT_PARTNER_URL: z.string().url().optional(),
 });
 
 const parsed = schema.safeParse({
@@ -14,6 +15,7 @@ const parsed = schema.safeParse({
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+  MERCHANT_PARTNER_URL: process.env.MERCHANT_PARTNER_URL,
 });
 
 if (!parsed.success) {

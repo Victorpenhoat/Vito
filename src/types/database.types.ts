@@ -79,6 +79,74 @@ export type Database = {
           },
         ]
       }
+      degustations: {
+        Row: {
+          avis_id: string | null
+          commentaire: string | null
+          created_at: string
+          deguste_le: string
+          etablissement_id: string | null
+          id: string
+          note: number | null
+          prix_paye: number | null
+          user_id: string
+          vin_id: string
+        }
+        Insert: {
+          avis_id?: string | null
+          commentaire?: string | null
+          created_at?: string
+          deguste_le?: string
+          etablissement_id?: string | null
+          id?: string
+          note?: number | null
+          prix_paye?: number | null
+          user_id: string
+          vin_id: string
+        }
+        Update: {
+          avis_id?: string | null
+          commentaire?: string | null
+          created_at?: string
+          deguste_le?: string
+          etablissement_id?: string | null
+          id?: string
+          note?: number | null
+          prix_paye?: number | null
+          user_id?: string
+          vin_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "degustations_avis_id_fkey"
+            columns: ["avis_id"]
+            isOneToOne: false
+            referencedRelation: "avis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "degustations_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "degustations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "degustations_vin_id_fkey"
+            columns: ["vin_id"]
+            isOneToOne: false
+            referencedRelation: "vins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       etablissements: {
         Row: {
           adresse: string | null
@@ -265,18 +333,67 @@ export type Database = {
         }
         Relationships: []
       }
+      vins: {
+        Row: {
+          achat_url: string | null
+          cepages: string[]
+          couleur: Database["public"]["Enums"]["vin_couleur"] | null
+          created_at: string
+          domaine: string | null
+          id: string
+          millesime: number | null
+          nom: string
+          region: string | null
+          user_id: string
+        }
+        Insert: {
+          achat_url?: string | null
+          cepages?: string[]
+          couleur?: Database["public"]["Enums"]["vin_couleur"] | null
+          created_at?: string
+          domaine?: string | null
+          id?: string
+          millesime?: number | null
+          nom: string
+          region?: string | null
+          user_id: string
+        }
+        Update: {
+          achat_url?: string | null
+          cepages?: string[]
+          couleur?: Database["public"]["Enums"]["vin_couleur"] | null
+          created_at?: string
+          domaine?: string | null
+          id?: string
+          millesime?: number | null
+          nom?: string
+          region?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      find_or_create_vin: { Args: { p: Json }; Returns: string }
       upsert_etablissement: { Args: { p: Json }; Returns: string }
     }
     Enums: {
       app_role: "client" | "agence" | "admin"
       etablissement_categorie: "resto" | "hotel"
       liste_statut: "a_faire" | "visite"
+      vin_couleur: "rouge" | "blanc" | "rose" | "petillant" | "autre"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -410,6 +527,7 @@ export const Constants = {
       app_role: ["client", "agence", "admin"],
       etablissement_categorie: ["resto", "hotel"],
       liste_statut: ["a_faire", "visite"],
+      vin_couleur: ["rouge", "blanc", "rose", "petillant", "autre"],
     },
   },
 } as const

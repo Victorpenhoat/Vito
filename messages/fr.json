@@ -12,6 +12,28 @@
       "signUpFailed": "Inscription échouée"
     }
   },
+  "vins": {
+    "title": "Mes vins",
+    "degustesIci": "Vins dégustés ici",
+    "add": "Ajouter un vin",
+    "nom": "Nom du vin",
+    "domaine": "Domaine",
+    "millesime": "Millésime",
+    "region": "Région",
+    "couleur": "Couleur",
+    "cepages": "Cépages (séparés par des virgules)",
+    "note": "Note (1-5)",
+    "prix": "Prix payé (€)",
+    "commentaire": "Commentaire",
+    "date": "Date de dégustation",
+    "couleurs": { "rouge": "Rouge", "blanc": "Blanc", "rose": "Rosé", "petillant": "Pétillant", "autre": "Autre" },
+    "filtres": { "titre": "Filtres", "tous": "Tous", "noteMin": "Note min.", "resto": "Restaurant", "du": "Du", "au": "Au", "reset": "Réinitialiser" },
+    "vide": "Aucun vin pour l'instant.",
+    "fois": "{count} dégustation(s)",
+    "acheter": "Acheter",
+    "quantite": "Quantité",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
   "restos": {
     "title": "Mes restos",
     "add": "Ajouter un resto",

@@ -50,3 +50,12 @@ values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistro
 -- Le client a déjà un resto dans sa liste
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
 values ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true);
+
+-- Vin + dégustation de démo pour le compte client (UUID v4 valides)
+insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, cepages)
+values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111',
+  'Château Démo', 'Domaine de Démo', 2019, 'Bordeaux', 'rouge', '{"merlot","cabernet sauvignon"}');
+
+insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, commentaire)
+values ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', current_date, 4, 45.00, 'Très bon, à recommander');
