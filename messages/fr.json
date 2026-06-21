@@ -49,6 +49,18 @@
     "bannerSearch": "Rechercher",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
+  "recherche": {
+    "title": "Recherche",
+    "zone": "Zone (ex. 17e, Paris)",
+    "budget": "Budget max / personne (€)",
+    "type": "Type",
+    "tous": "Tous",
+    "submit": "Rechercher",
+    "maListe": "Ta liste d'abord",
+    "recos": "Recommandations",
+    "vide": "Aucun résultat.",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
   "restos": {
     "title": "Mes restos",
     "add": "Ajouter un resto",
