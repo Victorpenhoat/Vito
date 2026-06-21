@@ -282,6 +282,41 @@ export type Database = {
           },
         ]
       }
+      profil_gouts: {
+        Row: {
+          ambiances: string[]
+          budget_max: number | null
+          types_preferes: string[]
+          updated_at: string
+          user_id: string
+          zones: string[]
+        }
+        Insert: {
+          ambiances?: string[]
+          budget_max?: number | null
+          types_preferes?: string[]
+          updated_at?: string
+          user_id: string
+          zones?: string[]
+        }
+        Update: {
+          ambiances?: string[]
+          budget_max?: number | null
+          types_preferes?: string[]
+          updated_at?: string
+          user_id?: string
+          zones?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profil_gouts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
