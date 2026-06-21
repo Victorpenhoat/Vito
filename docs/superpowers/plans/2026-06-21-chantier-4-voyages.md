@@ -968,9 +968,10 @@ insert into public.voyages (id, owner_id, titre, destination, date_debut, date_f
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111',
   'Week-end à Rome', 'Rome', '2026-09-12', '2026-09-15', 'confirme');
 
+-- Le trigger on_voyage_created insère déjà la ligne 'owner' (client). On ajoute juste l'agence.
 insert into public.voyage_membres (voyage_id, profile_id, role) values
-  ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'owner'),
-  ('11111111-2222-4333-8444-555555555555', '22222222-2222-2222-2222-222222222222', 'membre');
+  ('11111111-2222-4333-8444-555555555555', '22222222-2222-2222-2222-222222222222', 'membre')
+on conflict (voyage_id, profile_id) do nothing;
 
 insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien)
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'hotel',
