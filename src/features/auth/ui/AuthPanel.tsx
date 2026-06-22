@@ -16,6 +16,7 @@ export function AuthPanel({ signIn, signUp }: { signIn: Action; signUp: Action }
         <button
           type="button"
           data-testid="tab-login"
+          role="tab"
           aria-selected={mode === "login"}
           onClick={() => setMode("login")}
           className={tabClass(mode === "login")}
@@ -25,6 +26,7 @@ export function AuthPanel({ signIn, signUp }: { signIn: Action; signUp: Action }
         <button
           type="button"
           data-testid="tab-signup"
+          role="tab"
           aria-selected={mode === "signup"}
           onClick={() => setMode("signup")}
           className={tabClass(mode === "signup")}
