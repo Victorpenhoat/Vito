@@ -34,6 +34,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      agence_clients: {
+        Row: {
+          added_at: string
+          agence_id: string
+          client_id: string
+        }
+        Insert: {
+          added_at?: string
+          agence_id: string
+          client_id: string
+        }
+        Update: {
+          added_at?: string
+          agence_id?: string
+          client_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agence_clients_agence_id_fkey"
+            columns: ["agence_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agence_clients_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       avis: {
         Row: {
           commentaire: string | null
@@ -1038,12 +1071,25 @@ export type Database = {
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
+      creer_voyage_pour_client: {
+        Args: {
+          p_client_id: string
+          p_date_debut: string
+          p_date_fin: string
+          p_destination: string
+          p_statut: Database["public"]["Enums"]["voyage_statut"]
+          p_titre: string
+        }
+        Returns: string
+      }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      delier_client: { Args: { p_client_id: string }; Returns: undefined }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
       inviter_famille: {
         Args: { p_email: string; p_famille_id: string }
         Returns: string
       }
+      is_agence: { Args: never; Returns: boolean }
       is_concierge: { Args: never; Returns: boolean }
       is_famille_owner: { Args: { f_id: string }; Returns: boolean }
       is_groupe_membre: {
@@ -1053,6 +1099,7 @@ export type Database = {
       is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
       is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
+      lier_client: { Args: { p_email: string }; Returns: string }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       quitter_famille: { Args: never; Returns: undefined }
       retirer_membre_famille: {

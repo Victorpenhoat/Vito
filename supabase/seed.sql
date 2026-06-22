@@ -173,3 +173,21 @@ values
    '{"sub":"77777777-7777-4777-8777-777777777777","email":"famille1@vito.test"}', 'email', now(), now()),
   (gen_random_uuid(), '88888888-8888-4888-8888-888888888888', '88888888-8888-4888-8888-888888888888',
    '{"sub":"88888888-8888-4888-8888-888888888888","email":"famille2@vito.test"}', 'email', now(), now());
+
+-- Compte client dédié au Chantier 7b (Free, 0 voyage ; aucun lien agence pré-créé).
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  email_change_token_current, reauthentication_token, phone_change, phone_change_token)
+values
+  ('99999999-9999-4999-8999-999999999999', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'client7b@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Client 7b","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', '');
+
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
+values
+  (gen_random_uuid(), '99999999-9999-4999-8999-999999999999', '99999999-9999-4999-8999-999999999999',
+   '{"sub":"99999999-9999-4999-8999-999999999999","email":"client7b@vito.test"}', 'email', now(), now());

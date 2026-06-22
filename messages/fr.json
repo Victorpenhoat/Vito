@@ -214,5 +214,21 @@
     "vide": "Aucun resto partagé pour l'instant.",
     "pasDeFamille": "Vous n'avez pas encore de famille.",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
+  "agence": {
+    "title": "Espace agence",
+    "portefeuille": "Mes clients",
+    "lier": "Ajouter un client",
+    "clientEmail": "E-mail du client",
+    "retirer": "Retirer",
+    "vide": "Aucun client pour l'instant.",
+    "creerVoyage": "Créer un voyage",
+    "titre": "Titre du voyage",
+    "destination": "Destination",
+    "dateDebut": "Date de début",
+    "dateFin": "Date de fin",
+    "statut": "Statut",
+    "envoyer": "Créer le voyage",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   }
 }
