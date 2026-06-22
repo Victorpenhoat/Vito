@@ -112,3 +112,33 @@ values ('66666666-6666-4666-8666-bbbbbbbbbbbb', '66666666-6666-4666-8666-6666666
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
   ('66666666-6666-4666-8666-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 5000),
   ('66666666-6666-4666-8666-bbbbbbbbbbbb', '22222222-2222-2222-2222-222222222222', 4000);
+
+-- Comptes dédiés au Chantier 6 (isolés des autres e2e). UUID v4 valides.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  email_change_token_current, reauthentication_token, phone_change, phone_change_token)
+values
+  ('44444444-4444-4444-8444-444444444444', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'free@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Free Démo","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', ''),
+  ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'premium@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Premium Démo","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', '');
+
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
+values
+  (gen_random_uuid(), '44444444-4444-4444-8444-444444444444', '44444444-4444-4444-8444-444444444444',
+   '{"sub":"44444444-4444-4444-8444-444444444444","email":"free@vito.test"}', 'email', now(), now()),
+  (gen_random_uuid(), '55555555-5555-4555-8555-555555555555', '55555555-5555-4555-8555-555555555555',
+   '{"sub":"55555555-5555-4555-8555-555555555555","email":"premium@vito.test"}', 'email', now(), now());
+
+-- premium@vito.test : abonnement premium actif (annuel, expire dans 1 an)
+insert into public.subscriptions (user_id, tier, status, period, current_period_end)
+values ('55555555-5555-4555-8555-555555555555', 'premium', 'active', 'yearly', now() + interval '1 year');
