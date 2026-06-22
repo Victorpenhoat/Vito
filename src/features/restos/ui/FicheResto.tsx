@@ -9,6 +9,8 @@ import { DegustationForm } from "@/features/vins/ui/DegustationForm";
 import { getIsPremium } from "@/features/abonnement/data/queries";
 import { DemandeRestoForm } from "@/features/conciergerie/ui/DemandeRestoForm";
 import { Link } from "@/lib/i18n/routing";
+import { getMaFamille } from "@/features/famille/data/queries";
+import { AjouterFamilleButton } from "@/features/famille/ui/AjouterFamilleButton";
 
 export async function FicheResto({ etablissementId }: { etablissementId: string }) {
   const t = await getTranslations("restos");
@@ -21,6 +23,7 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
 
   const tc = await getTranslations("conciergerie");
   const isPremium = await getIsPremium();
+  const maFamille = await getMaFamille();
 
   let photoRefs: string[] = [];
   if (etab.place_id) {
@@ -78,6 +81,11 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
           </p>
         )}
       </section>
+      {maFamille && (
+        <section>
+          <AjouterFamilleButton etablissementId={etab.id} />
+        </section>
+      )}
     </article>
   );
 }

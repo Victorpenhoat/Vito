@@ -193,5 +193,26 @@
     "supprimer": "Supprimer",
     "vide": "Aucune demande pour l'instant.",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
+  "famille": {
+    "title": "Ma famille",
+    "creer": "Créer une famille",
+    "nom": "Nom de la famille",
+    "membres": "Membres",
+    "roleOwner": "propriétaire",
+    "inviter": "Inviter",
+    "inviteEmail": "E-mail de la personne",
+    "quitter": "Quitter la famille",
+    "retirer": "Retirer",
+    "supprimer": "Supprimer la famille",
+    "restos": "Restos du foyer",
+    "rechercher": "Rechercher un resto",
+    "rechercherBtn": "Rechercher",
+    "ajouter": "Ajouter",
+    "retirerResto": "Retirer",
+    "ajouterFamille": "Ajouter à ma famille",
+    "vide": "Aucun resto partagé pour l'instant.",
+    "pasDeFamille": "Vous n'avez pas encore de famille.",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   }
 }
