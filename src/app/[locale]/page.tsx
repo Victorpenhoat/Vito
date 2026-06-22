@@ -15,15 +15,14 @@ export default async function Home() {
   return (
     <main
       data-testid="landing"
-      className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-16 dark:bg-black min-h-dvh"
+      className="flex min-h-dvh flex-col items-center justify-center bg-[radial-gradient(1200px_400px_at_50%_-10%,var(--color-accent-50),var(--color-canvas)_60%)] px-6 py-16"
     >
-      <div className="text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-black dark:text-zinc-50">
+      <div className="w-full max-w-sm rounded-card border border-line bg-surface p-7 text-center shadow-sm">
+        <div className="text-3xl font-extrabold tracking-tight">
           {t("name")}
-        </h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">{t("tagline")}</p>
-      </div>
-      <div className="w-full max-w-sm rounded-lg border bg-white p-6 shadow-sm dark:bg-zinc-900">
+          <span className="text-accent">.</span>
+        </div>
+        <p className="mb-6 mt-1.5 text-sm text-muted">{t("tagline")}</p>
         <AuthPanel signIn={signIn} signUp={signUp} />
       </div>
     </main>
