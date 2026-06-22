@@ -729,6 +729,47 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          id: string
+          period: string
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end: string
+          id?: string
+          period: string
+          status: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          period?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tags: {
         Row: {
           categorie: string
@@ -880,58 +921,23 @@ export type Database = {
           },
         ]
       }
-      subscriptions: {
-        Row: {
-          id: string
-          user_id: string
-          tier: string
-          status: string
-          period: string
-          current_period_end: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          tier?: string
-          status: string
-          period: string
-          current_period_end: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          tier?: string
-          status?: string
-          period?: string
-          current_period_end?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      cancel_subscription: { Args: Record<PropertyKey, never>; Returns: undefined }
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
+      cancel_subscription: { Args: never; Returns: undefined }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      is_concierge: { Args: never; Returns: boolean }
+      is_groupe_membre: {
+        Args: { g_id: string; p_id: string }
+        Returns: boolean
+      }
       is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
+      is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       share_groupe: {
@@ -1093,6 +1099,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["client", "agence", "admin"],
+      conciergerie_statut: ["nouvelle", "en_cours", "confirmee", "refusee"],
+      conciergerie_type: ["resto", "hotel"],
       depense_mode: ["egal", "exact"],
       etablissement_categorie: ["resto", "hotel"],
       liste_statut: ["a_faire", "visite"],
