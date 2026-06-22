@@ -1,25 +1,31 @@
-import { getTranslations } from "next-intl/server";
-import Image from "next/image";
+import { getLocale, getTranslations } from "next-intl/server";
+import { createServerSupabase } from "@/lib/supabase/server";
+import { redirect } from "@/lib/i18n/routing";
+import { signIn, signUp } from "@/features/auth/data/actions";
+import { AuthPanel } from "@/features/auth/ui/AuthPanel";
 
 export default async function Home() {
+  const supabase = await createServerSupabase();
+  const { data } = await supabase.auth.getUser();
+  if (data.user) {
+    const locale = await getLocale();
+    redirect({ href: "/restos", locale });
+  }
   const t = await getTranslations("app");
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt={t("name")}
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            {t("name")}
-          </h1>
-        </div>
-      </main>
-    </div>
+    <main
+      data-testid="landing"
+      className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-16 dark:bg-black min-h-dvh"
+    >
+      <div className="text-center">
+        <h1 className="text-4xl font-semibold tracking-tight text-black dark:text-zinc-50">
+          {t("name")}
+        </h1>
+        <p className="mt-2 text-zinc-600 dark:text-zinc-400">{t("tagline")}</p>
+      </div>
+      <div className="w-full max-w-sm rounded-lg border bg-white p-6 shadow-sm dark:bg-zinc-900">
+        <AuthPanel signIn={signIn} signUp={signUp} />
+      </div>
+    </main>
   );
 }
