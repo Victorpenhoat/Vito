@@ -79,6 +79,100 @@ export type Database = {
           },
         ]
       }
+      conciergerie_demandes: {
+        Row: {
+          avec_enfants: boolean
+          chaise_haute: boolean | null
+          commentaire: string | null
+          created_at: string
+          date_debut: string | null
+          date_resa: string | null
+          enfants_ages: number[] | null
+          etablissement_id: string
+          heure_resa: string | null
+          id: string
+          nb_enfants: number
+          nombre_convives: number | null
+          nombre_nuits: number | null
+          occasion: string | null
+          repondu_le: string | null
+          repondu_par: string | null
+          reponse: string | null
+          sejour_type: string | null
+          statut: Database["public"]["Enums"]["conciergerie_statut"]
+          type: Database["public"]["Enums"]["conciergerie_type"]
+          user_id: string
+        }
+        Insert: {
+          avec_enfants?: boolean
+          chaise_haute?: boolean | null
+          commentaire?: string | null
+          created_at?: string
+          date_debut?: string | null
+          date_resa?: string | null
+          enfants_ages?: number[] | null
+          etablissement_id: string
+          heure_resa?: string | null
+          id?: string
+          nb_enfants?: number
+          nombre_convives?: number | null
+          nombre_nuits?: number | null
+          occasion?: string | null
+          repondu_le?: string | null
+          repondu_par?: string | null
+          reponse?: string | null
+          sejour_type?: string | null
+          statut?: Database["public"]["Enums"]["conciergerie_statut"]
+          type: Database["public"]["Enums"]["conciergerie_type"]
+          user_id: string
+        }
+        Update: {
+          avec_enfants?: boolean
+          chaise_haute?: boolean | null
+          commentaire?: string | null
+          created_at?: string
+          date_debut?: string | null
+          date_resa?: string | null
+          enfants_ages?: number[] | null
+          etablissement_id?: string
+          heure_resa?: string | null
+          id?: string
+          nb_enfants?: number
+          nombre_convives?: number | null
+          nombre_nuits?: number | null
+          occasion?: string | null
+          repondu_le?: string | null
+          repondu_par?: string | null
+          reponse?: string | null
+          sejour_type?: string | null
+          statut?: Database["public"]["Enums"]["conciergerie_statut"]
+          type?: Database["public"]["Enums"]["conciergerie_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conciergerie_demandes_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conciergerie_demandes_repondu_par_fkey"
+            columns: ["repondu_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conciergerie_demandes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       degustations: {
         Row: {
           avis_id: string | null
@@ -635,6 +729,47 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          id: string
+          period: string
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end: string
+          id?: string
+          period: string
+          status: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          period?: string
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tags: {
         Row: {
           categorie: string
@@ -786,58 +921,23 @@ export type Database = {
           },
         ]
       }
-      subscriptions: {
-        Row: {
-          id: string
-          user_id: string
-          tier: string
-          status: string
-          period: string
-          current_period_end: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          tier?: string
-          status: string
-          period: string
-          current_period_end: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          tier?: string
-          status?: string
-          period?: string
-          current_period_end?: string
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      cancel_subscription: { Args: Record<PropertyKey, never>; Returns: undefined }
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
+      cancel_subscription: { Args: never; Returns: undefined }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      is_concierge: { Args: never; Returns: boolean }
+      is_groupe_membre: {
+        Args: { g_id: string; p_id: string }
+        Returns: boolean
+      }
       is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
+      is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       share_groupe: {
@@ -860,6 +960,8 @@ export type Database = {
     }
     Enums: {
       app_role: "client" | "agence" | "admin"
+      conciergerie_statut: "nouvelle" | "en_cours" | "confirmee" | "refusee"
+      conciergerie_type: "resto" | "hotel"
       depense_mode: "egal" | "exact"
       etablissement_categorie: "resto" | "hotel"
       liste_statut: "a_faire" | "visite"
@@ -997,6 +1099,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["client", "agence", "admin"],
+      conciergerie_statut: ["nouvelle", "en_cours", "confirmee", "refusee"],
+      conciergerie_type: ["resto", "hotel"],
       depense_mode: ["egal", "exact"],
       etablissement_categorie: ["resto", "hotel"],
       liste_statut: ["a_faire", "visite"],

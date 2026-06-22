@@ -6,6 +6,9 @@ import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
 import { getPlacesProvider } from "@/lib/services/places";
 import { DegustationForm } from "@/features/vins/ui/DegustationForm";
+import { getIsPremium } from "@/features/abonnement/data/queries";
+import { DemandeRestoForm } from "@/features/conciergerie/ui/DemandeRestoForm";
+import { Link } from "@/lib/i18n/routing";
 
 export async function FicheResto({ etablissementId }: { etablissementId: string }) {
   const t = await getTranslations("restos");
@@ -15,6 +18,9 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
     getTags(),
   ]);
   if (!etab) return <p>{t("notFound")}</p>;
+
+  const tc = await getTranslations("conciergerie");
+  const isPremium = await getIsPremium();
 
   let photoRefs: string[] = [];
   if (etab.place_id) {
@@ -60,6 +66,17 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
       <section>
         <h2 className="font-semibold">{tv("degustesIci")}</h2>
         <DegustationForm etablissementId={etab.id} />
+      </section>
+      <section>
+        <h2 className="font-semibold">{tc("demander")}</h2>
+        {isPremium ? (
+          <DemandeRestoForm etablissementId={etab.id} />
+        ) : (
+          <p data-testid="conciergerie-premium-cta">
+            {tc("premiumRequis")}{" "}
+            <Link href="/abonnement" className="underline">{tc("passerPremium")}</Link>
+          </p>
+        )}
       </section>
     </article>
   );
