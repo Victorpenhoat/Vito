@@ -142,3 +142,8 @@ values
 -- premium@vito.test : abonnement premium actif (annuel, expire dans 1 an)
 insert into public.subscriptions (user_id, tier, status, period, current_period_end)
 values ('55555555-5555-4555-8555-555555555555', 'premium', 'active', 'yearly', now() + interval '1 year');
+
+-- Conciergerie : une demande resto démo du compte premium (statut nouvelle, commentaire stable)
+insert into public.conciergerie_demandes (user_id, type, etablissement_id, statut, date_resa, heure_resa, nombre_convives, occasion, commentaire)
+values ('55555555-5555-4555-8555-555555555555', 'resto', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  'nouvelle', '2026-10-10', '20:00', 2, 'amis', 'Demande démo conciergerie');
