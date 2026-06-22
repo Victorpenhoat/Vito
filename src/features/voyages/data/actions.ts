@@ -2,6 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { voyageInputSchema, reservationInputSchema, shareInputSchema } from "../domain/schemas";
+import { getIsPremium } from "@/features/abonnement/data/queries";
+import { FREE_VOYAGE_LIMIT } from "@/features/abonnement/domain/constants";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -20,6 +22,14 @@ export async function createVoyage(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
   if (!uid) return { error: "Non authentifié" };
+  // Gating Free : limite de voyages (le trigger DB reste le garde autoritaire).
+  if (!(await getIsPremium())) {
+    const { count } = await supabase
+      .from("voyages")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", uid);
+    if ((count ?? 0) >= FREE_VOYAGE_LIMIT) return { error: "Limite Free atteinte", limit: true as const };
+  }
   const { error } = await supabase.from("voyages").insert({
     owner_id: uid,
     titre: parsed.data.titre,
@@ -28,7 +38,10 @@ export async function createVoyage(_prev: unknown, formData: FormData) {
     date_fin: parsed.data.dateFin ?? null,
     statut: parsed.data.statut ?? "planifie",
   });
-  if (error) return { error: "Création échouée" };
+  if (error) {
+    if (error.message?.includes("limite_voyages_free")) return { error: "Limite Free atteinte", limit: true as const };
+    return { error: "Création échouée" };
+  }
   revalidatePath("/voyages");
   return { ok: true as const };
 }

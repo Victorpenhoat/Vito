@@ -3,6 +3,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { createVoyage } from "../data/actions";
 import { VOYAGE_STATUTS } from "../domain/schemas";
+import { Link } from "@/lib/i18n/routing";
 
 export function VoyageForm() {
   const t = useTranslations("voyages");
@@ -19,6 +20,11 @@ export function VoyageForm() {
         {VOYAGE_STATUTS.map((s) => <option key={s} value={s}>{t(`statuts.${s}`)}</option>)}
       </select>
       {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "limit" in state && state.limit && (
+        <p data-testid="voyage-limit-cta">
+          <Link href="/abonnement" className="underline">{t("limitCta")}</Link>
+        </p>
+      )}
       <button type="submit" disabled={pending} className="bg-black text-white p-2">{t("create")}</button>
     </form>
   );
