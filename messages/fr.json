@@ -1,8 +1,12 @@
 {
-  "app": { "name": "Vito" },
+  "app": {
+    "name": "Vito",
+    "tagline": "Votre carnet personnel de sorties et de voyages"
+  },
   "auth": {
     "login": "Connexion",
     "signup": "Créer un compte",
+    "signupTab": "Inscription",
     "email": "E-mail",
     "password": "Mot de passe",
     "submit": "Valider",
