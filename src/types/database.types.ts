@@ -786,17 +786,60 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          tier: string
+          status: string
+          period: string
+          current_period_end: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          tier?: string
+          status: string
+          period: string
+          current_period_end: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          tier?: string
+          status?: string
+          period?: string
+          current_period_end?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      cancel_subscription: { Args: Record<PropertyKey, never>; Returns: undefined }
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
       is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
+      mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       share_groupe: {
         Args: { p_email: string; p_groupe_id: string }
         Returns: string
