@@ -26,11 +26,11 @@ function arrondissementParisien(codePostal: string | null, ville: string | null)
   return n === 1 ? "1er" : `${n}e`; // convention FR : 1er, puis 2e, 3e…
 }
 
-export function mapPlaceToEtablissement(p: PlaceResult): EtablissementInput {
+export function mapPlaceToEtablissement(p: PlaceResult, categorie: "resto" | "hotel" = "resto"): EtablissementInput {
   return {
     place_id: p.placeId,
-    categorie: "resto",
-    type: classifyFallback(p.types, p.priceLevel),
+    categorie,
+    type: categorie === "hotel" ? "hotel" : classifyFallback(p.types, p.priceLevel),
     nom: p.nom,
     adresse: p.adresse,
     ville: p.ville,
