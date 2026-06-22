@@ -230,5 +230,22 @@
     "statut": "Statut",
     "envoyer": "Créer le voyage",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
+  "admin": {
+    "title": "Back-office",
+    "kpiUsers": "Utilisateurs",
+    "kpiPremium": "Premium actifs",
+    "kpiDemandes": "Demandes",
+    "users": "Utilisateurs",
+    "subscriptions": "Abonnements",
+    "demandes": "Conciergerie",
+    "colNom": "Nom",
+    "colRole": "Rôle",
+    "colDate": "Date",
+    "colStatut": "Statut",
+    "colType": "Type",
+    "colPeriode": "Période",
+    "colClient": "Client",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   }
 }
