@@ -8,6 +8,7 @@ const schema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   MERCHANT_PARTNER_URL: z.string().url().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
+  DOCUMENTS_ENCRYPTION_KEY: z.string().optional(),
 });
 
 const parsed = schema.safeParse({
@@ -18,6 +19,7 @@ const parsed = schema.safeParse({
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
   MERCHANT_PARTNER_URL: process.env.MERCHANT_PARTNER_URL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  DOCUMENTS_ENCRYPTION_KEY: process.env.DOCUMENTS_ENCRYPTION_KEY,
 });
 
 if (!parsed.success) {

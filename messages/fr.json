@@ -112,7 +112,16 @@
     "save": "Enregistrer",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
     "ouvrirCompte": "Comptes partagés",
-    "limitCta": "Limite Free atteinte — passez Premium"
+    "limitCta": "Limite Free atteinte — passez Premium",
+    "documents": {
+      "titre": "Documents",
+      "deposer": "Déposer un document",
+      "telecharger": "Télécharger",
+      "supprimer": "Supprimer",
+      "vide": "Aucun document.",
+      "typeNonSupporte": "Type non supporté (PDF, JPEG, PNG, WebP)",
+      "tropVolumineux": "Fichier trop volumineux (max 5 Mo)"
+    }
   },
   "depenses": {
     "title": "Comptes partagés",

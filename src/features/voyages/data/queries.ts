@@ -36,3 +36,14 @@ export async function getVoyageDetail(id: string) {
     isOwner: voyageRes.data.owner_id === uid,
   };
 }
+
+export async function getVoyageDocuments(voyageId: string) {
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase
+    .from("voyage_documents")
+    .select("id, nom, mime_type, taille, created_at")
+    .eq("voyage_id", voyageId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}

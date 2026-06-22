@@ -1,13 +1,16 @@
 import { getTranslations } from "next-intl/server";
-import { getVoyageDetail } from "../data/queries";
+import { getVoyageDetail, getVoyageDocuments } from "../data/queries";
 import { ReservationForm } from "./ReservationForm";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
+import { DocumentUploadForm } from "./DocumentUploadForm";
+import { DocumentsList } from "./DocumentsList";
 import { openVoyageGroupe } from "@/features/depenses/data/actions";
 
 export async function VoyageDetail({ id }: { id: string }) {
   const t = await getTranslations("voyages");
   const { voyage, reservations, membres, isOwner } = await getVoyageDetail(id);
+  const documents = await getVoyageDocuments(voyage.id);
   return (
     <article className="flex flex-col gap-6">
       <header>
@@ -43,6 +46,11 @@ export async function VoyageDetail({ id }: { id: string }) {
           <input type="hidden" name="voyageId" value={voyage.id} />
           <button type="submit" className="underline">{t("ouvrirCompte")}</button>
         </form>
+      </section>
+      <section data-testid="documents-section">
+        <h2 className="font-semibold">{t("documents.titre")}</h2>
+        <DocumentsList voyageId={voyage.id} documents={documents} />
+        <DocumentUploadForm voyageId={voyage.id} />
       </section>
     </article>
   );
