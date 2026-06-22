@@ -15,7 +15,7 @@ export default async function Home() {
   return (
     <main
       data-testid="landing"
-      className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-16 dark:bg-black"
+      className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-16 dark:bg-black min-h-dvh"
     >
       <div className="text-center">
         <h1 className="text-4xl font-semibold tracking-tight text-black dark:text-zinc-50">
