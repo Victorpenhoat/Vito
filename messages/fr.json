@@ -111,7 +111,8 @@
     "supprimer": "Supprimer le voyage",
     "save": "Enregistrer",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
-    "ouvrirCompte": "Comptes partagés"
+    "ouvrirCompte": "Comptes partagés",
+    "limitCta": "Limite Free atteinte — passez Premium"
   },
   "depenses": {
     "title": "Comptes partagés",
@@ -145,6 +146,18 @@
     "retirer": "Retirer",
     "supprimer": "Supprimer",
     "save": "Enregistrer",
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
+  "abonnement": {
+    "title": "Abonnement",
+    "free": "Vous êtes en formule Free.",
+    "premium": "Premium",
+    "renewsOn": "Renouvellement le {date}",
+    "premiumUntil": "Premium jusqu'au {date}",
+    "upsell": "Passez Premium pour des voyages illimités.",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "cancel": "Annuler l'abonnement",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   }
 }
