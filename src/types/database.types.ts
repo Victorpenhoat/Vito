@@ -985,6 +985,54 @@ export type Database = {
           },
         ]
       }
+      voyage_documents: {
+        Row: {
+          contenu_chiffre: string
+          created_at: string
+          id: string
+          mime_type: string
+          nom: string
+          taille: number
+          uploaded_by: string | null
+          voyage_id: string
+        }
+        Insert: {
+          contenu_chiffre: string
+          created_at?: string
+          id?: string
+          mime_type: string
+          nom: string
+          taille: number
+          uploaded_by?: string | null
+          voyage_id: string
+        }
+        Update: {
+          contenu_chiffre?: string
+          created_at?: string
+          id?: string
+          mime_type?: string
+          nom?: string
+          taille?: number
+          uploaded_by?: string | null
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_documents_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voyage_membres: {
         Row: {
           added_at: string
@@ -1089,6 +1137,7 @@ export type Database = {
         Args: { p_email: string; p_famille_id: string }
         Returns: string
       }
+      is_admin: { Args: never; Returns: boolean }
       is_agence: { Args: never; Returns: boolean }
       is_concierge: { Args: never; Returns: boolean }
       is_famille_owner: { Args: { f_id: string }; Returns: boolean }
