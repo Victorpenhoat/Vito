@@ -147,3 +147,29 @@ values ('55555555-5555-4555-8555-555555555555', 'premium', 'active', 'yearly', n
 insert into public.conciergerie_demandes (user_id, type, etablissement_id, statut, date_resa, heure_resa, nombre_convives, occasion, commentaire)
 values ('55555555-5555-4555-8555-555555555555', 'resto', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
   'nouvelle', '2026-10-10', '20:00', 2, 'amis', 'Demande démo conciergerie');
+
+-- Comptes dédiés au Chantier 7a (famille). Aucune famille pré-créée (l'e2e les crée).
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  email_change_token_current, reauthentication_token, phone_change, phone_change_token)
+values
+  ('77777777-7777-4777-8777-777777777777', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'famille1@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Famille Un","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', ''),
+  ('88888888-8888-4888-8888-888888888888', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'famille2@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Famille Deux","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', '');
+
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
+values
+  (gen_random_uuid(), '77777777-7777-4777-8777-777777777777', '77777777-7777-4777-8777-777777777777',
+   '{"sub":"77777777-7777-4777-8777-777777777777","email":"famille1@vito.test"}', 'email', now(), now()),
+  (gen_random_uuid(), '88888888-8888-4888-8888-888888888888', '88888888-8888-4888-8888-888888888888',
+   '{"sub":"88888888-8888-4888-8888-888888888888","email":"famille2@vito.test"}', 'email', now(), now());
