@@ -260,5 +260,17 @@
     "colPeriode": "Période",
     "colClient": "Client",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+  },
+  "nav": {
+    "restos": "Restos",
+    "voyages": "Voyages",
+    "depenses": "Dépenses",
+    "famille": "Famille",
+    "conciergerie": "Conciergerie",
+    "vins": "Vins",
+    "abonnement": "Abonnement",
+    "agence": "Agence",
+    "admin": "Admin",
+    "deconnexion": "Déconnexion"
   }
 }

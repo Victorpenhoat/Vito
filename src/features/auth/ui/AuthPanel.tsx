@@ -8,28 +8,28 @@ type Action = (prev: unknown, fd: FormData) => Promise<{ error: string } | undef
 export function AuthPanel({ signIn, signUp }: { signIn: Action; signUp: Action }) {
   const t = useTranslations("auth");
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const tabClass = (active: boolean) =>
-    `flex-1 p-2 border-b-2 ${active ? "border-black font-semibold" : "border-transparent text-zinc-500"}`;
+  const tab = (active: boolean) =>
+    `flex-1 rounded-lg py-2 text-sm font-semibold ${active ? "bg-surface text-ink shadow-sm" : "text-muted"}`;
   return (
     <div data-testid="auth-panel" className="w-full">
-      <div className="mb-4 flex gap-2" role="tablist">
+      <div className="mb-4 flex gap-1 rounded-xl bg-canvas p-1" role="tablist">
         <button
           type="button"
-          data-testid="tab-login"
           role="tab"
+          data-testid="tab-login"
           aria-selected={mode === "login"}
           onClick={() => setMode("login")}
-          className={tabClass(mode === "login")}
+          className={tab(mode === "login")}
         >
           {t("login")}
         </button>
         <button
           type="button"
-          data-testid="tab-signup"
           role="tab"
+          data-testid="tab-signup"
           aria-selected={mode === "signup"}
           onClick={() => setMode("signup")}
-          className={tabClass(mode === "signup")}
+          className={tab(mode === "signup")}
         >
           {t("signupTab")}
         </button>
