@@ -470,6 +470,114 @@ export type Database = {
         }
         Relationships: []
       }
+      famille_membres: {
+        Row: {
+          added_at: string
+          famille_id: string
+          profile_id: string
+          role: string
+        }
+        Insert: {
+          added_at?: string
+          famille_id: string
+          profile_id: string
+          role?: string
+        }
+        Update: {
+          added_at?: string
+          famille_id?: string
+          profile_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "famille_membres_famille_id_fkey"
+            columns: ["famille_id"]
+            isOneToOne: false
+            referencedRelation: "familles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "famille_membres_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      famille_restos: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          etablissement_id: string
+          famille_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          etablissement_id: string
+          famille_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          etablissement_id?: string
+          famille_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "famille_restos_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "famille_restos_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "famille_restos_famille_id_fkey"
+            columns: ["famille_id"]
+            isOneToOne: false
+            referencedRelation: "familles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      familles: {
+        Row: {
+          created_at: string
+          id: string
+          nom: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nom: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nom?: string
+          owner_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "familles_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       liste_item_tags: {
         Row: {
           liste_item_id: string
@@ -926,12 +1034,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_famille: { Args: { f_id: string }; Returns: boolean }
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      inviter_famille: {
+        Args: { p_email: string; p_famille_id: string }
+        Returns: string
+      }
       is_concierge: { Args: never; Returns: boolean }
+      is_famille_owner: { Args: { f_id: string }; Returns: boolean }
       is_groupe_membre: {
         Args: { g_id: string; p_id: string }
         Returns: boolean
@@ -940,6 +1054,11 @@ export type Database = {
       is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
+      quitter_famille: { Args: never; Returns: undefined }
+      retirer_membre_famille: {
+        Args: { p_famille_id: string; p_profile_id: string }
+        Returns: undefined
+      }
       share_groupe: {
         Args: { p_email: string; p_groupe_id: string }
         Returns: string
