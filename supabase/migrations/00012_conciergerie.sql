@@ -30,6 +30,20 @@ create table public.conciergerie_demandes (
 create index conciergerie_demandes_user_idx on public.conciergerie_demandes (user_id);
 create index conciergerie_demandes_statut_idx on public.conciergerie_demandes (statut);
 
+-- Anti-falsification : statut/réponse sont gérés par le staff, jamais positionnés à la création
+create function public.conciergerie_lock_insert() returns trigger
+  language plpgsql security definer set search_path = '' as $$
+begin
+  new.statut := 'nouvelle';
+  new.reponse := null;
+  new.repondu_par := null;
+  new.repondu_le := null;
+  return new;
+end;
+$$;
+create trigger conciergerie_lock_insert_fields before insert on public.conciergerie_demandes
+  for each row execute function public.conciergerie_lock_insert();
+
 -- Staff concierge (agence/admin) via claim JWT
 create function public.is_concierge() returns boolean
   language sql security definer set search_path = '' stable as $$
