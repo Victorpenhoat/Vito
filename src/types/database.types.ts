@@ -79,6 +79,100 @@ export type Database = {
           },
         ]
       }
+      conciergerie_demandes: {
+        Row: {
+          avec_enfants: boolean
+          chaise_haute: boolean | null
+          commentaire: string | null
+          created_at: string
+          date_debut: string | null
+          date_resa: string | null
+          enfants_ages: number[] | null
+          etablissement_id: string
+          heure_resa: string | null
+          id: string
+          nb_enfants: number
+          nombre_convives: number | null
+          nombre_nuits: number | null
+          occasion: string | null
+          repondu_le: string | null
+          repondu_par: string | null
+          reponse: string | null
+          sejour_type: string | null
+          statut: Database["public"]["Enums"]["conciergerie_statut"]
+          type: Database["public"]["Enums"]["conciergerie_type"]
+          user_id: string
+        }
+        Insert: {
+          avec_enfants?: boolean
+          chaise_haute?: boolean | null
+          commentaire?: string | null
+          created_at?: string
+          date_debut?: string | null
+          date_resa?: string | null
+          enfants_ages?: number[] | null
+          etablissement_id: string
+          heure_resa?: string | null
+          id?: string
+          nb_enfants?: number
+          nombre_convives?: number | null
+          nombre_nuits?: number | null
+          occasion?: string | null
+          repondu_le?: string | null
+          repondu_par?: string | null
+          reponse?: string | null
+          sejour_type?: string | null
+          statut?: Database["public"]["Enums"]["conciergerie_statut"]
+          type: Database["public"]["Enums"]["conciergerie_type"]
+          user_id: string
+        }
+        Update: {
+          avec_enfants?: boolean
+          chaise_haute?: boolean | null
+          commentaire?: string | null
+          created_at?: string
+          date_debut?: string | null
+          date_resa?: string | null
+          enfants_ages?: number[] | null
+          etablissement_id?: string
+          heure_resa?: string | null
+          id?: string
+          nb_enfants?: number
+          nombre_convives?: number | null
+          nombre_nuits?: number | null
+          occasion?: string | null
+          repondu_le?: string | null
+          repondu_par?: string | null
+          reponse?: string | null
+          sejour_type?: string | null
+          statut?: Database["public"]["Enums"]["conciergerie_statut"]
+          type?: Database["public"]["Enums"]["conciergerie_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conciergerie_demandes_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conciergerie_demandes_repondu_par_fkey"
+            columns: ["repondu_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conciergerie_demandes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       degustations: {
         Row: {
           avis_id: string | null
@@ -860,6 +954,8 @@ export type Database = {
     }
     Enums: {
       app_role: "client" | "agence" | "admin"
+      conciergerie_statut: "nouvelle" | "en_cours" | "confirmee" | "refusee"
+      conciergerie_type: "resto" | "hotel"
       depense_mode: "egal" | "exact"
       etablissement_categorie: "resto" | "hotel"
       liste_statut: "a_faire" | "visite"
