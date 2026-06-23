@@ -25,6 +25,7 @@ export function Drawer({
             return (
               <NavItem
                 key={it.key}
+                data-testid={`nav-${it.key}`}
                 icon={<Icon size={18} />}
                 label={t(it.key)}
                 href={it.href}

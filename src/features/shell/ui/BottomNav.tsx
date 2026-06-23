@@ -22,7 +22,6 @@ export function BottomNav({
           <Link
             key={it.key}
             href={it.href}
-            data-testid={`nav-${it.key}`}
             aria-current={active ? "page" : undefined}
             className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${active ? "text-accent" : "text-muted"}`}
           >
