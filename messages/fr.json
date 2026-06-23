@@ -261,6 +261,10 @@
     "colClient": "Client",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
+  "shell": {
+    "theme": "Basculer le thème (clair / sombre)",
+    "close": "Fermer"
+  },
   "nav": {
     "restos": "Restos",
     "voyages": "Voyages",
