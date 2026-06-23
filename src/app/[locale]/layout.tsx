@@ -1,9 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
+import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import { routing } from "@/lib/i18n/routing";
 import { PwaRegister } from "./pwa-register";
 import "../globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
@@ -26,8 +30,10 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
   return (
-    <html lang={locale}>
+    <html lang={locale} data-theme={theme} className={inter.variable}>
       <body>
         <NextIntlClientProvider>
           <PwaRegister />
