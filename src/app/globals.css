@@ -1,20 +1,67 @@
 @import "tailwindcss";
 
+/* Sombre = défaut (:root) ET ré-applicable en imbriqué via [data-theme="dark"] (ex. preview) */
+:root,
+[data-theme="dark"] {
+  --app: #0A0E17; --sidebar: #090C14;
+  --surface: #141925; --surface-hover: #1A2030;
+  --line: rgba(255,255,255,0.06);
+  --accent: #2563EB; --accent-hover: #3B82F6;
+  --accent-50: #1e2a52; --accent-600: #3B82F6;
+  --ink: #F5F7FA; --muted: #8A93A6; --faint: #5B6373;
+  --badge: #1E2435;
+  --kpi-green: #4ADE80; --kpi-green-bg: rgba(34,197,94,0.08);
+  --kpi-blue: #60A5FA; --kpi-blue-bg: rgba(59,130,246,0.08);
+  --kpi-amber: #FBBF24; --kpi-amber-bg: rgba(245,158,11,0.08);
+  --kpi-violet: #C084FC; --kpi-violet-bg: rgba(168,85,247,0.08);
+  --hero-from: #1B2138; --hero-to: #2A2140;
+}
+
+[data-theme="light"] {
+  --app: #f8fafc; --sidebar: #ffffff;
+  --surface: #ffffff; --surface-hover: #f1f5f9;
+  --line: #e2e8f0;
+  --accent: #2563EB; --accent-hover: #3B82F6;
+  --accent-50: #eef2ff; --accent-600: #4338ca;
+  --ink: #0f172a; --muted: #64748b; --faint: #94a3b8;
+  --badge: #eef2ff;
+  --kpi-green: #16a34a; --kpi-green-bg: rgba(34,197,94,0.10);
+  --kpi-blue: #2563eb; --kpi-blue-bg: rgba(59,130,246,0.10);
+  --kpi-amber: #d97706; --kpi-amber-bg: rgba(245,158,11,0.12);
+  --kpi-violet: #9333ea; --kpi-violet-bg: rgba(168,85,247,0.10);
+  --hero-from: #e0e7ff; --hero-to: #ede9fe;
+}
+
 @theme {
-  --color-accent: #4f46e5;
-  --color-accent-600: #4338ca;
-  --color-accent-50: #eef2ff;
-  --color-ink: #0f172a;
-  --color-muted: #64748b;
-  --color-line: #e2e8f0;
-  --color-surface: #ffffff;
-  --color-canvas: #f8fafc;
-  --radius-card: 16px;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --color-app: var(--app);
+  --color-canvas: var(--app);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-50: var(--accent-50);
+  --color-accent-600: var(--accent-600);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-badge: var(--badge);
+  --color-kpi-green: var(--kpi-green);
+  --color-kpi-green-bg: var(--kpi-green-bg);
+  --color-kpi-blue: var(--kpi-blue);
+  --color-kpi-blue-bg: var(--kpi-blue-bg);
+  --color-kpi-amber: var(--kpi-amber);
+  --color-kpi-amber-bg: var(--kpi-amber-bg);
+  --color-kpi-violet: var(--kpi-violet);
+  --color-kpi-violet-bg: var(--kpi-violet-bg);
+  --radius-card: 18px;
+  --radius-tile: 14px;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--color-canvas);
+  background-color: var(--color-app);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
