@@ -1,21 +1,6 @@
 {
-  "app": {
-    "name": "Vito",
-    "tagline": "Votre carnet personnel de sorties et de voyages"
-  },
-  "auth": {
-    "login": "Connexion",
-    "signup": "Créer un compte",
-    "signupTab": "Inscription",
-    "email": "E-mail",
-    "password": "Mot de passe",
-    "submit": "Valider",
-    "errors": {
-      "invalidCredentials": "Identifiants invalides",
-      "signInFailed": "Connexion échouée",
-      "signUpFailed": "Inscription échouée"
-    }
-  },
+  "app": { "name": "Vito", "tagline": "Il tuo diario personale di uscite e viaggi" },
+  "auth": { "login": "Accedi", "signup": "Crea un account", "signupTab": "Registrati", "email": "E-mail", "password": "Password", "submit": "Conferma", "errors": { "invalidCredentials": "Credenziali non valide", "signInFailed": "Accesso non riuscito", "signUpFailed": "Registrazione non riuscita" } },
   "vins": {
     "title": "Mes vins",
     "degustesIci": "Vins dégustés ici",
@@ -261,27 +246,7 @@
     "colClient": "Client",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
-  "shell": {
-    "theme": "Basculer le thème (clair / sombre)",
-    "close": "Fermer",
-    "language": "Langue",
-    "settings": "Paramétrage",
-    "menu": "Menu"
-  },
-  "nav": {
-    "restos": "Restos",
-    "voyages": "Voyages",
-    "depenses": "Dépenses",
-    "famille": "Famille",
-    "conciergerie": "Conciergerie",
-    "vins": "Vins",
-    "abonnement": "Abonnement",
-    "agence": "Agence",
-    "admin": "Admin",
-    "deconnexion": "Déconnexion",
-    "accueil": "Accueil",
-    "recherche": "Recherche",
-    "plus": "Plus"
-  },
-  "accueil": { "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos" }
+  "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
+  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro" },
+  "accueil": { "title": "Home", "welcome": "Benvenuto su Vito 👋", "cta": "Vedi i miei ristoranti" }
 }

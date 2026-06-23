@@ -1,21 +1,6 @@
 {
-  "app": {
-    "name": "Vito",
-    "tagline": "Votre carnet personnel de sorties et de voyages"
-  },
-  "auth": {
-    "login": "Connexion",
-    "signup": "Créer un compte",
-    "signupTab": "Inscription",
-    "email": "E-mail",
-    "password": "Mot de passe",
-    "submit": "Valider",
-    "errors": {
-      "invalidCredentials": "Identifiants invalides",
-      "signInFailed": "Connexion échouée",
-      "signUpFailed": "Inscription échouée"
-    }
-  },
+  "app": { "name": "Vito", "tagline": "Tu cuaderno personal de salidas y viajes" },
+  "auth": { "login": "Iniciar sesión", "signup": "Crear una cuenta", "signupTab": "Registrarse", "email": "Correo electrónico", "password": "Contraseña", "submit": "Enviar", "errors": { "invalidCredentials": "Credenciales no válidas", "signInFailed": "Error al iniciar sesión", "signUpFailed": "Error al registrarse" } },
   "vins": {
     "title": "Mes vins",
     "degustesIci": "Vins dégustés ici",
@@ -261,27 +246,7 @@
     "colClient": "Client",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
-  "shell": {
-    "theme": "Basculer le thème (clair / sombre)",
-    "close": "Fermer",
-    "language": "Langue",
-    "settings": "Paramétrage",
-    "menu": "Menu"
-  },
-  "nav": {
-    "restos": "Restos",
-    "voyages": "Voyages",
-    "depenses": "Dépenses",
-    "famille": "Famille",
-    "conciergerie": "Conciergerie",
-    "vins": "Vins",
-    "abonnement": "Abonnement",
-    "agence": "Agence",
-    "admin": "Admin",
-    "deconnexion": "Déconnexion",
-    "accueil": "Accueil",
-    "recherche": "Recherche",
-    "plus": "Plus"
-  },
-  "accueil": { "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos" }
+  "shell": { "theme": "Cambiar tema (claro / oscuro)", "close": "Cerrar", "language": "Idioma", "settings": "Ajustes", "menu": "Menú" },
+  "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más" },
+  "accueil": { "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes" }
 }
