@@ -8,29 +8,45 @@ async function login(page: Page, email: string) {
   await expect(page).toHaveURL(/\/fr\/restos/);
 }
 
-test("la barre de navigation est visible, l'onglet courant actif, Admin masqué (client)", async ({ page }) => {
-  await login(page, "client@vito.test");
-  await expect(page.getByTestId("app-nav")).toBeVisible();
-  await expect(page.getByTestId("nav-restos")).toBeVisible();
-  await expect(page.getByTestId("nav-voyages")).toBeVisible();
-  await expect(page.getByTestId("nav-restos")).toHaveAttribute("aria-current", "page");
-  await expect(page.getByTestId("nav-admin")).toHaveCount(0);
+test.describe("desktop", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("sidebar visible, bottom-nav masquée, actif + gating admin (client)", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await expect(page.getByTestId("sidebar")).toBeVisible();
+    await expect(page.getByTestId("bottom-nav")).toBeHidden();
+    await expect(page.getByTestId("nav-restos")).toHaveAttribute("aria-current", "page");
+    await expect(page.getByTestId("nav-admin")).toHaveCount(0);
+  });
+
+  test("navigation via la sidebar", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await page.getByTestId("nav-voyages").click();
+    await expect(page).toHaveURL(/\/fr\/voyages/);
+  });
+
+  test("le thème est sombre par défaut + déconnexion", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await page.getByRole("button", { name: "Déconnexion" }).click();
+    await expect(page).toHaveURL(/\/fr\/login/);
+  });
+
+  test("admin voit le lien Admin", async ({ page }) => {
+    await login(page, "admin@vito.test");
+    await expect(page.getByTestId("nav-admin")).toBeVisible();
+  });
 });
 
-test("naviguer via la barre change d'écran", async ({ page }) => {
-  await login(page, "client@vito.test");
-  await page.getByTestId("nav-voyages").click();
-  await expect(page).toHaveURL(/\/fr\/voyages/);
-  await expect(page.getByTestId("app-nav")).toBeVisible();
-});
+test.describe("mobile", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
 
-test("la déconnexion depuis la barre renvoie au login", async ({ page }) => {
-  await login(page, "client@vito.test");
-  await page.getByRole("button", { name: "Déconnexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/login/);
-});
-
-test("le lien Admin apparaît pour un admin", async ({ page }) => {
-  await login(page, "admin@vito.test");
-  await expect(page.getByTestId("nav-admin")).toBeVisible();
+  test("bottom-nav visible, sidebar masquée, drawer ouvrable", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await expect(page.getByTestId("bottom-nav")).toBeVisible();
+    await expect(page.getByTestId("sidebar")).toBeHidden();
+    await expect(page.getByTestId("drawer")).toHaveCount(0);
+    await page.getByTestId("drawer-open").click();
+    await expect(page.getByTestId("drawer")).toBeVisible();
+  });
 });

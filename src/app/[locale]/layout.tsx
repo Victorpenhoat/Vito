@@ -31,7 +31,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
+  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
   return (
     <html lang={locale} data-theme={theme} className={inter.variable}>
       <body>
