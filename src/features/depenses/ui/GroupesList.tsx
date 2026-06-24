@@ -9,10 +9,10 @@ export async function GroupesList() {
   return (
     <ul className="flex flex-col gap-2">
       {groupes.map((g) => (
-        <li key={g.id} data-testid="groupe-card" className="border p-3">
-          <Link href={`/depenses/${g.id}`}>
-            <span className="font-semibold">{g.titre}</span>{" "}
-            <span className="text-gray-500">· {g.devise}</span>
+        <li key={g.id} data-testid="groupe-card" className="rounded-card border border-line bg-surface p-4">
+          <Link href={`/depenses/${g.id}`} className="text-accent hover:underline">
+            <span className="font-semibold text-ink">{g.titre}</span>{" "}
+            <span className="text-muted">· {g.devise}</span>
           </Link>
         </li>
       ))}
