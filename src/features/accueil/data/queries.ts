@@ -1,12 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { rechercheRestos, type RestoResult } from "@/features/reco/data/queries";
-
-export function monthRange(now: Date): { start: string; end: string } {
-  const y = now.getUTCFullYear();
-  const m = now.getUTCMonth();
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  return { start: iso(new Date(Date.UTC(y, m, 1))), end: iso(new Date(Date.UTC(y, m + 1, 1))) };
-}
+import { monthRange } from "./monthRange";
 
 type ActivityItem = { type: "resto" | "voyage" | "vin" | "depense"; label: string; at: string };
 

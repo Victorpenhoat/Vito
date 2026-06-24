@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { monthRange } from "./queries";
+import { monthRange } from "./monthRange";
 
 describe("monthRange", () => {
   it("milieu de mois", () => {
