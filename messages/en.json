@@ -248,5 +248,15 @@
   },
   "shell": { "theme": "Toggle theme (light / dark)", "close": "Close", "language": "Language", "settings": "Settings", "menu": "Menu" },
   "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Family", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More" },
-  "accueil": { "title": "Home", "welcome": "Welcome to Vito 👋", "cta": "See my restaurants" }
+  "accueil": {
+    "title": "Home", "welcome": "Welcome to Vito 👋", "cta": "See my restaurants",
+    "greeting": { "bonjour": "Good morning", "bonsoir": "Good evening" },
+    "quote": "Every outing is a story to tell.",
+    "sortiesMois": "{n} outings this month",
+    "addResto": "+ Add a restaurant",
+    "fab": "Concierge request",
+    "sections": { "todo": "To do", "month": "This month", "discoveries": "Discoveries", "activity": "Recent activity" },
+    "todo": { "restosATester": "Restaurants to try", "voyagesAVenir": "Upcoming trips", "vinsARacheter": "Wines to rebuy" },
+    "kpi": { "sorties": "Outings", "nouveauxRestos": "New restaurants", "vinsGoutes": "Wines tasted", "depensesVoyage": "Trip spending" }
+  }
 }

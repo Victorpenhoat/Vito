@@ -283,5 +283,15 @@
     "recherche": "Recherche",
     "plus": "Plus"
   },
-  "accueil": { "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos" }
+  "accueil": {
+    "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos",
+    "greeting": { "bonjour": "Bonjour", "bonsoir": "Bonsoir" },
+    "quote": "Chaque sortie est une histoire à raconter.",
+    "sortiesMois": "{n} sorties ce mois",
+    "addResto": "+ Ajouter un resto",
+    "fab": "Demande de conciergerie",
+    "sections": { "todo": "À faire", "month": "Ce mois-ci", "discoveries": "Découvertes", "activity": "Activité récente" },
+    "todo": { "restosATester": "Restos à tester", "voyagesAVenir": "Voyages à venir", "vinsARacheter": "Vins à racheter" },
+    "kpi": { "sorties": "Sorties", "nouveauxRestos": "Nouveaux restos", "vinsGoutes": "Vins goûtés", "depensesVoyage": "Dépenses voyage" }
+  }
 }
