@@ -17,10 +17,10 @@ export async function VoyageDetail({ id }: { id: string }) {
     <article className="flex flex-col gap-6">
       <header>
         <h1 className="text-2xl font-bold text-ink">{voyage.titre}</h1>
-        <p className="text-muted">
-          {[voyage.destination, t(`statuts.${voyage.statut}`), voyage.date_debut, voyage.date_fin].filter(Boolean).join(" · ")}
+        <p className="mt-1 flex items-center gap-2 text-muted">
+          <span>{[voyage.destination, voyage.date_debut, voyage.date_fin].filter(Boolean).join(" · ")}</span>
+          <Badge>{t(`statuts.${voyage.statut}`)}</Badge>
         </p>
-        <Badge>{t(`statuts.${voyage.statut}`)}</Badge>
       </header>
 
       <Card>
