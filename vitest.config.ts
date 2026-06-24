@@ -10,5 +10,11 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,tsx}"],
     globals: true,
   },
-  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  resolve: {
+    alias: [
+      { find: "server-only", replacement: path.resolve(__dirname, "./src/test/mocks/server-only.ts") },
+      { find: /^@\/lib\/supabase\/server$/, replacement: path.resolve(__dirname, "./src/test/mocks/lib-supabase-server.ts") },
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
+  },
 });
