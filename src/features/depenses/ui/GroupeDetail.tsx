@@ -15,12 +15,12 @@ export async function GroupeDetail({ id }: { id: string }) {
   return (
     <article className="flex flex-col gap-6">
       <header>
-        <h1 className="text-xl font-bold">{groupe.titre}</h1>
-        <p className="text-gray-600">{groupe.devise}</p>
+        <h1 className="text-xl font-bold text-ink">{groupe.titre}</h1>
+        <p className="text-muted">{groupe.devise}</p>
       </header>
 
       <section>
-        <h2 className="font-semibold">{t("depenses")}</h2>
+        <h2 className="font-semibold text-ink mb-2">{t("depenses")}</h2>
         <DepensesList groupeId={groupe.id} depenses={depenses} devise={groupe.devise} nameById={nameById} />
         <DepenseForm groupeId={groupe.id} membres={membresSimple} />
       </section>
@@ -28,12 +28,12 @@ export async function GroupeDetail({ id }: { id: string }) {
       <SoldesPanel soldes={soldes} transferts={transferts} devise={groupe.devise} nameById={nameById} />
 
       <section>
-        <h2 className="font-semibold">{t("remboursement")}</h2>
+        <h2 className="font-semibold text-ink mb-2">{t("remboursement")}</h2>
         <RemboursementForm groupeId={groupe.id} membres={membresSimple} />
       </section>
 
       <section>
-        <h2 className="font-semibold">{t("membres")}</h2>
+        <h2 className="font-semibold text-ink mb-2">{t("membres")}</h2>
         <MembersList groupeId={groupe.id} membres={membres} isOwner={isOwner} />
         {isOwner && <ShareForm groupeId={groupe.id} />}
       </section>

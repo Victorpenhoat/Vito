@@ -2,6 +2,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { unshareGroupe } from "../data/actions";
+import { Button } from "@/features/shared/ui/Button";
 
 type Membre = { profile_id: string; role: string; display_name: string | null };
 
@@ -12,12 +13,12 @@ export function MembersList({ groupeId, membres, isOwner }: { groupeId: string; 
     <ul className="flex flex-col gap-1">
       {membres.map((m) => (
         <li key={m.profile_id} data-testid="member-row" className="flex items-center gap-2">
-          <span>{m.display_name ?? m.profile_id} {m.role === "owner" ? `(${t("roleOwner")})` : ""}</span>
+          <span className="text-ink">{m.display_name ?? m.profile_id} {m.role === "owner" ? <span className="text-muted">({t("roleOwner")})</span> : ""}</span>
           {isOwner && m.role !== "owner" && (
             <form action={action}>
               <input type="hidden" name="groupeId" value={groupeId} />
               <input type="hidden" name="profileId" value={m.profile_id} />
-              <button type="submit" className="underline text-sm">{t("retirer")}</button>
+              <Button type="submit" variant="ghost" className="text-sm px-2 py-1">{t("retirer")}</Button>
             </form>
           )}
         </li>
