@@ -2,6 +2,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { setTags } from "../data/actions";
+import { Button } from "@/features/shared/ui/Button";
 
 type Tag = {
   id: string;
@@ -38,9 +39,9 @@ export function TagPicker({ tags, appliedTagIds, listeItemId }: TagPickerProps) 
       {state && "ok" in state && state.ok && (
         <p data-testid="tags-saved" className="text-green-700">{t("tagsSaved")}</p>
       )}
-      <button type="submit" disabled={pending} className="underline self-start">
+      <Button type="submit" variant="subtle" pending={pending} className="self-start">
         {t("saveTags")}
-      </button>
+      </Button>
     </form>
   );
 }

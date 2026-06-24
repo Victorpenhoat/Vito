@@ -38,8 +38,8 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
   return (
     <article className="flex flex-col gap-4">
       <header>
-        <h1 className="text-xl font-bold">{etab.nom}</h1>
-        <p className="text-gray-600">{etab.type} — {etab.adresse} {etab.arrondissement ?? ""}</p>
+        <h1 className="text-xl font-bold text-ink">{etab.nom}</h1>
+        <p className="text-muted">{etab.type} — {etab.adresse} {etab.arrondissement ?? ""}</p>
         {etab.telephone && <p>{etab.telephone}</p>}
       </header>
       {photoRefs.length > 0 && (
@@ -63,7 +63,7 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
       )}
       <section>
         <h2 className="font-semibold">{t("avis")}</h2>
-        <ul>{avis.map((a) => <li key={a.id} className="border-b py-1">{a.note ? `${a.note}/5 — ` : ""}{a.commentaire}</li>)}</ul>
+        <ul>{avis.map((a) => <li key={a.id} className="border-b border-line py-1 text-muted">{a.note ? `${a.note}/5 — ` : ""}{a.commentaire}</li>)}</ul>
         <AvisForm etablissementId={etab.id} />
       </section>
       <section>
@@ -77,7 +77,7 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
         ) : (
           <p data-testid="conciergerie-premium-cta">
             {tc("premiumRequis")}{" "}
-            <Link href="/abonnement" className="underline">{tc("passerPremium")}</Link>
+            <Link href="/abonnement" className="text-accent hover:underline">{tc("passerPremium")}</Link>
           </p>
         )}
       </section>

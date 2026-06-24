@@ -3,6 +3,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { searchPlaces, addResto } from "../data/actions";
 import type { PlaceSummary } from "@/lib/services/places/types";
+import { Button } from "@/features/shared/ui/Button";
 
 export function RestoSearch() {
   const t = useTranslations("restos");
@@ -15,7 +16,7 @@ export function RestoSearch() {
       <input
         data-testid="add-resto-search"
         placeholder={t("search")}
-        className="border p-2"
+        className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent"
         onChange={(e) => {
           const q = e.target.value;
           start(async () => setResults(await searchPlaces(q)));
@@ -28,7 +29,7 @@ export function RestoSearch() {
       )}
       <ul>
         {results.map((r) => (
-          <li key={r.placeId} data-testid="search-result" className="flex justify-between border-b py-2">
+          <li key={r.placeId} data-testid="search-result" className="flex justify-between border-b border-line py-2">
             <span>{r.nom} — {r.adresse}</span>
             <form
               action={(fd) =>
@@ -44,7 +45,7 @@ export function RestoSearch() {
               }
             >
               <input type="hidden" name="placeId" value={r.placeId} />
-              <button type="submit" disabled={pending} className="underline">{t("add")}</button>
+              <Button type="submit" variant="ghost" pending={pending}>{t("add")}</Button>
             </form>
           </li>
         ))}

@@ -2,6 +2,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { addAvis } from "../data/actions";
+import { Button } from "@/features/shared/ui/Button";
 
 export function AvisForm({ etablissementId }: { etablissementId: string }) {
   const t = useTranslations("restos");
@@ -9,11 +10,11 @@ export function AvisForm({ etablissementId }: { etablissementId: string }) {
   return (
     <form action={action} data-testid="avis-form" className="flex flex-col gap-2">
       <input type="hidden" name="etablissementId" value={etablissementId} />
-      <input name="note" type="number" min={1} max={5} placeholder={t("notePlaceholder")} className="border p-2" />
-      <textarea name="commentaire" placeholder={t("commentairePlaceholder")} className="border p-2" />
-      <input name="visiteLe" type="date" className="border p-2" />
+      <input name="note" type="number" min={1} max={5} placeholder={t("notePlaceholder")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
+      <textarea name="commentaire" placeholder={t("commentairePlaceholder")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
+      <input name="visiteLe" type="date" className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
       {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
-      <button type="submit" disabled={pending} className="bg-black text-white p-2">{t("addAvis")}</button>
+      <Button type="submit" variant="primary" pending={pending}>{t("addAvis")}</Button>
     </form>
   );
 }
