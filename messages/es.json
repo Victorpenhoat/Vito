@@ -248,5 +248,15 @@
   },
   "shell": { "theme": "Cambiar tema (claro / oscuro)", "close": "Cerrar", "language": "Idioma", "settings": "Ajustes", "menu": "Menú" },
   "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más" },
-  "accueil": { "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes" }
+  "accueil": {
+    "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes",
+    "greeting": { "bonjour": "Buenos días", "bonsoir": "Buenas noches" },
+    "quote": "Cada salida es una historia que contar.",
+    "sortiesMois": "{n} salidas este mes",
+    "addResto": "+ Añadir un restaurante",
+    "fab": "Solicitud de conserjería",
+    "sections": { "todo": "Por hacer", "month": "Este mes", "discoveries": "Descubrimientos", "activity": "Actividad reciente" },
+    "todo": { "restosATester": "Restaurantes para probar", "voyagesAVenir": "Viajes próximos", "vinsARacheter": "Vinos para recomprar" },
+    "kpi": { "sorties": "Salidas", "nouveauxRestos": "Restaurantes nuevos", "vinsGoutes": "Vinos catados", "depensesVoyage": "Gastos de viaje" }
+  }
 }

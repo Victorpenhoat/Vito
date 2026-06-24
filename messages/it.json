@@ -248,5 +248,15 @@
   },
   "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
   "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro" },
-  "accueil": { "title": "Home", "welcome": "Benvenuto su Vito 👋", "cta": "Vedi i miei ristoranti" }
+  "accueil": {
+    "title": "Home", "welcome": "Benvenuto su Vito 👋", "cta": "Vedi i miei ristoranti",
+    "greeting": { "bonjour": "Buongiorno", "bonsoir": "Buonasera" },
+    "quote": "Ogni uscita è una storia da raccontare.",
+    "sortiesMois": "{n} uscite questo mese",
+    "addResto": "+ Aggiungi un ristorante",
+    "fab": "Richiesta concierge",
+    "sections": { "todo": "Da fare", "month": "Questo mese", "discoveries": "Scoperte", "activity": "Attività recente" },
+    "todo": { "restosATester": "Ristoranti da provare", "voyagesAVenir": "Viaggi in arrivo", "vinsARacheter": "Vini da ricomprare" },
+    "kpi": { "sorties": "Uscite", "nouveauxRestos": "Nuovi ristoranti", "vinsGoutes": "Vini degustati", "depensesVoyage": "Spese di viaggio" }
+  }
 }

@@ -9,7 +9,7 @@ export default async function Home() {
   const { data } = await supabase.auth.getUser();
   if (data.user) {
     const locale = await getLocale();
-    redirect({ href: "/restos", locale });
+    redirect({ href: "/accueil", locale });
   }
   const t = await getTranslations("app");
   return (

@@ -5,7 +5,7 @@ async function login(page: Page, email: string) {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Mot de passe").fill("password123");
   await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/restos/);
+  await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
 test("l'admin voit le tableau de bord (KPI + tableaux)", async ({ page }) => {

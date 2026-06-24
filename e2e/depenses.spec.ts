@@ -18,7 +18,7 @@ async function login(page: Page, email: string) {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Mot de passe").fill("password123");
   await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/restos/);
+  await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
 test("créer un compte partagé, partager, ajouter une dépense égale, vérifier les soldes", async ({ page }) => {
