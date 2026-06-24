@@ -9,11 +9,11 @@ export async function VoyagesList() {
   return (
     <ul className="flex flex-col gap-2">
       {voyages.map((v) => (
-        <li key={v.id} data-testid="voyage-card" className="border p-3">
-          <Link href={`/voyages/${v.id}`}>
+        <li key={v.id} data-testid="voyage-card" className="rounded-card border border-line bg-surface p-4">
+          <Link href={`/voyages/${v.id}`} className="text-accent hover:underline">
             <span className="font-semibold">{v.titre}</span>{" "}
-            {v.destination && <span className="text-gray-500">· {v.destination}</span>}{" "}
-            <span className="text-gray-500">· {t(`statuts.${v.statut}`)}</span>
+            {v.destination && <span className="text-muted">· {v.destination}</span>}{" "}
+            <span className="text-muted">· {t(`statuts.${v.statut}`)}</span>
           </Link>
         </li>
       ))}
