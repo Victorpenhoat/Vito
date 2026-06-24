@@ -256,7 +256,9 @@
     "addResto": "+ Aggiungi un ristorante",
     "fab": "Richiesta concierge",
     "sections": { "todo": "Da fare", "month": "Questo mese", "discoveries": "Scoperte", "activity": "Attività recente" },
-    "todo": { "restosATester": "Ristoranti da provare", "voyagesAVenir": "Viaggi in arrivo", "vinsARacheter": "Vini da ricomprare" },
-    "kpi": { "sorties": "Uscite", "nouveauxRestos": "Nuovi ristoranti", "vinsGoutes": "Vini degustati", "depensesVoyage": "Spese di viaggio" }
+    "todo": { "restosATester": "Ristoranti da provare", "voyagesAVenir": "Viaggi in arrivo", "conciergerieEnAttente": "Richieste in sospeso" },
+    "kpi": { "sorties": "Uscite", "nouveauxRestos": "Nuovi ristoranti", "vinsGoutes": "Vini degustati", "depensesVoyage": "Spese di viaggio" },
+    "activity": { "vide": "Niente per ora" },
+    "discoveries": { "vide": "Nessun suggerimento per ora" }
   }
 }
