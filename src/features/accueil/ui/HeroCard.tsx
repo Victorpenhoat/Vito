@@ -1,9 +1,8 @@
 import { getTranslations, getFormatter } from "next-intl/server";
 import { Star } from "lucide-react";
 import { greeting } from "../greeting";
-import { SORTIES_THIS_MONTH } from "../mock";
 
-export async function HeroCard({ userName }: { userName: string }) {
+export async function HeroCard({ userName, sorties }: { userName: string; sorties: number }) {
   const t = await getTranslations("accueil");
   const format = await getFormatter();
   const hour = new Date().getHours();
@@ -25,7 +24,7 @@ export async function HeroCard({ userName }: { userName: string }) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1 text-xs text-muted">
-          {t("sortiesMois", { n: SORTIES_THIS_MONTH })}
+          {t("sortiesMois", { n: sorties })}
           <Star size={14} className="text-kpi-amber" />
         </div>
       </div>

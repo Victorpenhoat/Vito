@@ -256,7 +256,9 @@
     "addResto": "+ Add a restaurant",
     "fab": "Concierge request",
     "sections": { "todo": "To do", "month": "This month", "discoveries": "Discoveries", "activity": "Recent activity" },
-    "todo": { "restosATester": "Restaurants to try", "voyagesAVenir": "Upcoming trips", "vinsARacheter": "Wines to rebuy" },
-    "kpi": { "sorties": "Outings", "nouveauxRestos": "New restaurants", "vinsGoutes": "Wines tasted", "depensesVoyage": "Trip spending" }
+    "todo": { "restosATester": "Restaurants to try", "voyagesAVenir": "Upcoming trips", "conciergerieEnAttente": "Pending requests" },
+    "kpi": { "sorties": "Outings", "nouveauxRestos": "New restaurants", "vinsGoutes": "Wines tasted", "depensesVoyage": "Trip spending" },
+    "activity": { "vide": "Nothing yet" },
+    "discoveries": { "vide": "No suggestions yet" }
   }
 }

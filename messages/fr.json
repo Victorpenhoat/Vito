@@ -291,7 +291,9 @@
     "addResto": "+ Ajouter un resto",
     "fab": "Demande de conciergerie",
     "sections": { "todo": "À faire", "month": "Ce mois-ci", "discoveries": "Découvertes", "activity": "Activité récente" },
-    "todo": { "restosATester": "Restos à tester", "voyagesAVenir": "Voyages à venir", "vinsARacheter": "Vins à racheter" },
-    "kpi": { "sorties": "Sorties", "nouveauxRestos": "Nouveaux restos", "vinsGoutes": "Vins goûtés", "depensesVoyage": "Dépenses voyage" }
+    "todo": { "restosATester": "Restos à tester", "voyagesAVenir": "Voyages à venir", "conciergerieEnAttente": "Demandes en attente" },
+    "kpi": { "sorties": "Sorties", "nouveauxRestos": "Nouveaux restos", "vinsGoutes": "Vins goûtés", "depensesVoyage": "Dépenses voyage" },
+    "activity": { "vide": "Rien pour l'instant" },
+    "discoveries": { "vide": "Aucune suggestion pour l'instant" }
   }
 }

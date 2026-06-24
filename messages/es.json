@@ -256,7 +256,9 @@
     "addResto": "+ Añadir un restaurante",
     "fab": "Solicitud de conserjería",
     "sections": { "todo": "Por hacer", "month": "Este mes", "discoveries": "Descubrimientos", "activity": "Actividad reciente" },
-    "todo": { "restosATester": "Restaurantes para probar", "voyagesAVenir": "Viajes próximos", "vinsARacheter": "Vinos para recomprar" },
-    "kpi": { "sorties": "Salidas", "nouveauxRestos": "Restaurantes nuevos", "vinsGoutes": "Vinos catados", "depensesVoyage": "Gastos de viaje" }
+    "todo": { "restosATester": "Restaurantes para probar", "voyagesAVenir": "Viajes próximos", "conciergerieEnAttente": "Solicitudes pendientes" },
+    "kpi": { "sorties": "Salidas", "nouveauxRestos": "Restaurantes nuevos", "vinsGoutes": "Vinos catados", "depensesVoyage": "Gastos de viaje" },
+    "activity": { "vide": "Nada por ahora" },
+    "discoveries": { "vide": "Sin sugerencias por ahora" }
   }
 }
