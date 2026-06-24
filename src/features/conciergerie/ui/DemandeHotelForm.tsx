@@ -3,8 +3,11 @@ import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { creerDemandeHotel, chercherHotels } from "../data/actions";
 import { SEJOUR_TYPES } from "../domain/schemas";
+import { Button } from "@/features/shared/ui/Button";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
+
+const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeHotelForm() {
   const t = useTranslations("conciergerie");
@@ -16,13 +19,13 @@ export function DemandeHotelForm() {
     <form action={action} data-testid="demande-hotel-form" className="flex flex-col gap-2 max-w-md border-t pt-3">
       <div data-testid="hotel-search" className="flex flex-col gap-1">
         <div className="flex gap-2">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("chercherHotel")} className="border p-2 flex-1" />
-          <button type="button" onClick={async () => setHits(await chercherHotels(query))} className="border p-2">{t("rechercher")}</button>
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("chercherHotel")} className={`${inputCls} flex-1`} />
+          <Button type="button" variant="ghost" onClick={async () => setHits(await chercherHotels(query))}>{t("rechercher")}</Button>
         </div>
         <ul className="flex flex-col gap-1">
           {hits.map((h) => (
             <li key={h.placeId}>
-              <button type="button" onClick={() => setSelected(h)} className="underline text-left">{h.nom}</button>
+              <button type="button" onClick={() => setSelected(h)} className="text-accent hover:underline text-left">{h.nom}</button>
             </li>
           ))}
         </ul>
@@ -30,16 +33,16 @@ export function DemandeHotelForm() {
         {selected && <input type="hidden" name="placeId" value={selected.placeId} />}
       </div>
       <div className="flex gap-2">
-        <input name="dateDebut" type="date" required aria-label={t("dateDebut")} className="border p-2" />
-        <input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className="border p-2" />
+        <input name="dateDebut" type="date" required aria-label={t("dateDebut")} className={inputCls} />
+        <input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className={inputCls} />
       </div>
-      <select name="sejourType" aria-label={t("sejour")} className="border p-2" defaultValue="loisirs">
+      <select name="sejourType" aria-label={t("sejour")} className={inputCls} defaultValue="loisirs">
         {SEJOUR_TYPES.map((s) => <option key={s} value={s}>{t(`sejours.${s}`)}</option>)}
       </select>
       <label className="flex items-center gap-2"><input type="checkbox" name="avecEnfants" /> {t("avecEnfants")}</label>
-      <textarea name="commentaire" placeholder={t("commentaire")} className="border p-2" />
+      <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
       {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
-      <button type="submit" disabled={pending || !selected} className="bg-black text-white p-2">{t("envoyer")}</button>
+      <Button type="submit" disabled={!selected} pending={pending}>{t("envoyer")}</Button>
     </form>
   );
 }
