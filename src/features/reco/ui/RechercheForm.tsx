@@ -17,9 +17,9 @@ export function RechercheForm() {
   };
   return (
     <div data-testid="recherche-form" className="flex flex-wrap gap-2 items-end">
-      <input aria-label={t("zone")} placeholder={t("zone")} defaultValue={params.get("zone") ?? ""} onBlur={(e) => set("zone", e.target.value)} className="border p-2" />
-      <input aria-label={t("budget")} type="number" min={0} placeholder={t("budget")} defaultValue={params.get("budgetMax") ?? ""} onBlur={(e) => set("budgetMax", e.target.value)} className="border p-2 w-40" />
-      <select aria-label={t("type")} defaultValue={params.get("type") ?? ""} onChange={(e) => set("type", e.target.value)} className="border p-2">
+      <input aria-label={t("zone")} placeholder={t("zone")} defaultValue={params.get("zone") ?? ""} onBlur={(e) => set("zone", e.target.value)} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
+      <input aria-label={t("budget")} type="number" min={0} placeholder={t("budget")} defaultValue={params.get("budgetMax") ?? ""} onBlur={(e) => set("budgetMax", e.target.value)} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent w-40" />
+      <select aria-label={t("type")} defaultValue={params.get("type") ?? ""} onChange={(e) => set("type", e.target.value)} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent">
         <option value="">{t("tous")}</option>
         {TYPES.map((ty) => <option key={ty} value={ty}>{ty}</option>)}
       </select>
