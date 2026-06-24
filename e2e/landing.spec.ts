@@ -18,10 +18,10 @@ test("basculer sur l'onglet Inscription change le bouton de soumission", async (
   await expect(submit).toHaveText("Créer un compte");
 });
 
-test("connexion depuis l'accueil redirige vers /restos", async ({ page }) => {
+test("connexion depuis l'accueil redirige vers /accueil", async ({ page }) => {
   await page.goto("/fr");
   await page.getByLabel("E-mail").fill("client@vito.test");
   await page.getByLabel("Mot de passe").fill("password123");
   await page.locator('form button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/fr\/restos/);
+  await expect(page).toHaveURL(/\/fr\/accueil/);
 });

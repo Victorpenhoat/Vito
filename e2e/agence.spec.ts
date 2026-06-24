@@ -7,7 +7,7 @@ async function login(page: Page, email: string) {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Mot de passe").fill("password123");
   await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/restos/);
+  await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
 test("l'agence relie un client, lui crée un voyage, le client le voit", async ({ browser }) => {

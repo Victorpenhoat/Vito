@@ -16,7 +16,7 @@ export async function signIn(_prev: unknown, formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: t("signInFailed") };
   const locale = await getLocale();
-  redirect({ href: "/restos", locale });
+  redirect({ href: "/accueil", locale });
 }
 
 export async function signUp(_prev: unknown, formData: FormData) {
@@ -32,7 +32,7 @@ export async function signUp(_prev: unknown, formData: FormData) {
   const { error } = await supabase.auth.signUp(parsed.data);
   if (error) return { error: t("signUpFailed") };
   const locale = await getLocale();
-  redirect({ href: "/restos", locale });
+  redirect({ href: "/accueil", locale });
 }
 
 export async function signOut() {

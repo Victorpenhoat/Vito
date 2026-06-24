@@ -5,7 +5,7 @@ async function login(page: import("@playwright/test").Page) {
   await page.getByLabel("E-mail").fill("client@vito.test");
   await page.getByLabel("Mot de passe").fill("password123");
   await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/restos/);
+  await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
 test("régler ses goûts puis rechercher : ta liste d'abord + recommandations", async ({ page }) => {
