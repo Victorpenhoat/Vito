@@ -6,6 +6,7 @@ import { StatsCards } from "@/features/admin/ui/StatsCards";
 import { UsersTable } from "@/features/admin/ui/UsersTable";
 import { SubscriptionsTable } from "@/features/admin/ui/SubscriptionsTable";
 import { DemandesTable } from "@/features/admin/ui/DemandesTable";
+import { PageHeader } from "@/features/shared/ui/PageHeader";
 
 export default async function AdminPage() {
   await requireRole(["admin"]); // redirige les non-admin
@@ -25,7 +26,7 @@ export default async function AdminPage() {
   );
   return (
     <main className="p-6 flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
+      <PageHeader title={t("title")} />
       <StatsCards stats={stats} />
       <UsersTable users={users} />
       <SubscriptionsTable subscriptions={subscriptions} />
