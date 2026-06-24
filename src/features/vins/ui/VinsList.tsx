@@ -14,12 +14,12 @@ export async function VinsList({ searchParams }: { searchParams: Record<string, 
   return (
     <ul className="flex flex-col gap-2">
       {vins.map((v) => (
-        <li key={v.id} data-testid="vin-row" className="border p-3">
-          <Link href={`/vins/${v.id}`}>
-            <span className="font-semibold">{v.nom}</span>{" "}
-            {v.millesime && <span>({v.millesime})</span>}{" "}
-            {v.couleur && <span className="text-gray-500">· {t(`couleurs.${v.couleur}`)}</span>}{" "}
-            <span className="text-gray-500">· {t("fois", { count: v.nb_degustations })}</span>
+        <li key={v.id} data-testid="vin-row" className="rounded-card border border-line bg-surface p-4">
+          <Link href={`/vins/${v.id}`} className="text-accent hover:underline">
+            <span className="font-semibold text-ink">{v.nom}</span>{" "}
+            {v.millesime && <span className="text-ink">({v.millesime})</span>}{" "}
+            {v.couleur && <span className="text-muted">· {t(`couleurs.${v.couleur}`)}</span>}{" "}
+            <span className="text-muted">· {t("fois", { count: v.nb_degustations })}</span>
           </Link>
         </li>
       ))}
