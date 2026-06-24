@@ -10,10 +10,10 @@ export function BuyButton({ url }: { url: string | null }) {
   const href = url.replace(/qty=\d+/, `qty=${qty}`);
   return (
     <div className="flex items-center gap-2">
-      <label>{t("quantite")}
-        <input type="number" min={1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className="border p-1 w-16 ml-1" />
+      <label className="text-muted">{t("quantite")}
+        <input type="number" min={1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent w-16 ml-1" />
       </label>
-      <a data-testid="buy-button" href={href} target="_blank" rel="noopener noreferrer" className="bg-black text-white p-2">{t("acheter")}</a>
+      <a data-testid="buy-button" href={href} target="_blank" rel="noopener noreferrer" className="rounded-xl px-4 py-2.5 text-sm font-semibold bg-accent text-white hover:bg-accent-hover transition-colors">{t("acheter")}</a>
     </div>
   );
 }

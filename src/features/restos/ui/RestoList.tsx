@@ -11,9 +11,14 @@ export async function RestoList() {
         const etab = Array.isArray(it.etablissement) ? it.etablissement[0] : it.etablissement;
         if (!etab) return null;
         return (
-          <li key={it.id} data-testid="resto-card" className="border p-3 flex justify-between">
-            <Link href={`/restos/${etab.id}`}>
-              {etab.nom} {it.is_favorite ? <span aria-label={t("favorite")}>★</span> : null} <span className="text-gray-500">({etab.type ?? "—"})</span>
+          <li
+            key={it.id}
+            data-testid="resto-card"
+            className="flex items-center justify-between rounded-card border border-line bg-surface p-4"
+          >
+            <Link href={`/restos/${etab.id}`} className="text-ink hover:text-accent">
+              {etab.nom} {it.is_favorite ? <span aria-label={t("favorite")}>★</span> : null}{" "}
+              <span className="text-muted">({etab.type ?? "—"})</span>
             </Link>
           </li>
         );

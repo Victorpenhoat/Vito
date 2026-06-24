@@ -8,11 +8,11 @@ export async function GoutsBanner() {
   if (gouts) return null;
   const t = await getTranslations("gouts");
   return (
-    <div data-testid="gouts-banner" className="flex items-center justify-between gap-3 border rounded p-3 bg-amber-50">
+    <div data-testid="gouts-banner" className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface p-4">
       <span>{t("banner")}</span>
       <span className="flex gap-3">
-        <Link href="/gouts" className="underline">{t("bannerCta")}</Link>
-        <Link href="/recherche" className="underline">{t("bannerSearch")}</Link>
+        <Link href="/gouts" className="text-accent hover:underline">{t("bannerCta")}</Link>
+        <Link href="/recherche" className="text-accent hover:underline">{t("bannerSearch")}</Link>
       </span>
     </div>
   );

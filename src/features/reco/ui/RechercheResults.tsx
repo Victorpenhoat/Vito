@@ -10,8 +10,8 @@ export async function RechercheResults({ searchParams }: { searchParams: Record<
   });
   const { maListe, recos } = await rechercheRestos(criteria);
   const row = (e: { id: string; nom: string; type: string | null; arrondissement: string | null }) => (
-    <li key={e.id} data-testid="resto-result" className="border p-2">
-      <Link href={`/restos/${e.id}`}>{e.nom} <span className="text-gray-500">{e.type ?? ""} {e.arrondissement ?? ""}</span></Link>
+    <li key={e.id} data-testid="resto-result" className="rounded-card border border-line bg-surface p-4">
+      <Link href={`/restos/${e.id}`} className="text-accent hover:underline">{e.nom} <span className="text-muted">{e.type ?? ""} {e.arrondissement ?? ""}</span></Link>
     </li>
   );
   return (
