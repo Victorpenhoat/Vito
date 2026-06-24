@@ -2,6 +2,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { saveGouts } from "../data/actions";
+import { Button } from "@/features/shared/ui/Button";
 
 type Tag = { slug: string; label: string };
 type Initial = { ambiances: string[]; budgetMax: number | null; typesPreferes: string[]; zones: string[] };
@@ -12,7 +13,7 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
   const [state, action, pending] = useActionState(saveGouts, undefined);
   return (
     <form action={action} data-testid="gouts-form" className="flex flex-col gap-4 max-w-xl">
-      <p className="text-gray-600">{t("intro")}</p>
+      <p className="text-muted">{t("intro")}</p>
       <fieldset>
         <legend className="font-semibold">{t("ambiances")}</legend>
         <div className="flex flex-wrap gap-2">
@@ -36,14 +37,14 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
         </div>
       </fieldset>
       <label className="flex flex-col">{t("budget")}
-        <input name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} className="border p-2" />
+        <input name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} className="rounded-xl border border-line bg-surface px-3 py-2" />
       </label>
       <label className="flex flex-col">{t("zones")}
-        <input name="zones" defaultValue={initial.zones.join(", ")} className="border p-2" />
+        <input name="zones" defaultValue={initial.zones.join(", ")} className="rounded-xl border border-line bg-surface px-3 py-2" />
       </label>
       {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
       {state?.ok && <p className="text-green-700">{t("saved")}</p>}
-      <button type="submit" disabled={pending} className="bg-black text-white p-2">{t("save")}</button>
+      <Button type="submit" pending={pending}>{t("save")}</Button>
     </form>
   );
 }

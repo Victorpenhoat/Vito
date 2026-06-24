@@ -2,16 +2,17 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { creerFamille } from "../data/actions";
+import { Button } from "@/features/shared/ui/Button";
 
 export function FamilleForm() {
   const t = useTranslations("famille");
   const [state, action, pending] = useActionState(creerFamille, undefined);
   return (
     <form action={action} data-testid="famille-form" className="flex flex-col gap-2 max-w-md">
-      <p>{t("pasDeFamille")}</p>
-      <input name="nom" required placeholder={t("nom")} className="border p-2" />
+      <p className="text-muted">{t("pasDeFamille")}</p>
+      <input name="nom" required placeholder={t("nom")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
       {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
-      <button type="submit" disabled={pending} className="bg-black text-white p-2">{t("creer")}</button>
+      <Button type="submit" pending={pending}>{t("creer")}</Button>
     </form>
   );
 }
