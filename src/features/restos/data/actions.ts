@@ -105,3 +105,11 @@ export async function setTags(_prev: unknown, formData: FormData) {
   revalidatePath("/restos");
   return { ok: true as const };
 }
+
+export async function cacheEtablissementPhoto(etabId: string, photoRef: string) {
+  if (!photoRef) return;
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return;
+  await supabase.rpc("cache_etablissement_photo", { p_etab: etabId, p_ref: photoRef });
+}
