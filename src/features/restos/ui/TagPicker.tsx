@@ -8,6 +8,7 @@ type Tag = {
   id: string;
   slug: string;
   label: string;
+  color?: string | null;
 };
 
 interface TagPickerProps {
@@ -30,6 +31,10 @@ export function TagPicker({ tags, appliedTagIds, listeItemId }: TagPickerProps) 
               name="tagIds"
               value={tag.id}
               defaultChecked={appliedTagIds.includes(tag.id)}
+            />
+            <span
+              className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+              style={tag.color ? { backgroundColor: tag.color } : { backgroundColor: "#d1d5db" }}
             />
             {tag.label}
           </label>
