@@ -21,7 +21,11 @@
     "fois": "{count} degustazione/i",
     "acheter": "Acquista",
     "quantite": "Quantità",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "eyebrow": "La cantina",
+    "compte": "{n} vini",
+    "fiche": "Scheda",
+    "mesDegustations": "Le mie degustazioni"
   },
   "gouts": {
     "title": "I miei gusti",

@@ -21,7 +21,11 @@
     "fois": "{count} tasting(s)",
     "acheter": "Buy",
     "quantite": "Quantity",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "eyebrow": "The cellar",
+    "compte": "{n} wines",
+    "fiche": "Details",
+    "mesDegustations": "My tastings"
   },
   "gouts": {
     "title": "My tastes",

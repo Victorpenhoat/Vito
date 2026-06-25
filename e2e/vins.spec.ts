@@ -42,8 +42,8 @@ test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filt
     page.getByTestId("vin-row").filter({ hasText: vinNom })
   ).toBeVisible();
 
-  // Filtre par couleur blanc -> toujours visible
-  await page.getByTestId("vins-filters").locator("select").first().selectOption("blanc");
+  // Filtre par couleur blanc (onglet) -> toujours visible
+  await page.getByTestId("vin-tab-blanc").click();
   await expect(
     page.getByTestId("vin-row").filter({ hasText: vinNom })
   ).toBeVisible();

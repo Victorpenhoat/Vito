@@ -2,8 +2,6 @@
 import { useRouter, usePathname } from "@/lib/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { VIN_COULEURS } from "../domain/schemas";
-
 const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function VinsFilters() {
@@ -18,10 +16,6 @@ export function VinsFilters() {
   };
   return (
     <div data-testid="vins-filters" className="flex flex-wrap gap-2 items-end">
-      <select aria-label={t("couleur")} defaultValue={params.get("couleur") ?? ""} onChange={(e) => set("couleur", e.target.value)} className={inputCls}>
-        <option value="">{t("filtres.tous")}</option>
-        {VIN_COULEURS.map((c) => <option key={c} value={c}>{t(`couleurs.${c}`)}</option>)}
-      </select>
       <input aria-label={t("region")} placeholder={t("region")} defaultValue={params.get("region") ?? ""} onBlur={(e) => set("region", e.target.value)} className={inputCls} />
       <input aria-label={t("filtres.noteMin")} type="number" min={1} max={5} placeholder={t("filtres.noteMin")} defaultValue={params.get("noteMin") ?? ""} onBlur={(e) => set("noteMin", e.target.value)} className={`${inputCls} w-24`} />
       <input aria-label={t("filtres.du")} type="date" defaultValue={params.get("dateFrom") ?? ""} onChange={(e) => set("dateFrom", e.target.value)} className={inputCls} />

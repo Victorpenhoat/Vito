@@ -62,6 +62,12 @@ export async function getMesVins(filters: VinFilters): Promise<VinConsolide[]> {
     .map(({ _hasMatch, ...r }) => r);
 }
 
+export async function getVinsCount(): Promise<number> {
+  const supabase = await createServerSupabase();
+  const { count } = await supabase.from("vins").select("id", { count: "exact", head: true });
+  return count ?? 0;
+}
+
 export async function getVinDetail(id: string) {
   const supabase = await createServerSupabase();
   const [vinRes, degRes] = await Promise.all([
