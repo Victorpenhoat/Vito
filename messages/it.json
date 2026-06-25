@@ -265,6 +265,6 @@
     "todo": { "restosATester": "Ristoranti da provare", "voyagesAVenir": "Viaggi in arrivo", "conciergerieEnAttente": "Richieste in sospeso" },
     "kpi": { "sorties": "Uscite", "nouveauxRestos": "Nuovi ristoranti", "vinsGoutes": "Vini degustati", "depensesVoyage": "Spese di viaggio" },
     "activity": { "vide": "Niente per ora" },
-    "discoveries": { "vide": "Nessun suggerimento per ora" }
+    "discoveries": { "vide": "Nessun suggerimento per ora", "suggested": "Suggerito" }
   }
 }
