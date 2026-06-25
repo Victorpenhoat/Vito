@@ -1,15 +1,5 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 
-export async function getMaListe() {
-  const supabase = await createServerSupabase();
-  const { data, error } = await supabase
-    .from("liste_items")
-    .select("id, statut, is_favorite, etablissement:etablissements(id, nom, type, ville, arrondissement)")
-    .order("added_at", { ascending: false });
-  if (error) throw error;
-  return data;
-}
-
 export async function getFiche(etablissementId: string) {
   const supabase = await createServerSupabase();
   const [etabRes, itemRes, avisRes] = await Promise.all([
