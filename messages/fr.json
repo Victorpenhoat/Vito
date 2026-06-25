@@ -286,8 +286,10 @@
     "group": { "carnet": "Carnet", "voyages": "Voyages", "cercle": "Cercle" }
   },
   "places": {
+    "tous": "Tous",
     "favoris": "Favoris",
     "aTester": "À tester",
+    "visites": "Visités",
     "searchPlaceholder": "Rechercher dans mes adresses…",
     "empty": "Aucune adresse ici pour l'instant"
   },
