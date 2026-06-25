@@ -1,5 +1,5 @@
 {
-  "app": { "name": "Vito", "tagline": "Il tuo diario personale di uscite e viaggi" },
+  "app": { "name": "Vito", "tagline": "Il tuo diario personale di uscite e viaggi", "subtitle": "il taccuino" },
   "auth": { "login": "Accedi", "signup": "Crea un account", "signupTab": "Registrati", "email": "E-mail", "password": "Password", "submit": "Conferma", "errors": { "invalidCredentials": "Credenziali non valide", "signInFailed": "Accesso non riuscito", "signUpFailed": "Registrazione non riuscita" } },
   "vins": {
     "title": "I miei vini",
@@ -247,7 +247,7 @@
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
-  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro" },
+  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro", "group": { "carnet": "Taccuino", "voyages": "Viaggi", "cercle": "Cerchia" } },
   "places": {
     "favoris": "Preferiti",
     "aTester": "Da provare",

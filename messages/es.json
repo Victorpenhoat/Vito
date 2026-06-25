@@ -1,5 +1,5 @@
 {
-  "app": { "name": "Vito", "tagline": "Tu cuaderno personal de salidas y viajes" },
+  "app": { "name": "Vito", "tagline": "Tu cuaderno personal de salidas y viajes", "subtitle": "el cuaderno" },
   "auth": { "login": "Iniciar sesión", "signup": "Crear una cuenta", "signupTab": "Registrarse", "email": "Correo electrónico", "password": "Contraseña", "submit": "Enviar", "errors": { "invalidCredentials": "Credenciales no válidas", "signInFailed": "Error al iniciar sesión", "signUpFailed": "Error al registrarse" } },
   "vins": {
     "title": "Mis vinos",
@@ -247,7 +247,7 @@
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "shell": { "theme": "Cambiar tema (claro / oscuro)", "close": "Cerrar", "language": "Idioma", "settings": "Ajustes", "menu": "Menú" },
-  "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más" },
+  "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más", "group": { "carnet": "Cuaderno", "voyages": "Viajes", "cercle": "Círculo" } },
   "places": {
     "favoris": "Favoritos",
     "aTester": "Para probar",

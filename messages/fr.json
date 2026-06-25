@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Vito",
-    "tagline": "Votre carnet personnel de sorties et de voyages"
+    "tagline": "Votre carnet personnel de sorties et de voyages",
+    "subtitle": "le carnet"
   },
   "auth": {
     "login": "Connexion",
@@ -281,7 +282,8 @@
     "deconnexion": "Déconnexion",
     "accueil": "Accueil",
     "recherche": "Recherche",
-    "plus": "Plus"
+    "plus": "Plus",
+    "group": { "carnet": "Carnet", "voyages": "Voyages", "cercle": "Cercle" }
   },
   "places": {
     "favoris": "Favoris",
