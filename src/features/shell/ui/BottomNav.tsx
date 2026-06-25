@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import { MoreHorizontal } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
-import { NAV_ICONS } from "./Sidebar";
+import { NAV_ICONS } from "./NavGroups";
 import { BOTTOM_KEYS, type NavEntry } from "../nav-config";
 
 export function BottomNav({
