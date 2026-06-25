@@ -248,6 +248,12 @@
   },
   "shell": { "theme": "Cambiar tema (claro / oscuro)", "close": "Cerrar", "language": "Idioma", "settings": "Ajustes", "menu": "Menú" },
   "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más" },
+  "places": {
+    "favoris": "Favoritos",
+    "aTester": "Para probar",
+    "searchPlaceholder": "Buscar en mis sitios…",
+    "empty": "Nada aquí por ahora"
+  },
   "accueil": {
     "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes",
     "greeting": { "bonjour": "Buenos días", "bonsoir": "Buenas noches" },
