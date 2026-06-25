@@ -249,8 +249,10 @@
   "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
   "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro", "group": { "carnet": "Taccuino", "voyages": "Viaggi", "cercle": "Cerchia" } },
   "places": {
+    "tous": "Tutti",
     "favoris": "Preferiti",
     "aTester": "Da provare",
+    "visites": "Visitati",
     "searchPlaceholder": "Cerca nei miei indirizzi…",
     "empty": "Ancora niente qui"
   },

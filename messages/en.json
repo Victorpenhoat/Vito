@@ -249,8 +249,10 @@
   "shell": { "theme": "Toggle theme (light / dark)", "close": "Close", "language": "Language", "settings": "Settings", "menu": "Menu" },
   "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Family", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
   "places": {
+    "tous": "All",
     "favoris": "Favourites",
     "aTester": "To try",
+    "visites": "Visited",
     "searchPlaceholder": "Search my places…",
     "empty": "Nothing here yet"
   },

@@ -455,6 +455,8 @@ export type Database = {
           lat: number | null
           lng: number | null
           nom: string
+          photo_fetched_at: string | null
+          photo_ref: string | null
           place_id: string | null
           price_level: number | null
           source: string
@@ -474,6 +476,8 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           nom: string
+          photo_fetched_at?: string | null
+          photo_ref?: string | null
           place_id?: string | null
           price_level?: number | null
           source?: string
@@ -493,6 +497,8 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           nom?: string
+          photo_fetched_at?: string | null
+          photo_ref?: string | null
           place_id?: string | null
           price_level?: number | null
           source?: string
@@ -1121,6 +1127,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cache_etablissement_photo: {
+        Args: { p_etab: string; p_ref: string }
+        Returns: undefined
+      }
       can_access_famille: { Args: { f_id: string }; Returns: boolean }
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }

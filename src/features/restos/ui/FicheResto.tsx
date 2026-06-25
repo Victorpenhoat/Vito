@@ -4,6 +4,7 @@ import { getFiche, getTagsForCategory } from "../data/queries";
 import { FavoriteToggle } from "./FavoriteToggle";
 import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
+import { PhotoCacheSync } from "./PhotoCacheSync";
 import { getPlacesProvider } from "@/lib/services/places";
 import { DegustationForm } from "@/features/vins/ui/DegustationForm";
 import { getIsPremium } from "@/features/abonnement/data/queries";
@@ -35,28 +36,34 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
     }
   }
 
+  const heroRef = photoRefs[0] ?? null;
+  const STALE_MS = 30 * 24 * 60 * 60 * 1000;
+  const fetchedAt = etab.photo_fetched_at ? new Date(etab.photo_fetched_at).getTime() : 0;
+  // eslint-disable-next-line react-hooks/purity -- Date.now() is fine in a Server Component (not a hook, no re-render)
+  const shouldSync = heroRef !== null && (heroRef !== etab.photo_ref || Date.now() - fetchedAt > STALE_MS);
+
   return (
     <article className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold text-ink">{etab.nom}</h1>
-        <p className="text-muted">{etab.type} — {etab.adresse} {etab.arrondissement ?? ""}</p>
-        {etab.telephone && <p>{etab.telephone}</p>}
-      </header>
-      {photoRefs.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto">
-          {photoRefs.map((ref) => (
-            <Image
-              key={ref}
-              src={`/api/places/photo?ref=${encodeURIComponent(ref)}&w=400`}
-              alt={etab.nom}
-              width={400}
-              height={267}
-              className="rounded object-cover"
-              data-testid="resto-photo"
-            />
-          ))}
+      <div className="relative overflow-hidden rounded-card bg-[linear-gradient(135deg,var(--hero-from),var(--hero-to))]">
+        {heroRef && (
+          <Image
+            src={`/api/places/photo?ref=${encodeURIComponent(heroRef)}&w=1200`}
+            alt={etab.nom}
+            width={1200}
+            height={420}
+            className="h-56 w-full object-cover md:h-72"
+            data-testid="resto-photo"
+          />
+        )}
+        <div className={`${heroRef ? "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent text-white" : "text-ink"} p-5`}>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] opacity-90">
+            {[etab.type, etab.arrondissement ?? etab.ville].filter(Boolean).join(" · ")}
+          </div>
+          <h1 className="font-serif text-3xl font-medium md:text-4xl">{etab.nom}</h1>
+          {etab.telephone && <p className="mt-1 text-sm opacity-90">{etab.telephone}</p>}
         </div>
-      )}
+      </div>
+      {shouldSync && heroRef && <PhotoCacheSync etabId={etab.id} photoRef={heroRef} />}
       {item && <FavoriteToggle listeItemId={item.id} isFavorite={item.is_favorite} />}
       {item && tags.length > 0 && (
         <TagPicker tags={tags} appliedTagIds={appliedTagIds} listeItemId={item.id} />

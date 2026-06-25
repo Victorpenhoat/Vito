@@ -16,6 +16,7 @@ export type EtablissementInput = {
   website: string | null;
   price_level: number | null;
   source: string;
+  photo_ref: string | null;
 };
 
 function arrondissementParisien(codePostal: string | null, ville: string | null): string | null {
@@ -42,5 +43,6 @@ export function mapPlaceToEtablissement(p: PlaceResult, categorie: "resto" | "ho
     website: p.website,
     price_level: p.priceLevel,
     source: "places",
+    photo_ref: p.photoRefs[0] ?? null,
   };
 }

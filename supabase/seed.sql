@@ -43,9 +43,9 @@ update public.profiles set role = 'admin'  where id = '33333333-3333-3333-3333-3
 -- — données de référence livrées avec le schéma, présentes aussi en prod.)
 
 -- Établissement démo (référentiel)
-insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source)
+insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
 values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistrot',
-  'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed');
+  'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed', 'mock_photo_1', now());
 
 -- Le client a déjà un resto dans sa liste
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)

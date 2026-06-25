@@ -2,7 +2,7 @@ export type Place = {
   id: string;
   statut: "a_faire" | "visite";
   is_favorite: boolean;
-  etablissement: { id: string; nom: string; type: string | null; ville: string | null; arrondissement: string | null; categorie: "resto" | "hotel" };
+  etablissement: { id: string; nom: string; type: string | null; ville: string | null; arrondissement: string | null; categorie: "resto" | "hotel"; photo_ref: string | null };
   tags: { slug: string; label: string; color: string | null }[];
 };
 

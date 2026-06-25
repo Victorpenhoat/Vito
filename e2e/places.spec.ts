@@ -17,11 +17,11 @@ test("places-tabs est visible après login", async ({ page }) => {
   await expect(page.getByTestId("places-tabs")).toBeVisible();
 });
 
-test("onglet Favoris est actif par défaut et contient le resto seedé", async ({ page }) => {
+test("onglet Tous est actif par défaut et contient le resto seedé", async ({ page }) => {
   await login(page);
-  // L'onglet Favoris est sélectionné par défaut
-  await expect(page.getByTestId("tab-favoris")).toHaveAttribute("aria-selected", "true");
-  // Le Bistrot Démo (is_favorite=true) apparaît sous l'onglet Favoris
+  // L'onglet Tous est sélectionné par défaut (Le Carnet)
+  await expect(page.getByTestId("tab-tous")).toHaveAttribute("aria-selected", "true");
+  // Le Bistrot Démo (seul item de la liste) apparaît sous l'onglet Tous
   await expect(page.getByTestId("place-card")).toHaveCount(1);
   await expect(page.getByTestId("place-card").first()).toContainText("Bistrot");
 });
