@@ -10,6 +10,7 @@ export type RestoResult = {
   ville: string | null;
   arrondissement: string | null;
   price_level: number | null;
+  photo_ref: string | null;
 };
 
 export async function getGouts() {
@@ -36,7 +37,7 @@ export async function rechercheRestos(criteria: RechercheCriteria) {
   // 1) Ta liste : etablissements présents dans liste_items de l'utilisateur
   const { data: liste, error: listeErr } = await supabase
     .from("liste_items")
-    .select("etablissement_id, is_favorite, etablissement:etablissements(id, nom, type, ville, arrondissement, price_level)");
+    .select("etablissement_id, is_favorite, etablissement:etablissements(id, nom, type, ville, arrondissement, price_level, photo_ref)");
   if (listeErr) throw listeErr;
 
   const listeEtabs: RestoResult[] = [];
@@ -75,7 +76,7 @@ export async function rechercheRestos(criteria: RechercheCriteria) {
 
   const { data: pool, error: poolErr } = await supabase
     .from("etablissements")
-    .select("id, nom, type, ville, arrondissement, price_level");
+    .select("id, nom, type, ville, arrondissement, price_level, photo_ref");
   if (poolErr) throw poolErr;
 
   const recos = (pool ?? [])

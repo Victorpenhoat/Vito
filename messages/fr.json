@@ -60,6 +60,7 @@
     "errors": { "invalid": "Goûts invalides", "notAuth": "Non authentifié", "saveFailed": "Enregistrement des goûts échoué" }
   },
   "recherche": {
+    "eyebrow": "Explorer",
     "title": "Recherche",
     "zone": "Zone (ex. 17e, Paris)",
     "budget": "Budget max / personne (€)",
