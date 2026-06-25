@@ -302,6 +302,6 @@
     "todo": { "restosATester": "Restos à tester", "voyagesAVenir": "Voyages à venir", "conciergerieEnAttente": "Demandes en attente" },
     "kpi": { "sorties": "Sorties", "nouveauxRestos": "Nouveaux restos", "vinsGoutes": "Vins goûtés", "depensesVoyage": "Dépenses voyage" },
     "activity": { "vide": "Rien pour l'instant" },
-    "discoveries": { "vide": "Aucune suggestion pour l'instant" }
+    "discoveries": { "vide": "Aucune suggestion pour l'instant", "suggested": "Suggéré" }
   }
 }

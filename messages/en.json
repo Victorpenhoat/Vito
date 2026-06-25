@@ -265,6 +265,6 @@
     "todo": { "restosATester": "Restaurants to try", "voyagesAVenir": "Upcoming trips", "conciergerieEnAttente": "Pending requests" },
     "kpi": { "sorties": "Outings", "nouveauxRestos": "New restaurants", "vinsGoutes": "Wines tasted", "depensesVoyage": "Trip spending" },
     "activity": { "vide": "Nothing yet" },
-    "discoveries": { "vide": "No suggestions yet" }
+    "discoveries": { "vide": "No suggestions yet", "suggested": "Suggested" }
   }
 }
