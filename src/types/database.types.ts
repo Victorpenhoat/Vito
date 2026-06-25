@@ -914,26 +914,32 @@ export type Database = {
       tags: {
         Row: {
           categorie: string
+          color: string | null
           created_at: string
           id: string
           is_system: boolean
           label: string
+          scope: string
           slug: string
         }
         Insert: {
           categorie?: string
+          color?: string | null
           created_at?: string
           id?: string
           is_system?: boolean
           label: string
+          scope?: string
           slug: string
         }
         Update: {
           categorie?: string
+          color?: string | null
           created_at?: string
           id?: string
           is_system?: boolean
           label?: string
+          scope?: string
           slug?: string
         }
         Relationships: []

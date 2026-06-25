@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import { getFiche, getTags } from "../data/queries";
+import { getFiche, getTagsForCategory } from "../data/queries";
 import { FavoriteToggle } from "./FavoriteToggle";
 import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
@@ -17,7 +17,7 @@ export async function FicheResto({ etablissementId }: { etablissementId: string 
   const tv = await getTranslations("vins");
   const [{ etab, item, avis, appliedTagIds }, tags] = await Promise.all([
     getFiche(etablissementId),
-    getTags(),
+    getTagsForCategory("restaurant"),
   ]);
   if (!etab) return <p>{t("notFound")}</p>;
 

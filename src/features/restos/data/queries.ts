@@ -42,3 +42,14 @@ export async function getTags() {
   if (error) throw error;
   return data;
 }
+
+export async function getTagsForCategory(category: "restaurant" | "hotel") {
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, slug, label, color")
+    .or(`scope.eq.common,scope.eq.${category}`)
+    .order("label");
+  if (error) throw error;
+  return data ?? [];
+}
