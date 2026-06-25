@@ -8,8 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:ci": "npm run typecheck && npm run lint && npm run test && npm run test:e2e",
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --local > src/types/database.types.ts"
   },
