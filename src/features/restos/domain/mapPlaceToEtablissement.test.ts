@@ -17,6 +17,7 @@ describe("mapPlaceToEtablissement", () => {
     expect(e.arrondissement).toBe("8e");
     expect(e.categorie).toBe("resto");
     expect(e.source).toBe("places");
+    expect(e.photo_ref).toBe("p");
   });
 
   const withCp = (ville: string | null, codePostal: string | null): PlaceResult => ({
