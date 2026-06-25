@@ -37,7 +37,11 @@
     "fois": "{count} dégustation(s)",
     "acheter": "Acheter",
     "quantite": "Quantité",
-    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
+    "eyebrow": "La cave",
+    "compte": "{n} vins",
+    "fiche": "Fiche",
+    "mesDegustations": "Mes dégustations"
   },
   "gouts": {
     "title": "Mes goûts",

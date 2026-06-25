@@ -21,7 +21,11 @@
     "fois": "{count} cata(s)",
     "acheter": "Comprar",
     "quantite": "Cantidad",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
+    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "eyebrow": "La bodega",
+    "compte": "{n} vinos",
+    "fiche": "Ficha",
+    "mesDegustations": "Mis catas"
   },
   "gouts": {
     "title": "Mis gustos",
