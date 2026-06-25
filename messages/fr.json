@@ -283,6 +283,12 @@
     "recherche": "Recherche",
     "plus": "Plus"
   },
+  "places": {
+    "favoris": "Favoris",
+    "aTester": "À tester",
+    "searchPlaceholder": "Rechercher dans mes adresses…",
+    "empty": "Aucune adresse ici pour l'instant"
+  },
   "accueil": {
     "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos",
     "greeting": { "bonjour": "Bonjour", "bonsoir": "Bonsoir" },

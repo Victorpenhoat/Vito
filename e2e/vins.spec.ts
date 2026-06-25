@@ -12,8 +12,8 @@ async function login(page: import("@playwright/test").Page) {
 test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filtrer", async ({ page }) => {
   await login(page);
 
-  // Ouvre la fiche du resto démo (déjà dans la liste du client)
-  await page.getByTestId("resto-card").first().getByRole("link").click();
+  // Ouvre la fiche du resto démo (déjà dans la liste du client — is_favorite=true → onglet Favoris par défaut)
+  await page.getByTestId("place-card").first().getByRole("link").click();
   await expect(page).toHaveURL(/\/fr\/restos\//);
 
   // Le formulaire de dégustation est visible

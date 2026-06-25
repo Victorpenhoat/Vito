@@ -17,11 +17,12 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
 
-  // Le resto apparaît dans la liste (Le Bistrot Démo déjà là ou Le Bistrot du Coin ajouté)
-  await expect(page.getByTestId("resto-card").filter({ hasText: "Bistrot" }).first()).toBeVisible();
+  // Le Bistrot du Coin est ajouté sans is_favorite → il apparaît dans l'onglet À tester
+  await page.getByTestId("tab-a-tester").click();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Bistrot" }).first()).toBeVisible();
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (ajouté via mock — a un UUID v4 valide pour la RPC avis)
-  await page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
+  await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
   await expect(page.getByTestId("avis-form")).toBeVisible();
 
   await page.getByTestId("avis-form").locator("textarea").fill("Très bonne adresse, revenir le samedi");
@@ -31,7 +32,8 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
 
 test("basculer un favori", async ({ page }) => {
   await login(page);
-  await page.getByTestId("resto-card").first().getByRole("link").click();
+  // Le Bistrot Démo est is_favorite=true → il est dans l'onglet Favoris (actif par défaut)
+  await page.getByTestId("place-card").first().getByRole("link").click();
   await page.getByTestId("favorite-toggle").click();
   await expect(page.getByTestId("favorite-toggle")).toContainText("Favori");
 });
@@ -43,10 +45,12 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   await page.getByTestId("add-resto-search").fill("bistrot");
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
-  await expect(page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
+  // Le Bistrot du Coin ajouté sans is_favorite → onglet À tester
+  await page.getByTestId("tab-a-tester").click();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (UUID v4 valide généré par la base)
-  await page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
+  await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
 
   // Le tag-picker doit être visible (l'item est dans la liste)
   const tagPicker = page.getByTestId("tag-picker");
@@ -90,10 +94,12 @@ test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)"
   await page.getByTestId("add-resto-search").fill("bistrot");
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
-  await expect(page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
+  // Le Bistrot du Coin ajouté sans is_favorite → onglet À tester
+  await page.getByTestId("tab-a-tester").click();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
   // Ouvrir sa fiche
-  await page.getByTestId("resto-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
+  await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
 
   // La photo proxy doit être visible (FicheResto récupère photoRefs via getPlacesProvider().details())
   const photo = page.getByTestId("resto-photo").first();
