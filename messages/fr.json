@@ -321,7 +321,10 @@
     "aTester": "À tester",
     "visites": "Visités",
     "searchPlaceholder": "Rechercher dans mes adresses…",
-    "empty": "Aucune adresse ici pour l'instant"
+    "empty": "Aucune adresse ici pour l'instant",
+    "vueListe": "Liste",
+    "vueCarte": "Carte",
+    "sansLocalisation": "{n} sans localisation"
   },
   "accueil": {
     "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos",
