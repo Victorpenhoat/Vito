@@ -171,7 +171,19 @@
     "monthly": "Mensual",
     "yearly": "Anual",
     "cancel": "Cancelar la suscripción",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
+    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "eyebrow": "Tu fórmula",
+    "gratuit": "Gratis",
+    "gratuitPrix": "0 €",
+    "gratuitSous": "para siempre",
+    "prixMois": "9,90 € / mes",
+    "prixAn": "o 99 € / año",
+    "feat": {
+      "carnet": "Cuaderno de restaurantes y vinos",
+      "voyages": "Viajes y reservas",
+      "conciergerie": "Conserjería ilimitada",
+      "foyer": "Hogar compartido"
+    }
   },
   "conciergerie": {
     "title": "Conserjería",
@@ -205,7 +217,9 @@
     "statut": "Estado",
     "supprimer": "Eliminar",
     "vide": "Ninguna solicitud por el momento.",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
+    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "eyebrow": "Servicio premium",
+    "premiumActif": "Premium activo"
   },
   "famille": {
     "title": "Mi familia",
@@ -226,7 +240,8 @@
     "ajouterFamille": "Añadir a mi familia",
     "vide": "Ningún restaurante compartido por el momento.",
     "pasDeFamille": "Aún no tienes una familia.",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
+    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "eyebrow": "Mi hogar"
   },
   "agence": {
     "title": "Espacio agencia",

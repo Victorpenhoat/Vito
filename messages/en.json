@@ -171,7 +171,19 @@
     "monthly": "Monthly",
     "yearly": "Yearly",
     "cancel": "Cancel subscription",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "eyebrow": "Your plan",
+    "gratuit": "Free",
+    "gratuitPrix": "0 €",
+    "gratuitSous": "forever",
+    "prixMois": "€9.90 / month",
+    "prixAn": "or €99 / year",
+    "feat": {
+      "carnet": "Restaurants & wine journal",
+      "voyages": "Trips & bookings",
+      "conciergerie": "Unlimited concierge",
+      "foyer": "Shared household"
+    }
   },
   "conciergerie": {
     "title": "Concierge",
@@ -205,7 +217,9 @@
     "statut": "Status",
     "supprimer": "Delete",
     "vide": "No requests yet.",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "eyebrow": "Premium service",
+    "premiumActif": "Premium active"
   },
   "famille": {
     "title": "My family",
@@ -226,7 +240,8 @@
     "ajouterFamille": "Add to my family",
     "vide": "No shared restaurants yet.",
     "pasDeFamille": "You don't have a family yet.",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "eyebrow": "My household"
   },
   "agence": {
     "title": "Agency space",
