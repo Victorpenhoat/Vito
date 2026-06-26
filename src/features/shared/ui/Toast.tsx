@@ -8,6 +8,6 @@ const TONE: Record<"info" | "success" | "error", string> = {
 
 export function Toast({ type = "info", children }: { type?: "info" | "success" | "error"; children: ReactNode }) {
   return (
-    <div className={`rounded-xl border bg-surface px-4 py-3 text-sm ${TONE[type]}`}>{children}</div>
+    <div className={`rounded-control border bg-surface px-4 py-3 text-sm ${TONE[type]}`}>{children}</div>
   );
 }

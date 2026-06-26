@@ -7,7 +7,7 @@ import { Button } from "@/features/shared/ui/Button";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
 
-const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeHotelForm() {
   const t = useTranslations("conciergerie");
@@ -41,7 +41,7 @@ export function DemandeHotelForm() {
       </select>
       <label className="flex items-center gap-2"><input type="checkbox" name="avecEnfants" /> {t("avecEnfants")}</label>
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" disabled={!selected} pending={pending}>{t("envoyer")}</Button>
     </form>
   );

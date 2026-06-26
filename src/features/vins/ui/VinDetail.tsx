@@ -4,10 +4,12 @@ import { couleurTint } from "../domain/couleurTint";
 import { BuyButton } from "./BuyButton";
 import { Card } from "@/features/shared/ui/Card";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { formatDay } from "@/lib/format/date";
 
 export async function VinDetail({ id }: { id: string }) {
   const t = await getTranslations("vins");
+  const locale = await getLocale();
   const { vin, degustations } = await getVinDetail(id);
   const merchantUrl = getMerchantProvider().buyUrl(
     { nom: vin.nom, domaine: vin.domaine, millesime: vin.millesime, couleur: vin.couleur },
@@ -38,7 +40,7 @@ export async function VinDetail({ id }: { id: string }) {
             <ul>
               {degustations.map((d) => (
                 <li key={d.id} data-testid="degustation-row" className="border-b border-line-soft py-2 text-sm">
-                  <span className="text-muted">{d.deguste_le}</span>
+                  <span className="text-muted">{formatDay(d.deguste_le, locale)}</span>
                   {d.note ? <span className="text-accent"> · {d.note}/5</span> : ""}
                   {d.prix_paye ? <span className="text-ink"> · {d.prix_paye}€</span> : ""}
                   {d.commentaire ? <span className="text-muted"> {d.commentaire}</span> : ""}

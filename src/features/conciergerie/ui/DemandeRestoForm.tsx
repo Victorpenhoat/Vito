@@ -5,7 +5,7 @@ import { creerDemandeResto } from "../data/actions";
 import { OCCASIONS } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
 
-const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeRestoForm({ etablissementId }: { etablissementId: string }) {
   const t = useTranslations("conciergerie");
@@ -25,7 +25,7 @@ export function DemandeRestoForm({ etablissementId }: { etablissementId: string 
       <input name="nbEnfants" type="number" min={0} placeholder={t("nbEnfants")} className={inputCls} />
       <label className="flex items-center gap-2"><input type="checkbox" name="chaiseHaute" /> {t("chaiseHaute")}</label>
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("envoyer")}</Button>
     </form>
   );

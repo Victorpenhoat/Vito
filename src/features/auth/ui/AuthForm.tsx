@@ -8,7 +8,7 @@ export function AuthForm({ action, submitLabelKey }: { action: Action; submitLab
   const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState(action, undefined);
   const inputClass =
-    "rounded-xl border border-line px-3 py-2.5 text-sm outline-none focus:border-transparent focus:outline-2 focus:outline-accent";
+    "rounded-control border border-line px-3 py-2.5 text-sm outline-none focus:border-transparent focus:outline-2 focus:outline-accent";
   return (
     <form action={formAction} className="flex flex-col gap-3 text-left">
       <label className="flex flex-col gap-1 text-sm font-medium">
@@ -19,11 +19,11 @@ export function AuthForm({ action, submitLabelKey }: { action: Action; submitLab
         {t("password")}
         <input name="password" type="password" required className={inputClass} />
       </label>
-      {state?.error && <p role="alert" className="text-sm text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
       <button
         type="submit"
         disabled={pending}
-        className="mt-1 rounded-xl bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60"
+        className="mt-1 rounded-control bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60"
       >
         {t(submitLabelKey)}
       </button>

@@ -10,7 +10,7 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
   const t = useTranslations("depenses");
   const [state, action, pending] = useActionState(addRemboursement, undefined);
   const nom = (m: Membre) => m.display_name ?? m.profile_id;
-  const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+  const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
   return (
     <form action={action} data-testid="remboursement-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="groupeId" value={groupeId} />
@@ -24,7 +24,7 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
         <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={`${inputCls} w-28`} />
       </div>
       <input name="date" type="date" aria-label={t("date")} className={inputCls} />
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("remboursement")}</Button>
     </form>
   );

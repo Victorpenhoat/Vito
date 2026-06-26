@@ -9,10 +9,10 @@ export function AuthPanel({ signIn, signUp }: { signIn: Action; signUp: Action }
   const t = useTranslations("auth");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const tab = (active: boolean) =>
-    `flex-1 rounded-lg py-2 text-sm font-semibold ${active ? "bg-surface text-ink shadow-sm" : "text-muted"}`;
+    `flex-1 rounded-control py-2 text-sm font-semibold ${active ? "bg-surface text-ink shadow-sm" : "text-muted"}`;
   return (
     <div data-testid="auth-panel" className="w-full">
-      <div className="mb-4 flex gap-1 rounded-xl bg-canvas p-1" role="tablist">
+      <div className="mb-4 flex gap-1 rounded-control bg-canvas p-1" role="tablist">
         <button
           type="button"
           role="tab"
