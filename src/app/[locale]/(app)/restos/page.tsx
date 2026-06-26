@@ -7,12 +7,13 @@ import { getPlaces } from "@/features/places/data/queries";
 
 export default async function RestosPage() {
   const t = await getTranslations("restos");
+  const places = await getPlaces("resto");
   return (
-    <main className="p-4 md:p-6 flex flex-col gap-6">
+    <main className="flex flex-col gap-6 p-4 md:p-8">
       <PageHeader title={t("title")} />
       <GoutsBanner />
-      <RestoSearch />
-      <PlacesTabs category="resto" places={await getPlaces("resto")} />
+      <RestoSearch places={places} />
+      <PlacesTabs category="resto" places={places} />
     </main>
   );
 }
