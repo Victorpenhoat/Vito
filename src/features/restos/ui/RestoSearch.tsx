@@ -16,7 +16,7 @@ export function RestoSearch({ places }: { places: Place[] }) {
   const [addError, setAddError] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
-  const { favoris, aTester } = splitSearch(q, places, externals);
+  const { favoris, aTester, externes } = splitSearch(q, places, externals);
 
   const ownedRow = (p: Place) => (
     <li key={p.id} data-testid="owned-result" className="border-b border-line-soft py-2">
@@ -56,11 +56,11 @@ export function RestoSearch({ places }: { places: Place[] }) {
           <ul>{aTester.map(ownedRow)}</ul>
         </section>
       )}
-      {externals.length > 0 && (
+      {externes.length > 0 && (
         <section>
           <SectionLabel>{t("resExternes")}</SectionLabel>
           <ul>
-            {externals.map((r) => (
+            {externes.map((r) => (
               <li key={r.placeId} data-testid="search-result" className="flex justify-between border-b border-line-soft py-2">
                 <span>{r.nom}{r.adresse ? ` — ${r.adresse}` : ""}</span>
                 <form

@@ -41,11 +41,8 @@ test("basculer un favori", async ({ page }) => {
 test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", async ({ page }) => {
   await login(page);
 
-  // S'assurer que "Le Bistrot du Coin" est dans la liste (idempotent grâce à l'upsert)
-  await page.getByTestId("add-resto-search").fill("bistrot");
-  await expect(page.getByTestId("search-result").first()).toBeVisible();
-  await page.getByTestId("search-result").first().getByRole("button").click();
-  // Le Bistrot du Coin ajouté sans is_favorite → onglet À tester
+  // "Le Bistrot du Coin" a été ajouté par le 1er test (état DB partagé, workers:1, statut a_faire)
+  // → on l'atteint via l'onglet À tester (la recherche externe dédoublonne les lieux déjà possédés)
   await page.getByTestId("tab-a-tester").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
@@ -90,11 +87,8 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
 test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)", async ({ page }) => {
   await login(page);
 
-  // Ajouter "Le Bistrot du Coin" (idempotent — upsert) qui a photoRefs dans le mock provider
-  await page.getByTestId("add-resto-search").fill("bistrot");
-  await expect(page.getByTestId("search-result").first()).toBeVisible();
-  await page.getByTestId("search-result").first().getByRole("button").click();
-  // Le Bistrot du Coin ajouté sans is_favorite → onglet À tester
+  // "Le Bistrot du Coin" (avec photoRefs dans le mock) a été ajouté par le 1er test (état DB partagé)
+  // → on l'atteint via l'onglet À tester (la recherche externe dédoublonne les lieux déjà possédés)
   await page.getByTestId("tab-a-tester").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
