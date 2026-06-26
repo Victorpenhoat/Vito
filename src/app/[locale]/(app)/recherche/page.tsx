@@ -7,8 +7,8 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
   const t = await getTranslations("recherche");
   const sp = await searchParams;
   return (
-    <main className="p-6 flex flex-col gap-6">
-      <PageHeader title={t("title")} />
+    <main className="flex flex-col gap-6 p-4 md:p-8">
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} />
       <RechercheForm />
       <RechercheResults searchParams={sp} />
     </main>

@@ -44,6 +44,7 @@
     "errors": { "invalid": "Invalid tastes", "notAuth": "Not authenticated", "saveFailed": "Failed to save tastes" }
   },
   "recherche": {
+    "eyebrow": "Explore",
     "title": "Search",
     "zone": "Area (e.g. 17th, Paris)",
     "budget": "Max budget / person (€)",

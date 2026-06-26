@@ -44,6 +44,7 @@
     "errors": { "invalid": "Gusti non validi", "notAuth": "Non autenticato", "saveFailed": "Salvataggio dei gusti non riuscito" }
   },
   "recherche": {
+    "eyebrow": "Esplora",
     "title": "Cerca",
     "zone": "Zona (es. 17e, Parigi)",
     "budget": "Budget max / persona (€)",
