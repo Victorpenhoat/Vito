@@ -171,7 +171,11 @@
     "retirer": "Retirer",
     "supprimer": "Supprimer",
     "save": "Enregistrer",
-    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
+    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
+    "eyebrow": "Comptes partagés",
+    "total": "Total du séjour",
+    "parPersonne": "{montant} par personne",
+    "equilibre": "Équilibre"
   },
   "abonnement": {
     "title": "Abonnement",

@@ -8,8 +8,8 @@ export default async function DepensesPage() {
   const t = await getTranslations("depenses");
   const voyages = (await getMesVoyages()).map((v) => ({ id: v.id, titre: v.titre }));
   return (
-    <main className="p-4 md:p-6 flex flex-col gap-6">
-      <PageHeader title={t("title")} />
+    <main className="flex flex-col gap-6 p-4 md:p-8">
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} />
       <GroupeForm voyages={voyages} />
       <GroupesList />
     </main>

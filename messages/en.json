@@ -155,7 +155,11 @@
     "retirer": "Remove",
     "supprimer": "Delete",
     "save": "Save",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "eyebrow": "Shared accounts",
+    "total": "Trip total",
+    "parPersonne": "{montant} per person",
+    "equilibre": "Balance"
   },
   "abonnement": {
     "title": "Subscription",
