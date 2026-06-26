@@ -171,7 +171,19 @@
     "monthly": "Mensile",
     "yearly": "Annuale",
     "cancel": "Annulla l'abbonamento",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "eyebrow": "Il tuo piano",
+    "gratuit": "Gratuito",
+    "gratuitPrix": "0 €",
+    "gratuitSous": "per sempre",
+    "prixMois": "9,90 € / mese",
+    "prixAn": "o 99 € / anno",
+    "feat": {
+      "carnet": "Taccuino ristoranti e vini",
+      "voyages": "Viaggi e prenotazioni",
+      "conciergerie": "Concierge illimitato",
+      "foyer": "Nucleo condiviso"
+    }
   },
   "conciergerie": {
     "title": "Concierge",
@@ -205,7 +217,9 @@
     "statut": "Stato",
     "supprimer": "Elimina",
     "vide": "Nessuna richiesta per ora.",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "eyebrow": "Servizio premium",
+    "premiumActif": "Premium attivo"
   },
   "famille": {
     "title": "La mia famiglia",
@@ -226,7 +240,8 @@
     "ajouterFamille": "Aggiungi alla mia famiglia",
     "vide": "Nessun ristorante condiviso per ora.",
     "pasDeFamille": "Non hai ancora una famiglia.",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "eyebrow": "Il mio nucleo"
   },
   "agence": {
     "title": "Area agenzia",
