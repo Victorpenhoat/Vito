@@ -617,6 +617,131 @@ export type Database = {
           },
         ]
       }
+      family_documents: {
+        Row: {
+          contenu_chiffre: string
+          country: string | null
+          created_at: string
+          doc_number: string | null
+          doc_type: string
+          expiry_date: string | null
+          holder_name: string | null
+          id: string
+          issue_date: string | null
+          issue_place: string | null
+          member_id: string
+          mime_type: string
+          ocr_raw: Json | null
+          taille: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contenu_chiffre: string
+          country?: string | null
+          created_at?: string
+          doc_number?: string | null
+          doc_type: string
+          expiry_date?: string | null
+          holder_name?: string | null
+          id?: string
+          issue_date?: string | null
+          issue_place?: string | null
+          member_id: string
+          mime_type: string
+          ocr_raw?: Json | null
+          taille: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contenu_chiffre?: string
+          country?: string | null
+          created_at?: string
+          doc_number?: string | null
+          doc_type?: string
+          expiry_date?: string | null
+          holder_name?: string | null
+          id?: string
+          issue_date?: string | null
+          issue_place?: string | null
+          member_id?: string
+          mime_type?: string
+          ocr_raw?: Json | null
+          taille?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_documents_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_members: {
+        Row: {
+          avatar_color: string | null
+          birth_date: string | null
+          circle: string
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          relation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_color?: string | null
+          birth_date?: string | null
+          circle?: string
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          phone?: string | null
+          relation: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_color?: string | null
+          birth_date?: string | null
+          circle?: string
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          relation?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       liste_item_tags: {
         Row: {
           liste_item_id: string
