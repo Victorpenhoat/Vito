@@ -1,22 +1,32 @@
 import { getMesVoyages } from "../data/queries";
-import { Link } from "@/lib/i18n/routing";
+import { splitVoyages } from "../domain/splitVoyages";
+import { VoyageCard } from "./VoyageCard";
+import { VoyageFeatured } from "./VoyageFeatured";
+import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { getTranslations } from "next-intl/server";
 
 export async function VoyagesList() {
   const t = await getTranslations("voyages");
   const voyages = await getMesVoyages();
-  if (voyages.length === 0) return <p>{t("vide")}</p>;
+  if (voyages.length === 0) return <p className="text-sm text-muted">{t("vide")}</p>;
+  const today = new Date().toISOString().slice(0, 10);
+  const { prochain, reste } = splitVoyages(voyages, today);
   return (
-    <ul className="flex flex-col gap-2">
-      {voyages.map((v) => (
-        <li key={v.id} data-testid="voyage-card" className="rounded-card border border-line bg-surface p-4">
-          <Link href={`/voyages/${v.id}`} className="text-accent hover:underline">
-            <span className="font-semibold">{v.titre}</span>{" "}
-            {v.destination && <span className="text-muted">· {v.destination}</span>}{" "}
-            <span className="text-muted">· {t(`statuts.${v.statut}`)}</span>
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col gap-8">
+      {prochain && (
+        <section>
+          <SectionLabel>{t("prochainDepart")}</SectionLabel>
+          <VoyageFeatured voyage={prochain} />
+        </section>
+      )}
+      {reste.length > 0 && (
+        <section>
+          <SectionLabel>{t("carnetRoute")}</SectionLabel>
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {reste.map((v) => <VoyageCard key={v.id} voyage={v} statutLabel={t(`statuts.${v.statut}`)} />)}
+          </ul>
+        </section>
+      )}
+    </div>
   );
 }

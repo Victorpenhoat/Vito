@@ -115,7 +115,13 @@
       "vide": "Ningún documento.",
       "typeNonSupporte": "Tipo no admitido (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "Archivo demasiado grande (máx. 5 MB)"
-    }
+    },
+    "eyebrow": "Mis viajes",
+    "heading": "Viajes",
+    "prochainDepart": "Próxima salida",
+    "carnetRoute": "Diario de ruta",
+    "compte": "{avenir} próximos · {passes} pasados",
+    "depenses": "Gastos"
   },
   "depenses": {
     "title": "Cuentas compartidas",
