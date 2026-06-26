@@ -284,7 +284,10 @@
     "aTester": "Para probar",
     "visites": "Visitados",
     "searchPlaceholder": "Buscar en mis sitios…",
-    "empty": "Nada aquí por ahora"
+    "empty": "Nada aquí por ahora",
+    "vueListe": "Lista",
+    "vueCarte": "Mapa",
+    "sansLocalisation": "{n} sin ubicación"
   },
   "accueil": {
     "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes",
