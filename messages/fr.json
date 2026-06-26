@@ -74,11 +74,6 @@
   },
   "restos": {
     "title": "Mes restos",
-    "resFavoris": "Tes favoris",
-    "resATester": "À tester",
-    "resExternes": "Ajouter depuis Google",
-    "add": "Ajouter un resto",
-    "search": "Rechercher un établissement",
     "favorite": "Favori",
     "statut": { "a_faire": "À faire", "visite": "Visité" },
     "avis": "Mes avis",
@@ -316,6 +311,7 @@
     "accueil": "Accueil",
     "recherche": "Recherche",
     "plus": "Plus",
+    "hotels": "Hôtels",
     "group": { "carnet": "Carnet", "voyages": "Voyages", "cercle": "Cercle" }
   },
   "places": {
@@ -327,7 +323,15 @@
     "empty": "Aucune adresse ici pour l'instant",
     "vueListe": "Liste",
     "vueCarte": "Carte",
-    "sansLocalisation": "{n} sans localisation"
+    "sansLocalisation": "{n} sans localisation",
+    "search": "Rechercher un établissement",
+    "add": "Ajouter",
+    "resFavoris": "Tes favoris",
+    "resATester": "À tester",
+    "resExternes": "Ajouter depuis Google"
+  },
+  "hotels": {
+    "title": "Mes hôtels"
   },
   "accueil": {
     "title": "Accueil", "welcome": "Bienvenue sur Vito 👋", "cta": "Voir mes restos",

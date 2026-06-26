@@ -58,11 +58,6 @@
   },
   "restos": {
     "title": "My restaurants",
-    "resFavoris": "Your favorites",
-    "resATester": "To try",
-    "resExternes": "Add from Google",
-    "add": "Add a restaurant",
-    "search": "Search for a venue",
     "favorite": "Favourite",
     "statut": { "a_faire": "To try", "visite": "Visited" },
     "avis": "My reviews",
@@ -280,7 +275,7 @@
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "shell": { "theme": "Toggle theme (light / dark)", "close": "Close", "language": "Language", "settings": "Settings", "menu": "Menu" },
-  "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Family", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
+  "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Family", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "hotels": "Hotels", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
   "places": {
     "tous": "All",
     "favoris": "Favourites",
@@ -290,7 +285,15 @@
     "empty": "Nothing here yet",
     "vueListe": "List",
     "vueCarte": "Map",
-    "sansLocalisation": "{n} without location"
+    "sansLocalisation": "{n} without location",
+    "search": "Search a place",
+    "add": "Add",
+    "resFavoris": "Your favorites",
+    "resATester": "To try",
+    "resExternes": "Add from Google"
+  },
+  "hotels": {
+    "title": "My hotels"
   },
   "accueil": {
     "title": "Home", "welcome": "Welcome to Vito 👋", "cta": "See my restaurants",

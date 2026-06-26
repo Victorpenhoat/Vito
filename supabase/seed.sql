@@ -51,6 +51,13 @@ values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistro
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
 values ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true);
 
+-- Hôtel démo (catégorie hotel) + dans la liste du client (à tester)
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
+values ('11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_1', 'hotel', 'hotel',
+  'Hôtel Démo', 'Paris', '75001', '1er', 'seed', 'mock_photo_1', now());
+insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
+values ('11111111-1111-1111-1111-111111111111', '11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
+
 -- Vin + dégustation de démo pour le compte client (UUID v4 valides)
 insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, cepages)
 values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111',
