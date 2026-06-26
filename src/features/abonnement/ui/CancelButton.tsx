@@ -10,7 +10,7 @@ export function CancelButton() {
   return (
     <form action={action} data-testid="cancel-form">
       <Button type="submit" variant="ghost" pending={pending} data-testid="cancel-sub">{t("cancel")}</Button>
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
     </form>
   );
 }

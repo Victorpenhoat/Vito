@@ -11,7 +11,7 @@ export function AjouterFamilleButton({ etablissementId }: { etablissementId: str
     <form action={action}>
       <input type="hidden" name="etablissementId" value={etablissementId} />
       <Button type="submit" pending={pending} variant="ghost" data-testid="ajouter-famille">{t("ajouterFamille")}</Button>
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
     </form>
   );
 }

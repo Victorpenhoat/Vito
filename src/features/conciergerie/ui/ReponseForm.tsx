@@ -17,7 +17,7 @@ export function ReponseForm({ demandeId }: { demandeId: string }) {
         {CONCIERGERIE_STATUTS.map((s) => <option key={s} value={s}>{t(`statuts.${s}`)}</option>)}
       </select>
       <textarea name="reponse" placeholder={t("reponse")} className={inputCls} />
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("repondre")}</Button>
     </form>
   );

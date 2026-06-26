@@ -20,7 +20,7 @@ export function VoyagePourClientForm({ clientId }: { clientId: string }) {
       <select name="statut" aria-label={t("statut")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" defaultValue="planifie">
         {VOYAGE_STATUTS.map((s) => <option key={s} value={s}>{s}</option>)}
       </select>
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("envoyer")}</Button>
     </form>
   );

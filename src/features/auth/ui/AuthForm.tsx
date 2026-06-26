@@ -19,7 +19,7 @@ export function AuthForm({ action, submitLabelKey }: { action: Action; submitLab
         {t("password")}
         <input name="password" type="password" required className={inputClass} />
       </label>
-      {state?.error && <p role="alert" className="text-sm text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
       <button
         type="submit"
         disabled={pending}

@@ -34,7 +34,7 @@ export function DegustationForm({ etablissementId }: { etablissementId: string }
         <input name="degusteLe" type="date" aria-label={t("date")} title={t("date")} className={inputCls} />
       </div>
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("add")}</Button>
     </form>
   );

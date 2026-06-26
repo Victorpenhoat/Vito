@@ -14,7 +14,7 @@ export function SubscribeButtons() {
         <Button type="submit" name="period" value="monthly" pending={pending} data-testid="subscribe-monthly" className="flex-1">{t("monthly")}</Button>
         <Button type="submit" name="period" value="yearly" pending={pending} data-testid="subscribe-yearly" className="flex-1">{t("yearly")}</Button>
       </div>
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
     </form>
   );
 }

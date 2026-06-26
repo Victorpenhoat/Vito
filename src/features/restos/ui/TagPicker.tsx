@@ -40,7 +40,7 @@ export function TagPicker({ tags, appliedTagIds, listeItemId }: TagPickerProps) 
           </label>
         ))}
       </div>
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       {state && "ok" in state && state.ok && (
         <p data-testid="tags-saved" className="text-green-700">{t("tagsSaved")}</p>
       )}

@@ -17,7 +17,7 @@ export function GroupeForm({ voyages }: { voyages: VoyageOption[] }) {
         <option value="">{t("aucunVoyage")}</option>
         {voyages.map((v) => <option key={v.id} value={v.id}>{v.titre}</option>)}
       </select>
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("create")}</Button>
     </form>
   );

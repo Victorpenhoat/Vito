@@ -41,7 +41,7 @@ export function DemandeHotelForm() {
       </select>
       <label className="flex items-center gap-2"><input type="checkbox" name="avecEnfants" /> {t("avecEnfants")}</label>
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
-      {state && "error" in state && state.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" disabled={!selected} pending={pending}>{t("envoyer")}</Button>
     </form>
   );

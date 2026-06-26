@@ -24,7 +24,7 @@ export function ReservationForm({ voyageId }: { voyageId: string }) {
       <input name="conciergerieMail" type="email" placeholder={t("conciergerieMail")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
       <input name="lien" type="url" placeholder={t("lien")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
       <textarea name="notes" placeholder={t("notes")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("addReservation")}</Button>
     </form>
   );

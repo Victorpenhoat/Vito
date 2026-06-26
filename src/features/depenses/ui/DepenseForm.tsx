@@ -37,7 +37,7 @@ export function DepenseForm({ groupeId, membres }: { groupeId: string; membres: 
           </label>
         ))}
       </fieldset>
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("addDepense")}</Button>
     </form>
   );

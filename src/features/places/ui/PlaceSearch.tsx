@@ -37,7 +37,7 @@ export function PlaceSearch({ places, category }: { places: Place[]; category: "
         className="rounded-control border border-line bg-surface px-3 py-2 text-sm outline-none focus:outline-2 focus:outline-accent"
         onChange={(e) => { const v = e.target.value; setQ(v); start(async () => setExternals(await searchPlaces(v))); }}
       />
-      {addError && <p role="alert" className="text-sm text-red-600" data-testid="add-resto-error">{addError}</p>}
+      {addError && <p role="alert" className="text-sm text-danger" data-testid="add-resto-error">{addError}</p>}
       {favoris.length > 0 && (
         <section><SectionLabel>{t("resFavoris")}</SectionLabel><ul>{favoris.map(ownedRow)}</ul></section>
       )}

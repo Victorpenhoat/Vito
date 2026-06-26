@@ -12,7 +12,7 @@ export function ShareForm({ voyageId }: { voyageId: string }) {
       <input type="hidden" name="voyageId" value={voyageId} />
       <input name="email" type="email" required placeholder={t("partagerEmail")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent flex-1" />
       <Button type="submit" pending={pending}>{t("partager")}</Button>
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
     </form>
   );
 }

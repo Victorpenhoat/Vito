@@ -24,7 +24,7 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
         <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={`${inputCls} w-28`} />
       </div>
       <input name="date" type="date" aria-label={t("date")} className={inputCls} />
-      {state?.error && <p role="alert" className="text-red-600">{state.error}</p>}
+      {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("remboursement")}</Button>
     </form>
   );
