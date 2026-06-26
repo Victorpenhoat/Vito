@@ -60,3 +60,9 @@ test("la recherche fonctionne aussi dans l'onglet À tester", async ({ page }) =
   await page.getByTestId("places-search").fill("xyzabsent999");
   await expect(page.getByTestId("place-card")).toHaveCount(0);
 });
+
+test("la bascule Carte affiche la carte", async ({ page }) => {
+  await login(page);
+  await page.getByTestId("view-carte").click();
+  await expect(page.getByTestId("places-map")).toBeVisible();
+});
