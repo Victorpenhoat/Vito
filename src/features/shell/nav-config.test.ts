@@ -28,7 +28,7 @@ describe("groupNav", () => {
 
   it("classe accueil/restos/vins/recherche dans carnet", () => {
     const carnet = groupNav(NAV_ITEMS).find((g) => g.group === "carnet")!;
-    expect(carnet.entries.map((e) => e.key)).toEqual(["accueil", "restos", "vins", "recherche"]);
+    expect(carnet.entries.map((e) => e.key)).toEqual(["accueil", "restos", "hotels", "vins", "recherche"]);
   });
 
   it("place agence et admin dans cercle (rôle admin)", () => {

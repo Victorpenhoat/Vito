@@ -13,12 +13,12 @@ import { Link } from "@/lib/i18n/routing";
 import { getMaFamille } from "@/features/famille/data/queries";
 import { AjouterFamilleButton } from "@/features/famille/ui/AjouterFamilleButton";
 
-export async function FicheResto({ etablissementId }: { etablissementId: string }) {
+export async function FicheResto({ etablissementId, category = "restaurant" }: { etablissementId: string; category?: "restaurant" | "hotel" }) {
   const t = await getTranslations("restos");
   const tv = await getTranslations("vins");
   const [{ etab, item, avis, appliedTagIds }, tags] = await Promise.all([
     getFiche(etablissementId),
-    getTagsForCategory("restaurant"),
+    getTagsForCategory(category),
   ]);
   if (!etab) return <p>{t("notFound")}</p>;
 

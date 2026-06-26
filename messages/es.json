@@ -58,11 +58,6 @@
   },
   "restos": {
     "title": "Mis restaurantes",
-    "resFavoris": "Tus favoritos",
-    "resATester": "Por probar",
-    "resExternes": "Añadir desde Google",
-    "add": "Añadir un restaurante",
-    "search": "Buscar un establecimiento",
     "favorite": "Favorito",
     "statut": { "a_faire": "Por visitar", "visite": "Visitado" },
     "avis": "Mis opiniones",
@@ -280,7 +275,7 @@
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "shell": { "theme": "Cambiar tema (claro / oscuro)", "close": "Cerrar", "language": "Idioma", "settings": "Ajustes", "menu": "Menú" },
-  "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más", "group": { "carnet": "Cuaderno", "voyages": "Viajes", "cercle": "Círculo" } },
+  "nav": { "restos": "Restaurantes", "voyages": "Viajes", "depenses": "Cuentas compartidas", "famille": "Familia", "conciergerie": "Conserjería", "vins": "Vinos", "abonnement": "Suscripción", "agence": "Agencia", "admin": "Back-office", "deconnexion": "Cerrar sesión", "accueil": "Inicio", "recherche": "Buscar", "plus": "Más", "hotels": "Hoteles", "group": { "carnet": "Cuaderno", "voyages": "Viajes", "cercle": "Círculo" } },
   "places": {
     "tous": "Todos",
     "favoris": "Favoritos",
@@ -290,7 +285,15 @@
     "empty": "Nada aquí por ahora",
     "vueListe": "Lista",
     "vueCarte": "Mapa",
-    "sansLocalisation": "{n} sin ubicación"
+    "sansLocalisation": "{n} sin ubicación",
+    "search": "Buscar un lugar",
+    "add": "Añadir",
+    "resFavoris": "Tus favoritos",
+    "resATester": "Por probar",
+    "resExternes": "Añadir desde Google"
+  },
+  "hotels": {
+    "title": "Mis hoteles"
   },
   "accueil": {
     "title": "Inicio", "welcome": "Bienvenido a Vito 👋", "cta": "Ver mis restaurantes",
