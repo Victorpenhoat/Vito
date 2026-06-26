@@ -1,14 +1,14 @@
 "use client";
 import { useTranslations } from "next-intl";
 import {
-  Home, Utensils, Wine, Search, Plane, Users, Wallet, ConciergeBell, CreditCard, Briefcase, Shield,
+  Home, Utensils, Hotel, Wine, Search, Plane, Users, Wallet, ConciergeBell, CreditCard, Briefcase, Shield,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavItem } from "@/features/shared/ui/NavItem";
 import { groupNav, type NavEntry, type NavKey } from "../nav-config";
 
 export const NAV_ICONS: Record<NavKey, LucideIcon> = {
-  accueil: Home, restos: Utensils, vins: Wine, recherche: Search, voyages: Plane,
+  accueil: Home, restos: Utensils, hotels: Hotel, vins: Wine, recherche: Search, voyages: Plane,
   famille: Users, depenses: Wallet, conciergerie: ConciergeBell, abonnement: CreditCard,
   agence: Briefcase, admin: Shield,
 };

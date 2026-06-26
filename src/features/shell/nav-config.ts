@@ -1,7 +1,7 @@
 export type Role = "client" | "agence" | "admin";
 export type NavGroup = "carnet" | "voyages" | "cercle";
 export type NavKey =
-  | "accueil" | "restos" | "vins" | "recherche" | "voyages" | "famille"
+  | "accueil" | "restos" | "hotels" | "vins" | "recherche" | "voyages" | "famille"
   | "depenses" | "conciergerie" | "abonnement" | "agence" | "admin";
 
 export type NavEntry = { key: NavKey; href: string; group: NavGroup; roles?: Role[] };
@@ -9,6 +9,7 @@ export type NavEntry = { key: NavKey; href: string; group: NavGroup; roles?: Rol
 export const NAV_ITEMS: NavEntry[] = [
   { key: "accueil", href: "/accueil", group: "carnet" },
   { key: "restos", href: "/restos", group: "carnet" },
+  { key: "hotels", href: "/hotels", group: "carnet" },
   { key: "vins", href: "/vins", group: "carnet" },
   { key: "recherche", href: "/recherche", group: "carnet" },
   { key: "voyages", href: "/voyages", group: "voyages" },
