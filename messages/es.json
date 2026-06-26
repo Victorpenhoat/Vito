@@ -58,6 +58,9 @@
   },
   "restos": {
     "title": "Mis restaurantes",
+    "resFavoris": "Tus favoritos",
+    "resATester": "Por probar",
+    "resExternes": "Añadir desde Google",
     "add": "Añadir un restaurante",
     "search": "Buscar un establecimiento",
     "favorite": "Favorito",
