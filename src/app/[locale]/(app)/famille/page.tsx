@@ -6,14 +6,16 @@ import { MembresList } from "@/features/famille/ui/MembresList";
 import { FamilleRestos } from "@/features/famille/ui/FamilleRestos";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
+import { SectionLabel } from "@/features/shared/ui/SectionLabel";
+import { Card } from "@/features/shared/ui/Card";
 
 export default async function FamillePage() {
   const t = await getTranslations("famille");
   const ma = await getMaFamille();
   if (!ma) {
     return (
-      <main className="p-4 md:p-6 flex flex-col gap-6">
-        <PageHeader title={t("title")} />
+      <main className="flex flex-col gap-6 p-4 md:p-8">
+        <PageHeader eyebrow={t("eyebrow")} title={t("title")} />
         <FamilleForm />
       </main>
     );
@@ -23,15 +25,23 @@ export default async function FamillePage() {
   const currentProfileId = auth.user?.id ?? "";
   const restos = await getFamilleRestos(ma.famille.id);
   return (
-    <main className="p-4 md:p-6 flex flex-col gap-6">
-      <PageHeader title={ma.famille.nom} />
-      <section className="flex flex-col gap-2">
-        <h2 className="font-semibold text-ink">{t("membres")}</h2>
-        <MembresList membres={ma.membres} isOwner={ma.isOwner} currentProfileId={currentProfileId} />
-        {ma.isOwner && <InviteForm />}
-      </section>
-      <section className="flex flex-col gap-2">
-        <h2 className="font-semibold text-ink">{t("restos")}</h2>
+    <main className="flex flex-col gap-6 p-4 md:p-8">
+      <PageHeader eyebrow={t("eyebrow")} title={ma.famille.nom} subtitle={`${ma.membres.length} · ${restos.length}`} />
+      <div className="grid gap-6 md:grid-cols-[1fr_300px]">
+        <section className="flex flex-col gap-3">
+          <SectionLabel>{t("membres")}</SectionLabel>
+          <MembresList membres={ma.membres} isOwner={ma.isOwner} currentProfileId={currentProfileId} />
+          {ma.isOwner && <InviteForm />}
+        </section>
+        <aside>
+          <Card>
+            <SectionLabel>{t("restos")}</SectionLabel>
+            <div className="font-serif text-4xl font-medium text-ink">{restos.length}</div>
+          </Card>
+        </aside>
+      </div>
+      <section className="flex flex-col gap-3">
+        <SectionLabel>{t("restos")}</SectionLabel>
         <FamilleRestos restos={restos} />
       </section>
     </main>
