@@ -131,7 +131,13 @@
       "vide": "Aucun document.",
       "typeNonSupporte": "Type non supporté (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "Fichier trop volumineux (max 5 Mo)"
-    }
+    },
+    "eyebrow": "Mes voyages",
+    "heading": "Voyages",
+    "prochainDepart": "Prochain départ",
+    "carnetRoute": "Carnet de route",
+    "compte": "{avenir} à venir · {passes} passés",
+    "depenses": "Dépenses"
   },
   "depenses": {
     "title": "Comptes partagés",

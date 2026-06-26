@@ -115,7 +115,13 @@
       "vide": "No documents.",
       "typeNonSupporte": "Unsupported type (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "File too large (max 5 MB)"
-    }
+    },
+    "eyebrow": "My trips",
+    "heading": "Trips",
+    "prochainDepart": "Next departure",
+    "carnetRoute": "Travel log",
+    "compte": "{avenir} upcoming · {passes} past",
+    "depenses": "Expenses"
   },
   "depenses": {
     "title": "Shared accounts",
