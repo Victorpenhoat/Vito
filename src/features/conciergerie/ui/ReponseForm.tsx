@@ -5,7 +5,7 @@ import { repondreDemande } from "../data/actions";
 import { CONCIERGERIE_STATUTS } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
 
-const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function ReponseForm({ demandeId }: { demandeId: string }) {
   const t = useTranslations("conciergerie");

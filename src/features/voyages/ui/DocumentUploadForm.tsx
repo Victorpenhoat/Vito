@@ -10,7 +10,7 @@ export function DocumentUploadForm({ voyageId }: { voyageId: string }) {
   return (
     <form action={action} data-testid="document-upload-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="voyageId" value={voyageId} />
-      <input name="file" type="file" required accept=".pdf,image/jpeg,image/png,image/webp" className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
+      <input name="file" type="file" required accept=".pdf,image/jpeg,image/png,image/webp" className="rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent" />
       {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("deposer")}</Button>
     </form>

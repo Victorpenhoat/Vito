@@ -37,10 +37,10 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
         </div>
       </fieldset>
       <label className="flex flex-col">{t("budget")}
-        <input name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} className="rounded-xl border border-line bg-surface px-3 py-2" />
+        <input name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} className="rounded-control border border-line bg-surface px-3 py-2" />
       </label>
       <label className="flex flex-col">{t("zones")}
-        <input name="zones" defaultValue={initial.zones.join(", ")} className="rounded-xl border border-line bg-surface px-3 py-2" />
+        <input name="zones" defaultValue={initial.zones.join(", ")} className="rounded-control border border-line bg-surface px-3 py-2" />
       </label>
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       {state?.ok && <p className="text-green-700">{t("saved")}</p>}

@@ -27,7 +27,7 @@ export function ThemeToggle() {
       data-testid="theme-toggle"
       onClick={toggle}
       aria-label={t("theme")}
-      className="grid h-9 w-9 place-items-center rounded-xl text-muted hover:bg-surface-hover"
+      className="grid h-9 w-9 place-items-center rounded-control text-muted hover:bg-surface-hover"
     >
       {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
     </button>

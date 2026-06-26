@@ -7,7 +7,7 @@ import { Button } from "@/features/shared/ui/Button";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
 
-const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeHotelForm() {
   const t = useTranslations("conciergerie");

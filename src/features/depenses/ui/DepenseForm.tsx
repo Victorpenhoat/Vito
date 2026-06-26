@@ -12,7 +12,7 @@ export function DepenseForm({ groupeId, membres }: { groupeId: string; membres: 
   const [state, action, pending] = useActionState(addDepense, undefined);
   const [mode, setMode] = useState<"egal" | "exact">("egal");
   const nom = (m: Membre) => m.display_name ?? m.profile_id;
-  const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+  const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
   return (
     <form action={action} data-testid="depense-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="groupeId" value={groupeId} />
@@ -32,7 +32,7 @@ export function DepenseForm({ groupeId, membres }: { groupeId: string; membres: 
             <input type="checkbox" name="participants" value={m.profile_id} defaultChecked />
             <span className="flex-1 text-ink">{nom(m)}</span>
             {mode === "exact" && (
-              <input name={`exact:${m.profile_id}`} inputMode="decimal" placeholder={t("montant")} className="rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent w-24" />
+              <input name={`exact:${m.profile_id}`} inputMode="decimal" placeholder={t("montant")} className="rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent w-24" />
             )}
           </label>
         ))}
