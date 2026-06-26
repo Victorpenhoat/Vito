@@ -58,6 +58,9 @@
   },
   "restos": {
     "title": "My restaurants",
+    "resFavoris": "Your favorites",
+    "resATester": "To try",
+    "resExternes": "Add from Google",
     "add": "Add a restaurant",
     "search": "Search for a venue",
     "favorite": "Favourite",

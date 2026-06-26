@@ -3,7 +3,7 @@ import { filterPlaces } from "./filterPlaces";
 
 const P = (nom: string, ville: string | null, tags: string[] = []) => ({
   id: nom, statut: "a_faire" as const, is_favorite: false,
-  etablissement: { id: nom, nom, type: null, ville, arrondissement: null, categorie: "resto" as const, photo_ref: null, lat: null, lng: null },
+  etablissement: { id: nom, nom, type: null, ville, arrondissement: null, categorie: "resto" as const, photo_ref: null, lat: null, lng: null, place_id: null },
   tags: tags.map((label) => ({ slug: label, label, color: null })),
 });
 
