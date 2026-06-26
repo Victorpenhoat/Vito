@@ -1,10 +1,11 @@
 import { Link } from "@/lib/i18n/routing";
 import { statutTint } from "../domain/statutTint";
+import { formatRange } from "@/lib/format/date";
 
 type Voyage = { id: string; titre: string; destination: string | null; date_debut: string | null; date_fin: string | null; statut: string };
 
-export function VoyageCard({ voyage, statutLabel }: { voyage: Voyage; statutLabel: string }) {
-  const dates = [voyage.date_debut, voyage.date_fin].filter(Boolean).join(" → ");
+export function VoyageCard({ voyage, statutLabel, locale }: { voyage: Voyage; statutLabel: string; locale: string }) {
+  const dates = formatRange(voyage.date_debut, voyage.date_fin, locale);
   const sub = [voyage.destination, dates].filter(Boolean).join(" · ");
   return (
     <li data-testid="voyage-card" className={voyage.statut === "termine" ? "opacity-70" : ""}>

@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { formatDay } from "@/lib/format/date";
 import { getSubscription, getIsPremium } from "@/features/abonnement/data/queries";
 import { SubscribeButtons } from "@/features/abonnement/ui/SubscribeButtons";
 import { CancelButton } from "@/features/abonnement/ui/CancelButton";
@@ -15,10 +16,11 @@ function FeatureRow({ ok, label }: { ok: boolean; label: string }) {
 
 export default async function AbonnementPage() {
   const t = await getTranslations("abonnement");
+  const locale = await getLocale();
   const sub = await getSubscription();
   const isPremium = await getIsPremium();
   const canceled = sub?.status === "canceled";
-  const periodEnd = sub?.current_period_end ? new Date(sub.current_period_end).toLocaleDateString("fr-FR") : "";
+  const periodEnd = formatDay(sub?.current_period_end ?? null, locale);
   const feats = [
     { key: "carnet", free: true },
     { key: "voyages", free: true },

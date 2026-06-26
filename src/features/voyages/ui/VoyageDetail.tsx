@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { formatRange } from "@/lib/format/date";
 import { getVoyageDetail, getVoyageDocuments } from "../data/queries";
 import { statutTint } from "../domain/statutTint";
 import { ReservationForm } from "./ReservationForm";
@@ -12,9 +13,10 @@ import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 
 export async function VoyageDetail({ id }: { id: string }) {
   const t = await getTranslations("voyages");
+  const locale = await getLocale();
   const { voyage, reservations, membres, isOwner } = await getVoyageDetail(id);
   const documents = await getVoyageDocuments(voyage.id);
-  const dates = [voyage.date_debut, voyage.date_fin].filter(Boolean).join(" → ");
+  const dates = formatRange(voyage.date_debut, voyage.date_fin, locale);
   const sub = [voyage.destination, dates].filter(Boolean).join(" · ");
   return (
     <article className="flex flex-col gap-6">
@@ -36,7 +38,7 @@ export async function VoyageDetail({ id }: { id: string }) {
                 <li key={r.id} data-testid="reservation-row" className="flex flex-col gap-0.5 border-b border-line-soft py-3">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{t(`types.${r.type}`)}</span>
                   <span className="font-serif text-lg text-ink">{[r.fournisseur, r.reference].filter(Boolean).join(" · ") || t(`types.${r.type}`)}</span>
-                  {(r.date_debut || r.date_fin) && <span className="text-sm text-muted">{[r.date_debut, r.date_fin].filter(Boolean).join(" → ")}</span>}
+                  {(r.date_debut || r.date_fin) && <span className="text-sm text-muted">{formatRange(r.date_debut, r.date_fin, locale)}</span>}
                   <span className="flex flex-wrap gap-3 text-sm">
                     {r.conciergerie_tel && <a href={`tel:${r.conciergerie_tel}`} className="text-accent hover:underline">{r.conciergerie_tel}</a>}
                     {r.conciergerie_mail && <a href={`mailto:${r.conciergerie_mail}`} className="text-accent hover:underline">{r.conciergerie_mail}</a>}

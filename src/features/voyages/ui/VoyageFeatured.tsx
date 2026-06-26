@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { formatRange } from "@/lib/format/date";
 import { Link } from "@/lib/i18n/routing";
 import { statutTint } from "../domain/statutTint";
 import { getVoyageMeta } from "../data/queries";
@@ -7,8 +8,9 @@ type Voyage = { id: string; titre: string; destination: string | null; date_debu
 
 export async function VoyageFeatured({ voyage }: { voyage: Voyage }) {
   const t = await getTranslations("voyages");
+  const locale = await getLocale();
   const meta = await getVoyageMeta(voyage.id);
-  const dates = [voyage.date_debut, voyage.date_fin].filter(Boolean).join(" → ");
+  const dates = formatRange(voyage.date_debut, voyage.date_fin, locale);
   const sub = [voyage.destination, dates].filter(Boolean).join(" · ");
   const metaLine = [
     `${meta.reservations} ${t("reservations").toLowerCase()}`,
