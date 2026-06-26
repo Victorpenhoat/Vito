@@ -155,7 +155,11 @@
     "retirer": "Rimuovi",
     "supprimer": "Elimina",
     "save": "Salva",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "eyebrow": "Conti condivisi",
+    "total": "Totale soggiorno",
+    "parPersonne": "{montant} a persona",
+    "equilibre": "Bilancio"
   },
   "abonnement": {
     "title": "Abbonamento",

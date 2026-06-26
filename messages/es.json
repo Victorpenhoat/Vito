@@ -155,7 +155,11 @@
     "retirer": "Quitar",
     "supprimer": "Eliminar",
     "save": "Guardar",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
+    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "eyebrow": "Cuentas compartidas",
+    "total": "Total del viaje",
+    "parPersonne": "{montant} por persona",
+    "equilibre": "Balance"
   },
   "abonnement": {
     "title": "Suscripción",
