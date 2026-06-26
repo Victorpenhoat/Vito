@@ -16,51 +16,33 @@ export async function searchPlaces(query: string) {
   return getPlacesProvider().search(query);
 }
 
-export async function addResto(_prev: unknown, formData: FormData) {
+async function addPlace(category: "resto" | "hotel", formData: FormData) {
   const parsed = addRestoSchema.safeParse({ placeId: formData.get("placeId") });
   if (!parsed.success) return { error: "Place invalide" };
-
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
-
   const place = await getPlacesProvider().details(parsed.data.placeId);
   if (!place) return { error: "Établissement introuvable" };
-
-  const input = mapPlaceToEtablissement(place);
+  const input = mapPlaceToEtablissement(place, category);
   const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", {
     p: { ...input, enriched_at: new Date().toISOString() },
   });
   if (rpcErr || !etabId) return { error: "Enregistrement échoué" };
-
   const { error: itemErr } = await supabase
     .from("liste_items")
     .upsert({ user_id: auth.user.id, etablissement_id: etabId }, { onConflict: "user_id,etablissement_id" });
   if (itemErr) return { error: "Ajout à la liste échoué" };
-
-  revalidatePath("/restos");
+  revalidatePath(category === "hotel" ? "/hotels" : "/restos");
   return {};
 }
 
+export async function addResto(_prev: unknown, formData: FormData) {
+  return addPlace("resto", formData);
+}
+
 export async function addHotel(_prev: unknown, formData: FormData) {
-  const parsed = addRestoSchema.safeParse({ placeId: formData.get("placeId") });
-  if (!parsed.success) return { error: "Place invalide" };
-  const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Non authentifié" };
-  const place = await getPlacesProvider().details(parsed.data.placeId);
-  if (!place) return { error: "Établissement introuvable" };
-  const input = mapPlaceToEtablissement(place, "hotel");
-  const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", {
-    p: { ...input, enriched_at: new Date().toISOString() },
-  });
-  if (rpcErr || !etabId) return { error: "Enregistrement échoué" };
-  const { error: itemErr } = await supabase
-    .from("liste_items")
-    .upsert({ user_id: auth.user.id, etablissement_id: etabId }, { onConflict: "user_id,etablissement_id" });
-  if (itemErr) return { error: "Ajout à la liste échoué" };
-  revalidatePath("/hotels");
-  return {};
+  return addPlace("hotel", formData);
 }
 
 export async function toggleFavorite(_prev: unknown, formData: FormData) {
