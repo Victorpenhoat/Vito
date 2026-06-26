@@ -4,6 +4,7 @@ import type { Place } from "../domain/filterPlaces";
 
 export function PlaceCard({ place }: { place: Place }) {
   const { etablissement, tags, is_favorite } = place;
+  const base = etablissement.categorie === "hotel" ? "hotels" : "restos";
   const subtitle = [etablissement.type, etablissement.ville].filter(Boolean).join(" · ");
   const photoUrl = etablissement.photo_ref
     ? `/api/places/photo?ref=${encodeURIComponent(etablissement.photo_ref)}&w=800`
@@ -13,7 +14,7 @@ export function PlaceCard({ place }: { place: Place }) {
   return (
     <li data-testid="place-card">
       <Link
-        href={`/restos/${etablissement.id}`}
+        href={`/${base}/${etablissement.id}`}
         className="block overflow-hidden rounded-card border border-line bg-surface"
       >
         <div className="relative h-40 bg-[linear-gradient(135deg,var(--hero-from),var(--hero-to))]">
