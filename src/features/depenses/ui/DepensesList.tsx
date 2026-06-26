@@ -16,19 +16,21 @@ export function DepensesList({ groupeId, depenses, devise, nameById }: {
   const t = useTranslations("depenses");
   const [, action] = useActionState(deleteDepense, undefined);
   return (
-    <ul className="flex flex-col gap-1">
+    <ul className="flex flex-col">
       {depenses.map((d) => (
-        <li key={d.id} data-testid="depense-row" className="flex items-center gap-2 border-b border-line py-2">
-          <span className="flex-1">
-            <span className="font-medium text-ink">{d.libelle}</span>{" "}
-            <span className="text-accent font-semibold">{formatCents(d.montant_cents, devise)}</span>
-            <span className="text-muted"> · {t("payePar")} {nameById[d.paye_par] ?? d.paye_par}</span>
-          </span>
-          <form action={action}>
-            <input type="hidden" name="depenseId" value={d.id} />
-            <input type="hidden" name="groupeId" value={groupeId} />
-            <Button type="submit" variant="ghost" className="text-sm px-2 py-1">{t("supprimer")}</Button>
-          </form>
+        <li key={d.id} data-testid="depense-row" className="flex items-center justify-between gap-3 border-b border-line-soft py-3">
+          <div className="min-w-0">
+            <div className="text-ink">{d.libelle}</div>
+            <div className="text-xs text-muted">{t("payePar")} {nameById[d.paye_par] ?? d.paye_par}{d.date ? ` · ${d.date}` : ""}</div>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="font-serif text-lg text-ink">{formatCents(d.montant_cents, devise)}</span>
+            <form action={action}>
+              <input type="hidden" name="depenseId" value={d.id} />
+              <input type="hidden" name="groupeId" value={groupeId} />
+              <Button type="submit" variant="ghost" className="px-2 py-1 text-xs">{t("supprimer")}</Button>
+            </form>
+          </div>
         </li>
       ))}
     </ul>
