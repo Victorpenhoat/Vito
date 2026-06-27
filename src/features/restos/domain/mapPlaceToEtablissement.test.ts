@@ -43,3 +43,15 @@ describe("mapPlaceToEtablissement", () => {
     expect(mapPlaceToEtablissement(withCp("Paris", null)).arrondissement).toBeNull();
   });
 });
+
+const base: PlaceResult = {
+  placeId: "p1", nom: "Le Test", adresse: null, ville: "Paris", codePostal: "75011",
+  lat: 48.8, lng: 2.3, telephone: null, website: null, priceLevel: 2, types: ["restaurant"],
+  photoRefs: [], rating: 4.6, ratingCount: 320,
+};
+
+it("mappe rating et rating_count", () => {
+  const e = mapPlaceToEtablissement(base, "resto");
+  expect(e.rating).toBe(4.6);
+  expect(e.rating_count).toBe(320);
+});
