@@ -65,6 +65,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
   return (
     <div data-testid="document-tunnel" className="flex max-w-md flex-col gap-4">
       <div className="text-sm text-muted">{t("tunnel.titre")} · {t("tunnel.stepOf", { n: stepN })}</div>
+      <StepIndicator step={step} t={t} />
 
       {step === "A" && (
         <div className="flex flex-col gap-3">
@@ -140,6 +141,27 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
         </form>
       )}
     </div>
+  );
+}
+
+function StepIndicator({ step, t }: { step: "A" | "B" | "C" | "D"; t: ReturnType<typeof useTranslations> }) {
+  const steps = [
+    { k: "A", label: t("tunnel.steps.type") },
+    { k: "B", label: t("tunnel.steps.document") },
+    { k: "C", label: t("tunnel.steps.lecture") },
+    { k: "D", label: t("tunnel.steps.verification") },
+  ];
+  const currentIdx = steps.findIndex((s) => s.k === step);
+  return (
+    <ol className="hidden lg:flex items-center gap-2" aria-hidden="true">
+      {steps.map((s, i) => (
+        <li key={s.k} className="flex items-center gap-2">
+          <span className={`grid h-6 w-6 place-items-center rounded-full text-xs font-semibold ${i <= currentIdx ? "bg-accent text-white" : "bg-accent-50 text-accent"}`}>{i + 1}</span>
+          <span className={`text-sm ${i === currentIdx ? "text-ink font-medium" : "text-muted"}`}>{s.label}</span>
+          {i < steps.length - 1 && <span className="mx-1 h-px w-6 bg-line" />}
+        </li>
+      ))}
+    </ol>
   );
 }
 

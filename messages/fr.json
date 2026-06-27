@@ -311,7 +311,13 @@
       "dExpiration": "Expiration",
       "dLieu": "Lieu d'émission",
       "dSaisieManuelle": "Lecture impossible — saisis les informations à la main.",
-      "dEnregistrer": "Enregistrer le document"
+      "dEnregistrer": "Enregistrer le document",
+      "steps": {
+        "type": "Type",
+        "document": "Document",
+        "lecture": "Lecture",
+        "verification": "Vérification"
+      }
     }
   },
   "agence": {

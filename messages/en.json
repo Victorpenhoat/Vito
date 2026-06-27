@@ -295,7 +295,13 @@
       "dExpiration": "Expiry",
       "dLieu": "Place of issue",
       "dSaisieManuelle": "Couldn't read it — enter the details manually.",
-      "dEnregistrer": "Save document"
+      "dEnregistrer": "Save document",
+      "steps": {
+        "type": "Type",
+        "document": "Document",
+        "lecture": "Reading",
+        "verification": "Review"
+      }
     }
   },
   "agence": {

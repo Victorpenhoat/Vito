@@ -295,7 +295,13 @@
       "dExpiration": "Scadenza",
       "dLieu": "Luogo di emissione",
       "dSaisieManuelle": "Lettura non riuscita — inserisci i dati manualmente.",
-      "dEnregistrer": "Salva documento"
+      "dEnregistrer": "Salva documento",
+      "steps": {
+        "type": "Tipo",
+        "document": "Documento",
+        "lecture": "Lettura",
+        "verification": "Verifica"
+      }
     }
   },
   "agence": {
