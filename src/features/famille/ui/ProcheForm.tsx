@@ -2,16 +2,16 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import type { ProcheDetail } from "../data/queries";
-import { creerProche, modifierProche, supprimerProche } from "../data/actions";
+import { creerProche, modifierProche } from "../data/actions";
 import { RELATIONS, CIRCLES } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
+import { DeleteProcheForm } from "./DeleteProcheForm";
 
 const FIELD = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function ProcheForm({ mode, initial }: { mode: "create" | "edit"; initial?: ProcheDetail }) {
   const t = useTranslations("famille");
   const [state, action, pending] = useActionState(mode === "create" ? creerProche : modifierProche, undefined);
-  const [, supprimer] = useActionState(supprimerProche, undefined);
   return (
     <div className="flex max-w-md flex-col gap-4">
       <form action={action} data-testid="proche-form" className="flex flex-col gap-3">
@@ -38,10 +38,7 @@ export function ProcheForm({ mode, initial }: { mode: "create" | "edit"; initial
         <Button type="submit" pending={pending}>{t("form.enregistrer")}</Button>
       </form>
       {mode === "edit" && (
-        <form action={supprimer} onSubmit={(e) => { if (!confirm(t("form.confirmSuppr"))) e.preventDefault(); }}>
-          <input type="hidden" name="id" value={initial!.id} />
-          <Button type="submit" variant="ghost" className="text-danger">{t("form.supprimer")}</Button>
-        </form>
+        <DeleteProcheForm id={initial!.id} label={t("form.supprimer")} confirmMsg={t("form.confirmSuppr")} />
       )}
     </div>
   );
