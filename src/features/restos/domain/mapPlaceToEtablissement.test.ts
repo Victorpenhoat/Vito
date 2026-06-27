@@ -6,6 +6,7 @@ const place: PlaceResult = {
   placeId: "mock_etoile_1", nom: "La Table Étoilée", adresse: "1 av Gourmet",
   ville: "Paris", codePostal: "75008", lat: 48.87, lng: 2.31,
   telephone: "+33 1 43 00 00 00", website: "https://x.fr", priceLevel: 4,
+  rating: 4.8, ratingCount: 156,
   types: ["restaurant", "fine_dining"], photoRefs: ["p"],
 };
 

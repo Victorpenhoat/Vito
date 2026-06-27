@@ -15,6 +15,8 @@ export type PlaceResult = {
   telephone: string | null;
   website: string | null;
   priceLevel: number | null;
+  rating: number | null;
+  ratingCount: number | null;
   types: string[];
   photoRefs: string[];
 };
