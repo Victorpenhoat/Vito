@@ -21,6 +21,8 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
   const [fields, setFields] = useState<OcrFields>(EMPTY_FIELDS);
   const [ocrRaw, setOcrRaw] = useState<string | null>(null);
   const [manual, setManual] = useState(false);
+  const [readError, setReadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [uploadError, setUploadError] = useState<{ name: string; size: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, dispatch, pending] = useActionState(creerDocument, undefined);
@@ -31,7 +33,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
     setUploadError(null); setFile(f); setStep("C");
   }
 
-  // Étape C : lecture OCR (la route ne persiste rien). Échec → fallback manuel en D.
+  // Étape C : lecture OCR (la route ne persiste rien). Échec → bloc d'erreur à l'étape C.
   useEffect(() => {
     if (step !== "C" || !file) return;
     let cancelled = false;
@@ -43,15 +45,14 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
         const body = await resp.json();
         if (cancelled) return;
         setFields({ ...EMPTY_FIELDS, ...body.fields }); setOcrRaw(JSON.stringify(body.raw ?? null)); setManual(false);
+        setStep("D");
       } catch {
         if (cancelled) return;
-        setFields(EMPTY_FIELDS); setOcrRaw(null); setManual(true);
-      } finally {
-        if (!cancelled) setStep("D");
+        setReadError(true);
       }
     })();
     return () => { cancelled = true; };
-  }, [step, file, docType]);
+  }, [step, file, docType, attempt]);
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,7 +76,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             {DOC_TYPES.map((dt) => (
               <li key={dt}>
                 <button type="button" onClick={() => setDocType(dt)}
-                  className={`flex w-full items-center gap-2 rounded-card border p-3 text-left ${docType === dt ? "border-accent" : "border-line"}`}>
+                  className={`flex w-full items-center gap-2 rounded-card border p-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${docType === dt ? "border-accent" : "border-line"}`}>
                   <DocTypeIcon docType={dt} /><span className="text-sm text-ink">{t(`docTypes.${dt}`)}</span>
                 </button>
               </li>
@@ -94,11 +95,11 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
               <div>{uploadError.name} · {(uploadError.size / 1048576).toFixed(1)} Mo · {t("tunnel.bNonSupporte")}</div>
               <div className="mt-2 flex gap-2">
                 <button type="button" onClick={() => setUploadError(null)}
-                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-accent">
                   {t("tunnel.bReessayer")}
                 </button>
                 <button type="button" onClick={() => inputRef.current?.click()}
-                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-accent">
                   {t("tunnel.bAutreFichier")}
                 </button>
               </div>
@@ -120,9 +121,21 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
       )}
 
       {step === "C" && (
-        <div className="flex flex-col items-center gap-2 p-8 text-center">
-          <h2 className="font-serif text-2xl text-ink">{t("tunnel.cTitre")}</h2>
-          <p className="text-muted">{t("tunnel.cSous")}</p>
+        <div className="flex flex-col items-center gap-3 p-8 text-center">
+          {readError ? (
+            <div role="alert" className="flex flex-col items-center gap-3">
+              <h2 className="font-serif text-2xl text-ink">{t("tunnel.cErreurTitre")}</h2>
+              <div className="flex gap-2">
+                <Button onClick={() => { setReadError(false); setAttempt((a) => a + 1); }}>{t("tunnel.cReessayer")}</Button>
+                <Button variant="ghost" onClick={() => { setManual(true); setFields(EMPTY_FIELDS); setReadError(false); setStep("D"); }}>{t("tunnel.cManuel")}</Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h2 className="font-serif text-2xl text-ink">{t("tunnel.cTitre")}</h2>
+              <p className="text-muted">{t("tunnel.cSous")}</p>
+            </>
+          )}
         </div>
       )}
 

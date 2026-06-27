@@ -22,13 +22,13 @@ export function DocumentRow({ doc, selected, onSelect }: { doc: DocMeta; selecte
       <div className="flex-1 min-w-0">
         <div className="text-ink">{t(`docTypes.${doc.doc_type}`)}</div>
         {doc.doc_number && (
-          <button type="button" onClick={(e) => { e.stopPropagation(); setRevealed((v) => !v); }} aria-label={t("fiche.revelerNumero")} className="text-sm text-muted tabular-nums">
+          <button type="button" onClick={(e) => { e.stopPropagation(); setRevealed((v) => !v); }} aria-label={t("fiche.revelerNumero")} aria-pressed={revealed} className="text-sm text-muted tabular-nums focus-visible:outline-2 focus-visible:outline-accent">
             {revealed ? doc.doc_number : maskDocNumber(doc.doc_number)}
           </button>
         )}
       </div>
       {status && status !== "valid" && <ExpiryBadge status={status} monthsLeft={doc.expiry_date ? monthsUntil(doc.expiry_date, new Date()) : undefined} />}
-      <a href={`/api/famille/documents/${doc.id}`} target="_blank" rel="noopener" className="text-sm font-medium text-accent" onClick={(e) => e.stopPropagation()}>{t("fiche.voirDocument")}</a>
+      <a href={`/api/famille/documents/${doc.id}`} target="_blank" rel="noopener" className="text-sm font-medium text-accent focus-visible:outline-2 focus-visible:outline-accent" onClick={(e) => e.stopPropagation()}>{t("fiche.voirDocument")}</a>
     </li>
   );
 }

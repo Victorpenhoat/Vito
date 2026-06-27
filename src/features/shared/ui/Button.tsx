@@ -17,7 +17,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; pending?: boolean }) {
   return (
     <button
-      className={`rounded-control px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60 ${VARIANT[variant]} ${className}`}
+      className={`rounded-control px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60 ${VARIANT[variant]} ${className}`}
       disabled={pending || props.disabled}
       {...props}
     >
