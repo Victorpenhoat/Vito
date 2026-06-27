@@ -9,7 +9,7 @@
   --accent: #4F8BF0; --accent-hover: #6BA0F5;
   --accent-50: rgba(79,139,240,0.14); --accent-600: #6BA0F5;
   --ink: #F2EDE3; --muted: #A39A8A; --faint: #6E665A;
-  --badge: #26211A; --gold: #E9B949; --danger: #F2998E;
+  --badge: #26211A; --gold: #E9B949; --danger: #F2998E; --danger-bg: rgba(244,63,63,0.14);
   --kpi-green: #7BE0A0; --kpi-green-bg: rgba(34,197,94,0.14);
   --kpi-blue: #4F8BF0; --kpi-blue-bg: rgba(79,139,240,0.14);
   --kpi-amber: #E9B949; --kpi-amber-bg: rgba(233,185,73,0.14);
@@ -24,7 +24,7 @@
   --accent: #2563EB; --accent-hover: #1D4ED8;
   --accent-50: #E6EDFC; --accent-600: #1D4ED8;
   --ink: #211E1A; --muted: #7A736A; --faint: #9A9081;
-  --badge: #F0EBE0; --gold: #E9B949; --danger: #B3261E;
+  --badge: #F0EBE0; --gold: #E9B949; --danger: #B3261E; --danger-bg: #FEF3F2;
   --kpi-green: #15803D; --kpi-green-bg: #E7F2EB;
   --kpi-blue: #2563EB; --kpi-blue-bg: #E6EDFC;
   --kpi-amber: #B45309; --kpi-amber-bg: #FBF0DF;
@@ -42,6 +42,7 @@
   --color-line-soft: var(--line-soft);
   --color-gold: var(--gold);
   --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-50: var(--accent-50);

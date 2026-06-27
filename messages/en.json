@@ -239,7 +239,29 @@
     "vide": "No shared restaurants yet.",
     "pasDeFamille": "You don't have a family yet.",
     "error": { "title": "Something went wrong", "retry": "Try again" },
-    "eyebrow": "My household"
+    "eyebrow": "My household",
+    "relations": {
+      "conjoint": "Partner",
+      "enfant": "Child",
+      "parent": "Parent",
+      "beau_parent": "In-law",
+      "ami": "Friend",
+      "autre": "Other"
+    },
+    "docTypes": {
+      "passeport": "Passport",
+      "carte_identite": "Identity card",
+      "permis_conduire": "Driving licence",
+      "permis_bateau": "Boat licence",
+      "visa": "Visa",
+      "titre_sejour": "Residence permit",
+      "autre": "Other"
+    },
+    "expiry": {
+      "valide": "Valid",
+      "expireDans": "Expires in {n} months",
+      "expire": "Expired"
+    }
   },
   "agence": {
     "title": "Agency space",

@@ -239,7 +239,29 @@
     "vide": "Nessun ristorante condiviso per ora.",
     "pasDeFamille": "Non hai ancora una famiglia.",
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
-    "eyebrow": "Il mio nucleo"
+    "eyebrow": "Il mio nucleo",
+    "relations": {
+      "conjoint": "Coniuge",
+      "enfant": "Figlio",
+      "parent": "Genitore",
+      "beau_parent": "Suocero",
+      "ami": "Amico",
+      "autre": "Altro"
+    },
+    "docTypes": {
+      "passeport": "Passaporto",
+      "carte_identite": "Carta d'identità",
+      "permis_conduire": "Patente di guida",
+      "permis_bateau": "Patente nautica",
+      "visa": "Visto",
+      "titre_sejour": "Permesso di soggiorno",
+      "autre": "Altro"
+    },
+    "expiry": {
+      "valide": "Valido",
+      "expireDans": "Scade tra {n} mesi",
+      "expire": "Scaduto"
+    }
   },
   "agence": {
     "title": "Area agenzia",
