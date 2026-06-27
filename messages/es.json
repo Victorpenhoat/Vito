@@ -239,7 +239,29 @@
     "vide": "Ningún restaurante compartido por el momento.",
     "pasDeFamille": "Aún no tienes una familia.",
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
-    "eyebrow": "Mi hogar"
+    "eyebrow": "Mi hogar",
+    "relations": {
+      "conjoint": "Pareja",
+      "enfant": "Hijo",
+      "parent": "Padre",
+      "beau_parent": "Suegro",
+      "ami": "Amigo",
+      "autre": "Otro"
+    },
+    "docTypes": {
+      "passeport": "Pasaporte",
+      "carte_identite": "Documento de identidad",
+      "permis_conduire": "Permiso de conducir",
+      "permis_bateau": "Licencia náutica",
+      "visa": "Visado",
+      "titre_sejour": "Permiso de residencia",
+      "autre": "Otro"
+    },
+    "expiry": {
+      "valide": "Válido",
+      "expireDans": "Vence en {n} meses",
+      "expire": "Caducado"
+    }
   },
   "agence": {
     "title": "Espacio agencia",

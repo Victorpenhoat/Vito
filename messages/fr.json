@@ -255,7 +255,29 @@
     "vide": "Aucun resto partagé pour l'instant.",
     "pasDeFamille": "Vous n'avez pas encore de famille.",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
-    "eyebrow": "Mon foyer"
+    "eyebrow": "Mon foyer",
+    "relations": {
+      "conjoint": "Conjoint·e",
+      "enfant": "Enfant",
+      "parent": "Parent",
+      "beau_parent": "Beau-parent",
+      "ami": "Ami·e",
+      "autre": "Autre"
+    },
+    "docTypes": {
+      "passeport": "Passeport",
+      "carte_identite": "Carte d'identité",
+      "permis_conduire": "Permis de conduire",
+      "permis_bateau": "Permis bateau",
+      "visa": "Visa",
+      "titre_sejour": "Titre de séjour",
+      "autre": "Autre"
+    },
+    "expiry": {
+      "valide": "Valide",
+      "expireDans": "Expire dans {n} mois",
+      "expire": "Expiré"
+    }
   },
   "agence": {
     "title": "Espace agence",
