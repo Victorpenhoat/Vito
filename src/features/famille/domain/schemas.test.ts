@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { familleInputSchema, inviteSchema, procheInputSchema } from "./schemas";
+import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchema } from "./schemas";
 
 describe("familleInputSchema", () => {
   it("nom requis, 1..120", () => {
@@ -47,5 +47,18 @@ describe("procheInputSchema", () => {
 
   it("rejette un prénom vide", () => {
     expect(procheInputSchema.safeParse({ ...base, first_name: "" }).success).toBe(false);
+  });
+});
+
+describe("documentInputSchema", () => {
+  const base = { doc_type: "passeport" };
+  it("accepte un type seul (champs optionnels vides)", () => {
+    expect(documentInputSchema.safeParse({ ...base, doc_number: "", country: "", holder_name: "", issue_date: "", expiry_date: "", issue_place: "" }).success).toBe(true);
+  });
+  it("accepte des champs renseignés", () => {
+    expect(documentInputSchema.safeParse({ ...base, doc_number: "12AB34567", country: "France", issue_date: "2021-03-12", expiry_date: "2031-03-11" }).success).toBe(true);
+  });
+  it("rejette un doc_type inconnu", () => {
+    expect(documentInputSchema.safeParse({ doc_type: "carte_vitale" }).success).toBe(false);
   });
 });
