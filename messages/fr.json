@@ -390,6 +390,7 @@
     "vueListe": "Liste",
     "vueCarte": "Carte",
     "noteSur10": "/10",
+    "conseilléPar": "Conseillé par {name}",
     "sansLocalisation": "{n} sans localisation",
     "search": "Rechercher un établissement",
     "add": "Ajouter",

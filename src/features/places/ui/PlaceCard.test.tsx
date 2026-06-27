@@ -4,13 +4,13 @@ import { NextIntlClientProvider } from "next-intl";
 import { PlaceCard } from "./PlaceCard";
 import type { Place } from "../domain/filterPlaces";
 
-const messages = { places: { noteSur10: "/10" } };
+const messages = { places: { noteSur10: "/10", "conseilléPar": "Conseillé par {name}" } };
 
-const makePlace = (over: Partial<Place["etablissement"]> = {}, tags: Place["tags"] = []): Place => ({
+const makePlace = (over: Partial<Place["etablissement"]> = {}, tags: Place["tags"] = [], reco_source: string | null = null): Place => ({
   id: "li1",
   statut: "a_faire",
   is_favorite: false,
-  reco_source: null,
+  reco_source,
   etablissement: {
     id: "e1", nom: "Le Bistrot Démo", type: null, ville: "Paris", arrondissement: null,
     categorie: "resto", photo_ref: null, lat: null, lng: null, place_id: null,
@@ -70,5 +70,20 @@ describe("PlaceCard — variants & chips", () => {
     expect(screen.getByText("Bistrot")).toBeInTheDocument();
     expect(screen.queryByText("Classique")).toBeNull();
     expect(screen.getByTestId("place-card-vignette")).toBeInTheDocument();
+  });
+});
+
+describe("PlaceCard — conseillé par (reco_source)", () => {
+  it("liste : affiche « Conseillé par X » quand reco_source présent", () => {
+    renderCard(makePlace({}, [], "Camille"));
+    expect(screen.getByTestId("place-reco")).toHaveTextContent("Conseillé par Camille");
+  });
+  it("liste : pas de bloc reco quand reco_source null", () => {
+    renderCard(makePlace({}, [], null));
+    expect(screen.queryByTestId("place-reco")).toBeNull();
+  });
+  it("vignette : jamais de bloc reco", () => {
+    renderCard(makePlace({}, [], "Camille"), "vignette");
+    expect(screen.queryByTestId("place-reco")).toBeNull();
   });
 });

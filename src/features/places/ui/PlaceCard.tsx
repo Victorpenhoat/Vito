@@ -2,6 +2,8 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/routing";
 import { Badge } from "@/features/shared/ui/Badge";
+import { Avatar } from "@/features/shared/ui/Avatar";
+import { avatarColor } from "@/features/famille/domain/avatarColor";
 import type { Place } from "../domain/filterPlaces";
 import { computeNotation, chipsForVariant } from "../domain/categoryConfig";
 
@@ -47,6 +49,13 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
       ))}
     </div>
   );
+
+  const reco = place.reco_source ? (
+    <span data-testid="place-reco" className="inline-flex items-center gap-2 text-xs text-muted">
+      <Avatar name={place.reco_source} size="sm" color={avatarColor(place.reco_source)} />
+      {t("conseilléPar", { name: place.reco_source })}
+    </span>
+  ) : null;
 
   if (variant === "vignette") {
     return (
@@ -103,6 +112,7 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
           )}
           <span className="font-serif text-xl font-medium text-ink">{etablissement.nom}</span>
           {subtitle && <span className="text-sm text-muted">{etablissement.ville}</span>}
+          {reco}
           {(note || chips) && (
             <div className="mt-1 flex items-center gap-2">
               {note}

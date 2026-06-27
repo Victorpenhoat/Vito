@@ -352,6 +352,7 @@
     "vueListe": "Elenco",
     "vueCarte": "Mappa",
     "noteSur10": "/10",
+    "conseilléPar": "Consigliato da {name}",
     "sansLocalisation": "{n} senza posizione",
     "search": "Cerca un locale",
     "add": "Aggiungi",
