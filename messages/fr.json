@@ -389,6 +389,7 @@
     "empty": "Aucune adresse ici pour l'instant",
     "vueListe": "Liste",
     "vueCarte": "Carte",
+    "noteSur10": "/10",
     "sansLocalisation": "{n} sans localisation",
     "search": "Rechercher un établissement",
     "add": "Ajouter",
