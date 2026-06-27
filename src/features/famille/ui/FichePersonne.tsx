@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import type { ProcheDetail, DocMeta } from "../data/queries";
+import { DeleteProcheForm } from "./DeleteProcheForm";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { Button } from "@/features/shared/ui/Button";
@@ -22,7 +23,10 @@ export async function FichePersonne({ proche, documents }: { proche: ProcheDetai
             <span className="text-sm text-muted">{t(`circles.${proche.circle}`)}</span>
           </div>
         </div>
-        <Link href={`/famille/proches/${proche.id}/modifier`}><Button variant="ghost">{t("fiche.modifier")}</Button></Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/famille/proches/${proche.id}/modifier`}><Button variant="ghost">{t("fiche.modifier")}</Button></Link>
+          <DeleteProcheForm id={proche.id} label={t("form.supprimer")} confirmMsg={t("form.confirmSuppr")} />
+        </div>
       </header>
 
       {(proche.phone || proche.email || proche.birth_date) && (

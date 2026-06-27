@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/lib/i18n/routing";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
@@ -181,7 +182,8 @@ export async function creerProche(_prev: unknown, formData: FormData) {
     .single();
   if (error || !data) return { error: "Création échouée" };
   revalidatePath("/famille");
-  redirect(`/famille/proches/${data.id}`);
+  const locale = await getLocale();
+  redirect({ href: `/famille/proches/${data.id}`, locale });
 }
 
 export async function modifierProche(_prev: unknown, formData: FormData) {
@@ -218,7 +220,8 @@ export async function modifierProche(_prev: unknown, formData: FormData) {
   if (!data) return { error: "Introuvable" };
   revalidatePath("/famille");
   revalidatePath(`/famille/proches/${id}`);
-  redirect(`/famille/proches/${id}`);
+  const locale = await getLocale();
+  redirect({ href: `/famille/proches/${id}`, locale });
 }
 
 export async function supprimerProche(_prev: unknown, formData: FormData) {
@@ -229,5 +232,6 @@ export async function supprimerProche(_prev: unknown, formData: FormData) {
   const { error } = await supabase.from("family_members").delete().eq("id", id);
   if (error) return { error: "Suppression échouée" };
   revalidatePath("/famille");
-  redirect("/famille");
+  const locale = await getLocale();
+  redirect({ href: "/famille", locale });
 }
