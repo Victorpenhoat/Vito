@@ -12,13 +12,16 @@ async function login(page: import("@playwright/test").Page) {
 test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis", async ({ page }) => {
   await login(page);
 
+  // Ouvrir l'onglet Recherche (la barre de recherche externe n'existe que là)
+  await page.getByTestId("tab-recherche").click();
+
   // Recherche (provider mock) + ajout
   await page.getByTestId("add-resto-search").fill("bistrot");
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
 
-  // Le Bistrot du Coin est ajouté sans is_favorite → il apparaît dans l'onglet À tester
-  await page.getByTestId("tab-a-tester").click();
+  // Le Bistrot du Coin est ajouté sans is_favorite + statut='a_faire' → il apparaît dans Recommandés
+  await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Bistrot" }).first()).toBeVisible();
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (ajouté via mock — a un UUID v4 valide pour la RPC avis)
@@ -42,8 +45,8 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   await login(page);
 
   // "Le Bistrot du Coin" a été ajouté par le 1er test (état DB partagé, workers:1, statut a_faire)
-  // → on l'atteint via l'onglet À tester (la recherche externe dédoublonne les lieux déjà possédés)
-  await page.getByTestId("tab-a-tester").click();
+  // → on l'atteint via l'onglet Recommandés (la recherche externe dédoublonne les lieux déjà possédés)
+  await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (UUID v4 valide généré par la base)
@@ -88,8 +91,8 @@ test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)"
   await login(page);
 
   // "Le Bistrot du Coin" (avec photoRefs dans le mock) a été ajouté par le 1er test (état DB partagé)
-  // → on l'atteint via l'onglet À tester (la recherche externe dédoublonne les lieux déjà possédés)
-  await page.getByTestId("tab-a-tester").click();
+  // → on l'atteint via l'onglet Recommandés (la recherche externe dédoublonne les lieux déjà possédés)
+  await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
 
   // Ouvrir sa fiche
