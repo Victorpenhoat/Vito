@@ -12,6 +12,8 @@ test("l'onglet Hôtels montre l'hôtel seedé", async ({ page }) => {
   await login(page);
   await page.goto("/fr/hotels");
   await expect(page.getByTestId("places-tabs")).toBeVisible();
+  // Hôtel Démo est is_favorite=false + statut='a_faire' → visible dans Recommandés
+  await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel Démo" }).first()).toBeVisible();
 });
 
@@ -25,9 +27,12 @@ test("l'hôtel n'apparaît PAS dans Restos (getPlaces resto exclut les hôtels)"
 test("ajouter un hôtel via la recherche externe", async ({ page }) => {
   await login(page);
   await page.goto("/fr/hotels");
+  // La barre de recherche externe n'existe que dans l'onglet Recherche
+  await page.getByTestId("tab-recherche").click();
   await page.getByTestId("add-hotel-search").fill("hôtel");
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
-  await page.getByTestId("tab-a-tester").click();
+  // L'hôtel ajouté est non-favori + statut='a_faire' → il apparaît dans Recommandés
+  await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").first()).toBeVisible();
 });

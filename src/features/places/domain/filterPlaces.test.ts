@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { filterPlaces } from "./filterPlaces";
 
 const P = (nom: string, ville: string | null, tags: string[] = []) => ({
-  id: nom, statut: "a_faire" as const, is_favorite: false,
+  id: nom, statut: "a_faire" as const, is_favorite: false, reco_source: null,
   etablissement: { id: nom, nom, type: null, ville, arrondissement: null, categorie: "resto" as const, photo_ref: null, lat: null, lng: null, place_id: null, rating: null, rating_count: null },
   tags: tags.map((label) => ({ slug: label, label, color: null })),
 });

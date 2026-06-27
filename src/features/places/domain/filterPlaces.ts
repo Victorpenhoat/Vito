@@ -2,6 +2,7 @@ export type Place = {
   id: string;
   statut: "a_faire" | "visite";
   is_favorite: boolean;
+  reco_source: string | null;
   etablissement: { id: string; nom: string; type: string | null; ville: string | null; arrondissement: string | null; categorie: "resto" | "hotel"; photo_ref: string | null; lat: number | null; lng: number | null; place_id: string | null; rating: number | null; rating_count: number | null };
   tags: { slug: string; label: string; color: string | null }[];
 };

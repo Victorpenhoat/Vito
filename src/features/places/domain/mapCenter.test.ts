@@ -3,7 +3,7 @@ import { mapCenter } from "./mapCenter";
 import type { Place } from "./filterPlaces";
 
 const place = (lat: number | null, lng: number | null): Place => ({
-  id: Math.random().toString(36), statut: "a_faire", is_favorite: false,
+  id: Math.random().toString(36), statut: "a_faire", is_favorite: false, reco_source: null,
   etablissement: { id: "x", nom: "X", type: null, ville: null, arrondissement: null, categorie: "resto", photo_ref: null, lat, lng, place_id: null, rating: null, rating_count: null },
   tags: [],
 });
