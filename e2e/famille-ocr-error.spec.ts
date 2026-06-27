@@ -13,7 +13,10 @@ async function login(page: Page, email: string) {
 async function openTunnel(page: Page) {
   await page.goto("/fr/famille");
   await page.getByTestId("proche-row").filter({ hasText: "Camille Durand" }).first().click();
+  // le skeleton loading.tsx (Slice 6) peut retarder l'affichage de la fiche sur CI : attendre la navigation
+  await expect(page).toHaveURL(/\/famille\/proches\//);
   await page.getByRole("link", { name: "Ajouter un document" }).click();
+  await expect(page.getByTestId("document-tunnel")).toBeVisible();
   await page.getByRole("button", { name: "Continuer" }).click(); // étape A -> B
 }
 
