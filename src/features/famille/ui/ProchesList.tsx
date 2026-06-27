@@ -18,7 +18,7 @@ export async function ProchesList({ proches }: { proches: Proche[] }) {
         return (
           <section key={circle} className="flex flex-col gap-3">
             <SectionLabel>{t(`circles.${circle}`)}</SectionLabel>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-2 xl:grid-cols-3">
               {group.map((p) => (
                 <li key={p.id} data-testid="proche-row">
                   <Link href={`/famille/proches/${p.id}`} className="block">

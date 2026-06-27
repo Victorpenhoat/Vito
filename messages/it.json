@@ -264,7 +264,7 @@
     },
     "proches": { "titre": "I miei cari", "ajouter": "Aggiungi una persona", "vide": "Ancora nessuno", "videTexte": "Aggiungi le persone di cui conservi i documenti a portata di mano.", "documentsCount": "{n, plural, =0 {Nessun documento} one {# documento} other {# documenti}}" },
     "circles": { "proche": "Famiglia stretta", "elargie": "Famiglia allargata", "amis": "Amici" },
-    "fiche": { "contacts": "Contatti", "naissance": "Nascita", "documents": "Documenti", "aucunDocument": "Nessun documento registrato.", "voirDocument": "Vedi il documento", "modifier": "Modifica", "revelerNumero": "Mostra il numero" },
+    "fiche": { "contacts": "Contatti", "naissance": "Nascita", "documents": "Documenti", "aucunDocument": "Nessun documento registrato.", "voirDocument": "Vedi il documento", "modifier": "Modifica", "revelerNumero": "Mostra il numero", "apercu": "Anteprima" },
     "form": { "prenom": "Nome", "nom": "Cognome", "relation": "Relazione", "cercle": "Cerchia", "telephone": "Telefono", "email": "E-mail", "naissance": "Data di nascita", "enregistrer": "Salva", "supprimer": "Elimina", "confirmSuppr": "Eliminare questa persona e i suoi documenti?" },
     "tunnel": {
       "ajouterDocument": "Aggiungi un documento",
