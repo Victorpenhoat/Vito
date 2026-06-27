@@ -66,3 +66,10 @@ test("la bascule Carte affiche la carte", async ({ page }) => {
   await page.getByTestId("view-carte").click();
   await expect(page.getByTestId("places-map")).toBeVisible();
 });
+
+test("la note du resto s'affiche sur la liste (★ 4,6)", async ({ page }) => {
+  await login(page);
+  const card = page.getByTestId("place-card").first();
+  await expect(card.getByTestId("place-note")).toBeVisible();
+  await expect(card.getByTestId("place-note")).toContainText("4,6");
+});
