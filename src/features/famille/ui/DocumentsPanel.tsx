@@ -5,14 +5,18 @@ import type { DocMeta } from "../data/queries";
 import { DocumentRow } from "./DocumentRow";
 import { DocumentPreview } from "./DocumentPreview";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
+import { AjouterDocumentButton } from "./AjouterDocumentButton";
 
-export function DocumentsPanel({ documents }: { documents: DocMeta[] }) {
+export function DocumentsPanel({ documents, memberId }: { documents: DocMeta[]; memberId: string }) {
   const t = useTranslations("famille");
   const [selected, setSelected] = useState<string | null>(documents[0]?.id ?? null);
   const current = documents.find((d) => d.id === selected) ?? documents[0] ?? null;
   return (
     <section className="flex flex-col gap-3">
-      <SectionLabel>{t("fiche.documents")}</SectionLabel>
+      <div className="flex items-center justify-between">
+        <SectionLabel>{t("fiche.documents")}</SectionLabel>
+        <AjouterDocumentButton memberId={memberId} />
+      </div>
       {documents.length === 0 ? (
         <p className="text-muted">{t("fiche.aucunDocument")}</p>
       ) : (

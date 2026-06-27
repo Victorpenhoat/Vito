@@ -6,7 +6,6 @@ import { Avatar } from "@/features/shared/ui/Avatar";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { Button } from "@/features/shared/ui/Button";
 import { RelationChip } from "./RelationChip";
-import { AjouterDocumentButton } from "./AjouterDocumentButton";
 import { DocumentsPanel } from "./DocumentsPanel";
 import { formatDay } from "@/lib/format/date";
 
@@ -40,11 +39,8 @@ export async function FichePersonne({ proche, documents }: { proche: ProcheDetai
           </section>
         )}
 
-        <div className="flex items-center justify-between">
-          <AjouterDocumentButton memberId={proche.id} />
-        </div>
       </div>
-      <DocumentsPanel documents={documents} />
+      <DocumentsPanel documents={documents} memberId={proche.id} />
     </div>
   );
 }
