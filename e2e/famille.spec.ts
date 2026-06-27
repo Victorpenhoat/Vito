@@ -98,6 +98,7 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
 
   // Modifier
   await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).click();
+  await expect(page).toHaveURL(/\/famille\/proches\//);
   await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
