@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/lib/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/features/shared/ui/Button";
 

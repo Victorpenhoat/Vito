@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/routing";
 import { getMaFamille, getFamilleRestos, getProches } from "@/features/famille/data/queries";
 import { FamilleForm } from "@/features/famille/ui/FamilleForm";
 import { InviteForm } from "@/features/famille/ui/InviteForm";

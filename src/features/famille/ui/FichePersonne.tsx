@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/lib/i18n/routing";
 import { getTranslations, getLocale } from "next-intl/server";
 import type { ProcheDetail, DocMeta } from "../data/queries";
 import { DeleteProcheForm } from "./DeleteProcheForm";
