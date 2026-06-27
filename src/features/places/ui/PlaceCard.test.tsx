@@ -10,6 +10,7 @@ const makePlace = (over: Partial<Place["etablissement"]> = {}, tags: Place["tags
   id: "li1",
   statut: "a_faire",
   is_favorite: false,
+  reco_source: null,
   etablissement: {
     id: "e1", nom: "Le Bistrot Démo", type: null, ville: "Paris", arrondissement: null,
     categorie: "resto", photo_ref: null, lat: null, lng: null, place_id: null,
