@@ -381,11 +381,12 @@
     "group": { "carnet": "Carnet", "voyages": "Voyages", "cercle": "Cercle" }
   },
   "places": {
-    "tous": "Tous",
     "favoris": "Favoris",
-    "aTester": "À tester",
-    "visites": "Visités",
-    "searchPlaceholder": "Rechercher dans mes adresses…",
+    "recommandes": "Recommandés",
+    "carte": "Carte",
+    "recherche": "Recherche",
+    "vueVignettes": "Vignettes",
+    "filtrerPlaceholder": "Rechercher dans cette liste…",
     "empty": "Aucune adresse ici pour l'instant",
     "vueListe": "Liste",
     "vueCarte": "Carte",
