@@ -8,6 +8,7 @@ describe("computeNotation", () => {
   it("hôtel → score /10 = rating × 2", () => {
     expect(computeNotation("hotel", 4.5)).toEqual({ kind: "score", value: 9, scale: 10 });
     expect(computeNotation("hotel", 5)).toEqual({ kind: "score", value: 10, scale: 10 });
+    expect(computeNotation("hotel", 3.3)).toEqual({ kind: "score", value: 6.6, scale: 10 });
   });
   it("rating null → null (resto et hôtel)", () => {
     expect(computeNotation("resto", null)).toBeNull();
@@ -23,6 +24,7 @@ describe("chipsForVariant", () => {
   const tags = ["a", "b", "c"];
   it("liste → max 2", () => expect(chipsForVariant(tags, "resto", "liste")).toEqual(["a", "b"]));
   it("vignette → max 1", () => expect(chipsForVariant(tags, "resto", "vignette")).toEqual(["a"]));
+  it("hôtel vignette → max 1 (au-dessus du max)", () => expect(chipsForVariant(tags, "hotel", "vignette")).toEqual(["a"]));
   it("moins de tags que le max → tous", () => expect(chipsForVariant(["a"], "hotel", "liste")).toEqual(["a"]));
 });
 
