@@ -47,3 +47,35 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   await ctxA.close();
   await ctxB.close();
 });
+
+test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
+  await login(page, "premium@vito.test");
+  await page.goto("/fr/famille");
+  await page.getByRole("link", { name: "Ajouter un proche" }).first().click();
+  await expect(page).toHaveURL(/\/famille\/proches\/nouveau/);
+
+  await page.getByTestId("proche-form").locator('input[name="first_name"]').fill("Léa");
+  await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Martin");
+  await page.getByTestId("proche-form").locator('select[name="circle"]').selectOption("amis");
+  await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
+
+  // Redirigé vers la fiche
+  await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
+
+  // Visible dans la liste, section Amis
+  await page.goto("/fr/famille");
+  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Martin" })).toBeVisible();
+
+  // Modifier
+  await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).click();
+  await page.getByRole("link", { name: "Modifier" }).click();
+  await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
+  await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
+  await expect(page.getByRole("heading", { name: "Léa Bernard" })).toBeVisible();
+
+  // Supprimer (confirm auto-accepté)
+  page.on("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "Supprimer" }).click();
+  await expect(page).toHaveURL(/\/fr\/famille$/);
+  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Bernard" })).toHaveCount(0);
+});

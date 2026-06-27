@@ -261,7 +261,11 @@
       "valide": "Válido",
       "expireDans": "Vence en {n} meses",
       "expire": "Caducado"
-    }
+    },
+    "proches": { "titre": "Mis allegados", "ajouter": "Añadir una persona", "vide": "Aún no hay nadie", "videTexte": "Añade a las personas cuyos documentos guardas a mano.", "documentsCount": "{n, plural, =0 {Sin documentos} one {# documento} other {# documentos}}" },
+    "circles": { "proche": "Familia cercana", "elargie": "Familia extensa", "amis": "Amigos" },
+    "fiche": { "contacts": "Contactos", "naissance": "Nacimiento", "documents": "Documentos", "aucunDocument": "Ningún documento registrado.", "voirDocument": "Ver el documento", "modifier": "Editar", "revelerNumero": "Mostrar el número" },
+    "form": { "prenom": "Nombre", "nom": "Apellido", "relation": "Relación", "cercle": "Círculo", "telephone": "Teléfono", "email": "Correo", "naissance": "Fecha de nacimiento", "enregistrer": "Guardar", "supprimer": "Eliminar", "confirmSuppr": "¿Eliminar a esta persona y sus documentos?" }
   },
   "agence": {
     "title": "Espacio agencia",

@@ -198,3 +198,13 @@ insert into auth.identities (id, user_id, provider_id, identity_data, provider, 
 values
   (gen_random_uuid(), '99999999-9999-4999-8999-999999999999', '99999999-9999-4999-8999-999999999999',
    '{"sub":"99999999-9999-4999-8999-999999999999","email":"client7b@vito.test"}', 'email', now(), now());
+
+-- Famille : répertoire de proches (Slice 3) pour client@vito.test (11111111-1111-1111-1111-111111111111)
+insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color) values
+  ('f1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111', 'Camille', 'Durand', 'enfant', 'proche', '#6B7A8F');
+
+insert into public.family_documents (id, user_id, member_id, doc_type, doc_number, country, holder_name, issue_date, expiry_date, contenu_chiffre, mime_type, taille) values
+  ('d1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111', 'f1111111-1111-4111-8111-111111111111',
+   'passeport', '19FR99892', 'FR', 'Camille Durand', '2019-03-01', '2029-03-01',
+   'z8qW2rZIWU40NFWX7FWy65T8NMMW06ozKgn3AQrM2dJLSJXyRoZFRHm9zmXN2eETafYyNJRDZ6TqEGgpEfBAGi8dee3//rtH',
+   'application/pdf', 48);

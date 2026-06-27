@@ -277,7 +277,11 @@
       "valide": "Valide",
       "expireDans": "Expire dans {n} mois",
       "expire": "Expiré"
-    }
+    },
+    "proches": { "titre": "Mes proches", "ajouter": "Ajouter un proche", "vide": "Aucun proche pour l'instant", "videTexte": "Ajoute les personnes dont tu gardes les papiers à portée de main.", "documentsCount": "{n, plural, =0 {Aucun document} one {# document} other {# documents}}" },
+    "circles": { "proche": "Proches", "elargie": "Famille élargie", "amis": "Amis" },
+    "fiche": { "contacts": "Contacts", "naissance": "Naissance", "documents": "Documents", "aucunDocument": "Aucun document enregistré.", "voirDocument": "Voir le document", "modifier": "Modifier", "revelerNumero": "Révéler le numéro" },
+    "form": { "prenom": "Prénom", "nom": "Nom", "relation": "Relation", "cercle": "Cercle", "telephone": "Téléphone", "email": "E-mail", "naissance": "Date de naissance", "enregistrer": "Enregistrer", "supprimer": "Supprimer", "confirmSuppr": "Supprimer ce proche et ses documents ?" }
   },
   "agence": {
     "title": "Espace agence",
