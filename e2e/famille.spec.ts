@@ -48,6 +48,36 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   await ctxB.close();
 });
 
+test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur la fiche", async ({ page }) => {
+  const PDF = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF");
+  await login(page, "client@vito.test");
+  // client a un proche seedé « Camille Durand » (Slice 3)
+  await page.goto("/fr/famille");
+  await page.getByTestId("proche-row").filter({ hasText: "Camille Durand" }).click();
+  await expect(page).toHaveURL(/\/famille\/proches\//);
+
+  await page.getByRole("link", { name: "Ajouter un document" }).click();
+  await expect(page.getByTestId("document-tunnel")).toBeVisible();
+
+  // A : Passeport est sélectionné par défaut → Continuer
+  await page.getByRole("button", { name: "Continuer" }).click();
+  // B : importer un PDF → déclenche C (OCR mock) puis D
+  await page.getByTestId("tunnel-file").setInputFiles({ name: "passeport.pdf", mimeType: "application/pdf", buffer: PDF });
+  // D : pré-rempli par le mock (pays France) → enregistrer
+  await expect(page.getByTestId("tunnel-verify")).toBeVisible();
+  await expect(page.locator('input[name="country"]')).toHaveValue("France");
+  await page.getByRole("button", { name: "Enregistrer le document" }).click();
+
+  // Retour fiche : le document apparaît, et la route déchiffrée renvoie 200
+  await expect(page).toHaveURL(/\/famille\/proches\/[^/]+$/);
+  const row = page.getByTestId("document-row").filter({ hasText: "Passeport" });
+  await expect(row.first()).toBeVisible();
+  const href = await row.first().getByRole("link", { name: "Voir le document" }).getAttribute("href");
+  expect(href).toBeTruthy();
+  const resp = await page.request.get(href!);
+  expect(resp.status()).toBe(200);
+});
+
 test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   await login(page, "premium@vito.test");
   await page.goto("/fr/famille");
