@@ -264,6 +264,9 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
   const uid = await userId(supabase);
   if (!uid) return { error: "Non authentifié" };
 
+  const { data: member } = await supabase.from("family_members").select("id").eq("id", memberId).maybeSingle();
+  if (!member) return { error: "Proche introuvable" };
+
   let chiffre: string;
   try {
     chiffre = encryptDocument(Buffer.from(await file.arrayBuffer()), getDocumentKey()).toString("base64");

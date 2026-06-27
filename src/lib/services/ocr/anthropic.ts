@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type {
   DocumentBlockParam,
   ImageBlockParam,
-} from "@anthropic-ai/sdk/resources/messages/messages";
+} from "@anthropic-ai/sdk/resources";
 import type { OcrProvider, OcrResult, OcrFields } from "./types";
 import { EMPTY_FIELDS } from "./types";
 

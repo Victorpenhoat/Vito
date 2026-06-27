@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useEffect, useState, startTransition } from "react";
+import { useActionState, useEffect, useState, startTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { creerDocument } from "../data/actions";
 import { DOC_TYPES } from "../domain/schemas";
@@ -22,6 +22,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
   const [ocrRaw, setOcrRaw] = useState<string | null>(null);
   const [manual, setManual] = useState(false);
   const [uploadError, setUploadError] = useState<{ name: string; size: number } | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [state, dispatch, pending] = useActionState(creerDocument, undefined);
   const stepN = { A: 1, B: 2, C: 3, D: 4 }[step];
 
@@ -90,12 +91,23 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             <div role="alert" className="rounded-card border border-danger bg-danger-bg p-3 text-sm text-danger">
               <div className="font-semibold">{t("tunnel.bErreurTitre")}</div>
               <div>{uploadError.name} · {(uploadError.size / 1048576).toFixed(1)} Mo · {t("tunnel.bNonSupporte")}</div>
+              <div className="mt-2 flex gap-2">
+                <button type="button" onClick={() => setUploadError(null)}
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  {t("tunnel.bReessayer")}
+                </button>
+                <button type="button" onClick={() => inputRef.current?.click()}
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  {t("tunnel.bAutreFichier")}
+                </button>
+              </div>
             </div>
           )}
           <label className="flex cursor-pointer flex-col items-center gap-1 rounded-card border border-dashed border-line p-6 text-center">
             <span className="text-ink">{t("tunnel.bDepose")}</span>
-            <span className="text-sm text-muted">{t("tunnel.bContraintes")}</span>
-            <input type="file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+            <span className="text-sm text-muted">{t("tunnel.bOu")}</span>
+            <span className="text-xs text-muted">{t("tunnel.bContraintes")}</span>
+            <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
               data-testid="tunnel-file" className="sr-only"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) pick(f); }} />
             <span className="mt-2 inline-flex gap-2">

@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
       { fields: result.fields, raw: result.raw },
       { headers: { "Cache-Control": "private, no-store" } },
     );
-  } catch {
+  } catch (err) {
+    console.error("ocr_error", err instanceof Error ? err.message : "unknown");
     return NextResponse.json({ error: "lecture_indisponible" }, { status: 502 });
   }
 }
