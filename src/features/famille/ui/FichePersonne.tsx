@@ -7,6 +7,7 @@ import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { Button } from "@/features/shared/ui/Button";
 import { RelationChip } from "./RelationChip";
 import { DocumentRow } from "./DocumentRow";
+import { AjouterDocumentButton } from "./AjouterDocumentButton";
 import { formatDay } from "@/lib/format/date";
 
 export async function FichePersonne({ proche, documents }: { proche: ProcheDetail; documents: DocMeta[] }) {
@@ -39,7 +40,10 @@ export async function FichePersonne({ proche, documents }: { proche: ProcheDetai
       )}
 
       <section className="flex flex-col gap-2">
-        <SectionLabel>{t("fiche.documents")}</SectionLabel>
+        <div className="flex items-center justify-between">
+          <SectionLabel>{t("fiche.documents")}</SectionLabel>
+          <AjouterDocumentButton memberId={proche.id} />
+        </div>
         {documents.length === 0 ? (
           <p className="text-muted">{t("fiche.aucunDocument")}</p>
         ) : (

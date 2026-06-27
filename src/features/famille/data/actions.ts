@@ -5,7 +5,10 @@ import { redirect } from "@/lib/i18n/routing";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
-import { familleInputSchema, inviteSchema, procheInputSchema } from "../domain/schemas";
+import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchema } from "../domain/schemas";
+import { encryptDocument } from "@/lib/crypto/documents";
+import { getDocumentKey } from "@/lib/crypto/documentKey";
+import type { Json } from "@/types/database.types";
 import { avatarColor } from "../domain/avatarColor";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
@@ -234,4 +237,65 @@ export async function supprimerProche(_prev: unknown, formData: FormData) {
   revalidatePath("/famille");
   const locale = await getLocale();
   redirect({ href: "/famille", locale });
+}
+
+const DOC_ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
+const DOC_MAX = 10 * 1024 * 1024;
+
+export async function creerDocument(_prev: unknown, formData: FormData) {
+  const memberId = formData.get("memberId");
+  const file = formData.get("file");
+  if (typeof memberId !== "string" || !memberId || !(file instanceof File)) return { error: "Entrée invalide" };
+  if (!DOC_ALLOWED.includes(file.type)) return { error: "Type non supporté" };
+  if (file.size <= 0 || file.size > DOC_MAX) return { error: "Fichier vide ou trop volumineux (max 10 Mo)" };
+
+  const parsed = documentInputSchema.safeParse({
+    doc_type: formData.get("docType"),
+    doc_number: formData.get("doc_number") ?? "",
+    country: formData.get("country") ?? "",
+    holder_name: formData.get("holder_name") ?? "",
+    issue_date: formData.get("issue_date") ?? "",
+    expiry_date: formData.get("expiry_date") ?? "",
+    issue_place: formData.get("issue_place") ?? "",
+  });
+  if (!parsed.success) return { error: "Champs invalides" };
+
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+
+  const { data: member } = await supabase.from("family_members").select("id").eq("id", memberId).maybeSingle();
+  if (!member) return { error: "Proche introuvable" };
+
+  let chiffre: string;
+  try {
+    chiffre = encryptDocument(Buffer.from(await file.arrayBuffer()), getDocumentKey()).toString("base64");
+  } catch {
+    return { error: "Chiffrement indisponible" };
+  }
+
+  const ocrRawStr = formData.get("ocrRaw");
+  let ocr_raw: Json | null = null;
+  if (typeof ocrRawStr === "string" && ocrRawStr) { try { ocr_raw = JSON.parse(ocrRawStr) as Json; } catch { ocr_raw = null; } }
+
+  const p = parsed.data;
+  const { error } = await supabase.from("family_documents").insert({
+    user_id: uid,
+    member_id: memberId,
+    doc_type: p.doc_type,
+    doc_number: clean(formData.get("doc_number")),
+    country: clean(formData.get("country")),
+    holder_name: clean(formData.get("holder_name")),
+    issue_date: clean(formData.get("issue_date")),
+    expiry_date: clean(formData.get("expiry_date")),
+    issue_place: clean(formData.get("issue_place")),
+    contenu_chiffre: chiffre,
+    mime_type: file.type,
+    taille: file.size,
+    ocr_raw,
+  });
+  if (error) return { error: "Enregistrement échoué" };
+  revalidatePath(`/famille/proches/${memberId}`);
+  const locale = await getLocale();
+  redirect({ href: `/famille/proches/${memberId}`, locale });
 }
