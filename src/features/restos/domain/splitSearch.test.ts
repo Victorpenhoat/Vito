@@ -6,7 +6,7 @@ const place = (over: Partial<Place> & { nom: string; place_id?: string | null })
   id: Math.random().toString(36),
   statut: over.statut ?? "a_faire",
   is_favorite: over.is_favorite ?? false,
-  etablissement: { id: "e", nom: over.nom, type: null, ville: null, arrondissement: null, categorie: "resto", photo_ref: null, lat: null, lng: null, place_id: over.place_id ?? null },
+  etablissement: { id: "e", nom: over.nom, type: null, ville: null, arrondissement: null, categorie: "resto", photo_ref: null, lat: null, lng: null, place_id: over.place_id ?? null, rating: null, rating_count: null },
   tags: [],
 });
 
