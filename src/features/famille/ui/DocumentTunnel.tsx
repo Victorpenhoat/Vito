@@ -75,7 +75,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             {DOC_TYPES.map((dt) => (
               <li key={dt}>
                 <button type="button" onClick={() => setDocType(dt)}
-                  className={`flex w-full items-center gap-2 rounded-card border p-3 text-left ${docType === dt ? "border-accent" : "border-line"}`}>
+                  className={`flex w-full items-center gap-2 rounded-card border p-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${docType === dt ? "border-accent" : "border-line"}`}>
                   <DocTypeIcon docType={dt} /><span className="text-sm text-ink">{t(`docTypes.${dt}`)}</span>
                 </button>
               </li>
@@ -94,11 +94,11 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
               <div>{uploadError.name} · {(uploadError.size / 1048576).toFixed(1)} Mo · {t("tunnel.bNonSupporte")}</div>
               <div className="mt-2 flex gap-2">
                 <button type="button" onClick={() => setUploadError(null)}
-                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-accent">
                   {t("tunnel.bReessayer")}
                 </button>
                 <button type="button" onClick={() => inputRef.current?.click()}
-                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium">
+                  className="rounded-control border border-danger px-3 py-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-accent">
                   {t("tunnel.bAutreFichier")}
                 </button>
               </div>
