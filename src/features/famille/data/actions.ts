@@ -1,9 +1,11 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
-import { familleInputSchema, inviteSchema } from "../domain/schemas";
+import { familleInputSchema, inviteSchema, procheInputSchema } from "../domain/schemas";
+import { avatarColor } from "../domain/avatarColor";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -141,4 +143,91 @@ export async function chercherEtablissements(query: string) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return [];
   return getPlacesProvider().search(query);
+}
+
+function clean(v: FormDataEntryValue | null): string | null {
+  return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
+}
+
+export async function creerProche(_prev: unknown, formData: FormData) {
+  const parsed = procheInputSchema.safeParse({
+    first_name: formData.get("first_name"),
+    last_name: formData.get("last_name"),
+    relation: formData.get("relation"),
+    circle: formData.get("circle"),
+    phone: formData.get("phone") ?? "",
+    email: formData.get("email") ?? "",
+    birth_date: formData.get("birth_date") ?? "",
+  });
+  if (!parsed.success) return { error: "Champs invalides" };
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+  const p = parsed.data;
+  const { data, error } = await supabase
+    .from("family_members")
+    .insert({
+      user_id: uid,
+      first_name: p.first_name,
+      last_name: p.last_name,
+      relation: p.relation,
+      circle: p.circle,
+      phone: clean(formData.get("phone")),
+      email: clean(formData.get("email")),
+      birth_date: clean(formData.get("birth_date")),
+      avatar_color: avatarColor(`${p.first_name} ${p.last_name}`),
+    })
+    .select("id")
+    .single();
+  if (error || !data) return { error: "Création échouée" };
+  revalidatePath("/famille");
+  redirect(`/famille/proches/${data.id}`);
+}
+
+export async function modifierProche(_prev: unknown, formData: FormData) {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
+  const parsed = procheInputSchema.safeParse({
+    first_name: formData.get("first_name"),
+    last_name: formData.get("last_name"),
+    relation: formData.get("relation"),
+    circle: formData.get("circle"),
+    phone: formData.get("phone") ?? "",
+    email: formData.get("email") ?? "",
+    birth_date: formData.get("birth_date") ?? "",
+  });
+  if (!parsed.success) return { error: "Champs invalides" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const p = parsed.data;
+  const { data, error } = await supabase
+    .from("family_members")
+    .update({
+      first_name: p.first_name,
+      last_name: p.last_name,
+      relation: p.relation,
+      circle: p.circle,
+      phone: clean(formData.get("phone")),
+      email: clean(formData.get("email")),
+      birth_date: clean(formData.get("birth_date")),
+    })
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+  if (error) return { error: "Modification échouée" };
+  if (!data) return { error: "Introuvable" };
+  revalidatePath("/famille");
+  revalidatePath(`/famille/proches/${id}`);
+  redirect(`/famille/proches/${id}`);
+}
+
+export async function supprimerProche(_prev: unknown, formData: FormData) {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { error } = await supabase.from("family_members").delete().eq("id", id);
+  if (error) return { error: "Suppression échouée" };
+  revalidatePath("/famille");
+  redirect("/famille");
 }
