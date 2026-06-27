@@ -23,11 +23,7 @@ export function DocumentsPanel({ documents, memberId }: { documents: DocMeta[]; 
         <div className="lg:grid lg:grid-cols-2 lg:gap-6">
           <ul className="flex flex-col gap-2">
             {documents.map((d) => (
-              <li key={d.id}>
-                <button type="button" onClick={() => setSelected(d.id)} className="w-full text-left">
-                  <DocumentRow doc={d} />
-                </button>
-              </li>
+              <DocumentRow key={d.id} doc={d} selected={selected === d.id} onSelect={() => setSelected(d.id)} />
             ))}
           </ul>
           {current && <div className="hidden lg:block"><DocumentPreview doc={current} /></div>}
