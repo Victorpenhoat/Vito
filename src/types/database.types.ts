@@ -459,6 +459,8 @@ export type Database = {
           photo_ref: string | null
           place_id: string | null
           price_level: number | null
+          rating: number | null
+          rating_count: number | null
           source: string
           telephone: string | null
           type: string | null
@@ -480,6 +482,8 @@ export type Database = {
           photo_ref?: string | null
           place_id?: string | null
           price_level?: number | null
+          rating?: number | null
+          rating_count?: number | null
           source?: string
           telephone?: string | null
           type?: string | null
@@ -501,6 +505,8 @@ export type Database = {
           photo_ref?: string | null
           place_id?: string | null
           price_level?: number | null
+          rating?: number | null
+          rating_count?: number | null
           source?: string
           telephone?: string | null
           type?: string | null
@@ -775,28 +781,37 @@ export type Database = {
       liste_items: {
         Row: {
           added_at: string
+          archived_at: string | null
           etablissement_id: string
           id: string
+          is_archived: boolean
           is_favorite: boolean
           montant_par_personne: number | null
+          reco_source: string | null
           statut: Database["public"]["Enums"]["liste_statut"]
           user_id: string
         }
         Insert: {
           added_at?: string
+          archived_at?: string | null
           etablissement_id: string
           id?: string
+          is_archived?: boolean
           is_favorite?: boolean
           montant_par_personne?: number | null
+          reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id: string
         }
         Update: {
           added_at?: string
+          archived_at?: string | null
           etablissement_id?: string
           id?: string
+          is_archived?: boolean
           is_favorite?: boolean
           montant_par_personne?: number | null
+          reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id?: string
         }
