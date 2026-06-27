@@ -264,7 +264,7 @@
     },
     "proches": { "titre": "My circle", "ajouter": "Add a person", "vide": "No one yet", "videTexte": "Add the people whose documents you keep close at hand.", "documentsCount": "{n, plural, =0 {No documents} one {# document} other {# documents}}" },
     "circles": { "proche": "Close family", "elargie": "Extended family", "amis": "Friends" },
-    "fiche": { "contacts": "Contacts", "naissance": "Birth", "documents": "Documents", "aucunDocument": "No document on file.", "voirDocument": "View document", "modifier": "Edit", "revelerNumero": "Reveal number" },
+    "fiche": { "contacts": "Contacts", "naissance": "Birth", "documents": "Documents", "aucunDocument": "No document on file.", "voirDocument": "View document", "modifier": "Edit", "revelerNumero": "Reveal number", "apercu": "Preview" },
     "form": { "prenom": "First name", "nom": "Last name", "relation": "Relationship", "cercle": "Circle", "telephone": "Phone", "email": "Email", "naissance": "Date of birth", "enregistrer": "Save", "supprimer": "Delete", "confirmSuppr": "Delete this person and their documents?" },
     "tunnel": {
       "ajouterDocument": "Add a document",
@@ -295,7 +295,13 @@
       "dExpiration": "Expiry",
       "dLieu": "Place of issue",
       "dSaisieManuelle": "Couldn't read it — enter the details manually.",
-      "dEnregistrer": "Save document"
+      "dEnregistrer": "Save document",
+      "steps": {
+        "type": "Type",
+        "document": "Document",
+        "lecture": "Reading",
+        "verification": "Review"
+      }
     }
   },
   "agence": {

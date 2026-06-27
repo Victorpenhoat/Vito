@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { expiryStatus, monthsUntil } from "../domain/expiry";
 
@@ -53,7 +54,7 @@ function worstUrgency(dates: (string | null)[], now: Date): { urgency: Proche["u
   return { urgency: worst, urgency_months: worst === "soon" ? soonMonths : null };
 }
 
-export async function getProches(): Promise<Proche[]> {
+export const getProches = cache(async (): Promise<Proche[]> => {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return [];
@@ -79,7 +80,7 @@ export async function getProches(): Promise<Proche[]> {
       urgency_months,
     };
   });
-}
+});
 
 export async function getProche(id: string): Promise<{ proche: ProcheDetail; documents: DocMeta[] } | null> {
   const supabase = await createServerSupabase();

@@ -12,7 +12,9 @@ export default async function NouveauDocumentPage({ params }: { params: Promise<
   return (
     <main className="flex flex-col gap-6 p-4 md:p-8">
       <PageHeader eyebrow={t("eyebrow")} title={t("tunnel.titre")} />
-      <DocumentTunnel memberId={id} />
+      <div className="lg:mx-auto lg:max-w-[880px] lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-8 lg:shadow-lg">
+        <DocumentTunnel memberId={id} />
+      </div>
     </main>
   );
 }
