@@ -30,7 +30,7 @@ export class GooglePlacesProvider implements PlacesProvider {
       headers: {
         "X-Goog-Api-Key": this.apiKey,
         "X-Goog-FieldMask":
-          "id,displayName,formattedAddress,location,internationalPhoneNumber,websiteUri,priceLevel,types,photos,addressComponents",
+          "id,displayName,formattedAddress,location,internationalPhoneNumber,websiteUri,priceLevel,rating,userRatingCount,types,photos,addressComponents",
       },
     });
     if (res.status === 404) return null;
@@ -53,6 +53,8 @@ export class GooglePlacesProvider implements PlacesProvider {
       telephone: (p.internationalPhoneNumber as string) ?? null,
       website: (p.websiteUri as string) ?? null,
       priceLevel: priceLevelToInt(p.priceLevel as string | undefined),
+      rating: typeof p.rating === "number" ? p.rating : null,
+      ratingCount: (p.userRatingCount as number | undefined) ?? null,
       types: (p.types as string[]) ?? [],
       photoRefs: photos.map((ph) => ph.name),
     };

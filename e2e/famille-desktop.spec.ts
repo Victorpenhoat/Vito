@@ -19,6 +19,7 @@ test.describe("desktop", () => {
     await expect(railLink.first()).toBeVisible();
     await railLink.first().click();
     await expect(page).toHaveURL(/\/famille\/proches\//);
+    await expect(page.getByRole("heading", { name: "Camille Durand" })).toBeVisible();
     // aperçu : le document seedé est un PDF -> <iframe> d'aperçu
     await expect(page.locator('iframe[title="Aperçu"]')).toBeVisible();
   });
@@ -27,6 +28,7 @@ test.describe("desktop", () => {
     await login(page, "client@vito.test");
     await page.goto("/fr/famille");
     await page.getByTestId("famille-rail").getByRole("link", { name: /Camille Durand/ }).first().click();
+    await expect(page.getByRole("heading", { name: "Camille Durand" })).toBeVisible();
     await page.getByRole("link", { name: "Ajouter un document" }).click();
     await expect(page.getByText("Vérification", { exact: true })).toBeVisible(); // libellé du StepIndicator
   });

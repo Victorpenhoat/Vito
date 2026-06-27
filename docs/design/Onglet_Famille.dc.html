@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;}
+  .serif{font-family:'Newsreader',Georgia,serif;}
+  @keyframes scan{0%{top:6%;}50%{top:90%;}100%{top:6%;}}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes pulse{0%,100%{opacity:.35;}50%{opacity:.9;}}
+</style>
+</helmet>
+
+<!-- ============ SCREEN 1 · LISTE DES PERSONNES ============ -->
+<div style="position:absolute;left:80px;top:0;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Famille</div>
+    <div style="font-size:13px;color:#6b6b6b;margin-top:3px;">Liste des personnes</div>
+  </div>
+  <div data-screen-label="Liste personnes" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <!-- status -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <!-- header -->
+    <div style="padding:14px 22px 18px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon cercle</div>
+      <h1 class="serif" style="margin:5px 0 0;font-size:32px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Famille</h1>
+      <p style="margin:6px 0 0;font-size:13.5px;color:#7A736A;">5 proches · 11 documents</p>
+    </div>
+    <!-- content -->
+    <div style="flex:1;overflow:hidden;padding:0 18px 18px;display:flex;flex-direction:column;gap:22px;">
+      <!-- proche -->
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9A9081;margin:0 0 10px;">Famille proche</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <!-- person w/ orange alert -->
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#211E1A;color:#fff;font-size:14px;font-weight:600;">CP</span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:17px;color:#211E1A;">Camille Penhoat</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:3px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Conjointe</span><span style="font-size:12.5px;color:#9A9081;">3 documents</span></div>
+            </div>
+            <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:4px 9px;">Expire bientôt</span>
+          </div>
+          <!-- person ok -->
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#6B7A8F;color:#fff;font-size:14px;font-weight:600;">LP</span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:17px;color:#211E1A;">Léa Penhoat</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:3px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Enfant</span><span style="font-size:12.5px;color:#9A9081;">2 documents</span></div>
+            </div>
+            <span style="flex-shrink:0;color:#C9BFAE;font-size:20px;line-height:1;">›</span>
+          </div>
+          <!-- person red alert -->
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#8A7A64;color:#fff;font-size:14px;font-weight:600;">TP</span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:17px;color:#211E1A;">Tom Penhoat</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:3px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Enfant</span><span style="font-size:12.5px;color:#9A9081;">1 document</span></div>
+            </div>
+            <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#B42318;background:#FEF3F2;border-radius:999px;padding:4px 9px;">1 expiré</span>
+          </div>
+        </div>
+      </div>
+      <!-- élargie -->
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9A9081;margin:0 0 10px;">Famille élargie</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+          <span style="flex-shrink:0;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#9A8466;color:#fff;font-size:14px;font-weight:600;">HP</span>
+          <div style="flex:1;min-width:0;">
+            <div class="serif" style="font-size:17px;color:#211E1A;">Hélène Penhoat</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:3px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Parent</span><span style="font-size:12.5px;color:#9A9081;">2 documents</span></div>
+          </div>
+          <span style="flex-shrink:0;color:#C9BFAE;font-size:20px;line-height:1;">›</span>
+        </div>
+      </div>
+      <!-- amis -->
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9A9081;margin:0 0 10px;">Amis</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+          <span style="flex-shrink:0;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#5E7163;color:#fff;font-size:14px;font-weight:600;">MD</span>
+          <div style="flex:1;min-width:0;">
+            <div class="serif" style="font-size:17px;color:#211E1A;">Marc Dubois</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:3px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Ami</span><span style="font-size:12.5px;color:#9A9081;">3 documents</span></div>
+          </div>
+          <span style="flex-shrink:0;color:#C9BFAE;font-size:20px;line-height:1;">›</span>
+        </div>
+      </div>
+    </div>
+    <!-- FAB -->
+    <button style="position:absolute;right:18px;bottom:96px;display:flex;align-items:center;gap:7px;background:#2563EB;color:#fff;border:none;border-radius:999px;padding:13px 18px;font-size:13.5px;font-weight:600;font-family:inherit;box-shadow:0 8px 22px rgba(37,99,235,.4);cursor:pointer;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Ajouter une personne
+    </button>
+    <!-- bottom nav -->
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 6px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3.5 4 9l3.5 1.5L9 14l1.5-3.5L20.5 3.5 10.5 3.5Z" transform="rotate(0)"/><path d="M2 21l7-4"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;font-weight:600;">Famille</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2 · ÉTAT VIDE ============ -->
+<div style="position:absolute;left:550px;top:0;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Liste — état vide</div></div>
+  <div data-screen-label="Liste vide" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="padding:14px 22px 0;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon cercle</div>
+      <h1 class="serif" style="margin:5px 0 0;font-size:32px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Famille</h1>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px 80px;">
+      <div style="width:96px;height:96px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;display:grid;place-items:center;margin-bottom:22px;">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg>
+      </div>
+      <h2 class="serif" style="margin:0;font-size:23px;font-weight:500;color:#211E1A;">Aucun proche enregistré</h2>
+      <p style="margin:10px 0 26px;font-size:14px;line-height:1.6;color:#7A736A;">Ajoutez les personnes qui voyagent avec vous pour garder leurs papiers d'identité à portée de main.</p>
+      <button style="display:flex;align-items:center;gap:8px;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:13px 22px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Ajouter une personne
+      </button>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 6px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3.5 4 9l3.5 1.5L9 14l1.5-3.5L10.5 3.5Z"/><path d="M2 21l7-4"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;font-weight:600;">Famille</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3 · FICHE PERSONNE ============ -->
+<div style="position:absolute;left:1020px;top:0;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Fiche personne</div></div>
+  <div data-screen-label="Fiche personne" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <!-- nav row -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#211E1A;font-size:14px;font-family:inherit;cursor:pointer;padding:6px 6px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Famille</button>
+      <button style="background:none;border:none;color:#7A736A;cursor:pointer;padding:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#7A736A"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+    </div>
+    <!-- person header -->
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 22px 20px;border-bottom:1px solid #E4DDD0;">
+      <span style="display:inline-grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#211E1A;color:#fff;font-size:22px;font-weight:600;">CP</span>
+      <h1 class="serif" style="margin:14px 0 0;font-size:25px;font-weight:500;color:#211E1A;">Camille Penhoat</h1>
+      <div style="margin-top:6px;font-size:13px;color:#7A736A;">Conjointe · Famille proche</div>
+    </div>
+    <!-- body -->
+    <div style="flex:1;overflow:hidden;padding:18px;display:flex;flex-direction:column;gap:20px;">
+      <!-- contact -->
+      <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:11px;padding:13px 15px;border-bottom:1px solid #F0EBE0;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c0 9 6 15 15 15l2.5-4-5-2-2 2c-2-1-4-3-5-5l2-2-2-5L4 5Z"/></svg>
+          <span style="font-size:14px;color:#211E1A;">+33 6 12 34 56 78</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:13px 15px;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <span style="font-size:14px;color:#211E1A;">camille.penhoat@email.fr</span>
+        </div>
+      </div>
+      <!-- docs label -->
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9A9081;">Documents</div>
+        <span style="display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#E4DDD0;color:#7A736A;font-size:11px;font-weight:600;padding:0 6px;">3</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <!-- DOC 1 · passport · masked · orange -->
+        <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:15px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:40px;height:40px;border-radius:6px;background:#EEF2FC;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8.5 18c.6-2 2-3 3.5-3s2.9 1 3.5 3"/></svg></span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:16px;color:#211E1A;">Passeport</div>
+              <div style="font-size:12px;color:#9A9081;margin-top:1px;">France</div>
+            </div>
+            <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:4px 9px;">Expire dans 4 mois</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:13px;border-top:1px solid #F0EBE0;">
+            <div><div style="font-size:10.5px;color:#9A9081;text-transform:uppercase;letter-spacing:.08em;">Numéro</div><div style="font-size:14.5px;color:#211E1A;letter-spacing:.06em;margin-top:2px;">FR•••••892</div></div>
+            <button style="display:flex;align-items:center;gap:5px;background:none;border:1px solid #E4DDD0;border-radius:3px;padding:7px 11px;color:#7A736A;font-size:12px;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="2.6"/></svg>Révéler</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:13px;">
+            <div style="position:relative;width:46px;height:58px;border-radius:4px;background:linear-gradient(135deg,#dfe6f2,#c4cfe2);border:1px solid #E4DDD0;flex-shrink:0;overflow:hidden;"><div style="position:absolute;left:7px;right:7px;top:8px;height:4px;border-radius:2px;background:rgba(37,99,235,.35);"></div><div style="position:absolute;left:7px;right:16px;top:16px;height:3px;border-radius:2px;background:rgba(33,30,26,.18);"></div><div style="position:absolute;left:7px;width:14px;height:16px;top:26px;border-radius:2px;background:rgba(33,30,26,.2);"></div></div>
+            <div style="flex:1;">
+              <div style="font-size:12px;color:#7A736A;">Émis 03/2021 · expire 03/2027</div>
+              <a style="display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:#2563EB;text-decoration:none;">Voir le document →</a>
+            </div>
+          </div>
+        </div>
+        <!-- DOC 2 · CNI · revealed · green -->
+        <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:15px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:40px;height:40px;border-radius:6px;background:#EEF2FC;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8" cy="11" r="2.2"/><path d="M5.5 16c.5-1.6 1.5-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14 9.5h5M14 13h5M14 16h3"/></svg></span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:16px;color:#211E1A;">Carte d'identité</div>
+              <div style="font-size:12px;color:#9A9081;margin-top:1px;">France</div>
+            </div>
+            <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#15803D;background:#E7F2EB;border-radius:999px;padding:4px 9px;">Valide</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:13px;border-top:1px solid #F0EBE0;">
+            <div><div style="font-size:10.5px;color:#9A9081;text-transform:uppercase;letter-spacing:.08em;">Numéro</div><div style="font-size:14.5px;color:#211E1A;letter-spacing:.06em;margin-top:2px;">CNI 4408 7712 4471</div></div>
+            <button style="display:flex;align-items:center;gap:5px;background:none;border:1px solid #E4DDD0;border-radius:3px;padding:7px 11px;color:#7A736A;font-size:12px;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2 0 3.7.6 5.2 1.5M22 12s-3.5 7-10 7c-2 0-3.7-.6-5.2-1.5"/><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2M3 3l18 18"/></svg>Masquer</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:13px;">
+            <div style="position:relative;width:46px;height:58px;border-radius:4px;background:linear-gradient(135deg,#e7efe9,#cfe0d4);border:1px solid #E4DDD0;flex-shrink:0;overflow:hidden;"><div style="position:absolute;left:7px;right:7px;top:8px;height:4px;border-radius:2px;background:rgba(21,128,61,.3);"></div><div style="position:absolute;left:7px;right:16px;top:16px;height:3px;border-radius:2px;background:rgba(33,30,26,.18);"></div><div style="position:absolute;left:7px;width:14px;height:16px;top:26px;border-radius:2px;background:rgba(33,30,26,.2);"></div></div>
+            <div style="flex:1;">
+              <div style="font-size:12px;color:#7A736A;">Émise 06/2021 · expire 06/2031</div>
+              <a style="display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:#2563EB;text-decoration:none;">Voir le document →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- add doc -->
+      <button style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#fff;color:#2563EB;border:1px dashed #B9C6E8;border-radius:4px;padding:14px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Ajouter un document
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ SCREEN 4 · ÉTAPE A · CHOIX DU TYPE ============ -->
+<div style="position:absolute;left:80px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Ajout d'un document</div>
+    <div style="font-size:13px;color:#6b6b6b;margin-top:3px;">Étape A — Choix du type</div>
+  </div>
+  <div data-screen-label="Ajout étape A" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;">
+      <button style="display:flex;align-items:center;background:none;border:none;color:#211E1A;cursor:pointer;padding:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <span style="font-size:14px;font-weight:600;color:#211E1A;">Nouveau document</span>
+      <span style="font-size:12px;color:#9A9081;min-width:34px;text-align:right;">1 / 4</span>
+    </div>
+    <div style="display:flex;gap:5px;padding:8px 22px 18px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <h1 class="serif" style="margin:0 0 4px;font-size:24px;font-weight:500;color:#211E1A;">Quel document ?</h1>
+      <p style="margin:0 0 20px;font-size:13.5px;color:#7A736A;">Choisissez le type de papier à enregistrer.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+        <!-- selected -->
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1.5px solid #2563EB;background:#EEF2FC;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8.5 18c.6-2 2-3 3.5-3s2.9 1 3.5 3"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Passeport</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8" cy="11" r="2.2"/><path d="M5.5 16c.5-1.6 1.5-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14 9.5h5M14 13h5"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Carte d'identité</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h4v6H6zM13 9.5h5M13 13h5M13 16h3"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Permis de conduire</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18M5 18l1-5h12l1 5M9 13V7h3l3 6"/><path d="M2 21h20"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Permis bateau</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/><circle cx="17" cy="6" r="2.5" fill="none"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Visa</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:16px 14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4"/><path d="M14.5 9h3.5M14.5 12.5h3.5"/></svg>
+          <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Titre de séjour</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:14px;border:1px solid #E4DDD0;background:#fff;border-radius:6px;margin-top:11px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        <span style="font-size:13.5px;font-weight:600;color:#211E1A;">Autre document</span>
+      </div>
+    </div>
+    <div style="padding:16px 18px 26px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <button style="width:100%;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Continuer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 5 · ÉTAPE B · UPLOAD ============ -->
+<div style="position:absolute;left:550px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Étape B — Upload</div></div>
+  <div data-screen-label="Ajout étape B" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;">
+      <button style="display:flex;align-items:center;background:none;border:none;color:#211E1A;cursor:pointer;padding:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <span style="font-size:14px;font-weight:600;color:#211E1A;">Passeport</span>
+      <span style="font-size:12px;color:#9A9081;min-width:34px;text-align:right;">2 / 4</span>
+    </div>
+    <div style="display:flex;gap:5px;padding:8px 22px 18px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <h1 class="serif" style="margin:0 0 4px;font-size:24px;font-weight:500;color:#211E1A;">Ajoutez le document</h1>
+      <p style="margin:0 0 20px;font-size:13.5px;line-height:1.55;color:#7A736A;">Prenez une photo ou importez un fichier. Nous lisons les informations pour vous.</p>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1.5px dashed #C4B6E8;border-color:#B9C6E8;background:#fff;border-radius:10px;padding:40px 24px;">
+        <div style="width:62px;height:62px;border-radius:50%;background:#EEF2FC;display:grid;place-items:center;margin-bottom:16px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        </div>
+        <div style="font-size:14.5px;font-weight:600;color:#211E1A;">Déposez votre document</div>
+        <div style="font-size:12.5px;color:#9A9081;margin-top:3px;">ou utilisez un des choix ci-dessous</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+        <button style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L19 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" transform="translate(-1 0)"/><circle cx="11" cy="13" r="3.5"/></svg>Prendre une photo</button>
+        <button style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:#fff;color:#211E1A;border:1px solid #E4DDD0;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/></svg>Importer un fichier</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span style="font-size:12px;color:#9A9081;">JPG, PNG ou PDF · 10 Mo max · chiffré</span>
+      </div>
+    </div>
+    <div style="height:26px;"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 6 · ERREUR UPLOAD ============ -->
+<div style="position:absolute;left:1020px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">État d'erreur — Upload</div></div>
+  <div data-screen-label="Erreur upload" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;">
+      <button style="display:flex;align-items:center;background:none;border:none;color:#211E1A;cursor:pointer;padding:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <span style="font-size:14px;font-weight:600;color:#211E1A;">Passeport</span>
+      <span style="font-size:12px;color:#9A9081;min-width:34px;text-align:right;">2 / 4</span>
+    </div>
+    <div style="display:flex;gap:5px;padding:8px 22px 18px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <h1 class="serif" style="margin:0 0 4px;font-size:24px;font-weight:500;color:#211E1A;">Ajoutez le document</h1>
+      <p style="margin:0 0 20px;font-size:13.5px;line-height:1.55;color:#7A736A;">Prenez une photo ou importez un fichier. Nous lisons les informations pour vous.</p>
+      <!-- error dropzone -->
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1.5px dashed #F0B4AE;background:#FEF3F2;border-radius:10px;padding:34px 24px;">
+        <div style="width:62px;height:62px;border-radius:50%;background:#FCE4E1;display:grid;place-items:center;margin-bottom:14px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <div style="font-size:14.5px;font-weight:600;color:#B42318;">Échec de l'import</div>
+        <div style="font-size:12.5px;line-height:1.5;color:#9a6a64;margin-top:4px;">Format non supporté ou fichier trop volumineux (10 Mo max).</div>
+      </div>
+      <!-- failed file chip -->
+      <div style="display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid #F0B4AE;background:#fff;border-radius:6px;margin-top:14px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/></svg>
+        <div style="flex:1;min-width:0;"><div style="font-size:13.5px;color:#211E1A;">passeport-scan.tiff</div><div style="font-size:11.5px;color:#B42318;">14,2 Mo · non supporté</div></div>
+        <button style="background:none;border:none;color:#9A9081;cursor:pointer;padding:4px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+        <button style="display:flex;align-items:center;justify-content:center;gap:9px;width:100%;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Réessayer</button>
+        <button style="width:100%;background:#fff;color:#211E1A;border:1px solid #E4DDD0;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Choisir un autre fichier</button>
+      </div>
+    </div>
+    <div style="height:26px;"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 7 · ÉTAPE C · LECTURE ============ -->
+<div style="position:absolute;left:1490px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Étape C — Lecture (chargement)</div></div>
+  <div data-screen-label="Ajout étape C" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;gap:5px;padding:46px 22px 0;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#E4DDD0;"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 36px 80px;">
+      <!-- scanning doc -->
+      <div style="position:relative;width:150px;height:190px;border-radius:8px;background:linear-gradient(135deg,#dfe6f2,#c4cfe2);border:1px solid #E4DDD0;overflow:hidden;box-shadow:0 10px 26px rgba(33,30,26,.16);">
+        <div style="position:absolute;left:16px;top:18px;width:46px;height:56px;border-radius:4px;background:rgba(33,30,26,.16);"></div>
+        <div style="position:absolute;left:74px;right:16px;top:20px;height:6px;border-radius:3px;background:rgba(37,99,235,.4);"></div>
+        <div style="position:absolute;left:74px;right:28px;top:34px;height:5px;border-radius:3px;background:rgba(33,30,26,.16);"></div>
+        <div style="position:absolute;left:74px;right:22px;top:46px;height:5px;border-radius:3px;background:rgba(33,30,26,.16);"></div>
+        <div style="position:absolute;left:16px;right:16px;bottom:18px;height:5px;border-radius:3px;background:rgba(33,30,26,.13);"></div>
+        <div style="position:absolute;left:16px;right:40px;bottom:30px;height:5px;border-radius:3px;background:rgba(33,30,26,.13);"></div>
+        <!-- scan line -->
+        <div style="position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#2563EB,transparent);box-shadow:0 0 12px 2px rgba(37,99,235,.5);animation:scan 2.2s ease-in-out infinite;"></div>
+      </div>
+      <!-- spinner + text -->
+      <div style="display:flex;align-items:center;gap:10px;margin-top:34px;">
+        <div style="width:18px;height:18px;border:2.5px solid #E4DDD0;border-top-color:#2563EB;border-radius:50%;animation:spin .8s linear infinite;"></div>
+        <h2 class="serif" style="margin:0;font-size:21px;font-weight:500;color:#211E1A;">Lecture du document…</h2>
+      </div>
+      <p style="margin:10px 0 0;font-size:13.5px;line-height:1.55;color:#7A736A;">Extraction des informations en cours.<br>Cela prend quelques secondes.</p>
+      <div style="display:flex;gap:6px;margin-top:18px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:#2563EB;animation:pulse 1.2s ease-in-out infinite;"></span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#2563EB;animation:pulse 1.2s ease-in-out .2s infinite;"></span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#2563EB;animation:pulse 1.2s ease-in-out .4s infinite;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 8 · ÉTAPE D · FORMULAIRE PRÉ-REMPLI ============ -->
+<div style="position:absolute;left:1960px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Le plus important</div>
+    <div style="font-size:13px;color:#6b6b6b;margin-top:3px;">Étape D — Vérification (pré-rempli)</div>
+  </div>
+  <div data-screen-label="Ajout étape D" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;">
+      <span style="font-size:14px;font-weight:600;">9:41</span>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;">
+      <button style="display:flex;align-items:center;background:none;border:none;color:#211E1A;cursor:pointer;padding:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <span style="font-size:14px;font-weight:600;color:#211E1A;">Vérifier</span>
+      <span style="font-size:12px;color:#9A9081;min-width:34px;text-align:right;">4 / 4</span>
+    </div>
+    <div style="display:flex;gap:5px;padding:8px 22px 16px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#2563EB;"></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <h1 class="serif" style="margin:0 0 4px;font-size:23px;font-weight:500;color:#211E1A;">Vérifiez les informations</h1>
+      <!-- legend -->
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EEF2FC;border-radius:6px;margin:12px 0 18px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg>
+        <span style="font-size:12.5px;line-height:1.45;color:#1D4ED8;">Les champs <strong>Lu automatiquement</strong> ont été remplis par la lecture. Corrigez si besoin.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- type (verrouillé) -->
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Type</div>
+          <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #E4DDD0;background:#F4F1E9;border-radius:4px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8.5 18c.6-2 2-3 3.5-3s2.9 1 3.5 3"/></svg><span style="font-size:14px;color:#211E1A;">Passeport</span></div>
+        </div>
+        <!-- numéro AUTO -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Numéro</span><span style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg>Lu automatiquement</span></div>
+          <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;letter-spacing:.04em;">12AB34567</div>
+        </div>
+        <!-- pays AUTO -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Pays d'émission</span><span style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg>Lu automatiquement</span></div>
+          <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">France</div>
+        </div>
+        <!-- dates row -->
+        <div style="display:flex;gap:11px;">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Émission</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg></div>
+            <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">12/03/2021</div>
+          </div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Expiration</span><span style="font-size:10px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:2px 7px;">À vérifier</span></div>
+            <div style="padding:11px 13px;border:1px solid #F0D49A;border-left:2px solid #B45309;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">12/03/2027</div>
+          </div>
+        </div>
+        <!-- titulaire (manuel, pré-sélectionné) -->
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Titulaire</div>
+          <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #E4DDD0;background:#fff;border-radius:4px;"><span style="display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#211E1A;color:#fff;font-size:10px;font-weight:600;">CP</span><span style="font-size:14px;color:#211E1A;">Camille Penhoat</span></div>
+        </div>
+        <!-- champ NON lu (manuel, vide) -->
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Lieu d'émission <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#B9AE9C;">· à compléter</span></div>
+          <div style="padding:11px 13px;border:1px solid #E4DDD0;background:#fff;border-radius:4px;font-size:14px;color:#B9AE9C;">Préfecture, ville…</div>
+        </div>
+      </div>
+      <div style="height:14px;"></div>
+    </div>
+    <div style="padding:14px 18px 24px;border-top:1px solid #E4DDD0;background:#FBF9F3;display:flex;flex-direction:column;gap:9px;">
+      <button style="width:100%;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer le document</button>
+      <button style="width:100%;background:none;color:#7A736A;border:none;padding:4px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WEB / DESKTOP ============ -->
+
+<!-- WEB 1 · Liste Famille -->
+<div style="position:absolute;left:2520px;top:1020px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Version web</div>
+    <div style="font-size:13px;color:#6b6b6b;margin-top:3px;">Famille — liste (desktop)</div>
+  </div>
+  <div data-screen-label="Web liste" style="display:flex;min-height:900px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);font-family:'Inter',sans-serif;">
+    <aside style="width:236px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:30px 22px;display:flex;flex-direction:column;">
+      <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:28px;"><div style="font-size:19px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:14px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#b3a896;margin:0 0 8px 8px;">Carnet</div>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Vins</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Recherche</a>
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#b3a896;margin:22px 0 8px 8px;">Voyages</div>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Dépenses</a>
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#b3a896;margin:22px 0 8px 8px;">Cercle</div>
+        <a style="padding:8px 10px;font-size:14px;color:#211E1A;font-weight:600;text-decoration:none;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Famille</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Conciergerie</a>
+        <a style="padding:8px 10px;font-size:14px;color:#7A736A;text-decoration:none;border-radius:3px;">Abonnement</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:10px;padding-top:18px;border-top:1px solid #E4DDD0;"><span style="display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#211E1A;color:#fff;font-size:12px;font-weight:600;">VP</span><div style="line-height:1.3;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Victor Penhoat</div><div style="font-size:11px;color:#9a9081;">Premium</div></div></div>
+    </aside>
+    <main style="flex:1;padding:42px 46px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;">
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon cercle</div>
+          <h1 class="serif" style="margin:6px 0 0;font-size:38px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Famille</h1>
+          <p style="margin:8px 0 0;font-size:14px;color:#7A736A;">5 proches · 11 documents</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="display:flex;align-items:center;gap:8px;width:240px;padding:9px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><span style="color:#b3a896;">⌕</span><span style="font-size:13px;color:#b3a896;">Rechercher un proche</span></div>
+          <button style="padding:10px 18px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Ajouter une personne</button>
+        </div>
+      </div>
+      <!-- famille proche -->
+      <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;margin:32px 0 14px;">Famille proche</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+          <span style="flex-shrink:0;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#211E1A;color:#fff;font-size:16px;font-weight:600;">CP</span>
+          <div style="flex:1;min-width:0;"><div class="serif" style="font-size:19px;color:#211E1A;">Camille Penhoat</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Conjointe</span><span style="font-size:12.5px;color:#9A9081;">3 documents</span></div><span style="display:inline-block;margin-top:9px;font-size:10.5px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:3px 9px;">Expire bientôt</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+          <span style="flex-shrink:0;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#6B7A8F;color:#fff;font-size:16px;font-weight:600;">LP</span>
+          <div style="flex:1;min-width:0;"><div class="serif" style="font-size:19px;color:#211E1A;">Léa Penhoat</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Enfant</span><span style="font-size:12.5px;color:#9A9081;">2 documents</span></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+          <span style="flex-shrink:0;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#8A7A64;color:#fff;font-size:16px;font-weight:600;">TP</span>
+          <div style="flex:1;min-width:0;"><div class="serif" style="font-size:19px;color:#211E1A;">Tom Penhoat</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Enfant</span><span style="font-size:12.5px;color:#9A9081;">1 document</span></div><span style="display:inline-block;margin-top:9px;font-size:10.5px;font-weight:600;color:#B42318;background:#FEF3F2;border-radius:999px;padding:3px 9px;">1 expiré</span></div>
+        </div>
+      </div>
+      <!-- élargie + amis -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:38px;margin-top:30px;">
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;margin:0 0 14px;">Famille élargie</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#9A8466;color:#fff;font-size:16px;font-weight:600;">HP</span>
+            <div style="flex:1;min-width:0;"><div class="serif" style="font-size:19px;color:#211E1A;">Hélène Penhoat</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Parent</span><span style="font-size:12.5px;color:#9A9081;">2 documents</span></div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;margin:0 0 14px;">Amis</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:18px;background:#fff;border:1px solid #E4DDD0;border-radius:4px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#5E7163;color:#fff;font-size:16px;font-weight:600;">MD</span>
+            <div style="flex:1;min-width:0;"><div class="serif" style="font-size:19px;color:#211E1A;">Marc Dubois</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px;"><span style="font-size:11px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 9px;">Ami</span><span style="font-size:12.5px;color:#9A9081;">3 documents</span></div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- WEB 2 · Fiche personne -->
+<div style="position:absolute;left:2520px;top:2020px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:16px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Version web — Fiche personne</div></div>
+  <div data-screen-label="Web fiche" style="background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);font-family:'Inter',sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid #E4DDD0;background:#F4F1E9;">
+      <div style="display:flex;align-items:center;gap:20px;"><span style="font-size:16px;font-weight:700;letter-spacing:.26em;color:#211E1A;">VITO</span><span style="font-size:13px;color:#9a9081;">Famille&nbsp;&nbsp;/&nbsp;&nbsp;<span style="color:#211E1A;">Camille Penhoat</span></span></div>
+      <span style="display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#211E1A;color:#fff;font-size:12px;font-weight:600;">VP</span>
+    </div>
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:44px;padding:38px 40px 44px;">
+      <!-- left identity -->
+      <aside>
+        <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:26px 22px;text-align:center;">
+          <span style="display:inline-grid;place-items:center;width:84px;height:84px;border-radius:50%;background:#211E1A;color:#fff;font-size:26px;font-weight:600;">CP</span>
+          <h1 class="serif" style="margin:16px 0 0;font-size:26px;font-weight:500;color:#211E1A;">Camille Penhoat</h1>
+          <div style="margin-top:6px;font-size:13px;color:#7A736A;">Conjointe · Famille proche</div>
+        </div>
+        <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;margin-top:22px;overflow:hidden;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;padding:16px 18px 4px;">Contact</div>
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 18px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5c0 9 6 15 15 15l2.5-4-5-2-2 2c-2-1-4-3-5-5l2-2-2-5L4 5Z"/></svg><span style="font-size:13.5px;color:#211E1A;">+33 6 12 34 56 78</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 18px 16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span style="font-size:13.5px;color:#211E1A;">camille.penhoat@email.fr</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 18px 16px;border-top:1px solid #F0EBE0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span style="font-size:13.5px;color:#211E1A;">14 mai 1989</span></div>
+        </div>
+      </aside>
+      <!-- right documents -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;">Documents</span><span style="display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#E4DDD0;color:#7A736A;font-size:11px;font-weight:600;padding:0 6px;">3</span></div>
+          <button style="display:flex;align-items:center;gap:7px;padding:9px 15px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un document</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <!-- doc passport orange -->
+          <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:18px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <span style="flex-shrink:0;display:inline-grid;place-items:center;width:42px;height:42px;border-radius:6px;background:#EEF2FC;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="16" height="19" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8.5 18c.6-2 2-3 3.5-3s2.9 1 3.5 3"/></svg></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:17px;color:#211E1A;">Passeport</div><div style="font-size:12px;color:#9A9081;margin-top:1px;">France</div></div>
+              <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:4px 9px;">Expire dans 4 mois</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #F0EBE0;">
+              <div><div style="font-size:10.5px;color:#9A9081;text-transform:uppercase;letter-spacing:.08em;">Numéro</div><div style="font-size:14.5px;color:#211E1A;letter-spacing:.06em;margin-top:2px;">FR•••••892</div></div>
+              <button style="display:flex;align-items:center;gap:5px;background:none;border:1px solid #E4DDD0;border-radius:3px;padding:7px 11px;color:#7A736A;font-size:12px;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="2.6"/></svg>Révéler</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+              <div style="position:relative;width:44px;height:56px;border-radius:4px;background:linear-gradient(135deg,#dfe6f2,#c4cfe2);border:1px solid #E4DDD0;flex-shrink:0;overflow:hidden;"><div style="position:absolute;left:7px;right:7px;top:8px;height:4px;border-radius:2px;background:rgba(37,99,235,.35);"></div><div style="position:absolute;left:7px;right:16px;top:16px;height:3px;border-radius:2px;background:rgba(33,30,26,.18);"></div></div>
+              <div style="flex:1;"><div style="font-size:12px;color:#7A736A;">Émis 03/2021 · expire 03/2027</div><a style="display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:#2563EB;text-decoration:none;">Voir le document →</a></div>
+            </div>
+          </div>
+          <!-- doc CNI green revealed -->
+          <div style="border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:18px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <span style="flex-shrink:0;display:inline-grid;place-items:center;width:42px;height:42px;border-radius:6px;background:#EEF2FC;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8" cy="11" r="2.2"/><path d="M5.5 16c.5-1.6 1.5-2.4 2.5-2.4s2 .8 2.5 2.4"/><path d="M14 9.5h5M14 13h5M14 16h3"/></svg></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:17px;color:#211E1A;">Carte d'identité</div><div style="font-size:12px;color:#9A9081;margin-top:1px;">France</div></div>
+              <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#15803D;background:#E7F2EB;border-radius:999px;padding:4px 9px;">Valide</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #F0EBE0;">
+              <div><div style="font-size:10.5px;color:#9A9081;text-transform:uppercase;letter-spacing:.08em;">Numéro</div><div style="font-size:14.5px;color:#211E1A;letter-spacing:.04em;margin-top:2px;">4408 7712 4471</div></div>
+              <button style="display:flex;align-items:center;gap:5px;background:none;border:1px solid #E4DDD0;border-radius:3px;padding:7px 11px;color:#7A736A;font-size:12px;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7c2 0 3.7.6 5.2 1.5M22 12s-3.5 7-10 7c-2 0-3.7-.6-5.2-1.5"/><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2M3 3l18 18"/></svg>Masquer</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:14px;">
+              <div style="position:relative;width:44px;height:56px;border-radius:4px;background:linear-gradient(135deg,#e7efe9,#cfe0d4);border:1px solid #E4DDD0;flex-shrink:0;overflow:hidden;"><div style="position:absolute;left:7px;right:7px;top:8px;height:4px;border-radius:2px;background:rgba(21,128,61,.3);"></div><div style="position:absolute;left:7px;right:16px;top:16px;height:3px;border-radius:2px;background:rgba(33,30,26,.18);"></div></div>
+              <div style="flex:1;"><div style="font-size:12px;color:#7A736A;">Émise 06/2021 · expire 06/2031</div><a style="display:inline-block;margin-top:4px;font-size:13px;font-weight:600;color:#2563EB;text-decoration:none;">Voir le document →</a></div>
+            </div>
+          </div>
+          <!-- doc permis red expired, spans full -->
+          <div style="grid-column:1 / -1;border:1px solid #E4DDD0;border-radius:4px;background:#fff;padding:18px;display:flex;align-items:center;gap:16px;">
+            <span style="flex-shrink:0;display:inline-grid;place-items:center;width:42px;height:42px;border-radius:6px;background:#EEF2FC;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h4v6H6zM13 9.5h5M13 13h5M13 16h3"/></svg></span>
+            <div style="flex:1;min-width:0;"><div class="serif" style="font-size:17px;color:#211E1A;">Permis de conduire</div><div style="font-size:12px;color:#9A9081;margin-top:1px;">France · FR•••••203 · expiré 01/2026</div></div>
+            <span style="flex-shrink:0;font-size:10.5px;font-weight:600;color:#B42318;background:#FEF3F2;border-radius:999px;padding:4px 9px;">Expiré</span>
+            <a style="flex-shrink:0;font-size:13px;font-weight:600;color:#2563EB;text-decoration:none;">Voir →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 3 · Ajout document (modale, lecture + formulaire) -->
+<div style="position:absolute;left:2520px;top:3160px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:16px;"><div style="font-size:13px;font-weight:600;color:#4a4a4a;">Version web — Ajout d'un document (modale)</div></div>
+  <div data-screen-label="Web ajout modale" style="position:relative;background:#EEEAE0;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);font-family:'Inter',sans-serif;padding:34px;min-height:760px;">
+    <!-- dimmed page hint -->
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(33,30,26,.02) 0 12px,transparent 12px 24px);"></div>
+    <!-- modal -->
+    <div style="position:relative;max-width:880px;margin:0 auto;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:8px;overflow:hidden;box-shadow:0 24px 70px rgba(33,30,26,.28);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid #E4DDD0;background:#F4F1E9;">
+        <div><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Nouveau document · Camille Penhoat</div><h2 class="serif" style="margin:4px 0 0;font-size:24px;font-weight:500;color:#211E1A;">Vérifiez les informations</h2></div>
+        <button style="background:none;border:none;color:#9A9081;cursor:pointer;padding:6px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <!-- stepper -->
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 28px;border-bottom:1px solid #E4DDD0;font-size:12.5px;">
+        <span style="display:flex;align-items:center;gap:6px;color:#15803D;"><span style="display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#E7F2EB;font-size:11px;">✓</span>Type</span>
+        <span style="color:#C9BFAE;">———</span>
+        <span style="display:flex;align-items:center;gap:6px;color:#15803D;"><span style="display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#E7F2EB;font-size:11px;">✓</span>Document</span>
+        <span style="color:#C9BFAE;">———</span>
+        <span style="display:flex;align-items:center;gap:6px;color:#15803D;"><span style="display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#E7F2EB;font-size:11px;">✓</span>Lecture</span>
+        <span style="color:#C9BFAE;">———</span>
+        <span style="display:flex;align-items:center;gap:6px;color:#211E1A;font-weight:600;"><span style="display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#2563EB;color:#fff;font-size:11px;">4</span>Vérifier</span>
+      </div>
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:0;">
+        <!-- preview side -->
+        <div style="padding:28px;border-right:1px solid #E4DDD0;background:#F8F5EE;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#9A9081;margin-bottom:14px;">Document lu</div>
+          <div style="position:relative;width:100%;aspect-ratio:3/4;border-radius:6px;background:linear-gradient(135deg,#dfe6f2,#c4cfe2);border:1px solid #E4DDD0;overflow:hidden;box-shadow:0 8px 20px rgba(33,30,26,.14);">
+            <div style="position:absolute;left:18px;top:22px;width:54px;height:66px;border-radius:4px;background:rgba(33,30,26,.16);"></div>
+            <div style="position:absolute;left:86px;right:18px;top:24px;height:7px;border-radius:3px;background:rgba(37,99,235,.4);"></div>
+            <div style="position:absolute;left:86px;right:34px;top:40px;height:6px;border-radius:3px;background:rgba(33,30,26,.16);"></div>
+            <div style="position:absolute;left:86px;right:28px;top:54px;height:6px;border-radius:3px;background:rgba(33,30,26,.16);"></div>
+            <div style="position:absolute;left:18px;right:18px;bottom:24px;height:6px;border-radius:3px;background:rgba(33,30,26,.13);"></div>
+            <div style="position:absolute;left:18px;right:50px;bottom:38px;height:6px;border-radius:3px;background:rgba(33,30,26,.13);"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:14px;font-size:12px;color:#15803D;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Lecture réussie · 5 champs détectés</div>
+        </div>
+        <!-- form side -->
+        <div style="padding:28px;">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EEF2FC;border-radius:6px;margin-bottom:20px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg><span style="font-size:12.5px;color:#1D4ED8;">Les champs <strong>Lu automatiquement</strong> ont été remplis par la lecture. Corrigez si besoin.</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="grid-column:1 / -1;">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Type</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid #E4DDD0;background:#F4F1E9;border-radius:4px;font-size:14px;color:#211E1A;">Passeport</div>
+            </div>
+            <div style="grid-column:1 / -1;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Numéro</span><span style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#2563EB;background:#EEF2FC;border-radius:999px;padding:2px 8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg>Lu automatiquement</span></div>
+              <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;letter-spacing:.04em;">12AB34567</div>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Pays</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg></div>
+              <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">France</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Titulaire</div>
+              <div style="padding:11px 13px;border:1px solid #E4DDD0;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">Camille Penhoat</div>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Émission</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/></svg></div>
+              <div style="padding:11px 13px;border:1px solid #E4DDD0;border-left:2px solid #2563EB;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">12/03/2021</div>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;">Expiration</span><span style="font-size:10px;font-weight:600;color:#B45309;background:#FBF0DF;border-radius:999px;padding:2px 7px;">À vérifier</span></div>
+              <div style="padding:11px 13px;border:1px solid #F0D49A;border-left:2px solid #B45309;background:#fff;border-radius:4px;font-size:14px;color:#211E1A;">12/03/2027</div>
+            </div>
+            <div style="grid-column:1 / -1;">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9A9081;margin-bottom:6px;">Lieu d'émission <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#B9AE9C;">· à compléter</span></div>
+              <div style="padding:11px 13px;border:1px solid #E4DDD0;background:#fff;border-radius:4px;font-size:14px;color:#B9AE9C;">Préfecture, ville…</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid #E4DDD0;">
+            <button style="padding:11px 18px;background:#fff;color:#7A736A;border:1px solid #E4DDD0;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Annuler</button>
+            <button style="padding:11px 20px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer le document</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

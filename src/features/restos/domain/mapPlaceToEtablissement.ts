@@ -15,6 +15,8 @@ export type EtablissementInput = {
   telephone: string | null;
   website: string | null;
   price_level: number | null;
+  rating: number | null;
+  rating_count: number | null;
   source: string;
   photo_ref: string | null;
 };
@@ -42,6 +44,8 @@ export function mapPlaceToEtablissement(p: PlaceResult, categorie: "resto" | "ho
     telephone: p.telephone,
     website: p.website,
     price_level: p.priceLevel,
+    rating: p.rating,
+    rating_count: p.ratingCount,
     source: "places",
     photo_ref: p.photoRefs[0] ?? null,
   };

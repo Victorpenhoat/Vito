@@ -23,4 +23,12 @@ describe("MockPlacesProvider", () => {
     expect(p.photoUrl("mock_photo_1", 400)).toBeTruthy();
     expect(p.photoUrl("", 400)).toBeNull();
   });
+  it("details renvoie un rating numérique 0-5 + ratingCount", async () => {
+    const r = await new MockPlacesProvider().details("mock_bistrot_1");
+    expect(r).not.toBeNull();
+    expect(typeof r!.rating).toBe("number");
+    expect(r!.rating).toBeGreaterThanOrEqual(0);
+    expect(r!.rating).toBeLessThanOrEqual(5);
+    expect(typeof r!.ratingCount).toBe("number");
+  });
 });
