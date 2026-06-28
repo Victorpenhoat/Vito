@@ -4,7 +4,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
 import {
-  addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema,
+  addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema, toggleArchiveSchema,
 } from "../domain/schemas";
 
 export async function searchPlaces(query: string) {
@@ -60,6 +60,28 @@ export async function toggleFavorite(_prev: unknown, formData: FormData) {
     .eq("id", parsed.data.listeItemId);
   if (error) return { error: "Mise à jour échouée" };
   revalidatePath("/restos");
+  return {};
+}
+
+export async function toggleArchive(_prev: unknown, formData: FormData) {
+  const parsed = toggleArchiveSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    isArchived: formData.get("isArchived"),
+  });
+  if (!parsed.success) return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { error } = await supabase
+    .from("liste_items")
+    .update({
+      is_archived: parsed.data.isArchived,
+      archived_at: parsed.data.isArchived ? new Date().toISOString() : null,
+    })
+    .eq("id", parsed.data.listeItemId);
+  if (error) return { error: "Mise à jour échouée" };
+  revalidatePath("/restos");
+  revalidatePath("/hotels");
   return {};
 }
 

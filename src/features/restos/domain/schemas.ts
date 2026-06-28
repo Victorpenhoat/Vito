@@ -22,3 +22,8 @@ export const toggleFavoriteSchema = z.object({
   // est piégeux ici : Boolean("false") === true. On parse explicitement.
   isFavorite: z.enum(["true", "false"]).transform((v) => v === "true"),
 });
+
+export const toggleArchiveSchema = z.object({
+  listeItemId: z.string().uuid(),
+  isArchived: z.enum(["true", "false"]).transform((v) => v === "true"),
+});
