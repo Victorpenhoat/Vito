@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { type Place } from "../domain/filterPlaces";
 import { TAB_VIEWS, subsetForTab, type PlacesTab } from "../domain/placesTabsConfig";
 import { PlaceListPanel } from "./PlaceListPanel";
-import { PlaceSearch } from "./PlaceSearch";
+import { PlaceDiscovery } from "./PlaceDiscovery";
 import { PlacesMapCombined } from "./PlacesMapCombined";
 
 export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; places: Place[] }) {
@@ -48,7 +48,7 @@ export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; 
       {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} />}
       {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} />}
       {tab === "carte" && <PlacesMapCombined places={cartePlaces} locale={locale} />}
-      {tab === "recherche" && <PlaceSearch places={places} category={category} />}
+      {tab === "recherche" && <PlaceDiscovery places={places} category={category} />}
     </div>
   );
 }
