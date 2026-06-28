@@ -30,6 +30,7 @@ test("ajouter un hôtel via la recherche externe", async ({ page }) => {
   // La barre de recherche externe n'existe que dans l'onglet Recherche
   await page.getByTestId("tab-recherche").click();
   await page.getByTestId("add-hotel-search").fill("hôtel");
+  await page.getByTestId("search-submit").click();
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
   // L'hôtel ajouté est non-favori + statut='a_faire' → il apparaît dans Recommandés
