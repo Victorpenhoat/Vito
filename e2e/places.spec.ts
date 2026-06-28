@@ -53,3 +53,19 @@ test("onglet Recherche affiche le PlaceSearch", async ({ page }) => {
   await page.getByTestId("tab-recherche").click();
   await expect(page.getByTestId("add-resto-search")).toBeVisible();
 });
+
+test("onglet Carte : carte combinée — légende, filtre tag, comptage", async ({ page }) => {
+  await login(page);
+  await page.getByTestId("tab-carte").click();
+  await expect(page.getByTestId("places-map")).toBeVisible();
+  await expect(page.getByTestId("map-legend")).toBeVisible();
+  await expect(page.getByTestId("map-tag-filter")).toBeVisible();
+  // 2 adresses resto (Bistrot favori + Comptoir recommandé)
+  await expect(page.getByTestId("map-count")).toContainText("2");
+  // filtrer par « Terrasse » → seul le Bistrot
+  await page.getByTestId("map-tag-terrasse").click();
+  await expect(page.getByTestId("map-count")).toContainText("1");
+  // retour « Tous »
+  await page.getByTestId("map-tag-tous").click();
+  await expect(page.getByTestId("map-count")).toContainText("2");
+});

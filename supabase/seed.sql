@@ -43,13 +43,23 @@ update public.profiles set role = 'admin'  where id = '33333333-3333-3333-3333-3
 -- — données de référence livrées avec le schéma, présentes aussi en prod.)
 
 -- Établissement démo (référentiel)
-insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at, rating)
+insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at, rating, lat, lng)
 values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistrot',
-  'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed', 'mock_photo_1', now(), 4.6);
+  'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed', 'mock_photo_1', now(), 4.6, 48.8841, 2.3219);
 
 -- Le client a déjà un resto dans sa liste
-insert into public.liste_items (user_id, etablissement_id, statut, is_favorite, reco_source)
-values ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true, 'Camille');
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, reco_source)
+values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true, 'Camille');
+
+-- Tag « Terrasse » lié au liste_item du Bistrot
+insert into public.liste_item_tags (liste_item_id, tag_id)
+select 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', id from public.tags where slug = 'terrasse';
+
+-- 2e resto « Le Comptoir Démo » (a_faire, non-favori, avec coords, sans tag)
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, lat, lng)
+values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'demo_place_2', 'resto', 'bistrot', 'Le Comptoir Démo', 'Paris', '75001', '1er', 'seed', 48.8566, 2.3522);
+insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
+values ('11111111-1111-1111-1111-111111111111', 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'a_faire', false);
 
 -- Hôtel démo (catégorie hotel) + dans la liste du client (à tester)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
@@ -70,7 +80,7 @@ values ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbb
 -- Pool de démo pour la recherche/reco (UUID v4 valides ; PAS dans la liste du client)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, price_level, source) values
   ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'demo_p_c', 'resto', 'bistrot', 'Bistrot du 17e', 'Paris', '75017', '17e', 2, 'seed'),
-  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'demo_p_d', 'resto', 'étoilé', 'La Table du 8e', 'Paris', '75008', '8e', 4, 'seed'),
+  ('dddddddd-dddd-4ddd-8ddd-eeeeeeeeeeee', 'demo_p_d', 'resto', 'étoilé', 'La Table du 8e', 'Paris', '75008', '8e', 4, 'seed'),
   ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'demo_p_e', 'resto', 'brasserie', 'Brasserie du 17e', 'Paris', '75017', '17e', 2, 'seed'),
   ('ffffffff-ffff-4fff-8fff-ffffffffffff', 'demo_p_f', 'resto', 'café', 'Café du 1er', 'Paris', '75001', '1er', 1, 'seed');
 
