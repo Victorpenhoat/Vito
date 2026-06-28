@@ -7,14 +7,11 @@ import { mapCenter } from "../domain/mapCenter";
 import type { Place } from "../domain/filterPlaces";
 
 function pin(favorite: boolean): L.DivIcon {
-  // Couleurs via tokens CSS (le marqueur est dans le document → les variables s'appliquent).
-  const color = favorite ? "var(--gold)" : "var(--accent)";
-  return L.divIcon({
-    className: "",
-    html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${color};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)"></span>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-  });
+  // Favori = disque plein or ; recommandé (non favori) = disque contour accent. Couleurs via tokens CSS.
+  const html = favorite
+    ? `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:var(--gold);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)"></span>`
+    : `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.4)"></span>`;
+  return L.divIcon({ className: "", html, iconSize: [14, 14], iconAnchor: [7, 7] });
 }
 
 export function PlacesMap({ places, locale }: { places: Place[]; locale: string }) {
@@ -30,13 +27,16 @@ export function PlacesMap({ places, locale }: { places: Place[]; locale: string 
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {withCoords.map((p) => (
-            <Marker key={p.id} position={[p.etablissement.lat as number, p.etablissement.lng as number]} icon={pin(p.is_favorite)}>
-              <Popup>
-                <a href={`/${locale}/restos/${p.etablissement.id}`} className="font-semibold text-accent">{p.etablissement.nom}</a>
-              </Popup>
-            </Marker>
-          ))}
+          {withCoords.map((p) => {
+            const base = p.etablissement.categorie === "hotel" ? "hotels" : "restos";
+            return (
+              <Marker key={p.id} position={[p.etablissement.lat as number, p.etablissement.lng as number]} icon={pin(p.is_favorite)}>
+                <Popup>
+                  <a href={`/${locale}/${base}/${p.etablissement.id}`} className="font-semibold text-accent">{p.etablissement.nom}</a>
+                </Popup>
+              </Marker>
+            );
+          })}
         </MapContainer>
       </div>
       {sansLoc > 0 && <p className="text-sm text-muted">{t("sansLocalisation", { n: sansLoc })}</p>}
