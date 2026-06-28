@@ -23,8 +23,11 @@ export function PlaceDiscovery({ places, category }: { places: Place[]; category
   const testidBase = category === "hotel" ? "hotel" : "resto";
 
   useEffect(() => {
+    // Hydratation depuis localStorage après montage : pattern SSR-safe volontaire
+    // (un init paresseux provoquerait un mismatch d'hydratation serveur/client).
     try {
       const raw = localStorage.getItem(storageKey);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (raw) setRecents(JSON.parse(raw) as string[]);
     } catch {
       /* localStorage indisponible : on ignore */
