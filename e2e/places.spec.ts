@@ -48,7 +48,7 @@ test("filtre local d'un onglet filtre les place-cards", async ({ page }) => {
   await expect(page.getByTestId("place-card")).toHaveCount(0);
 });
 
-test("onglet Recherche affiche le PlaceSearch", async ({ page }) => {
+test("onglet Recherche affiche le champ de recherche (Découverte)", async ({ page }) => {
   await login(page);
   await page.getByTestId("tab-recherche").click();
   await expect(page.getByTestId("add-resto-search")).toBeVisible();
