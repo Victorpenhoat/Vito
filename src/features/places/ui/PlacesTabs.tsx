@@ -50,7 +50,7 @@ export function PlacesTabs({ category, places, archived }: { category: "resto" |
         <button
           type="button"
           data-testid="tab-archives"
-          aria-selected={tab === "archives"}
+          aria-pressed={tab === "archives"}
           onClick={() => setTab("archives")}
           className={`self-start text-xs ${tab === "archives" ? "font-semibold text-ink" : "text-muted"}`}
         >
