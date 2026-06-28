@@ -48,7 +48,7 @@ test("filtre local d'un onglet filtre les place-cards", async ({ page }) => {
   await expect(page.getByTestId("place-card")).toHaveCount(0);
 });
 
-test("onglet Recherche affiche le PlaceSearch", async ({ page }) => {
+test("onglet Recherche affiche le champ de recherche (Découverte)", async ({ page }) => {
   await login(page);
   await page.getByTestId("tab-recherche").click();
   await expect(page.getByTestId("add-resto-search")).toBeVisible();
@@ -68,4 +68,22 @@ test("onglet Carte : carte combinée — légende, filtre tag, comptage", async 
   // retour « Tous »
   await page.getByTestId("map-tag-tous").click();
   await expect(page.getByTestId("map-count")).toContainText("2");
+});
+
+test("onglet Recherche : découverte (envies, submit, récentes)", async ({ page }) => {
+  await login(page);
+  await page.getByTestId("tab-recherche").click();
+  // état initial : chips d'envie rendues
+  await expect(page.getByTestId("envies")).toBeVisible();
+  await expect(page.getByTestId("envie-envieItalien")).toBeVisible();
+  // submit "bistrot" → résultats
+  await page.getByTestId("add-resto-search").fill("bistrot");
+  await page.getByTestId("search-submit").click();
+  await expect(page.getByTestId("search-result").first()).toBeVisible();
+  // revenir à la découverte → la recherche récente est enregistrée
+  await page.getByTestId("search-clear").click();
+  await expect(page.getByTestId("recents")).toContainText("bistrot");
+  // re-cliquer la récente relance la recherche
+  await page.getByTestId("recent-item").first().click();
+  await expect(page.getByTestId("search-result").first()).toBeVisible();
 });

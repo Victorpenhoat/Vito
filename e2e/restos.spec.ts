@@ -17,6 +17,7 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
 
   // Recherche (provider mock) + ajout
   await page.getByTestId("add-resto-search").fill("bistrot");
+  await page.getByTestId("search-submit").click();
   await expect(page.getByTestId("search-result").first()).toBeVisible();
   await page.getByTestId("search-result").first().getByRole("button").click();
 
