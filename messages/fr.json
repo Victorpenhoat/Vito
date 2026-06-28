@@ -397,7 +397,9 @@
     "add": "Ajouter",
     "resFavoris": "Tes favoris",
     "resATester": "À tester",
-    "resExternes": "Ajouter depuis Google"
+    "resExternes": "Ajouter depuis Google",
+    "tagTous": "Tous",
+    "adressesCount": "{n} adresses"
   },
   "hotels": {
     "title": "Mes hôtels"
