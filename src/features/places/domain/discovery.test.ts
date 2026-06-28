@@ -19,7 +19,11 @@ describe("searchEnvies", () => {
     expect(e).toHaveLength(4);
     expect(e.every((x) => x.query.trim().length > 0 && x.labelKey.length > 0)).toBe(true);
   });
-  it("hotel → vide (Slice 7)", () => expect(searchEnvies("hotel")).toEqual([]));
+  it("hotel → 4 envies (query/labelKey non vides)", () => {
+    const e = searchEnvies("hotel");
+    expect(e).toHaveLength(4);
+    expect(e.every((x) => x.query.trim().length > 0 && x.labelKey.length > 0)).toBe(true);
+  });
 });
 
 describe("markOwned", () => {

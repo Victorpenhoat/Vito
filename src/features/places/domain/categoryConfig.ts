@@ -19,11 +19,13 @@ export type CategoryConfig = {
   descriptor: "cuisine" | "ambiance";
   /** Réservé Slice 7 : classe étoiles hôtel. Non rendu ni alimenté en Slice 2. */
   showStarClass: boolean;
+  /** Affiche une barre de filtre par tag (ambiance) sur la liste. */
+  listTagFilter: boolean;
 };
 
 export const categoryConfig: Record<Categorie, CategoryConfig> = {
-  resto: { notationKind: "stars", maxChipsListe: 2, maxChipsVignette: 1, descriptor: "cuisine", showStarClass: false },
-  hotel: { notationKind: "score", maxChipsListe: 2, maxChipsVignette: 1, descriptor: "ambiance", showStarClass: false },
+  resto: { notationKind: "stars", maxChipsListe: 2, maxChipsVignette: 1, descriptor: "cuisine", showStarClass: false, listTagFilter: false },
+  hotel: { notationKind: "score", maxChipsListe: 2, maxChipsVignette: 1, descriptor: "ambiance", showStarClass: false, listTagFilter: true },
 };
 
 /** Limite la liste de chips selon la catégorie et le variant. */
