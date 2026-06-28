@@ -74,6 +74,8 @@
   },
   "restos": {
     "title": "Mes restos",
+    "archiver": "Archiver",
+    "desarchiver": "Désarchiver",
     "favorite": "Favori",
     "statut": { "a_faire": "À faire", "visite": "Visité" },
     "avis": "Mes avis",
@@ -405,7 +407,9 @@
     "envieItalien": "Italien",
     "envieBrunch": "Brunch",
     "tagTous": "Tous",
-    "adressesCount": "{n} adresses"
+    "adressesCount": "{n} adresses",
+    "archives": "Archivés",
+    "archivesVide": "Aucun établissement archivé"
   },
   "hotels": {
     "title": "Mes hôtels"

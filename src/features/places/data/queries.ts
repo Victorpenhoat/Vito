@@ -1,15 +1,16 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import type { Place } from "../domain/filterPlaces";
 
-export async function getPlaces(category: "resto" | "hotel"): Promise<Place[]> {
+const SELECT =
+  "id, statut, is_favorite, reco_source, etablissement:etablissements!inner(id, nom, type, ville, arrondissement, categorie, photo_ref, lat, lng, place_id, rating, rating_count), tags:liste_item_tags(tag:tags(slug, label, color))";
+
+async function queryPlaces(category: "resto" | "hotel", archived: boolean): Promise<Place[]> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("liste_items")
-    .select(
-      "id, statut, is_favorite, reco_source, etablissement:etablissements!inner(id, nom, type, ville, arrondissement, categorie, photo_ref, lat, lng, place_id, rating, rating_count), tags:liste_item_tags(tag:tags(slug, label, color))"
-    )
+    .select(SELECT)
     .eq("etablissement.categorie", category)
-    .eq("is_archived", false)
+    .eq("is_archived", archived)
     .order("added_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((row) => ({
@@ -23,4 +24,12 @@ export async function getPlaces(category: "resto" | "hotel"): Promise<Place[]> {
       return tag ? [tag] : [];
     }),
   })) as Place[];
+}
+
+export function getPlaces(category: "resto" | "hotel"): Promise<Place[]> {
+  return queryPlaces(category, false);
+}
+
+export function getArchivedPlaces(category: "resto" | "hotel"): Promise<Place[]> {
+  return queryPlaces(category, true);
 }

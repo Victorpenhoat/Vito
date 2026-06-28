@@ -87,3 +87,23 @@ test("onglet Recherche : découverte (envies, submit, récentes)", async ({ page
   await page.getByTestId("recent-item").first().click();
   await expect(page.getByTestId("search-result").first()).toBeVisible();
 });
+
+test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la fiche", async ({ page }) => {
+  await login(page);
+  const archived = () => page.getByTestId("archived-item").filter({ hasText: "Le Resto Archivé Démo" });
+  // Le lien Archivés est visible (≥1 archivé seedé)
+  await expect(page.getByTestId("tab-archives")).toBeVisible();
+  await page.getByTestId("tab-archives").click();
+  await expect(archived()).toBeVisible();
+  // Désarchiver inline → quitte la liste Archivés
+  await archived().getByTestId("archive-unarchive").click();
+  await expect(archived()).toHaveCount(0);
+  // RESTAURER : ouvrir la fiche et ré-archiver
+  await page.goto("/fr/restos/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee");
+  await page.getByTestId("archive-toggle").click();
+  await page.waitForLoadState("networkidle");
+  // De retour sur la liste, il est de nouveau archivé
+  await page.goto("/fr/restos");
+  await page.getByTestId("tab-archives").click();
+  await expect(archived()).toBeVisible();
+});

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toggleFavoriteSchema, addAvisSchema } from "./schemas";
+import { toggleFavoriteSchema, addAvisSchema, toggleArchiveSchema } from "./schemas";
 
 // UUID v4 valide (Zod v4 .uuid() vérifie le nibble de version/variant ;
 // les vrais ids viennent de gen_random_uuid() => v4 valide).
@@ -24,5 +24,17 @@ describe("addAvisSchema", () => {
   it("rejette une note hors plage (6)", () => {
     const r = addAvisSchema.safeParse({ etablissementId: UUID, note: 6 });
     expect(r.success).toBe(false);
+  });
+});
+
+describe("toggleArchiveSchema", () => {
+  it('parse "true" -> true', () => {
+    expect(toggleArchiveSchema.parse({ listeItemId: UUID, isArchived: "true" }).isArchived).toBe(true);
+  });
+  it('parse "false" -> false', () => {
+    expect(toggleArchiveSchema.parse({ listeItemId: UUID, isArchived: "false" }).isArchived).toBe(false);
+  });
+  it("rejette un listeItemId non-uuid", () => {
+    expect(toggleArchiveSchema.safeParse({ listeItemId: "x", isArchived: "true" }).success).toBe(false);
   });
 });

@@ -61,6 +61,12 @@ values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'demo_place_2', 'resto', 'bistro
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
 values ('11111111-1111-1111-1111-111111111111', 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'a_faire', false);
 
+-- Resto déjà archivé (vue Archivés) — sans coords (n'affecte pas le comptage Carte)
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source)
+values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'demo_place_archive', 'resto', 'bistrot', 'Le Resto Archivé Démo', 'Paris', '75002', '2e', 'seed');
+insert into public.liste_items (user_id, etablissement_id, statut, is_favorite, is_archived)
+values ('11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'a_faire', false, true);
+
 -- Hôtel démo (catégorie hotel) + dans la liste du client (à tester)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
 values ('11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_1', 'hotel', 'hotel',
@@ -81,7 +87,7 @@ values ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbb
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, price_level, source) values
   ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'demo_p_c', 'resto', 'bistrot', 'Bistrot du 17e', 'Paris', '75017', '17e', 2, 'seed'),
   ('dddddddd-dddd-4ddd-8ddd-eeeeeeeeeeee', 'demo_p_d', 'resto', 'étoilé', 'La Table du 8e', 'Paris', '75008', '8e', 4, 'seed'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'demo_p_e', 'resto', 'brasserie', 'Brasserie du 17e', 'Paris', '75017', '17e', 2, 'seed'),
+  ('eeeeeeee-eeee-4eee-8eee-000000000001', 'demo_p_e', 'resto', 'brasserie', 'Brasserie du 17e', 'Paris', '75017', '17e', 2, 'seed'),
   ('ffffffff-ffff-4fff-8fff-ffffffffffff', 'demo_p_f', 'resto', 'café', 'Café du 1er', 'Paris', '75001', '1er', 1, 'seed');
 
 -- Goûts de démo du client : aime bistrot, zone 17e

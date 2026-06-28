@@ -4,7 +4,7 @@ export async function getFiche(etablissementId: string) {
   const supabase = await createServerSupabase();
   const [etabRes, itemRes, avisRes] = await Promise.all([
     supabase.from("etablissements").select("*").eq("id", etablissementId).single(),
-    supabase.from("liste_items").select("id, statut, is_favorite").eq("etablissement_id", etablissementId).maybeSingle(),
+    supabase.from("liste_items").select("id, statut, is_favorite, is_archived").eq("etablissement_id", etablissementId).maybeSingle(),
     supabase.from("avis").select("*").eq("etablissement_id", etablissementId).order("created_at", { ascending: false }),
   ]);
   // Un établissement introuvable n'est pas une fiche valide : on remonte l'erreur.

@@ -58,6 +58,8 @@
   },
   "restos": {
     "title": "I miei ristoranti",
+    "archiver": "Archivia",
+    "desarchiver": "Rimuovi dall'archivio",
     "favorite": "Preferito",
     "statut": { "a_faire": "Da fare", "visite": "Visitato" },
     "avis": "Le mie recensioni",
@@ -367,7 +369,9 @@
     "envieItalien": "Italiano",
     "envieBrunch": "Brunch",
     "tagTous": "Tutti",
-    "adressesCount": "{n} indirizzi"
+    "adressesCount": "{n} indirizzi",
+    "archives": "Archiviati",
+    "archivesVide": "Nessun locale archiviato"
   },
   "hotels": {
     "title": "I miei hotel"
