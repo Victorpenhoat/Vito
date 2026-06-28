@@ -5,7 +5,7 @@ import { type Place } from "../domain/filterPlaces";
 import { TAB_VIEWS, subsetForTab, type PlacesTab } from "../domain/placesTabsConfig";
 import { PlaceListPanel } from "./PlaceListPanel";
 import { PlaceSearch } from "./PlaceSearch";
-import { PlacesMapLazy } from "./PlacesMapLazy";
+import { PlacesMapCombined } from "./PlacesMapCombined";
 
 export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; places: Place[] }) {
   const t = useTranslations("places");
@@ -47,7 +47,7 @@ export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; 
       </div>
       {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} />}
       {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} />}
-      {tab === "carte" && <PlacesMapLazy places={cartePlaces} locale={locale} />}
+      {tab === "carte" && <PlacesMapCombined places={cartePlaces} locale={locale} />}
       {tab === "recherche" && <PlaceSearch places={places} category={category} />}
     </div>
   );
