@@ -6,11 +6,12 @@ import { TAB_VIEWS, subsetForTab, type PlacesTab } from "../domain/placesTabsCon
 import { PlaceListPanel } from "./PlaceListPanel";
 import { PlaceDiscovery } from "./PlaceDiscovery";
 import { PlacesMapCombined } from "./PlacesMapCombined";
+import { ArchivedPanel } from "./ArchivedPanel";
 
-export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; places: Place[] }) {
+export function PlacesTabs({ category, places, archived }: { category: "resto" | "hotel"; places: Place[]; archived: Place[] }) {
   const t = useTranslations("places");
   const locale = useLocale();
-  const [tab, setTab] = useState<PlacesTab>("favoris");
+  const [tab, setTab] = useState<PlacesTab | "archives">("favoris");
 
   const favoris = subsetForTab(places, "favoris");
   const recommandes = subsetForTab(places, "recommandes");
@@ -45,10 +46,22 @@ export function PlacesTabs({ category, places }: { category: "resto" | "hotel"; 
           );
         })}
       </div>
+      {archived.length > 0 && (
+        <button
+          type="button"
+          data-testid="tab-archives"
+          aria-selected={tab === "archives"}
+          onClick={() => setTab("archives")}
+          className={`self-start text-xs ${tab === "archives" ? "font-semibold text-ink" : "text-muted"}`}
+        >
+          {t("archives")} <span className="text-faint">({archived.length})</span>
+        </button>
+      )}
       {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} />}
       {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} />}
       {tab === "carte" && <PlacesMapCombined places={cartePlaces} locale={locale} />}
       {tab === "recherche" && <PlaceDiscovery places={places} category={category} />}
+      {tab === "archives" && <ArchivedPanel places={archived} />}
     </div>
   );
 }

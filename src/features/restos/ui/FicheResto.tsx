@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { getFiche, getTagsForCategory } from "../data/queries";
 import { FavoriteToggle } from "./FavoriteToggle";
+import { ArchiveToggle } from "./ArchiveToggle";
 import { AvisForm } from "./AvisForm";
 import { TagPicker } from "./TagPicker";
 import { PhotoCacheSync } from "./PhotoCacheSync";
@@ -65,6 +66,7 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
       </div>
       {shouldSync && heroRef && <PhotoCacheSync etabId={etab.id} photoRef={heroRef} />}
       {item && <FavoriteToggle listeItemId={item.id} isFavorite={item.is_favorite} />}
+      {item && <ArchiveToggle listeItemId={item.id} isArchived={item.is_archived} />}
       {item && tags.length > 0 && (
         <TagPicker tags={tags} appliedTagIds={appliedTagIds} listeItemId={item.id} />
       )}
