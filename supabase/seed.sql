@@ -71,8 +71,16 @@ values ('11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-4eee-8eee-eeeeeee
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
 values ('11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_1', 'hotel', 'hotel',
   'Hôtel Démo', 'Paris', '75001', '1er', 'seed', 'mock_photo_1', now());
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite)
+values ('11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', '11111111-1111-1111-1111-111111111111', '11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
+-- Tag ambiance « Spa » (tag hôtel existant, 00017) lié à l'Hôtel Démo
+insert into public.liste_item_tags (liste_item_id, tag_id)
+select '11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', id from public.tags where slug = 'spa';
+-- 2e hôtel sans tag (pour que le filtre ambiance fasse varier le nombre)
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source)
+values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed');
 insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
-values ('11111111-1111-1111-1111-111111111111', '11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
+values ('11111111-1111-1111-1111-111111111111', '22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
 
 -- Vin + dégustation de démo pour le compte client (UUID v4 valides)
 insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, cepages)
