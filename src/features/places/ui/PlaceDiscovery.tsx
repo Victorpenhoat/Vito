@@ -97,7 +97,7 @@ export function PlaceDiscovery({ places, category }: { places: Place[]; category
           {envies.length > 0 && (
             <section data-testid="envies">
               <SectionLabel>{t("explorerEnvie")}</SectionLabel>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
                 {envies.map((e) => (
                   <button
                     key={e.labelKey}
@@ -117,7 +117,7 @@ export function PlaceDiscovery({ places, category }: { places: Place[]; category
       )}
 
       {searched && results.length > 0 && (
-        <ul className="flex flex-col">
+        <ul className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-x-6">
           {owned.map(({ result, owned: isOwned }) => {
             const added = isOwned || addedIds.has(result.placeId);
             return (
