@@ -7,6 +7,7 @@
 // tsconfig-paths (cfg.tsconfig). Voir .design-sync/NOTES.md.
 import "./process-shim"; // DOIT rester en premier (définit process avant next-intl via Fab/NavItem/Modal)
 export { Button } from "../src/features/shared/ui/Button";
+export { Input } from "../src/features/shared/ui/Input";
 export { Avatar } from "../src/features/shared/ui/Avatar";
 export { Badge } from "../src/features/shared/ui/Badge";
 export { Card } from "../src/features/shared/ui/Card";
