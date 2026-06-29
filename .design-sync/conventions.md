@@ -17,6 +17,7 @@ Primitives UI de l'app **Vito** (`window.VitoKit.*`). React 19 + Tailwind v4,
 ## Composants
 
 - **Button** — `variant: "primary" | "ghost" | "subtle"`, `pending?`.
+- **Input** — champ texte ; `label?`, `error?` (bordure/texte danger) + attributs `<input>` natifs.
 - **Avatar** — `name`, `size: "sm"|"md"|"lg"|"xl"`, `color?` (initiales auto).
 - **Badge** — pastille ; `children`.
 - **Card** — conteneur `rounded-card` bordé ; `children`.
