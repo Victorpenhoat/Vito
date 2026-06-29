@@ -8,6 +8,10 @@ export default defineConfig({
   // en parallèle, plusieurs workers s'authentifiant comme le même user provoquent des "Non authentifié".
   // Dette suivie : passer à une isolation par storageState (auth une fois, cookie réutilisé) pour restaurer le parallélisme.
   workers: 1,
+  // Flakes de timing connus sous charge CI (race RSC fiche proche, formulaires lents à s'activer,
+  // permission denied liste_items anon en préfetch) : ils passent au re-run. On laisse Playwright
+  // re-tenter en CI plutôt que de re-runner le job entier à la main. 0 en local (échec = vrai échec).
+  retries: process.env.CI ? 2 : 0,
   use: { baseURL: `http://localhost:${PORT}` },
   webServer: {
     command: `npm run build && PORT=${PORT} npm run start`,

@@ -378,7 +378,8 @@
     "archivesVide": "Nessun locale archiviato"
   },
   "hotels": {
-    "title": "I miei hotel"
+    "title": "I miei hotel",
+    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "accueil": {
     "title": "Home", "welcome": "Benvenuto su Vito 👋", "cta": "Vedi i miei ristoranti",

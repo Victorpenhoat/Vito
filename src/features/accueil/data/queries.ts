@@ -49,7 +49,8 @@ export async function getDashboardData() {
     supabase
       .from("liste_items")
       .select("id", { count: "exact", head: true })
-      .eq("statut", "a_faire"),
+      .eq("statut", "a_faire")
+      .eq("is_archived", false),
     supabase
       .from("voyages")
       .select("id", { count: "exact", head: true })

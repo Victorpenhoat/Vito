@@ -6,14 +6,15 @@ import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlacesMapLazy } from "./PlacesMapLazy";
 import { Link } from "@/lib/i18n/routing";
 
+function chipCls(active: boolean): string {
+  return `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
+}
+
 export function PlacesMapCombined({ places, locale }: { places: Place[]; locale: string }) {
   const t = useTranslations("places");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const tags = tagsForMap(places);
   const filtered = filterByTag(places, selectedTag);
-
-  const chipCls = (active: boolean) =>
-    `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
 
   return (
     <div className="flex flex-col gap-3">
@@ -60,7 +61,7 @@ export function PlacesMapCombined({ places, locale }: { places: Place[]; locale:
               const base = p.etablissement.categorie === "hotel" ? "hotels" : "restos";
               return (
                 <li key={p.id} data-testid="map-list-item" className="border-b border-line-soft py-2">
-                  <Link href={`/${base}/${p.etablissement.id}`} className="text-sm text-accent hover:underline">
+                  <Link href={`/${base}/${p.etablissement.id}`} className="block truncate text-sm text-accent hover:underline">
                     {p.etablissement.nom}
                     {p.etablissement.ville ? <span className="text-muted"> · {p.etablissement.ville}</span> : null}
                   </Link>

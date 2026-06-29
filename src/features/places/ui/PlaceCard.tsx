@@ -111,7 +111,7 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">{etablissement.type}</span>
           )}
           <span className="font-serif text-xl font-medium text-ink">{etablissement.nom}</span>
-          {subtitle && <span className="text-sm text-muted">{etablissement.ville}</span>}
+          {subtitle && <span className="text-sm text-muted">{subtitle}</span>}
           {reco}
           {(note || chips) && (
             <div className="mt-1 flex items-center gap-2">

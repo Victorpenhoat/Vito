@@ -51,12 +51,14 @@ test("liste hôtel : filtre par ambiance (Spa)", async ({ page }) => {
   await page.goto("/fr/hotels");
   await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("list-tag-filter")).toBeVisible();
-  // 2 hôtels recommandés seedés (Hôtel Démo [spa] + Hôtel Démo 2 [sans tag])
-  await expect(page.getByTestId("place-card")).toHaveCount(2);
-  // filtrer par Spa → seul l'Hôtel Démo
+  // ≥ 2 hôtels recommandés (Hôtel Démo [spa] + Hôtel Démo 2 [sans tag] ; d'autres
+  // tests du fichier peuvent en ajouter en base partagée → on capture le total).
+  const total = await page.getByTestId("place-card").count();
+  expect(total).toBeGreaterThanOrEqual(2);
+  // filtrer par Spa → seul l'Hôtel Démo est taggé spa
   await page.getByTestId("list-tag-spa").click();
   await expect(page.getByTestId("place-card")).toHaveCount(1);
-  // retour Tous → 2
+  // retour Tous → on retrouve le total initial
   await page.getByTestId("list-tag-tous").click();
-  await expect(page.getByTestId("place-card")).toHaveCount(2);
+  await expect(page.getByTestId("place-card")).toHaveCount(total);
 });

@@ -88,6 +88,13 @@ test("onglet Recherche : découverte (envies, submit, récentes)", async ({ page
   await expect(page.getByTestId("search-result").first()).toBeVisible();
 });
 
+test("a11y : le panneau d'onglet expose role=tabpanel lié à l'onglet actif", async ({ page }) => {
+  await login(page);
+  const panel = page.getByTestId("places-panel");
+  await expect(panel).toHaveAttribute("role", "tabpanel");
+  await expect(panel).toHaveAttribute("aria-labelledby", "tab-favoris");
+});
+
 test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la fiche", async ({ page }) => {
   await login(page);
   const archived = () => page.getByTestId("archived-item").filter({ hasText: "Le Resto Archivé Démo" });

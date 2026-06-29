@@ -8,6 +8,10 @@ import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlaceCard } from "./PlaceCard";
 import { PlacesMapLazy } from "./PlacesMapLazy";
 
+function chipCls(active: boolean): string {
+  return `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
+}
+
 export function PlaceListPanel({
   places,
   views,
@@ -35,9 +39,6 @@ export function PlaceListPanel({
     vignettes: t("vueVignettes"),
     carte: t("vueCarte"),
   };
-  const chipCls = (active: boolean) =>
-    `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
