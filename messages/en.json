@@ -378,7 +378,8 @@
     "archivesVide": "No archived places"
   },
   "hotels": {
-    "title": "My hotels"
+    "title": "My hotels",
+    "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "accueil": {
     "title": "Home", "welcome": "Welcome to Vito 👋", "cta": "See my restaurants",
