@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { filterPlaces, type Place } from "../domain/filterPlaces";
 import type { PlaceView } from "../domain/placesTabsConfig";
+import { categoryConfig } from "../domain/categoryConfig";
+import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlaceCard } from "./PlaceCard";
 import { PlacesMapLazy } from "./PlacesMapLazy";
 
@@ -10,20 +12,27 @@ export function PlaceListPanel({
   places,
   views,
   locale,
+  category,
 }: {
   places: Place[];
   views: PlaceView[];
   locale: string;
+  category: "resto" | "hotel";
 }) {
   const t = useTranslations("places");
   const [q, setQ] = useState("");
   const [view, setView] = useState<PlaceView>(views[0]!);
-  const shown = filterPlaces(places, q);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const showTagFilter = categoryConfig[category].listTagFilter;
+  const tags = showTagFilter ? tagsForMap(places) : [];
+  const shown = filterByTag(filterPlaces(places, q), selectedTag);
   const viewLabel: Record<PlaceView, string> = {
     liste: t("vueListe"),
     vignettes: t("vueVignettes"),
     carte: t("vueCarte"),
   };
+  const chipCls = (active: boolean) =>
+    `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
 
   return (
     <div className="flex flex-col gap-4">
@@ -52,6 +61,31 @@ export function PlaceListPanel({
           </div>
         )}
       </div>
+      {showTagFilter && tags.length > 0 && (
+        <div data-testid="list-tag-filter" className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            data-testid="list-tag-tous"
+            aria-pressed={selectedTag === null}
+            onClick={() => setSelectedTag(null)}
+            className={chipCls(selectedTag === null)}
+          >
+            {t("tagTous")}
+          </button>
+          {tags.map((tag) => (
+            <button
+              key={tag.slug}
+              type="button"
+              data-testid={`list-tag-${tag.slug}`}
+              aria-pressed={selectedTag === tag.slug}
+              onClick={() => setSelectedTag(tag.slug)}
+              className={chipCls(selectedTag === tag.slug)}
+            >
+              {tag.label}
+            </button>
+          ))}
+        </div>
+      )}
       {view === "carte" ? (
         <PlacesMapLazy places={shown} locale={locale} />
       ) : shown.length === 0 ? (

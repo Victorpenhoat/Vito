@@ -57,8 +57,8 @@ export function PlacesTabs({ category, places, archived }: { category: "resto" |
           {t("archives")} <span className="text-faint">({archived.length})</span>
         </button>
       )}
-      {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} />}
-      {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} />}
+      {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} category={category} />}
+      {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} category={category} />}
       {tab === "carte" && <PlacesMapCombined places={cartePlaces} locale={locale} />}
       {tab === "recherche" && <PlaceDiscovery places={places} category={category} />}
       {tab === "archives" && <ArchivedPanel places={archived} />}
