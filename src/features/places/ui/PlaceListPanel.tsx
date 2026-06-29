@@ -26,6 +26,10 @@ export function PlaceListPanel({
   const showTagFilter = categoryConfig[category].listTagFilter;
   const tags = showTagFilter ? tagsForMap(places) : [];
   const shown = filterByTag(filterPlaces(places, q), selectedTag);
+  const gridCls =
+    view === "vignettes"
+      ? "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      : "grid grid-cols-1 gap-5 sm:grid-cols-2";
   const viewLabel: Record<PlaceView, string> = {
     liste: t("vueListe"),
     vignettes: t("vueVignettes"),
@@ -91,7 +95,7 @@ export function PlaceListPanel({
       ) : shown.length === 0 ? (
         <p className="text-sm text-muted">{t("empty")}</p>
       ) : (
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <ul className={gridCls}>
           {shown.map((p) => (
             <PlaceCard key={p.id} place={p} variant={view === "vignettes" ? "vignette" : "liste"} />
           ))}
