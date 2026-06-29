@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { Place } from "../domain/filterPlaces";
 import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlacesMapLazy } from "./PlacesMapLazy";
+import { Link } from "@/lib/i18n/routing";
 
 export function PlacesMapCombined({ places, locale }: { places: Place[]; locale: string }) {
   const t = useTranslations("places");
@@ -52,7 +53,24 @@ export function PlacesMapCombined({ places, locale }: { places: Place[]; locale:
         </div>
         <span data-testid="map-count">{t("adressesCount", { n: filtered.length })}</span>
       </div>
-      <PlacesMapLazy places={filtered} locale={locale} />
+      <div className="lg:grid lg:grid-cols-[340px_1fr] lg:gap-4">
+        <aside data-testid="map-list" className="hidden lg:block lg:max-h-[60vh] lg:overflow-y-auto">
+          <ul className="flex flex-col">
+            {filtered.map((p) => {
+              const base = p.etablissement.categorie === "hotel" ? "hotels" : "restos";
+              return (
+                <li key={p.id} data-testid="map-list-item" className="border-b border-line-soft py-2">
+                  <Link href={`/${base}/${p.etablissement.id}`} className="text-sm text-accent hover:underline">
+                    {p.etablissement.nom}
+                    {p.etablissement.ville ? <span className="text-muted"> · {p.etablissement.ville}</span> : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+        <PlacesMapLazy places={filtered} locale={locale} />
+      </div>
     </div>
   );
 }
