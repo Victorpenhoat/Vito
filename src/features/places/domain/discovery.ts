@@ -3,9 +3,16 @@ import type { PlaceSummary } from "@/lib/services/places/types";
 
 export type Envie = { emoji: string; labelKey: string; query: string };
 
-/** « Explorer par envie » par catégorie. resto = cuisines ; hotel = [] (Slice 7). */
+/** « Explorer par envie » par catégorie. resto = cuisines ; hotel = 4 ambiances. */
 export function searchEnvies(category: "resto" | "hotel"): Envie[] {
-  if (category === "hotel") return [];
+  if (category === "hotel") {
+    return [
+      { emoji: "🏖️", labelKey: "envieBordDeMer", query: "bord de mer" },
+      { emoji: "💆", labelKey: "envieSpa", query: "spa" },
+      { emoji: "🏨", labelKey: "envieBoutique", query: "hôtel boutique" },
+      { emoji: "🏊", labelKey: "enviePiscine", query: "piscine" },
+    ];
+  }
   return [
     { emoji: "🍷", labelKey: "envieCaveAManger", query: "cave à manger" },
     { emoji: "🐟", labelKey: "envieFruitsDeMer", query: "fruits de mer" },

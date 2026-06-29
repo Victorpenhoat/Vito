@@ -37,3 +37,26 @@ test("ajouter un hôtel via la recherche externe", async ({ page }) => {
   await page.getByTestId("tab-recommandes").click();
   await expect(page.getByTestId("place-card").first()).toBeVisible();
 });
+
+test("onglet Recherche hôtel : chips « Explorer par envie »", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels");
+  await page.getByTestId("tab-recherche").click();
+  await expect(page.getByTestId("envies")).toBeVisible();
+  await expect(page.getByTestId("envie-envieSpa")).toBeVisible();
+});
+
+test("liste hôtel : filtre par ambiance (Spa)", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels");
+  await page.getByTestId("tab-recommandes").click();
+  await expect(page.getByTestId("list-tag-filter")).toBeVisible();
+  // 2 hôtels recommandés seedés (Hôtel Démo [spa] + Hôtel Démo 2 [sans tag])
+  await expect(page.getByTestId("place-card")).toHaveCount(2);
+  // filtrer par Spa → seul l'Hôtel Démo
+  await page.getByTestId("list-tag-spa").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(1);
+  // retour Tous → 2
+  await page.getByTestId("list-tag-tous").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(2);
+});

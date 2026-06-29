@@ -39,4 +39,8 @@ describe("categoryConfig", () => {
     expect(categoryConfig.hotel.descriptor).toBe("ambiance");
     expect(categoryConfig.hotel.showStarClass).toBe(false);
   });
+  it("listTagFilter : resto false, hôtel true", () => {
+    expect(categoryConfig.resto.listTagFilter).toBe(false);
+    expect(categoryConfig.hotel.listTagFilter).toBe(true);
+  });
 });
