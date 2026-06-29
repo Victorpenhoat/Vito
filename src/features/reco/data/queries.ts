@@ -37,7 +37,8 @@ export async function rechercheRestos(criteria: RechercheCriteria) {
   // 1) Ta liste : etablissements présents dans liste_items de l'utilisateur
   const { data: liste, error: listeErr } = await supabase
     .from("liste_items")
-    .select("etablissement_id, is_favorite, etablissement:etablissements(id, nom, type, ville, arrondissement, price_level, photo_ref)");
+    .select("etablissement_id, is_favorite, etablissement:etablissements(id, nom, type, ville, arrondissement, price_level, photo_ref)")
+    .eq("is_archived", false);
   if (listeErr) throw listeErr;
 
   const listeEtabs: RestoResult[] = [];
