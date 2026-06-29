@@ -13,7 +13,9 @@
     "test:e2e": "playwright test",
     "test:ci": "npm run typecheck && npm run lint && npm run test && npm run test:e2e",
     "typecheck": "tsc --noEmit",
-    "db:types": "supabase gen types typescript --local > src/types/database.types.ts"
+    "db:types": "supabase gen types typescript --local > src/types/database.types.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
@@ -30,6 +32,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/nextjs-vite": "^10.4.6",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -38,12 +43,17 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "eslint-plugin-storybook": "^10.4.6",
     "jsdom": "^29.1.1",
+    "playwright": "^1.61.1",
     "server-only": "^0.0.1",
+    "storybook": "^10.4.6",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite": "^8.1.0",
     "vitest": "^4.1.9"
   }
 }
