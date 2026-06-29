@@ -1,0 +1,13 @@
+{
+  "projectId": "e7666b87-8784-465d-81a4-cfa293f76dc7",
+  "pkg": "vito",
+  "globalName": "VitoKit",
+  "shape": "storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "storybookConfigDir": ".storybook",
+  "entry": ".design-sync/entry.tsx",
+  "tsconfig": "tsconfig.json",
+  "extraEntries": ["./.design-sync/provider.tsx"],
+  "provider": { "component": "VitoPreviewProvider" },
+  "readmeHeader": ".design-sync/conventions.md"
+}

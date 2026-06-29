@@ -27,6 +27,10 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Sortie de build Storybook (JS minifié) — ne pas linter.
     "storybook-static/**",
+    // Artefacts & scripts design-sync (bundle minifié, converter, références) — ne pas linter.
+    "ds-bundle/**",
+    ".ds-sync/**",
+    ".design-sync/**",
   ]),
   ...storybook.configs["flat/recommended"]
 ]);
