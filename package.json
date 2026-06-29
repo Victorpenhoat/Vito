@@ -2,6 +2,7 @@
   "name": "vito",
   "version": "0.1.0",
   "private": true,
+  "types": ".design-sync/entry.tsx",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
