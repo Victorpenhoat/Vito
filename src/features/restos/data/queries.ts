@@ -2,6 +2,14 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 export async function getFiche(etablissementId: string) {
   const supabase = await createServerSupabase();
+  // Fail-safe anon : layout et page rendent en parallèle (App Router), donc le
+  // requireRole du layout ne garde pas ces requêtes. Sans session, les tables
+  // (etablissements/liste_items/avis, authenticated-only) renvoient 42501 (anon)
+  // et crashent le RSC. FicheResto gère déjà `!etab` (notFound) ; on court-circuite.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) {
+    return { etab: null, item: null, avis: [], appliedTagIds: [] as string[] };
+  }
   const [etabRes, itemRes, avisRes] = await Promise.all([
     supabase.from("etablissements").select("*").eq("id", etablissementId).single(),
     supabase.from("liste_items").select("id, statut, is_favorite, is_archived").eq("etablissement_id", etablissementId).maybeSingle(),
