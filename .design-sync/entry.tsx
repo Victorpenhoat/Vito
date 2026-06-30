@@ -1,5 +1,5 @@
 // Barrel d'entrée pour design-sync : Vito est une app (pas un package), donc on
-// expose ici les 13 primitives du kit pour que le converter les bundle dans
+// expose ici les 15 primitives du kit pour que le converter les bundle dans
 // window.VitoKit.* ET pour qu'esbuild + ts-morph détectent les exports.
 // Imports RELATIFS (pas l'alias @/) : ts-morph (détection d'exports / props,
 // cf. pkgJson.types) ne charge pas les paths tsconfig. esbuild résout le relatif
@@ -8,6 +8,7 @@
 import "./process-shim"; // DOIT rester en premier (définit process avant next-intl via Fab/NavItem/Modal)
 export { Button } from "../src/features/shared/ui/Button";
 export { Input } from "../src/features/shared/ui/Input";
+export { Select } from "../src/features/shared/ui/Select";
 export { Avatar } from "../src/features/shared/ui/Avatar";
 export { Badge } from "../src/features/shared/ui/Badge";
 export { Card } from "../src/features/shared/ui/Card";
