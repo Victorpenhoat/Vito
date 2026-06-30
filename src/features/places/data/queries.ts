@@ -6,6 +6,11 @@ const SELECT =
 
 async function queryPlaces(category: "resto" | "hotel", archived: boolean): Promise<Place[]> {
   const supabase = await createServerSupabase();
+  // Fail-safe anon : layout et page rendent en parallèle (App Router), donc le
+  // requireRole du layout ne garde pas cette requête. Sans session, liste_items
+  // renvoie 42501 (anon) et crashe le RSC ; on court-circuite (cf. accueil/reco).
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   const { data, error } = await supabase
     .from("liste_items")
     .select(SELECT)

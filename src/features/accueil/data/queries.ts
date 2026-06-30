@@ -12,6 +12,20 @@ function embedName(v: unknown): string {
 
 export async function getDashboardData() {
   const supabase = await createServerSupabase();
+  // Fail-safe anon : le layout (app) garde déjà l'accès via requireRole, mais layout
+  // et page rendent EN PARALLÈLE dans l'App Router — le redirect du layout ne bloque
+  // donc pas cette requête. Sans session valide (fenêtre de refresh / prefetch), le
+  // client tombe en rôle `anon` et liste_items renvoie 42501 (GRANT authenticated-only
+  // + RLS owner), ce qui crashe le RSC. On court-circuite comme rechercheRestos.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) {
+    return {
+      kpis: { sorties: 0, nouveauxRestos: 0, vinsGoutes: 0, depensesVoyageCents: 0 },
+      todo: { restosATester: 0, voyagesAVenir: 0, conciergerieEnAttente: 0 },
+      discoveries: [] as { title: string; source: string }[],
+      activity: [] as ActivityItem[],
+    };
+  }
   const now = new Date();
   const { start, end } = monthRange(now);
   const today = now.toISOString().slice(0, 10);
