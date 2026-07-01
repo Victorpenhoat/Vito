@@ -30,7 +30,7 @@ export default async function ConciergeriePage() {
         title={t("title")}
         action={isPremium ? <span className="rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-surface">{t("premiumActif")}</span> : undefined}
       />
-      <div className="grid gap-6 md:grid-cols-[1fr_300px]">
+      <div className="grid gap-6 md:grid-cols-[1fr_340px] md:items-start">
         <section className="flex flex-col gap-3">
           <SectionLabel>{t("mesDemandes")}</SectionLabel>
           <DemandesList demandes={demandes} />

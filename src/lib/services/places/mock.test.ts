@@ -23,6 +23,12 @@ describe("MockPlacesProvider", () => {
     expect(p.photoUrl("mock_photo_1", 400)).toBeTruthy();
     expect(p.photoUrl("", 400)).toBeNull();
   });
+  it("photoUrl laisse passer une URL http / data (photos de seed en dev)", () => {
+    const p = new MockPlacesProvider();
+    const url = "https://images.unsplash.com/photo-123?w=800";
+    expect(p.photoUrl(url, 400)).toBe(url);
+    expect(p.photoUrl("data:image/png;base64,AAAA", 400)).toBe("data:image/png;base64,AAAA");
+  });
   it("details renvoie un rating numérique 0-5 + ratingCount", async () => {
     const r = await new MockPlacesProvider().details("mock_bistrot_1");
     expect(r).not.toBeNull();
