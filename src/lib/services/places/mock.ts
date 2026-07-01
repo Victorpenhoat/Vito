@@ -78,9 +78,11 @@ export class MockPlacesProvider implements PlacesProvider {
     return FIXTURES.find((f) => f.placeId === placeId) ?? null;
   }
   photoUrl(photoRef: string, _maxWidth: number): string | null {
-    // En mock, une image placeholder data-URI déterministe (maxWidth ignoré)
-    return photoRef
-      ? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
-      : null;
+    if (!photoRef) return null;
+    // Dev/démo : si la réf est déjà une URL http(s) ou un data-URI (photos de seed),
+    // on la renvoie telle quelle -> /api/places/photo la streame (http) ou redirige
+    // (data:). Sinon, placeholder 1×1 déterministe (maxWidth ignoré).
+    if (/^https?:\/\//.test(photoRef) || photoRef.startsWith("data:")) return photoRef;
+    return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
   }
 }

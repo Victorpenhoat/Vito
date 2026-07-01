@@ -7,7 +7,7 @@ import { Button } from "@/features/shared/ui/Button";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
 
-const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
+const inputCls = "w-full min-w-0 rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeHotelForm() {
   const t = useTranslations("conciergerie");
@@ -16,7 +16,7 @@ export function DemandeHotelForm() {
   const [hits, setHits] = useState<Hit[]>([]);
   const [selected, setSelected] = useState<Hit | null>(null);
   return (
-    <form action={action} data-testid="demande-hotel-form" className="flex flex-col gap-2 max-w-md border-t pt-3">
+    <form action={action} data-testid="demande-hotel-form" className="flex flex-col gap-2">
       <div data-testid="hotel-search" className="flex flex-col gap-1">
         <div className="flex gap-2">
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("chercherHotel")} className={`${inputCls} flex-1`} />
@@ -32,7 +32,7 @@ export function DemandeHotelForm() {
         {selected && <p className="text-sm">{t("selectionne")} : {selected.nom}</p>}
         {selected && <input type="hidden" name="placeId" value={selected.placeId} />}
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <input name="dateDebut" type="date" required aria-label={t("dateDebut")} className={inputCls} />
         <input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className={inputCls} />
       </div>
