@@ -20,6 +20,11 @@ export type VinConsolide = {
 export async function getMesVins(filters: VinFilters): Promise<VinConsolide[]> {
   const q = filtersToQuery(filters);
   const supabase = await createServerSupabase();
+  // Fail-safe anon : layout et page rendent en parallèle (App Router) — le
+  // requireRole du layout ne garde pas cette lecture. Sans session, vins renvoie
+  // 42501 (anon) et crashe le RSC ; on court-circuite (cf. #61/#63).
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
 
   // Récupère les vins (filtres intrinsèques) + leurs dégustations (filtres contextuels).
   let vinsQuery = supabase
@@ -70,6 +75,10 @@ export async function getVinsCount(): Promise<number> {
 
 export async function getVinDetail(id: string) {
   const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : sans session, les tables renvoient 42501 et
+  // crashent le RSC. On retourne null ; le consommateur (VinDetail) fait notFound().
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return null;
   const [vinRes, degRes] = await Promise.all([
     supabase.from("vins").select("*").eq("id", id).single(),
     supabase

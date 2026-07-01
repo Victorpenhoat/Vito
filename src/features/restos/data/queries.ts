@@ -36,6 +36,10 @@ export async function getFiche(etablissementId: string) {
 
 export async function getTags() {
   const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : `tags` est authenticated-only (GRANT 00005) ;
+  // sans session la lecture renvoie 42501 (anon) et crashe le RSC (gouts/page).
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   const { data, error } = await supabase.from("tags").select("id, slug, label").order("label");
   if (error) throw error;
   return data;
@@ -43,6 +47,11 @@ export async function getTags() {
 
 export async function getTagsForCategory(category: "restaurant" | "hotel") {
   const supabase = await createServerSupabase();
+  // Fail-safe anon : `tags` est authenticated-only. Cette lecture est dans le même
+  // Promise.all que getFiche (gardé #61) dans FicheResto — non gardée, elle faisait
+  // throw tout le Promise.all et crashait la fiche EN ANON malgré #61. On court-circuite.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   const { data, error } = await supabase
     .from("tags")
     .select("id, slug, label, color")

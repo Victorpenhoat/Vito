@@ -125,6 +125,10 @@ export async function getMaFamille() {
 
 export async function getFamilleRestos(familleId: string) {
   const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : protégé en amont par getMaFamille (null → non
+  // rendu), mais on garde par cohérence — sans session, la lecture renverrait 42501.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   const { data, error } = await supabase
     .from("famille_restos")
     .select("etablissement_id, created_at, etablissement:etablissements(nom, ville)")

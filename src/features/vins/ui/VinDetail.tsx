@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getVinDetail } from "../data/queries";
 import { getMerchantProvider } from "@/lib/services/merchant";
 import { couleurTint } from "../domain/couleurTint";
@@ -10,7 +11,9 @@ import { formatDay } from "@/lib/format/date";
 export async function VinDetail({ id }: { id: string }) {
   const t = await getTranslations("vins");
   const locale = await getLocale();
-  const { vin, degustations } = await getVinDetail(id);
+  const detail = await getVinDetail(id);
+  if (!detail) notFound();
+  const { vin, degustations } = detail;
   const merchantUrl = getMerchantProvider().buyUrl(
     { nom: vin.nom, domaine: vin.domaine, millesime: vin.millesime, couleur: vin.couleur },
     1,
