@@ -3,6 +3,10 @@ import { computeBalances, simplifyDebts, type Part } from "../domain/calculation
 
 export async function getMesGroupes() {
   const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : layout et page rendent en parallèle ; sans
+  // session, depense_groupes renvoie 42501 (anon) et crashe le RSC. On court-circuite.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   // RLS (can_access_groupe) renvoie automatiquement les groupes possédés + partagés.
   const { data, error } = await supabase
     .from("depense_groupes")
@@ -16,6 +20,9 @@ export async function getGroupeDetail(id: string) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   const uid = auth.user?.id ?? null;
+  // Fail-safe anon (cf. #61/#63) : sans session, les tables renvoient 42501 et
+  // crashent le RSC. On retourne null ; le consommateur (GroupeDetail) fait notFound().
+  if (!uid) return null;
 
   const [gRes, mRes, dRes, rRes] = await Promise.all([
     supabase.from("depense_groupes").select("id, titre, devise, voyage_id, owner_id").eq("id", id).single(),

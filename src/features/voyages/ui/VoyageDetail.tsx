@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { formatRange } from "@/lib/format/date";
 import { getVoyageDetail, getVoyageDocuments } from "../data/queries";
@@ -14,7 +15,9 @@ import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 export async function VoyageDetail({ id }: { id: string }) {
   const t = await getTranslations("voyages");
   const locale = await getLocale();
-  const { voyage, reservations, membres, isOwner } = await getVoyageDetail(id);
+  const detail = await getVoyageDetail(id);
+  if (!detail) notFound();
+  const { voyage, reservations, membres, isOwner } = detail;
   const documents = await getVoyageDocuments(voyage.id);
   const dates = formatRange(voyage.date_debut, voyage.date_fin, locale);
   const sub = [voyage.destination, dates].filter(Boolean).join(" · ");

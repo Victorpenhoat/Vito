@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getGroupeDetail } from "../data/queries";
 import { formatCents } from "../domain/money";
@@ -12,7 +13,9 @@ import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 
 export async function GroupeDetail({ id }: { id: string }) {
   const t = await getTranslations("depenses");
-  const { groupe, membres, depenses, soldes, transferts, isOwner } = await getGroupeDetail(id);
+  const detail = await getGroupeDetail(id);
+  if (!detail) notFound();
+  const { groupe, membres, depenses, soldes, transferts, isOwner } = detail;
   const nameById = Object.fromEntries(membres.map((m) => [m.profile_id, m.display_name ?? m.profile_id]));
   const membresSimple = membres.map((m) => ({ profile_id: m.profile_id, display_name: m.display_name }));
   const total = depenses.reduce((s, d) => s + d.montant_cents, 0);

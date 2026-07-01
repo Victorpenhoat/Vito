@@ -17,6 +17,10 @@ export async function getMesDemandes() {
 
 export async function getInboxConciergerie() {
   const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : protégé en amont par le check staff de la page,
+  // mais on garde par cohérence — sans session, la lecture renverrait 42501.
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return [];
   // RLS : un membre du staff (is_concierge) voit toutes les demandes ; sinon seulement les siennes.
   const { data, error } = await supabase
     .from("conciergerie_demandes")
