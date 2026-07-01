@@ -232,3 +232,80 @@ insert into public.family_documents (id, user_id, member_id, doc_type, doc_numbe
    'passeport', '19FR99892', 'FR', 'Camille Durand', '2019-03-01', '2029-03-01',
    'z8qW2rZIWU40NFWX7FWy65T8NMMW06ozKgn3AQrM2dJLSJXyRoZFRHm9zmXN2eETafYyNJRDZ6TqEGgpEfBAGi8dee3//rtH',
    'application/pdf', 48);
+
+-- ============================================================================
+-- Compte de démo « riche » : demo@vito.test / password123.
+-- Isolé des comptes e2e (client/agence/admin/…). Sert à explorer l'app avec du
+-- contenu réaliste. Les établissements créés ici sont HORS zone 17e (et non
+-- bistrot-17e) pour ne pas altérer la reco du compte client testée en e2e.
+-- ============================================================================
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  email_change_token_current, reauthentication_token, phone_change, phone_change_token)
+values
+  ('de110000-0000-4000-8000-000000000000', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'demo@vito.test',
+   crypt('password123', gen_salt('bf')), now(),
+   '{"provider":"email","providers":["email"]}',
+   '{"display_name":"Démo Vito","role":"client"}', now(), now(),
+   '', '', '', '', '', '', '', '');
+
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
+values
+  (gen_random_uuid(), 'de110000-0000-4000-8000-000000000000', 'de110000-0000-4000-8000-000000000000',
+   '{"sub":"de110000-0000-4000-8000-000000000000","email":"demo@vito.test"}', 'email', now(), now());
+
+-- Restos (liste du compte démo)
+insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, rating, price_level, lat, lng) values
+ ('a1000001-0000-4000-8000-000000000001','demo_r1','resto','bistrot','Chez Marceau','15 rue Marbeuf','Paris','75008','8e','seed',4.4,3,48.8686,2.3020),
+ ('a1000001-0000-4000-8000-000000000002','demo_r2','resto','étoilé','Le Petit Nice','17 rue des Braves','Marseille','13007','7e','seed',4.8,4,43.2790,5.3560),
+ ('a1000001-0000-4000-8000-000000000003','demo_r3','resto','italien','Osteria Bella','8 rue Oberkampf','Paris','75011','11e','seed',4.5,2,48.8640,2.3760),
+ ('a1000001-0000-4000-8000-000000000004','demo_r4','resto','brasserie','Le Grand Comptoir','5 rue de la Paix','Paris','75009','9e','seed',4.2,2,48.8700,2.3320),
+ ('a1000001-0000-4000-8000-000000000005','demo_r5','resto','café','Café Lumière','22 rue de Bretagne','Paris','75003','3e','seed',4.6,1,48.8630,2.3630);
+
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite) values
+ ('b1000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000001','visite',true),
+ ('b1000001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000002','a_faire',false),
+ ('b1000001-0000-4000-8000-000000000003','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000003','visite',true),
+ ('b1000001-0000-4000-8000-000000000004','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000004','a_faire',false),
+ ('b1000001-0000-4000-8000-000000000005','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000005','visite',true);
+
+insert into public.liste_item_tags (liste_item_id, tag_id)
+ select 'b1000001-0000-4000-8000-000000000001'::uuid, id from public.tags where slug='terrasse'
+ union all select 'b1000001-0000-4000-8000-000000000003'::uuid, id from public.tags where slug='gastronomique'
+ union all select 'b1000001-0000-4000-8000-000000000005'::uuid, id from public.tags where slug='cuisine_marche';
+
+-- Hôtels (liste du compte démo)
+insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, rating, price_level, lat, lng) values
+ ('a1000001-0000-4000-8000-000000000101','demo_h1','hotel','hotel','Hôtel des Grands Boulevards','17 bd Poissonnière','Paris','75002','2e','seed',4.3,3,48.8710,2.3450),
+ ('a1000001-0000-4000-8000-000000000102','demo_h2','hotel','hotel','Le Roch Hôtel & Spa','28 rue Saint-Roch','Paris','75001','1er','seed',4.7,4,48.8660,2.3320),
+ ('a1000001-0000-4000-8000-000000000103','demo_h3','hotel','hotel','Hôtel Lutetia','45 bd Raspail','Paris','75006','6e','seed',4.9,4,48.8510,2.3260);
+
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite) values
+ ('b1000001-0000-4000-8000-000000000101','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000101','a_faire',false),
+ ('b1000001-0000-4000-8000-000000000102','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000102','visite',true),
+ ('b1000001-0000-4000-8000-000000000103','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000103','a_faire',false);
+
+insert into public.liste_item_tags (liste_item_id, tag_id)
+ select 'b1000001-0000-4000-8000-000000000101'::uuid, id from public.tags where slug='spa'
+ union all select 'b1000001-0000-4000-8000-000000000102'::uuid, id from public.tags where slug='piscine'
+ union all select 'b1000001-0000-4000-8000-000000000103'::uuid, id from public.tags where slug='petit_dej_inclus';
+
+-- Voyages du compte démo (le trigger on_voyage_created insère la ligne membre 'owner')
+insert into public.voyages (id, owner_id, titre, destination, date_debut, date_fin, statut) values
+ ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Week-end à Rome','Rome','2026-09-12','2026-09-15','confirme'),
+ ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','Escapade à Lisbonne','Lisbonne','2026-11-05','2026-11-09','planifie');
+
+insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien) values
+ ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','hotel','Hotel Roma','CONF-RM-123','2026-09-12','2026-09-15','+39 06 0000 0000','concierge@hotelroma.test','https://airbnb.example/rome'),
+ ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','vol','TAP Air Portugal','TP-440','2026-11-05','2026-11-09',null,null,'https://flytap.example/booking');
+
+-- Documents chiffrés (AES-256-GCM via DOCUMENTS_ENCRYPTION_KEY) — Rome + Lisbonne
+insert into public.voyage_documents (id, voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by) values
+  ('d0000001-0000-4000-8000-000000000001', 'de110001-0000-4000-8000-000000000001', 'Passeport - Client Démo.pdf', 'application/pdf', 561, 'ayGIhvRQCvN/fV6hBBERmNpq+tHWGEC/xvH6Mmsg10rdZCZ834g5TKulT8lUfO7japZYwRf95A+A+8Ectki90/+jgCItMvUA6HaIoYDrgteAhS+10vP/lG0kCHALbxBsCiS1K1Qm/yFsV8hD06CtXnNxofgS9x+Y9Uw3L5R77ft9EkJX1wfNL8l2sDp6yVTOW3uU4M0GOX4PWjooTFxoLFlvXcZ6/wG++spCQeMszGsrvfXr4EYQl2Acy8SVfPfLDqi9I/492bH7sHLJICu6K3Cf6e5MY5WJnOMKNuHWydYiYVFMzUnKffzOGGAg1/9Li+1PXA9lyn8t1Zn+2B61q/Cf+hCKYkAWwHROnKD4b/u53krX9XMckW5KMGLoSm87Lr9FZq24RDFihjrpx55XaHLaKFO0Bguxy00hnjaJi0GG/t6FEQKf344JwfUgq0Lry7iVmwTxQ8j/i+0SKbIEWHZQtEEslGfQY3CSw8URFNBch1GNIJwMRxKw0s4np8mXpUB6pCF5A6hEtyH2ElTGv65X8YpCk4cVu3PbBmdLBeITlUJN4zM4xnOrApeyio1PBAevjYcrVF5EMUf3vUsCsHqHEwKAaTWYkYGU0shhSYQoVu/qAn+G1Sb7mvjS5qCVpiiBtI4oNuoyI/g3yjtLS0AZuk25Viucbg9idQGJqdRCEDQq5vRgbzgrQj599pGvW8nXAfIWnXNdWELz2awJDm4WAzgOP9DmagbBXZL6/knM/Y2FqHiUpmTggM01QNkHNDaIKOr/BvItfzLWYA==', 'de110000-0000-4000-8000-000000000000'),
+  ('d0000001-0000-4000-8000-000000000002', 'de110001-0000-4000-8000-000000000001', 'Billet avion CDG-FCO.pdf', 'application/pdf', 561, 'ron5GZqpFycFMGQXnAixfI58qwP++qFPlIdtaphDMDMsnoOHIgbjbtEKBhXD0oAAnKbRvQlIXs/h7LjHQ9q52bv6wvlDzjkTJe+3DhZXirGqxu0yqI+e3BXULCPNMwN6uAhzhpzCfqKwen1HTeINB9OwtpcHhGVccI8Glq0yJzKl1sDOGT06McO42P0D6cMt+Vsc9B90jADdx2sJIY8tt6Ra99rdeXB3WpY7Mr3LkuYn0Bn9vtzEGKTbqZZ4am8eiUcn53DO5BIz2DDMQLhx9Lb54rAHPZe1DkLfDVx8mLsFozj4pRyn2soO54Ezs0p/j9I3u2lwRi0iEDSqqqbiA3N2VPPfEL0EhsDulsZ0BFvIysUkhMUpojWumRUlgcJ0hEjH7OZ/N8tdxBJrMBRPvRt51U71sQ3Oj+bkt9gsMHNP8NMlzAljMw4H+wSebdRA5uNQv8Ii2js7rS/AUArh7oOvKOo++fNSJYYk8M2XPK1ECqcOurRKYZKOqDPSiwWZiZMo+w4Cfn8NR7JJi/vp4gpoTtiY31sluMBGxa5Qgd1bLT61658MRWjH7PLuWdCuXmk5BL765UftQ1FOTRyr4X2/m6q+uWwkP9EKgTCvvMsP94tgYRlfERfklmp6Vn+HQyzaJ9auqM7Hjsm+j1RmxP6S6iiMeNahsX85AkOM3Gb5mLJ6dsiMlnuBJt66mXgKDt7ckLxZHLSGXRmQfNaVAoBBcV0RzPV+megYf4MTnT0HLr9hECsxbefxp26swgiSIu0lHiYBhGASUouIvw==', 'de110000-0000-4000-8000-000000000000'),
+  ('d0000001-0000-4000-8000-000000000003', 'de110001-0000-4000-8000-000000000001', 'Reservation Hotel Roma.pdf', 'application/pdf', 561, '4zAd7hJQ6GMk7nBHct68lAguF2SQjbG8OyEUj4NPrFe4k84oapcKJhr+W039wvgFAh8CyET4QQrc/I0mVV8jYm19ATatVQmYt3FB+2hfgt4X6TQ/0MrgfWmk3yF4RpjPT2DEiFVOOAP9j/6UFmENN9CyZHkxvmLPe5kJaMqaAaPepA6uU6CAIPk9bqDLmz5ib6nlYlbAy4YQmuozH/gJ5FSOtSXJQrD5huZi5jxW2NXLSaK9yVMn7KHUK3mi8II2kTMdf+W5tU7H9NyM3s6zCP5ClL830ohuS1p2BNOhPLQI5doDfW4zeOkEgZuu3o1uCMbcGGpnnSouE2bjS5OakikLs8G8zxalr1SjP+WZScXNPKGXWK3G6SxmLGfY/ENUftsv7zxCzhJbu2kEekNroEuM4W6peu6LvLvckoiio7CQf81hN/vXW6xhHIigIvXAy0RVBbcI+RbCMPJdrsxoTsPeRvzZld/3icgyEtntv4WvR8AxhYeZhsUEiCRqdy7B9QVUuKoSKEGNNSOfrFThDjnhPONO5acIUBEPT934FV+wmbn0rpJavpOgVWUkzxkU4KbEQjnanGx9eZrfn+yrr+HBjdnDnkPy20pUkY1At/5hlGXlVfwgLd/z0k+uNjCCmuCqmfsL9V7Xt4ciQXeSMzrRo3RZfvYprP/ttwtUPNT1xJSEvjojH/pt64aJgwkYGPJsx3WEIeR1CqsA4k7M6GN2F3oIxP0SqmApV+dZggVZw1GntLsLXxzSiY+mORuOXPGXnmbor7k+whuitg==', 'de110000-0000-4000-8000-000000000000'),
+  ('d0000001-0000-4000-8000-000000000004', 'de110001-0000-4000-8000-000000000002', 'Billet avion ORY-LIS.pdf', 'application/pdf', 565, 'b/Mt0p0E0ZH4kQRqBkEkybb5XEzHgj/7kU4yUv1wcxFVr3XiWDoT6uoune8/FpRGUEl01OaPy4h6nKhOJLaYBiS7VaojP7bBLd9VBslp6fwUQXOjEvPOiqdRa3YER3LLugct3G452MOExT1Ett0g3p5BVOPB2urmU6hZ5AwcWzSoIE9dcPQ3IVNVcq0k+lm2nBLc0j77OxEPb3Jov94xhVvi1O21jo5F1rD/81OVk69eNn8Px2kUzNNxiafXMcWGp6uw7P+g5WhJMWTy2LJS2QvLfQLcB/qP3YzbU/gvdYe8Byaao0B1uVyF43pctfGWFdDaRFAVYwFdYqa0K1vGAzP8sKxAlBXvcBPAnQEkkryV/2PjTht1+PLEzUqJX4vDgtl9lw4RkxyohVmh8sfOmf/QpDZdjePeK3GArpOHM47/dZCGa9hBV63zfIS758qG/XS11Cs9qQ+RFj/PLJl0sHapTQ0EuupqEAnxlnUbomeycvD4LAVeTvAPzVrrVGKsG4q+vLWc3Erhapdebr3eV6ZdXW1Yk0bVXNLvHkbREoc+61KFhUx8CrpwQE9dccdMGQhgwVrzNN0fYXD7IvWrUHwYVmru0Y/raY3cOu7tlL3DjunxZKv2Iwh0WSLLMS3E0tLangHKlH7REVDm475fDVQ03HhMd+FdNaLiQg41mv4HOcfSlAy/c7NtNzDXwiiDWRBjfFZKpRWsKPrGbjNfzzjlEzRcQLSkxWmgqN18w6S3CaOvOYpiojVE6WqsCcUIr42O4IfLA0YUDAGzxZWYuAg=', 'de110000-0000-4000-8000-000000000000'),
+  ('d0000001-0000-4000-8000-000000000005', 'de110001-0000-4000-8000-000000000002', 'Voucher Airbnb Alfama.pdf', 'application/pdf', 559, 'TSsTJMgG4q4lqBUoAly9SANzFVpFIuwVqlWjNfthBUY5S8FEEAUWlgaEeKoGWxhjbQS/qnxRRwp7cW4E+muYMAOdRFTjgQ4oU9YhSwDrO+y+oQ3pTpAEviWg9/5pMCdCy0WEmcFI57pk1X/0rOoWfRKo/h8c1zLpuDRteaGAZR7E1dzQ6PtKbLoCQ3uVJt65NAf4y/k5qXG+I30j2E5K44uklrCh55+bd/v7+/Vh2FFaAfiyaa2kCgPIKqDOdGim0rkhu+wl+hogHRWeo9AtMtcYyWV7tMIyC8zSq+NP/Qdilnh/UG9rImcNhPqO1zPHD+AkG2iWhmbQ+WwM9cdd80nLvIiGo3DTx4SCfeXyWnzMWj17l2ZYJBlen6vYUB4RvyIXEEYwX5CbCG5j5DP84gKF5D88BzZCrpDSxkKVEOcTmW124jpp21IGdpwp9BJqZPiW4Lh9RuHm4RT9vNaumgvy2pG7QFLUat0i8fIZTfHb7RjR1bqpjI1WrAK+otQhu9ae+cAEpeB6XDMhfmWCkewtRvkVT/4TFoNdEcrh+LNpkG0WnK8vCQKYRl0/SIJV9xW+vqrLLS46FhE5qUD/kXoWHjOIdkmKr5Sxg/+OXIdmX5BmGxPONb22LUZuqKNXSvfqBO3ZJ9pdXu2nvPfJVqXUYkc8wbMVCy0fl6M8XH6+dEyi3coGbmyuvXfQsNW5W6YUmWUJYRM0tVAb1XP6EPJbDuGv4iK7dJMUI9ctB0vTTkwg0+qYfY/QLrjW+xHJAmHr27BVcuZvV4Q=', 'de110000-0000-4000-8000-000000000000');
+
