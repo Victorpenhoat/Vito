@@ -12,7 +12,13 @@ export default defineConfig({
   // permission denied liste_items anon en préfetch) : ils passent au re-run. On laisse Playwright
   // re-tenter en CI plutôt que de re-runner le job entier à la main. 0 en local (échec = vrai échec).
   retries: process.env.CI ? 2 : 0,
-  use: { baseURL: `http://localhost:${PORT}` },
+  // Trace + screenshot sur échec/retry : indispensables pour diagnostiquer les flakes
+  // sous charge CI (le run local ne les reproduit pas). Uploadés en artefact par la CI.
+  use: {
+    baseURL: `http://localhost:${PORT}`,
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+  },
   webServer: {
     command: `npm run build && PORT=${PORT} npm run start`,
     url: `http://localhost:${PORT}/fr`,
