@@ -15,6 +15,14 @@ export type RestoResult = {
 
 export async function getGouts() {
   const supabase = await createServerSupabase();
+  // Fail-safe anon : GoutsBanner (restos/page) et gouts/page rendent cette lecture
+  // pendant que le layout (app) rend EN PARALLÈLE — son requireRole ne garde donc
+  // pas la requête. Sans session valide (fenêtre de refresh / prefetch RSC), le
+  // client tombe en rôle `anon` et profil_gouts renvoie 42501, ce qui crashe le RSC
+  // (flake CI). On court-circuite comme rechercheRestos ; les 2 consommateurs gèrent
+  // déjà `null` (banner affiché / champs par défaut).
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return null;
   const { data, error } = await supabase.from("profil_gouts").select("*").maybeSingle();
   if (error) throw error;
   return data;
