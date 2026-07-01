@@ -97,9 +97,11 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   await page.goto("/fr/famille");
   await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Martin" })).toBeVisible();
 
-  // Modifier — naviguer via URL directe pour éviter l'erreur RSC intermittente sur client nav
-  const ficheUrl = await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).getByRole("link").getAttribute("href");
-  await page.goto(ficheUrl!);
+  // Modifier — nav cliente rétablie : l'« erreur RSC intermittente » contournée ici était la
+  // race anon 42501 (getProche → notFound / famille/error.tsx sous fenêtre anon), éradiquée
+  // par les guards getUser des PR #61/#63/#64. L'attente du heading reste (rendu streamé).
+  await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).click();
+  await expect(page).toHaveURL(/\/famille\/proches\//);
   await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
   await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
