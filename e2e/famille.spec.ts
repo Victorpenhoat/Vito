@@ -80,35 +80,43 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
 });
 
 test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
+  // Prénom unique par tentative : une tentative qui échoue après la création laisse un proche
+  // en base (jamais réinitialisée entre retries) ; avec un nom fixe, le retry violait le strict
+  // mode (2 « Léa Martin ») et ne pouvait jamais s'auto-réparer. Le reliquat est inoffensif
+  // (seul ce test manipule les proches de premium@vito.test).
+  const PRENOM = `Léa-${Date.now()}`;
   await login(page, "premium@vito.test");
   await page.goto("/fr/famille");
   await page.getByRole("link", { name: "Ajouter un proche" }).first().click();
   await expect(page).toHaveURL(/\/famille\/proches\/nouveau/);
 
-  await page.getByTestId("proche-form").locator('input[name="first_name"]').fill("Léa");
+  await page.getByTestId("proche-form").locator('input[name="first_name"]').fill(PRENOM);
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Martin");
   await page.getByTestId("proche-form").locator('select[name="circle"]').selectOption("amis");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
 
   // Redirigé vers la fiche
-  await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
 
   // Visible dans la liste, section Amis
   await page.goto("/fr/famille");
-  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Martin" })).toBeVisible();
+  await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` })).toBeVisible();
 
-  // Modifier — naviguer via URL directe pour éviter l'erreur RSC intermittente sur client nav
-  const ficheUrl = await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).getByRole("link").getAttribute("href");
-  await page.goto(ficheUrl!);
-  await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
+  // Modifier — nav cliente (couverture rétablie). Il subsiste une race rare du routeur client
+  // Next sous charge CI (URL et rail à jour mais slot enfant jamais commité — ni page, ni
+  // loading, ni boundary, aucune erreur serveur) : elle est absorbée par les retries Playwright
+  // maintenant que le test est idempotent, comme pour les autres tests de nav cliente.
+  await page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` }).click();
+  await expect(page).toHaveURL(/\/famille\/proches\//);
+  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
   await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByRole("heading", { name: "Léa Bernard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `${PRENOM} Bernard` })).toBeVisible();
 
   // Supprimer (confirm auto-accepté)
   page.on("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Supprimer" }).click();
   await expect(page).toHaveURL(/\/fr\/famille$/);
-  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Bernard" })).toHaveCount(0);
+  await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Bernard` })).toHaveCount(0);
 });
