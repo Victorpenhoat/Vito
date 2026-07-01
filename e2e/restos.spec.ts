@@ -36,10 +36,27 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
 
 test("basculer un favori", async ({ page }) => {
   await login(page);
-  // Le Bistrot Démo est is_favorite=true → il est dans l'onglet Favoris (actif par défaut)
-  await page.getByTestId("place-card").first().getByRole("link").click();
-  await page.getByTestId("favorite-toggle").click();
-  await expect(page.getByTestId("favorite-toggle")).toContainText("Favori");
+  // On atteint le Bistrot Démo via Recommandés : il y reste favori ou non (statut a_faire),
+  // alors que l'onglet Favoris se vide si une tentative précédente a laissé le favori retiré.
+  await page.getByTestId("tab-recommandes").click();
+  await page.getByTestId("place-card").filter({ hasText: "Le Bistrot Démo" }).first().getByRole("link").click();
+  const toggle = page.getByTestId("favorite-toggle");
+  await expect(toggle).toBeVisible();
+  const wasFavorite = ((await toggle.textContent()) ?? "").includes("★");
+  await toggle.click();
+  // L'action ne re-rend pas la fiche en place (revalidatePath("/restos") ne couvre pas /restos/[id]) :
+  // on attend le POST de l'action puis on recharge pour asserter l'état persisté en base.
+  await page.waitForLoadState("networkidle");
+  await page.reload();
+  await expect(toggle).toContainText(wasFavorite ? "☆" : "★");
+  // RESTAURER l'état favori du seed : c'est l'unique favori de client@vito.test, et
+  // vins.spec (exécuté après) ouvre la première place-card de l'onglet Favoris.
+  if (!((await toggle.textContent()) ?? "").includes("★")) {
+    await toggle.click();
+    await page.waitForLoadState("networkidle");
+    await page.reload();
+    await expect(toggle).toContainText("★");
+  }
 });
 
 test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", async ({ page }) => {
