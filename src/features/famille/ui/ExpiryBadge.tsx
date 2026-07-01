@@ -10,5 +10,5 @@ export function ExpiryBadge({ status, monthsLeft }: { status: "expired" | "soon"
     status === "valid" ? t("expiry.valide")
     : status === "soon" ? t("expiry.expireDans", { n: monthsLeft ?? 0 })
     : t("expiry.expire");
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${cls}`}>{label}</span>;
+  return <span className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ${cls}`}>{label}</span>;
 }
