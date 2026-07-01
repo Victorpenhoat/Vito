@@ -97,6 +97,21 @@ test("a11y : le panneau d'onglet expose role=tabpanel lié à l'onglet actif", a
 
 test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la fiche", async ({ page }) => {
   await login(page);
+  const ARCHIVED_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
+  // Idempotence : ce test désarchive l'unique item archivé du seed puis le ré-archive.
+  // Si une tentative précédente a échoué entre les deux, l'item reste désarchivé — et
+  // comme les retries Playwright ne réinitialisent pas la base, la tentative suivante
+  // échouerait à L102 (onglet Archivés masqué car archived.length === 0). On restaure
+  // donc l'état « archivé » au départ pour que le test se répare au retry.
+  await page.goto(`/fr/restos/${ARCHIVED_ID}`);
+  const toggle = page.getByTestId("archive-toggle");
+  await expect(toggle).toBeVisible();
+  if (!((await toggle.textContent()) ?? "").includes("Désarchiver")) {
+    await toggle.click();
+    await page.waitForLoadState("networkidle");
+  }
+  await page.goto("/fr/restos");
+
   const archived = () => page.getByTestId("archived-item").filter({ hasText: "Le Resto Archivé Démo" });
   // Le lien Archivés est visible (≥1 archivé seedé)
   await expect(page.getByTestId("tab-archives")).toBeVisible();
@@ -106,7 +121,7 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
   await archived().getByTestId("archive-unarchive").click();
   await expect(archived()).toHaveCount(0);
   // RESTAURER : ouvrir la fiche et ré-archiver
-  await page.goto("/fr/restos/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee");
+  await page.goto(`/fr/restos/${ARCHIVED_ID}`);
   await page.getByTestId("archive-toggle").click();
   await page.waitForLoadState("networkidle");
   // De retour sur la liste, il est de nouveau archivé
