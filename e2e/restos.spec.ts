@@ -15,23 +15,35 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
   // Ouvrir l'onglet Recherche (la barre de recherche externe n'existe que là)
   await page.getByTestId("tab-recherche").click();
 
-  // Recherche (provider mock) + ajout
+  // Recherche (provider mock) + ajout — idempotent : si une tentative précédente a déjà ajouté
+  // « Le Bistrot du Coin », la recherche le dédoublonne (badge « Ajouté » sans bouton d'ajout,
+  // markOwned dans PlaceDiscovery) ; viser .first().getByRole("button") faisait échouer les
+  // retries en dur. On cible la ligne par nom et on n'ajoute que si elle n'est pas possédée.
   await page.getByTestId("add-resto-search").fill("bistrot");
   await page.getByTestId("search-submit").click();
-  await expect(page.getByTestId("search-result").first()).toBeVisible();
-  await page.getByTestId("search-result").first().getByRole("button").click();
+  const coin = page.getByTestId("search-result").filter({ hasText: "Le Bistrot du Coin" }).first();
+  await expect(coin).toBeVisible();
+  if ((await coin.getByTestId("result-added").count()) === 0) {
+    await coin.getByRole("button").click();
+  }
+  // Le badge « Ajouté » n'apparaît qu'après résolution de l'action serveur (commit garanti)
+  await expect(coin.getByTestId("result-added")).toBeVisible({ timeout: 15_000 });
 
-  // Le Bistrot du Coin est ajouté sans is_favorite + statut='a_faire' → il apparaît dans Recommandés
+  // Le Bistrot du Coin est ajouté sans is_favorite + statut='a_faire' → il apparaît dans
+  // Recommandés (poussé par le refresh RSC post-action, lent sous charge CI → timeout élargi)
   await page.getByTestId("tab-recommandes").click();
-  await expect(page.getByTestId("place-card").filter({ hasText: "Bistrot" }).first()).toBeVisible();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible({ timeout: 15_000 });
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (ajouté via mock — a un UUID v4 valide pour la RPC avis)
   await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
   await expect(page.getByTestId("avis-form")).toBeVisible();
 
-  await page.getByTestId("avis-form").locator("textarea").fill("Très bonne adresse, revenir le samedi");
+  // Texte unique par tentative : les avis d'une tentative échouée restent en base (jamais
+  // réinitialisée entre retries) et un texte fixe ferait violer le strict mode à l'assertion.
+  const avis = `Très bonne adresse ${Date.now()}, revenir le samedi`;
+  await page.getByTestId("avis-form").locator("textarea").fill(avis);
   await page.getByTestId("avis-form").getByRole("button").click();
-  await expect(page.getByText("Très bonne adresse")).toBeVisible();
+  await expect(page.getByText(avis)).toBeVisible({ timeout: 15_000 });
 });
 
 test("basculer un favori", async ({ page }) => {
