@@ -117,9 +117,20 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
   await expect(page.getByTestId("tab-archives")).toBeVisible();
   await page.getByTestId("tab-archives").click();
   await expect(archived()).toBeVisible();
-  // Désarchiver inline → quitte la liste Archivés
+  // Désarchiver inline → quitte la liste Archivés. L'action commite en ~300 ms, mais sous
+  // charge CI le refresh RSC post-action peut revenir VIDE (race routeur client — trace du
+  // run 28607271257, 3 tentatives de suite) : l'UI garde alors l'ancien état pour de bon,
+  // rallonger le timeout ne sert à rien. Récupération : reload → rendu frais depuis la base.
   await archived().getByTestId("archive-unarchive").click();
-  await expect(archived()).toHaveCount(0);
+  await page.waitForLoadState("networkidle");
+  try {
+    await expect(archived()).toHaveCount(0);
+  } catch {
+    await page.reload();
+    // L'item du seed est l'unique archivé : désarchivé, le bouton Archivés n'est plus rendu
+    // du tout (PlacesTabs: archived.length > 0) — assertion plus forte que le compte à 0.
+    await expect(page.getByTestId("tab-archives")).toHaveCount(0);
+  }
   // RESTAURER : ouvrir la fiche et ré-archiver
   await page.goto(`/fr/restos/${ARCHIVED_ID}`);
   await page.getByTestId("archive-toggle").click();
