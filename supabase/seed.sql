@@ -337,3 +337,32 @@ insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, 
  ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000003',null,'2026-05-28',3,22.00,'Léger et frais, idéal en terrasse'),
  ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000004','a1000001-0000-4000-8000-000000000004','2026-06-15',4,60.00,'Bulles fines, belle longueur'),
  ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000005',null,'2026-04-10',5,80.00,'Tannique et puissant, superbe potentiel de garde');
+
+-- Compte de dépenses partagé du compte démo (lié au voyage Rome, partagé avec l'agence)
+insert into public.depense_groupes (id, owner_id, voyage_id, titre, devise) values
+ ('d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','de110001-0000-4000-8000-000000000001','Dépenses Rome','EUR');
+-- Le trigger on_groupe_created insère déjà la ligne 'owner' (démo). On ajoute l'agence.
+insert into public.depense_groupe_membres (groupe_id, profile_id, role) values
+ ('d2000001-0000-4000-8000-000000000001','22222222-2222-2222-2222-222222222222','membre')
+on conflict (groupe_id, profile_id) do nothing;
+
+-- Dépense 1 : hôtel 300 € payé par le démo, split égal (150/150)
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
+ ('d2000001-0000-4000-8000-0000000000a1','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Hôtel Roma',30000,'2026-09-12','egal','de110000-0000-4000-8000-000000000000');
+insert into public.depense_parts (depense_id, profile_id, part_cents) values
+ ('d2000001-0000-4000-8000-0000000000a1','de110000-0000-4000-8000-000000000000',15000),
+ ('d2000001-0000-4000-8000-0000000000a1','22222222-2222-2222-2222-222222222222',15000);
+
+-- Dépense 2 : dîner 120 € payé par l'agence, exact (démo 70 / agence 50)
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
+ ('d2000001-0000-4000-8000-0000000000a2','d2000001-0000-4000-8000-000000000001','22222222-2222-2222-2222-222222222222','Dîner Trastevere',12000,'2026-09-13','exact','22222222-2222-2222-2222-222222222222');
+insert into public.depense_parts (depense_id, profile_id, part_cents) values
+ ('d2000001-0000-4000-8000-0000000000a2','de110000-0000-4000-8000-000000000000',7000),
+ ('d2000001-0000-4000-8000-0000000000a2','22222222-2222-2222-2222-222222222222',5000);
+
+-- Dépense 3 : taxi 40 € payé par le démo, split égal (20/20)
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
+ ('d2000001-0000-4000-8000-0000000000a3','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Taxi aéroport',4000,'2026-09-15','egal','de110000-0000-4000-8000-000000000000');
+insert into public.depense_parts (depense_id, profile_id, part_cents) values
+ ('d2000001-0000-4000-8000-0000000000a3','de110000-0000-4000-8000-000000000000',2000),
+ ('d2000001-0000-4000-8000-0000000000a3','22222222-2222-2222-2222-222222222222',2000);
