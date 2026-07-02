@@ -11,25 +11,35 @@ async function login(page: Page, email: string) {
 }
 
 test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus déjà-famille", async ({ browser }) => {
-  // Contexte A : famille1 crée le foyer
+  // Contexte A : famille1 crée le foyer — ou le retrouve : une tentative échouée après la
+  // création le laisse en base (jamais réinitialisée entre retries) et la page rend alors le
+  // foyer à la place du formulaire ; sans cette branche, le retry échouerait en dur sur le
+  // fill de famille-form. Les étapes suivantes sont déjà tolérantes au re-run (ajouterRestoFiche
+  // est un upsert ; ré-inviter un membre renvoie une erreur sans changer le compte de membres).
   const ctxA = await browser.newContext();
   const pageA = await ctxA.newPage();
   await login(pageA, "famille1@vito.test");
   await pageA.goto("/fr/famille");
-  await pageA.getByTestId("famille-form").locator('input[name="nom"]').fill("Foyer Démo");
-  await pageA.getByTestId("famille-form").getByRole("button").click();
-  await expect(pageA.getByRole("heading", { name: "Foyer Démo" })).toBeVisible();
+  const familleForm = pageA.getByTestId("famille-form");
+  const foyerHeading = pageA.getByRole("heading", { name: "Foyer Démo" });
+  await expect(familleForm.or(foyerHeading)).toBeVisible();
+  if (await familleForm.isVisible()) {
+    await familleForm.locator('input[name="nom"]').fill("Foyer Démo");
+    await familleForm.getByRole("button").click();
+  }
+  await expect(foyerHeading).toBeVisible();
 
   // A ajoute un resto via une fiche (resto seed pré-sélectionné)
   await pageA.goto(`/fr/restos/${BISTROT}`);
   await pageA.getByTestId("ajouter-famille").click();
   await expect(pageA.getByTestId("ajouter-famille")).toBeEnabled({ timeout: 10000 });
 
-  // A invite famille2
+  // A invite famille2 — le refresh RSC post-action peut être lent sous charge CI (flake du
+  // 27/06, antérieur aux retries) → timeout élargi, aligné sur les conventions de la suite
   await pageA.goto("/fr/famille");
   await pageA.getByTestId("invite-form").locator('input[name="email"]').fill("famille2@vito.test");
   await pageA.getByTestId("invite-form").getByRole("button").click();
-  await expect(pageA.getByTestId("membre-row")).toHaveCount(2);
+  await expect(pageA.getByTestId("membre-row")).toHaveCount(2, { timeout: 15_000 });
 
   // Contexte B : famille2 voit le foyer + le resto partagé
   const ctxB = await browser.newContext();
@@ -80,35 +90,43 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
 });
 
 test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
+  // Prénom unique par tentative : une tentative qui échoue après la création laisse un proche
+  // en base (jamais réinitialisée entre retries) ; avec un nom fixe, le retry violait le strict
+  // mode (2 « Léa Martin ») et ne pouvait jamais s'auto-réparer. Le reliquat est inoffensif
+  // (seul ce test manipule les proches de premium@vito.test).
+  const PRENOM = `Léa-${Date.now()}`;
   await login(page, "premium@vito.test");
   await page.goto("/fr/famille");
   await page.getByRole("link", { name: "Ajouter un proche" }).first().click();
   await expect(page).toHaveURL(/\/famille\/proches\/nouveau/);
 
-  await page.getByTestId("proche-form").locator('input[name="first_name"]').fill("Léa");
+  await page.getByTestId("proche-form").locator('input[name="first_name"]').fill(PRENOM);
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Martin");
   await page.getByTestId("proche-form").locator('select[name="circle"]').selectOption("amis");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
 
   // Redirigé vers la fiche
-  await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
 
   // Visible dans la liste, section Amis
   await page.goto("/fr/famille");
-  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Martin" })).toBeVisible();
+  await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` })).toBeVisible();
 
-  // Modifier — naviguer via URL directe pour éviter l'erreur RSC intermittente sur client nav
-  const ficheUrl = await page.getByTestId("proche-row").filter({ hasText: "Léa Martin" }).getByRole("link").getAttribute("href");
-  await page.goto(ficheUrl!);
-  await expect(page.getByRole("heading", { name: "Léa Martin" })).toBeVisible();
+  // Modifier — nav cliente (couverture rétablie). Il subsiste une race rare du routeur client
+  // Next sous charge CI (URL et rail à jour mais slot enfant jamais commité — ni page, ni
+  // loading, ni boundary, aucune erreur serveur) : elle est absorbée par les retries Playwright
+  // maintenant que le test est idempotent, comme pour les autres tests de nav cliente.
+  await page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` }).click();
+  await expect(page).toHaveURL(/\/famille\/proches\//);
+  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
   await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByRole("heading", { name: "Léa Bernard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: `${PRENOM} Bernard` })).toBeVisible();
 
   // Supprimer (confirm auto-accepté)
   page.on("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Supprimer" }).click();
   await expect(page).toHaveURL(/\/fr\/famille$/);
-  await expect(page.getByTestId("proche-row").filter({ hasText: "Léa Bernard" })).toHaveCount(0);
+  await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Bernard` })).toHaveCount(0);
 });
