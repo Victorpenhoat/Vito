@@ -1295,6 +1295,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_agence: { Args: never; Returns: boolean }
+      is_co_membre: { Args: { target: string }; Returns: boolean }
       is_concierge: { Args: never; Returns: boolean }
       is_famille_owner: { Args: { f_id: string }; Returns: boolean }
       is_groupe_membre: {

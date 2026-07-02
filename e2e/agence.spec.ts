@@ -1,6 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const CLIENT7B = "99999999-9999-4999-8999-999999999999";
+// display_name du seed client7b@vito.test — avant la policy profiles_select_co_membre
+// (00021), l'agence ne pouvait pas lire le profil et la ligne affichait l'UUID ;
+// ce test assertait ce comportement bugué.
+const CLIENT7B = "Client 7b";
 
 async function login(page: Page, email: string) {
   await page.goto("/fr/login");

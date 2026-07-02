@@ -40,14 +40,17 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   await pageA.getByTestId("invite-form").locator('input[name="email"]').fill("famille2@vito.test");
   await pageA.getByTestId("invite-form").getByRole("button").click();
   await expect(pageA.getByTestId("membre-row")).toHaveCount(2, { timeout: 15_000 });
+  // Le co-membre s'affiche par son display_name, pas par son UUID (policy profiles_select_co_membre)
+  await expect(pageA.getByTestId("membre-row").filter({ hasText: "Famille Deux" })).toBeVisible();
 
-  // Contexte B : famille2 voit le foyer + le resto partagé
+  // Contexte B : famille2 voit le foyer + le resto partagé + le nom de l'owner
   const ctxB = await browser.newContext();
   const pageB = await ctxB.newPage();
   await login(pageB, "famille2@vito.test");
   await pageB.goto("/fr/famille");
   await expect(pageB.getByRole("heading", { name: "Foyer Démo" })).toBeVisible();
   await expect(pageB.getByTestId("famille-resto-row")).toHaveCount(1);
+  await expect(pageB.getByTestId("membre-row").filter({ hasText: "Famille Un" })).toBeVisible();
 
   // A ré-invite famille2 (déjà membre) -> message « déjà dans une famille »
   await pageA.getByTestId("invite-form").locator('input[name="email"]').fill("famille2@vito.test");
