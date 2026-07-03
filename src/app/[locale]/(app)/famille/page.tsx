@@ -19,14 +19,16 @@ export default async function FamillePage() {
 
   return (
     <main className="flex flex-col gap-8 p-4 md:p-8">
-      <PageHeader eyebrow={t("eyebrow")} title={t("proches.titre")} />
+      {/* Le CTA vit dans le slot action du header — un SectionLabel « Mes proches » sous le
+          titre « Mes proches » dupliquait le même libellé trois fois avec les groupes de la liste. */}
+      <PageHeader
+        eyebrow={t("eyebrow")}
+        title={t("proches.titre")}
+        action={<Link href="/famille/proches/nouveau"><Button className="text-sm py-1.5">{t("proches.ajouter")}</Button></Link>}
+      />
 
       {/* Répertoire de proches (héros) */}
       <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <SectionLabel>{t("proches.titre")}</SectionLabel>
-          <Link href="/famille/proches/nouveau"><Button className="text-sm py-1.5">{t("proches.ajouter")}</Button></Link>
-        </div>
         {proches.length === 0 ? <ProchesEmptyState /> : <ProchesList proches={proches} />}
       </section>
 

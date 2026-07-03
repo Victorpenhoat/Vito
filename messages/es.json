@@ -11,6 +11,7 @@
     "region": "Región",
     "couleur": "Color",
     "cepages": "Variedades (separadas por comas)",
+    "cepagesLabel": "Variedades",
     "note": "Nota (1-5)",
     "prix": "Precio pagado (€)",
     "commentaire": "Comentario",
@@ -89,6 +90,10 @@
     "vide": "Ningún viaje por el momento.",
     "partage": "Compartido contigo",
     "reservations": "Reservas",
+    "metaReservations": "{count, plural, one {# reserva} other {# reservas}}",
+    "metaMembres": "{count, plural, one {# miembro} other {# miembros}}",
+    "metaDocuments": "{count, plural, one {# documento} other {# documentos}}",
+    "roleOwner": "propietario",
     "addReservation": "Añadir una reserva",
     "type": "Tipo",
     "types": { "hotel": "Hotel", "vol": "Vuelo", "voiture": "Coche", "hebergement": "Alojamiento", "autre": "Otro" },
@@ -127,7 +132,7 @@
     "depenses": "Gastos"
   },
   "depenses": {
-    "title": "Cuentas compartidas",
+    "title": "Gastos",
     "roleOwner": "propietario",
     "create": "Crear una cuenta compartida",
     "titre": "Título",

@@ -22,7 +22,7 @@ export async function VinDetail({ id }: { id: string }) {
   const eyebrow = [vin.region, vin.couleur ? t(`couleurs.${vin.couleur}`) : null].filter(Boolean).join(" · ");
   const infos: { label: string; value: string }[] = [
     ...(vin.millesime ? [{ label: t("millesime"), value: String(vin.millesime) }] : []),
-    ...(vin.cepages?.length ? [{ label: t("cepages"), value: vin.cepages.join(", ") }] : []),
+    ...(vin.cepages?.length ? [{ label: t("cepagesLabel"), value: vin.cepages.join(", ") }] : []),
     ...(vin.region ? [{ label: t("region"), value: vin.region }] : []),
     ...(vin.domaine ? [{ label: t("domaine"), value: vin.domaine }] : []),
   ];
