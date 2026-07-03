@@ -19,6 +19,9 @@ Primitives UI de l'app **Vito** (`window.VitoKit.*`). React 19 + Tailwind v4,
 - **Button** — `variant: "primary" | "ghost" | "subtle"`, `pending?`.
 - **Input** — champ texte ; `label?`, `error?` (bordure/texte danger) + attributs `<input>` natifs.
 - **Select** — liste de sélection (`<option>` en `children`) ; `label?`, `error?` (bordure/texte danger) + attributs `<select>` natifs ; chevron ▾ custom.
+- **Checkbox** — case à cocher native thémée (`accent-color`) ; `label` (ReactNode) + attributs `<input type=checkbox>` natifs (`name`, `value`, `defaultChecked`…).
+- **DateField** — champ date natif habillé ; `label?`, `error?` + attributs `<input type=date>` natifs ; le format d'affichage suit la locale du navigateur.
+- **FileField** — sélecteur de fichier stylé (input natif masqué + bouton + nom du fichier) ; `label`, `emptyLabel` (obligatoires) + attributs `<input type=file>` natifs (`name`, `accept`…).
 - **Avatar** — `name`, `size: "sm"|"md"|"lg"|"xl"`, `color?` (initiales auto).
 - **Badge** — pastille ; `children`.
 - **Card** — conteneur `rounded-card` bordé ; `children`.
