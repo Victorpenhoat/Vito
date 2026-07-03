@@ -55,17 +55,18 @@ test("basculer un favori", async ({ page }) => {
   const toggle = page.getByTestId("favorite-toggle");
   await expect(toggle).toBeVisible();
   const wasFavorite = ((await toggle.textContent()) ?? "").includes("★");
-  await toggle.click();
   // L'action ne re-rend pas la fiche en place (revalidatePath("/restos") ne couvre pas /restos/[id]) :
-  // on attend le POST de l'action puis on recharge pour asserter l'état persisté en base.
-  await page.waitForLoadState("networkidle");
+  // on attend la RÉPONSE du POST de l'action (signal de commit déterministe — networkidle peut se
+  // déclencher sur une fenêtre calme AVANT que la transition React n'envoie le POST, et le reload
+  // rendrait alors l'état pré-commit), puis on recharge pour asserter l'état persisté en base.
+  const actionDone = () => page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/"));
+  await Promise.all([actionDone(), toggle.click()]);
   await page.reload();
   await expect(toggle).toContainText(wasFavorite ? "☆" : "★");
   // RESTAURER l'état favori du seed : c'est l'unique favori de client@vito.test, et
   // vins.spec (exécuté après) ouvre la première place-card de l'onglet Favoris.
   if (!((await toggle.textContent()) ?? "").includes("★")) {
-    await toggle.click();
-    await page.waitForLoadState("networkidle");
+    await Promise.all([actionDone(), toggle.click()]);
     await page.reload();
     await expect(toggle).toContainText("★");
   }
