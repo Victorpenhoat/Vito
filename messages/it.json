@@ -11,6 +11,7 @@
     "region": "Regione",
     "couleur": "Colore",
     "cepages": "Vitigni (separati da virgole)",
+    "cepagesLabel": "Vitigni",
     "note": "Voto (1-5)",
     "prix": "Prezzo pagato (€)",
     "commentaire": "Commento",
@@ -89,6 +90,10 @@
     "vide": "Nessun viaggio per ora.",
     "partage": "Condiviso con te",
     "reservations": "Prenotazioni",
+    "metaReservations": "{count, plural, one {# prenotazione} other {# prenotazioni}}",
+    "metaMembres": "{count, plural, one {# membro} other {# membri}}",
+    "metaDocuments": "{count, plural, one {# documento} other {# documenti}}",
+    "roleOwner": "proprietario",
     "addReservation": "Aggiungi una prenotazione",
     "type": "Tipo",
     "types": { "hotel": "Hotel", "vol": "Volo", "voiture": "Auto", "hebergement": "Alloggio", "autre": "Altro" },
@@ -127,7 +132,7 @@
     "depenses": "Spese"
   },
   "depenses": {
-    "title": "Conti condivisi",
+    "title": "Spese",
     "roleOwner": "proprietario",
     "create": "Crea un conto condiviso",
     "titre": "Titolo",

@@ -12,7 +12,7 @@ export function MembersList({ voyageId, membres, isOwner }: { voyageId: string; 
     <ul className="flex flex-col gap-1">
       {membres.map((m) => (
         <li key={m.profile_id} data-testid="member-row" className="flex items-center gap-2">
-          <span className="text-ink">{m.display_name ?? m.profile_id} {m.role === "owner" ? <span className="text-muted text-sm">(owner)</span> : ""}</span>
+          <span className="text-ink">{m.display_name ?? m.profile_id} {m.role === "owner" ? <span className="text-muted text-sm">({t("roleOwner")})</span> : ""}</span>
           {isOwner && m.role !== "owner" && (
             <form action={action}>
               <input type="hidden" name="voyageId" value={voyageId} />

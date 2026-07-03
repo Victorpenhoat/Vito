@@ -13,9 +13,9 @@ export async function VoyageFeatured({ voyage }: { voyage: Voyage }) {
   const dates = formatRange(voyage.date_debut, voyage.date_fin, locale);
   const sub = [voyage.destination, dates].filter(Boolean).join(" · ");
   const metaLine = [
-    `${meta.reservations} ${t("reservations").toLowerCase()}`,
-    `${meta.voyageurs} ${t("membres").toLowerCase()}`,
-    `${meta.documents} ${t("documents.titre").toLowerCase()}`,
+    t("metaReservations", { count: meta.reservations }),
+    t("metaMembres", { count: meta.voyageurs }),
+    t("metaDocuments", { count: meta.documents }),
   ].join(" · ");
   return (
     <div data-testid="voyage-card">

@@ -27,6 +27,7 @@
     "region": "Région",
     "couleur": "Couleur",
     "cepages": "Cépages (séparés par des virgules)",
+    "cepagesLabel": "Cépages",
     "note": "Note (1-5)",
     "prix": "Prix payé (€)",
     "commentaire": "Commentaire",
@@ -105,6 +106,10 @@
     "vide": "Aucun voyage pour l'instant.",
     "partage": "Partagé avec vous",
     "reservations": "Réservations",
+    "metaReservations": "{count, plural, one {# réservation} other {# réservations}}",
+    "metaMembres": "{count, plural, one {# membre} other {# membres}}",
+    "metaDocuments": "{count, plural, one {# document} other {# documents}}",
+    "roleOwner": "propriétaire",
     "addReservation": "Ajouter une réservation",
     "type": "Type",
     "types": { "hotel": "Hôtel", "vol": "Vol", "voiture": "Voiture", "hebergement": "Hébergement", "autre": "Autre" },
@@ -143,7 +148,7 @@
     "depenses": "Dépenses"
   },
   "depenses": {
-    "title": "Comptes partagés",
+    "title": "Dépenses",
     "roleOwner": "propriétaire",
     "create": "Créer un compte partagé",
     "titre": "Titre",

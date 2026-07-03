@@ -11,6 +11,7 @@
     "region": "Region",
     "couleur": "Colour",
     "cepages": "Grape varieties (comma-separated)",
+    "cepagesLabel": "Grape varieties",
     "note": "Rating (1-5)",
     "prix": "Price paid (€)",
     "commentaire": "Comment",
@@ -89,6 +90,10 @@
     "vide": "No trips yet.",
     "partage": "Shared with you",
     "reservations": "Bookings",
+    "metaReservations": "{count, plural, one {# booking} other {# bookings}}",
+    "metaMembres": "{count, plural, one {# member} other {# members}}",
+    "metaDocuments": "{count, plural, one {# document} other {# documents}}",
+    "roleOwner": "owner",
     "addReservation": "Add a booking",
     "type": "Type",
     "types": { "hotel": "Hotel", "vol": "Flight", "voiture": "Car", "hebergement": "Accommodation", "autre": "Other" },
@@ -127,7 +132,7 @@
     "depenses": "Expenses"
   },
   "depenses": {
-    "title": "Shared accounts",
+    "title": "Expenses",
     "roleOwner": "owner",
     "create": "Create a shared account",
     "titre": "Title",
