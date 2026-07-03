@@ -42,12 +42,14 @@ export function PlaceListPanel({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
+        {/* min-w-0 : sans lui, la largeur minimale intrinsèque de l'input (~180px) + le
+            toggle de vues dépassent le viewport mobile → scroll horizontal de la page. */}
         <input
           data-testid="places-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("filtrerPlaceholder")}
-          className="flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm outline-none focus:outline-2 focus:outline-accent"
+          className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm outline-none focus:outline-2 focus:outline-accent"
         />
         {views.length > 1 && (
           <div className="flex gap-1 rounded-control border border-line p-0.5">
