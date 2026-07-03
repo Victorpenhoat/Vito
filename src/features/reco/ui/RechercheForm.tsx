@@ -23,7 +23,7 @@ export function RechercheForm() {
     <div data-testid="recherche-form" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-end gap-2">
         <input aria-label={t("zone")} placeholder={t("zone")} defaultValue={params.get("zone") ?? ""} onBlur={(e) => set("zone", e.target.value)} className={inputCls} />
-        <input aria-label={t("budget")} type="number" min={0} placeholder={t("budget")} defaultValue={params.get("budgetMax") ?? ""} onBlur={(e) => set("budgetMax", e.target.value)} className={`${inputCls} w-44`} />
+        <input aria-label={t("budget")} type="number" min={0} placeholder={t("budget")} defaultValue={params.get("budgetMax") ?? ""} onBlur={(e) => set("budgetMax", e.target.value)} className={`${inputCls} w-56`} />
       </div>
       <div className="flex flex-wrap gap-2">
         {typeTabs.map((it) => {

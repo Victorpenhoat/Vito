@@ -29,9 +29,11 @@ export function DegustationForm({ etablissementId }: { etablissementId: string }
         </select>
       </div>
       <input name="cepages" placeholder={t("cepages")} className={inputCls} />
-      <div className="flex gap-2">
-        <input name="note" type="number" min={1} max={5} placeholder={t("note")} className={`${inputCls} w-24`} />
-        <input name="prixPaye" type="number" min={0} step="0.01" placeholder={t("prix")} className={`${inputCls} w-32`} />
+      {/* flex-wrap : en mobile la date passe à la ligne au lieu d'écraser les champs
+          (largeurs calées sur les placeholders « Note (1-5) » / « Prix payé (€) ») */}
+      <div className="flex flex-wrap gap-2">
+        <input name="note" type="number" min={1} max={5} placeholder={t("note")} className={`${inputCls} w-32`} />
+        <input name="prixPaye" type="number" min={0} step="0.01" placeholder={t("prix")} className={`${inputCls} w-36`} />
         <DateField name="degusteLe" aria-label={t("date")} title={t("date")} />
       </div>
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />

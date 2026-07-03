@@ -17,7 +17,7 @@ export function VinsFilters() {
   return (
     <div data-testid="vins-filters" className="flex flex-wrap gap-2 items-end">
       <input aria-label={t("region")} placeholder={t("region")} defaultValue={params.get("region") ?? ""} onBlur={(e) => set("region", e.target.value)} className={inputCls} />
-      <input aria-label={t("filtres.noteMin")} type="number" min={1} max={5} placeholder={t("filtres.noteMin")} defaultValue={params.get("noteMin") ?? ""} onBlur={(e) => set("noteMin", e.target.value)} className={`${inputCls} w-24`} />
+      <input aria-label={t("filtres.noteMin")} type="number" min={1} max={5} placeholder={t("filtres.noteMin")} defaultValue={params.get("noteMin") ?? ""} onBlur={(e) => set("noteMin", e.target.value)} className={`${inputCls} w-28`} />
       <input aria-label={t("filtres.du")} type="date" defaultValue={params.get("dateFrom") ?? ""} onChange={(e) => set("dateFrom", e.target.value)} className={inputCls} />
       <input aria-label={t("filtres.au")} type="date" defaultValue={params.get("dateTo") ?? ""} onChange={(e) => set("dateTo", e.target.value)} className={inputCls} />
       <button type="button" onClick={() => router.replace(pathname)} className="text-accent hover:underline">{t("filtres.reset")}</button>
