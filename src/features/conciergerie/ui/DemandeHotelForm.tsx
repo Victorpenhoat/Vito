@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { creerDemandeHotel, chercherHotels } from "../data/actions";
 import { SEJOUR_TYPES } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
+import { Checkbox } from "@/features/shared/ui/Checkbox";
+import { DateField } from "@/features/shared/ui/DateField";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
 
@@ -33,13 +35,13 @@ export function DemandeHotelForm() {
         {selected && <input type="hidden" name="placeId" value={selected.placeId} />}
       </div>
       <div className="flex flex-col gap-2">
-        <input name="dateDebut" type="date" required aria-label={t("dateDebut")} className={inputCls} />
+        <DateField name="dateDebut" required aria-label={t("dateDebut")} className="w-full min-w-0" />
         <input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className={inputCls} />
       </div>
       <select name="sejourType" aria-label={t("sejour")} className={inputCls} defaultValue="loisirs">
         {SEJOUR_TYPES.map((s) => <option key={s} value={s}>{t(`sejours.${s}`)}</option>)}
       </select>
-      <label className="flex items-center gap-2"><input type="checkbox" name="avecEnfants" /> {t("avecEnfants")}</label>
+      <Checkbox name="avecEnfants" label={t("avecEnfants")} />
       <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
       {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" disabled={!selected} pending={pending}>{t("envoyer")}</Button>

@@ -3,6 +3,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { setTags } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
+import { Checkbox } from "@/features/shared/ui/Checkbox";
 
 type Tag = {
   id: string;
@@ -25,19 +26,19 @@ export function TagPicker({ tags, appliedTagIds, listeItemId }: TagPickerProps) 
       <input type="hidden" name="listeItemId" value={listeItemId} />
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <label key={tag.id} className="flex items-center gap-1 cursor-pointer">
-            <input
-              type="checkbox"
-              name="tagIds"
-              value={tag.id}
-              defaultChecked={appliedTagIds.includes(tag.id)}
-            />
-            <span
-              className="inline-block w-3 h-3 rounded-full flex-shrink-0"
-              style={tag.color ? { backgroundColor: tag.color } : { backgroundColor: "#d1d5db" }}
-            />
-            {tag.label}
-          </label>
+          <Checkbox
+            key={tag.id}
+            name="tagIds"
+            value={tag.id}
+            defaultChecked={appliedTagIds.includes(tag.id)}
+            label={<>
+              <span
+                className="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                style={tag.color ? { backgroundColor: tag.color } : { backgroundColor: "#d1d5db" }}
+              />
+              {tag.label}
+            </>}
+          />
         ))}
       </div>
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}

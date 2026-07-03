@@ -71,6 +71,7 @@
     "addError": "Could not add the restaurant",
     "notePlaceholder": "Rating (1-5)",
     "commentairePlaceholder": "My review…",
+    "visiteLe": "Visit date",
     "error": {
       "title": "Something went wrong",
       "retry": "Try again"
@@ -109,6 +110,8 @@
     "limitCta": "Free limit reached — go Premium",
     "documents": {
       "titre": "Documents",
+      "choisirFichier": "Choose a file",
+      "aucunFichier": "No file selected",
       "deposer": "Upload a document",
       "telecharger": "Download",
       "supprimer": "Delete",

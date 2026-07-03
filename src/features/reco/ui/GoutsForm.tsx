@@ -3,6 +3,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { saveGouts } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
+import { Checkbox } from "@/features/shared/ui/Checkbox";
 
 type Tag = { slug: string; label: string };
 type Initial = { ambiances: string[]; budgetMax: number | null; typesPreferes: string[]; zones: string[] };
@@ -18,10 +19,7 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
         <legend className="font-semibold">{t("ambiances")}</legend>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <label key={tag.slug} className="flex items-center gap-1">
-              <input type="checkbox" name="ambiances" value={tag.slug} defaultChecked={initial.ambiances.includes(tag.slug)} />
-              {tag.label}
-            </label>
+<Checkbox key={tag.slug} name="ambiances" value={tag.slug} defaultChecked={initial.ambiances.includes(tag.slug)} label={tag.label} />
           ))}
         </div>
       </fieldset>
@@ -29,10 +27,7 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
         <legend className="font-semibold">{t("types")}</legend>
         <div className="flex flex-wrap gap-2">
           {TYPES.map((ty) => (
-            <label key={ty} className="flex items-center gap-1">
-              <input type="checkbox" name="typesPreferes" value={ty} defaultChecked={initial.typesPreferes.includes(ty)} />
-              {ty}
-            </label>
+<Checkbox key={ty} name="typesPreferes" value={ty} defaultChecked={initial.typesPreferes.includes(ty)} label={ty} />
           ))}
         </div>
       </fieldset>
