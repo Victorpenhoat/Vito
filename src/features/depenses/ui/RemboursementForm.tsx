@@ -14,11 +14,14 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
   return (
     <form action={action} data-testid="remboursement-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="groupeId" value={groupeId} />
-      <div className="flex gap-2 items-center">
-        <select name="deProfileId" aria-label={t("de")} className={inputCls} defaultValue={membres[0]?.profile_id ?? ""}>
+      {/* min-w-0 + flex-1 : les selects rétrécissent sous leur largeur intrinsèque (noms longs)
+          et flex-wrap fait passer le montant à la ligne — sinon la rangée déborde du panneau
+          de 320px en desktop et fait scroller toute la page horizontalement en mobile. */}
+      <div className="flex flex-wrap gap-2 items-center">
+        <select name="deProfileId" aria-label={t("de")} className={`${inputCls} min-w-0 flex-1`} defaultValue={membres[0]?.profile_id ?? ""}>
           {membres.map((m) => <option key={m.profile_id} value={m.profile_id}>{nom(m)}</option>)}
         </select>
-        <select name="versProfileId" aria-label={t("vers")} className={inputCls} defaultValue={membres[1]?.profile_id ?? ""}>
+        <select name="versProfileId" aria-label={t("vers")} className={`${inputCls} min-w-0 flex-1`} defaultValue={membres[1]?.profile_id ?? ""}>
           {membres.map((m) => <option key={m.profile_id} value={m.profile_id}>{nom(m)}</option>)}
         </select>
         <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={`${inputCls} w-28`} />

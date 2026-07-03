@@ -3,24 +3,17 @@ import { rechercheRestos } from "../data/queries";
 import { rechercheCriteriaSchema } from "../domain/schemas";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { Link } from "@/lib/i18n/routing";
+import { PhotoVignette } from "./PhotoVignette";
 
 type Row = { id: string; nom: string; type: string | null; ville: string | null; arrondissement: string | null; photo_ref: string | null };
 
 function ResultRow({ e }: { e: Row }) {
   const photoUrl = e.photo_ref ? `/api/places/photo?ref=${encodeURIComponent(e.photo_ref)}&w=200` : null;
-  const initial = e.nom.charAt(0).toUpperCase();
   const subtitle = [e.type, e.arrondissement ?? e.ville].filter(Boolean).join(" · ");
   return (
     <li data-testid="resto-result">
       <Link href={`/restos/${e.id}`} className="flex items-center gap-4 border-b border-line-soft py-3">
-        <span className="h-14 w-14 shrink-0 overflow-hidden rounded-control bg-[linear-gradient(135deg,var(--hero-from),var(--hero-to))]">
-          {photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photoUrl} alt={e.nom} className="h-full w-full object-cover" />
-          ) : (
-            <span className="flex h-full w-full items-center justify-center font-serif text-lg text-faint">{initial}</span>
-          )}
-        </span>
+        <PhotoVignette src={photoUrl} nom={e.nom} />
         <span className="min-w-0">
           <span className="block font-serif text-lg text-ink">{e.nom}</span>
           {subtitle && <span className="block text-sm text-muted">{subtitle}</span>}
