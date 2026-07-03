@@ -29,13 +29,21 @@ test("ajouter un hôtel via la recherche externe", async ({ page }) => {
   await page.goto("/fr/hotels");
   // La barre de recherche externe n'existe que dans l'onglet Recherche
   await page.getByTestId("tab-recherche").click();
+  // Idempotent (même recette que restos, cf. #72) : si une tentative ou un run précédent a
+  // déjà ajouté l'hôtel, la recherche le dédoublonne (badge « Ajouté » sans bouton d'ajout,
+  // markOwned) — .first().getByRole("button") ferait échouer les retries en dur.
   await page.getByTestId("add-hotel-search").fill("hôtel");
   await page.getByTestId("search-submit").click();
-  await expect(page.getByTestId("search-result").first()).toBeVisible();
-  await page.getByTestId("search-result").first().getByRole("button").click();
+  const voyageurs = page.getByTestId("search-result").filter({ hasText: "Hôtel des Voyageurs" }).first();
+  await expect(voyageurs).toBeVisible();
+  if ((await voyageurs.getByTestId("result-added").count()) === 0) {
+    await voyageurs.getByRole("button").click();
+  }
+  // Le badge « Ajouté » n'apparaît qu'après résolution de l'action serveur (commit garanti)
+  await expect(voyageurs.getByTestId("result-added")).toBeVisible({ timeout: 15_000 });
   // L'hôtel ajouté est non-favori + statut='a_faire' → il apparaît dans Recommandés
   await page.getByTestId("tab-recommandes").click();
-  await expect(page.getByTestId("place-card").first()).toBeVisible();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel des Voyageurs" }).first()).toBeVisible({ timeout: 15_000 });
 });
 
 test("onglet Recherche hôtel : chips « Explorer par envie »", async ({ page }) => {
