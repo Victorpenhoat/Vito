@@ -34,7 +34,7 @@ export default async function AccueilPage() {
     { key: "conciergerieEnAttente", count: d.todo.conciergerieEnAttente },
   ];
   return (
-    <main data-testid="accueil" className="flex flex-col gap-6 p-4 md:p-8">
+    <main data-testid="accueil" className="flex flex-col gap-6 p-4 pb-20 md:p-8 md:pb-8">
       <HeroCard userName={userName} />
       <StatsRow stats={stats} />
       <div className="grid gap-6 md:grid-cols-[1.5fr_1fr]">
