@@ -71,6 +71,7 @@
     "addError": "Impossibile aggiungere il ristorante",
     "notePlaceholder": "Voto (1-5)",
     "commentairePlaceholder": "La mia recensione…",
+    "visiteLe": "Data della visita",
     "error": {
       "title": "Si è verificato un errore",
       "retry": "Riprova"
@@ -109,6 +110,8 @@
     "limitCta": "Limite Free raggiunto — passa a Premium",
     "documents": {
       "titre": "Documenti",
+      "choisirFichier": "Scegli un file",
+      "aucunFichier": "Nessun file selezionato",
       "deposer": "Carica un documento",
       "telecharger": "Scarica",
       "supprimer": "Elimina",

@@ -3,6 +3,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { addRemboursement } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
+import { DateField } from "@/features/shared/ui/DateField";
 
 type Membre = { profile_id: string; display_name: string | null };
 
@@ -26,7 +27,7 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
         </select>
         <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={`${inputCls} w-28`} />
       </div>
-      <input name="date" type="date" aria-label={t("date")} className={inputCls} />
+      <DateField name="date" aria-label={t("date")} />
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" pending={pending}>{t("remboursement")}</Button>
     </form>

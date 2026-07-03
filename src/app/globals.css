@@ -3,6 +3,9 @@
 /* Sombre = défaut (:root) ET ré-applicable en imbriqué via [data-theme="dark"] (ex. preview) */
 :root,
 [data-theme="dark"] {
+  /* Les widgets natifs (icône du date-picker, dropdowns de select, scrollbars)
+     suivent le thème — sinon ils restent clairs sur fond sombre. */
+  color-scheme: dark;
   --app: #161310; --sidebar: #110E0A;
   --surface: #1E1A14; --surface-hover: #26211A;
   --line: rgba(255,255,255,0.08); --line-soft: rgba(255,255,255,0.06);
@@ -18,6 +21,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --app: #FBF9F3; --sidebar: #F4F1E9;
   --surface: #FFFFFF; --surface-hover: #F4F1E9;
   --line: #E4DDD0; --line-soft: #F0EBE0;

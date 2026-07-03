@@ -87,6 +87,7 @@
     "addError": "Impossible d'ajouter le restaurant",
     "notePlaceholder": "Note (1-5)",
     "commentairePlaceholder": "Mon avis…",
+    "visiteLe": "Date de visite",
     "error": {
       "title": "Une erreur est survenue",
       "retry": "Réessayer"
@@ -125,6 +126,8 @@
     "limitCta": "Limite Free atteinte — passez Premium",
     "documents": {
       "titre": "Documents",
+      "choisirFichier": "Choisir un fichier",
+      "aucunFichier": "Aucun fichier sélectionné",
       "deposer": "Déposer un document",
       "telecharger": "Télécharger",
       "supprimer": "Supprimer",
