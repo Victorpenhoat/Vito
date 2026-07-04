@@ -234,6 +234,7 @@
     "creer": "Create a family",
     "nom": "Family name",
     "membres": "Members",
+    "foyerPartage": "Shared household",
     "roleOwner": "owner",
     "inviter": "Invite",
     "inviteEmail": "Person's email",
@@ -247,7 +248,7 @@
     "retirerResto": "Remove",
     "ajouterFamille": "Add to my family",
     "vide": "No shared restaurants yet.",
-    "pasDeFamille": "You don't have a family yet.",
+    "pasDeFamille": "No shared household yet. Create one to share your addresses with your loved ones.",
     "error": { "title": "Something went wrong", "retry": "Try again" },
     "eyebrow": "My household",
     "relations": {

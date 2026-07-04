@@ -36,6 +36,9 @@ export default async function AccueilPage() {
   return (
     <main data-testid="accueil" className="flex flex-col gap-6 p-4 pb-20 md:p-8 md:pb-8">
       <HeroCard userName={userName} />
+      {/* Les 4 tuiles sont bornées au mois calendaire (monthRange) : sans libellé de période,
+          un « 0 » à côté d'une activité récente semble cassé (audit du 03/07). */}
+      <SectionLabel>{t("sections.month")}</SectionLabel>
       <StatsRow stats={stats} />
       <div className="grid gap-6 md:grid-cols-[1.5fr_1fr]">
         <section>

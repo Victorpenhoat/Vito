@@ -250,6 +250,7 @@
     "creer": "Créer une famille",
     "nom": "Nom de la famille",
     "membres": "Membres",
+    "foyerPartage": "Foyer partagé",
     "roleOwner": "propriétaire",
     "inviter": "Inviter",
     "inviteEmail": "E-mail de la personne",
@@ -263,7 +264,7 @@
     "retirerResto": "Retirer",
     "ajouterFamille": "Ajouter à ma famille",
     "vide": "Aucun resto partagé pour l'instant.",
-    "pasDeFamille": "Vous n'avez pas encore de famille.",
+    "pasDeFamille": "Pas encore de foyer partagé. Créez-en un pour partager vos adresses avec vos proches.",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
     "eyebrow": "Mon foyer",
     "relations": {

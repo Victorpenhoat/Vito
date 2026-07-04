@@ -34,7 +34,7 @@ export default async function FamillePage() {
 
       {/* Foyer partagé (bloc réutilisant l'existant) */}
       <section className="flex flex-col gap-4 border-t border-line pt-8">
-        <SectionLabel>{t("membres")}</SectionLabel>
+        <SectionLabel>{t("foyerPartage")}</SectionLabel>
         {!ma ? <FamilleForm /> : <FoyerPartage ma={ma} />}
       </section>
     </main>

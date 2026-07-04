@@ -234,6 +234,7 @@
     "creer": "Crear una familia",
     "nom": "Nombre de la familia",
     "membres": "Miembros",
+    "foyerPartage": "Hogar compartido",
     "roleOwner": "propietario",
     "inviter": "Invitar",
     "inviteEmail": "Correo de la persona",
@@ -247,7 +248,7 @@
     "retirerResto": "Quitar",
     "ajouterFamille": "Añadir a mi familia",
     "vide": "Ningún restaurante compartido por el momento.",
-    "pasDeFamille": "Aún no tienes una familia.",
+    "pasDeFamille": "Aún no hay hogar compartido. Crea uno para compartir tus direcciones con los tuyos.",
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
     "eyebrow": "Mi hogar",
     "relations": {
