@@ -234,6 +234,7 @@
     "creer": "Crea una famiglia",
     "nom": "Nome della famiglia",
     "membres": "Membri",
+    "foyerPartage": "Famiglia condivisa",
     "roleOwner": "proprietario",
     "inviter": "Invita",
     "inviteEmail": "E-mail della persona",
@@ -247,7 +248,7 @@
     "retirerResto": "Rimuovi",
     "ajouterFamille": "Aggiungi alla mia famiglia",
     "vide": "Nessun ristorante condiviso per ora.",
-    "pasDeFamille": "Non hai ancora una famiglia.",
+    "pasDeFamille": "Nessuna famiglia condivisa per ora. Creane una per condividere i tuoi indirizzi con i tuoi cari.",
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
     "eyebrow": "Il mio nucleo",
     "relations": {

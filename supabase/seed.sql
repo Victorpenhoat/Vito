@@ -294,12 +294,12 @@ insert into public.liste_item_tags (liste_item_id, tag_id)
 
 -- Voyages du compte démo (le trigger on_voyage_created insère la ligne membre 'owner')
 insert into public.voyages (id, owner_id, titre, destination, date_debut, date_fin, statut) values
- ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Week-end à Rome','Rome','2026-09-12','2026-09-15','confirme'),
- ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','Escapade à Lisbonne','Lisbonne','2026-11-05','2026-11-09','planifie');
+ ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Week-end à Rome','Rome',current_date + 71,current_date + 74,'confirme'),
+ ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','Escapade à Lisbonne','Lisbonne',current_date + 125,current_date + 129,'planifie');
 
 insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien) values
- ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','hotel','Hotel Roma','CONF-RM-123','2026-09-12','2026-09-15','+39 06 0000 0000','concierge@hotelroma.test','https://airbnb.example/rome'),
- ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','vol','TAP Air Portugal','TP-440','2026-11-05','2026-11-09',null,null,'https://flytap.example/booking');
+ ('de110001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','hotel','Hotel Roma','CONF-RM-123',current_date + 71,current_date + 74,'+39 06 0000 0000','concierge@hotelroma.test','https://airbnb.example/rome'),
+ ('de110001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','vol','TAP Air Portugal','TP-440',current_date + 125,current_date + 129,null,null,'https://flytap.example/booking');
 
 -- Documents chiffrés (AES-256-GCM via DOCUMENTS_ENCRYPTION_KEY) — Rome + Lisbonne
 insert into public.voyage_documents (id, voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by) values
@@ -318,8 +318,8 @@ insert into public.family_members (id, user_id, first_name, last_name, relation,
 
 insert into public.family_documents (id, user_id, member_id, doc_type, doc_number, country, holder_name, issue_date, expiry_date, contenu_chiffre, mime_type, taille) values
  ('fd000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000001','passeport','22FR11234','FR','Léa Martin','2021-05-10','2031-05-10','vlBxBRqqDaFwHsoM2oS/A5AP4VigFxeGAEfbPRNqt4YnA33fhwXYG2iptZcl7mY5qhiZuFigcttbfVAgoTYPYM87cID1/x3g3QpB5KLWda3FOAkRJdetPzoRQNEPb8Ls7MmMYT9eS0jivfDeiZrRvd44WXjZoKLnwefygboZCs9R/Jw0I7XKpw5oABQP4OX0rQLgDlfrwu2aaNpjc3WJ+viWkYsxI2+lT/z62rCGoi+A0z56OknNezmcXNKnOEQ77ighEqCjplSA7bWmWN70g7OYkF9wtgUhbxWITkrgKgWbX+9F5+pzudk9GNWSi4D5bqYRZa+Un5HAxJTM7KlbLcaTCtsysPt28MiBkSZJZqJpFIyB5QOg3VHbr9ApkGMFa3GRh1yTcl/0i/WK8vKgJEGVzfT4wYh5Zpaa+fdmSgPOr7id9oIo/kRYDmjV0KbdVOtRsN+ARn97t3lvLi72ki4cr42nLxVCN9q5VaA8aDaGwFX9SKSlVZda7W9gAOviRXfJ/qWmzE+nbhhrFfyQYrbJ+f/g1/TZ+GuHhPC/+dvojPegp14bx9ovbtxlml0IOKrjzzAsOiLkcgoV4MoTLY8Y/LMLflQbc6At1iswxOqwnXrY096I7u7yRwk/Q3LirXYVtH91BqQf/UBwq+opjfnG4/V09yQkFn7GFkLI26kKHFzfsTeQK6WUurbQ48Yt4/QVi1Fy/YILxx1u4ww8R7hzjk68oc/EcsG++iUoXMVF9lh9qBWjGa/5H6S83xbx1lEQh7JuOQDAStse','application/pdf',560),
- ('fd000001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000001','carte_identite','CI-778812','FR','Léa Martin','2016-09-15','2026-09-15','NUK9bwt1hkwgmt30oFekFKdPat7AOLpipsiYdjSbtFb7vgJo6cIWDGuMKgH1ZjAomYrQwazQTrE+3m708igbTt/hnUF87NHLSDeiEU5A3tC/WgODl+cVaQKWY12kXHVNoG7MQnFHYsQF4opkppP+vWoR5ZfBtDqbFzfH34JXqcQd6lleUZ9HhPjHe3jJI0zs8e9lfqiVAVeyFXp0Ux60HHVcz1bqtXwWX+2Qd3LpcplRjLUTk7HgV+JOfJUjRrO2T6OYtXJEwTqdrERx4QtBpjmQxC+02Oi+PeF92p2MYqQwLyMX1UZPljP2UoHI9DoSCJML4qs30380y+o4J73aQbshTdJ6AhJfOwPIwlOVmguIQ6hsSoje9cRCyz84ZwwmH6zXSXumQHMc2aMS3ju6kQa4xH0wvV1fSTmvHtJvS39I0+lY3e4uuAO//sHQsXwhu+yS2VPI/k9xpILAhqdkzBvptTo5x6zkHxLDccYNtobnJF/sUaYUeNI1T7ymJP03tp/xmo6Vz86FdwRsR3OR+jWuA5XpDkFl8JSQD8n6z1SnuMam3PODE7b+uOyyhT3DLdzrnqs1rG9N8tLCvsVa4PtPiD2S5C8AHNcDjCm+sEk/uZi8j/EfYO3GOzhQ/76eblgdhi/UFSTdnZZQkHwYIdhDYCsmzlsCl2L2gex7JPLzZshYlRefUa8Pq9jpwoVR0S20oAwwELo7OiTzspgmgCCY8harUUs+SoBGZu6eBqP27MX5NSRZu6TXSe8JXSBwvAxl8o7uaEhV4IPFPNnkbK4=','application/pdf',565),
- ('fd000001-0000-4000-8000-000000000003','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000002','passeport','22FR55110','FR','Hugo Martin','2016-06-01','2026-06-01','A+f1JppG+4ZU4E8F1pKsFkatlH9s3x2ZlQaulciM9keJAckBmZ6Yi82bxTdAjhlOvuJKrnusOx6n0DMQfehnKDZvPl+SDoG4jGNJaWSVRNA4x/Q6VPD8ez9aQpUiISoYfm3glE+FZswykOg+s/CPE6KV2GEP7DSvIz9feCtbn/3rpF+ohPCPmJN0Ib3GFUUZhYNIGJpdYcz1QqYV0cgJSw/1nHDE4clCrdX7R7OMXMpe7JKyGA2ai8aibwtTIrXCZAuIZ4i1cyqdLwbKCo3ARgOgpYrG1Ehj/IV/Vr4RF5AHsvql7kxV0oFUfDuRyDwxsC8VA2i+zoOcCE2lutKafqv2srmailArkWykamtq5cfhctayuMJGTAcI9i2LKjqDHNdX9bGIOOlLAIGzGrQDgwH+vsIYYD+eHoi5RTtzSBMxhBV3n9tdKAlzweTxOz/6rexu+ZKTxqZVd0eXOOXzY4zZqrhsnRwPeG5cxtwLSxaY14hNBKYNmwwKYRNygBGQWM7G5JruN8w2QqsgfoNEynP+J6ME8wOKYTV3rSLIi5IWvZNIMEx9N+s2As9bfss6/97SXgwdFBu4yvk46MTVZJVAWl0tudMhqMki7pm82z6tZ9Vxhx+gEGz+TWodbQkhgpAOPyHXqkKSEuaY21mM8mVI2UTriJttCk/4bHU8FwVDmYWw1P7dMNW0JmQ9VjCwxFT3IKrOtKkq6a8WkoV8DjuO9IWKFH4x5xGYcrC1WzKtAUV2BfPKeFGziEVSpD3Ju4Zhf7HAtrdmYuJh3A==','application/pdf',561),
+ ('fd000001-0000-4000-8000-000000000002','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000001','carte_identite','CI-778812','FR','Léa Martin','2016-09-15',current_date + 60,'NUK9bwt1hkwgmt30oFekFKdPat7AOLpipsiYdjSbtFb7vgJo6cIWDGuMKgH1ZjAomYrQwazQTrE+3m708igbTt/hnUF87NHLSDeiEU5A3tC/WgODl+cVaQKWY12kXHVNoG7MQnFHYsQF4opkppP+vWoR5ZfBtDqbFzfH34JXqcQd6lleUZ9HhPjHe3jJI0zs8e9lfqiVAVeyFXp0Ux60HHVcz1bqtXwWX+2Qd3LpcplRjLUTk7HgV+JOfJUjRrO2T6OYtXJEwTqdrERx4QtBpjmQxC+02Oi+PeF92p2MYqQwLyMX1UZPljP2UoHI9DoSCJML4qs30380y+o4J73aQbshTdJ6AhJfOwPIwlOVmguIQ6hsSoje9cRCyz84ZwwmH6zXSXumQHMc2aMS3ju6kQa4xH0wvV1fSTmvHtJvS39I0+lY3e4uuAO//sHQsXwhu+yS2VPI/k9xpILAhqdkzBvptTo5x6zkHxLDccYNtobnJF/sUaYUeNI1T7ymJP03tp/xmo6Vz86FdwRsR3OR+jWuA5XpDkFl8JSQD8n6z1SnuMam3PODE7b+uOyyhT3DLdzrnqs1rG9N8tLCvsVa4PtPiD2S5C8AHNcDjCm+sEk/uZi8j/EfYO3GOzhQ/76eblgdhi/UFSTdnZZQkHwYIdhDYCsmzlsCl2L2gex7JPLzZshYlRefUa8Pq9jpwoVR0S20oAwwELo7OiTzspgmgCCY8harUUs+SoBGZu6eBqP27MX5NSRZu6TXSe8JXSBwvAxl8o7uaEhV4IPFPNnkbK4=','application/pdf',565),
+ ('fd000001-0000-4000-8000-000000000003','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000002','passeport','22FR55110','FR','Hugo Martin','2016-06-01',current_date - 30,'A+f1JppG+4ZU4E8F1pKsFkatlH9s3x2ZlQaulciM9keJAckBmZ6Yi82bxTdAjhlOvuJKrnusOx6n0DMQfehnKDZvPl+SDoG4jGNJaWSVRNA4x/Q6VPD8ez9aQpUiISoYfm3glE+FZswykOg+s/CPE6KV2GEP7DSvIz9feCtbn/3rpF+ohPCPmJN0Ib3GFUUZhYNIGJpdYcz1QqYV0cgJSw/1nHDE4clCrdX7R7OMXMpe7JKyGA2ai8aibwtTIrXCZAuIZ4i1cyqdLwbKCo3ARgOgpYrG1Ehj/IV/Vr4RF5AHsvql7kxV0oFUfDuRyDwxsC8VA2i+zoOcCE2lutKafqv2srmailArkWykamtq5cfhctayuMJGTAcI9i2LKjqDHNdX9bGIOOlLAIGzGrQDgwH+vsIYYD+eHoi5RTtzSBMxhBV3n9tdKAlzweTxOz/6rexu+ZKTxqZVd0eXOOXzY4zZqrhsnRwPeG5cxtwLSxaY14hNBKYNmwwKYRNygBGQWM7G5JruN8w2QqsgfoNEynP+J6ME8wOKYTV3rSLIi5IWvZNIMEx9N+s2As9bfss6/97SXgwdFBu4yvk46MTVZJVAWl0tudMhqMki7pm82z6tZ9Vxhx+gEGz+TWodbQkhgpAOPyHXqkKSEuaY21mM8mVI2UTriJttCk/4bHU8FwVDmYWw1P7dMNW0JmQ9VjCwxFT3IKrOtKkq6a8WkoV8DjuO9IWKFH4x5xGYcrC1WzKtAUV2BfPKeFGziEVSpD3Ju4Zhf7HAtrdmYuJh3A==','application/pdf',561),
  ('fd000001-0000-4000-8000-000000000004','de110000-0000-4000-8000-000000000000','fa000001-0000-4000-8000-000000000003','carte_identite','CI-330199','FR','Jeanne Martin','2020-01-01','2030-01-01','8ZWVwPdbpMp6obmcD5HSPJHMid1gX9KDKLAB7HywTLUzSOyTD/Baw5aYPJ8/fgSXZ/NKyjFyU2rdAaSrqH1EUtAXVtl2fEKG6pngf1f3OhA/NYAGd+v1wV5eMPe/R8DQLHg6TIKgCC4bDsSF8qiNcQAJzH8kmoOT0Vr9bxfBX/8TmaeF+u0O9I+TzSsTZHi9DasUdIxv/DdxSwhSFaT9avCYabyb1ZKk+xIU7Kt+aDkFkhqm0Im7ZaMa3cRQUF3oyiDavv/1VOIAnFYzpHuuHEyXO1TktEz4gL9Z45mu8Z+DZJ4esMfishLMFR7F1sEWVWau6lejnHPvvNvYQVdf/MgxVkXwVyQ+omLpZMDT1fttxvKhzHlG7JGA+QkSb1/6WsDD7Fc1L+72IcRp/x0925WfkyxHnkyGlqLRQFSRm/syHhhHj6eS0lKxxSnJ/PoxP1Mi3wri3LMM+YmxlXUralRpp7DPki0b7X7Y6xdLcDSjQDpw+PF5+enaoYzIeEAoaK42NQQy7Oqtifx1FLWhreB7uLvXxADWRMvFuhOi28yWQD8vGezxIE9aHlPyaodhRVZgftL48Je6r04nrXAz8RyjtgO/mEzztz/jTeM+blAw73K5mLwtoGzKTv5k+X32B8NINeqcPaC8wdgDKaqTFmpmvRKM83HOih6iqRXD+gR0FzBhuPYNbsaD3RKN8UXiul1pg44kiDTUJUNpUaLHJJJkMU+t0aOcVYFpWPELn0gaO4XnBuFVGWkxcOfymvcLZjUVPiRChQOI99mda9S3ikPjzck=','application/pdf',568);
 
 
@@ -332,11 +332,11 @@ insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, 
  ('c1000001-0000-4000-8000-000000000005','de110000-0000-4000-8000-000000000000','Barolo Riserva Démo','Cantina Démo',2017,'Piémont','rouge','{"nebbiolo"}');
 
 insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, commentaire) values
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000001','a1000001-0000-4000-8000-000000000003','2026-06-20',5,120.00,'Exceptionnel, à ouvrir pour les grandes occasions'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000002','a1000001-0000-4000-8000-000000000001','2026-06-05',4,45.00,'Minéral, parfait sur les fruits de mer'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000003',null,'2026-05-28',3,22.00,'Léger et frais, idéal en terrasse'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000004','a1000001-0000-4000-8000-000000000004','2026-06-15',4,60.00,'Bulles fines, belle longueur'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000005',null,'2026-04-10',5,80.00,'Tannique et puissant, superbe potentiel de garde');
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000001','a1000001-0000-4000-8000-000000000003',current_date,5,120.00,'Exceptionnel, à ouvrir pour les grandes occasions'),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000002','a1000001-0000-4000-8000-000000000001',current_date - 9,4,45.00,'Minéral, parfait sur les fruits de mer'),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000003',null,current_date - 20,3,22.00,'Léger et frais, idéal en terrasse'),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000004','a1000001-0000-4000-8000-000000000004',current_date - 45,4,60.00,'Bulles fines, belle longueur'),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000005',null,current_date - 80,5,80.00,'Tannique et puissant, superbe potentiel de garde');
 
 -- Compte de dépenses partagé du compte démo (lié au voyage Rome, partagé avec l'agence)
 insert into public.depense_groupes (id, owner_id, voyage_id, titre, devise) values
@@ -348,21 +348,21 @@ on conflict (groupe_id, profile_id) do nothing;
 
 -- Dépense 1 : hôtel 300 € payé par le démo, split égal (150/150)
 insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
- ('d2000001-0000-4000-8000-0000000000a1','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Hôtel Roma',30000,'2026-09-12','egal','de110000-0000-4000-8000-000000000000');
+ ('d2000001-0000-4000-8000-0000000000a1','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Hôtel Roma',30000,current_date - 3,'egal','de110000-0000-4000-8000-000000000000');
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
  ('d2000001-0000-4000-8000-0000000000a1','de110000-0000-4000-8000-000000000000',15000),
  ('d2000001-0000-4000-8000-0000000000a1','22222222-2222-2222-2222-222222222222',15000);
 
 -- Dépense 2 : dîner 120 € payé par l'agence, exact (démo 70 / agence 50)
 insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
- ('d2000001-0000-4000-8000-0000000000a2','d2000001-0000-4000-8000-000000000001','22222222-2222-2222-2222-222222222222','Dîner Trastevere',12000,'2026-09-13','exact','22222222-2222-2222-2222-222222222222');
+ ('d2000001-0000-4000-8000-0000000000a2','d2000001-0000-4000-8000-000000000001','22222222-2222-2222-2222-222222222222','Dîner Trastevere',12000,current_date + 72,'exact','22222222-2222-2222-2222-222222222222');
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
  ('d2000001-0000-4000-8000-0000000000a2','de110000-0000-4000-8000-000000000000',7000),
  ('d2000001-0000-4000-8000-0000000000a2','22222222-2222-2222-2222-222222222222',5000);
 
 -- Dépense 3 : taxi 40 € payé par le démo, split égal (20/20)
 insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by) values
- ('d2000001-0000-4000-8000-0000000000a3','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Taxi aéroport',4000,'2026-09-15','egal','de110000-0000-4000-8000-000000000000');
+ ('d2000001-0000-4000-8000-0000000000a3','d2000001-0000-4000-8000-000000000001','de110000-0000-4000-8000-000000000000','Taxi aéroport',4000,current_date + 74,'egal','de110000-0000-4000-8000-000000000000');
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
  ('d2000001-0000-4000-8000-0000000000a3','de110000-0000-4000-8000-000000000000',2000),
  ('d2000001-0000-4000-8000-0000000000a3','22222222-2222-2222-2222-222222222222',2000);
