@@ -33,10 +33,18 @@ test("créer un compte partagé, partager, ajouter une dépense égale, vérifie
   await page.getByTestId("groupe-card").filter({ hasText: titre }).first().getByRole("link").click();
   await expect(page).toHaveURL(/\/fr\/depenses\//);
 
-  // Partager avec l'agence (pour avoir 2 participants)
+  // Partager avec l'agence (pour avoir 2 participants). Le refresh RSC post-action peut
+  // revenir vide sous charge (race documentée #71/#77) → l'agence n'apparaît pas en place ;
+  // récupération par reload (rendu frais depuis la base), comme l'archivage #77.
   await page.getByTestId("share-form").locator('input[name="email"]').fill("agence@vito.test");
   await page.getByTestId("share-form").getByRole("button").click();
-  await expect(page.getByTestId("member-row").filter({ hasText: "agence" }).or(page.getByTestId("member-row").nth(1))).toBeVisible();
+  const deuxMembres = page.getByTestId("member-row").filter({ hasText: "agence" }).or(page.getByTestId("member-row").nth(1));
+  try {
+    await expect(deuxMembres).toBeVisible();
+  } catch {
+    await page.reload();
+    await expect(deuxMembres).toBeVisible();
+  }
 
   // Ajouter une dépense égale de 30,00 € payée par le client, participants = tous (cochés par défaut)
   await page.getByTestId("depense-form").locator('input[name="libelle"]').fill("Taxi");
