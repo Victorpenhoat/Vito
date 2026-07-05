@@ -7,6 +7,7 @@ import { categoryConfig } from "../domain/categoryConfig";
 import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlaceCard } from "./PlaceCard";
 import { PlacesMapLazy } from "./PlacesMapLazy";
+import { Input } from "@/features/shared/ui/Input";
 
 function chipCls(active: boolean): string {
   return `whitespace-nowrap rounded-control border px-3 py-1 text-xs ${active ? "border-transparent bg-accent text-white" : "border-line text-muted"}`;
@@ -44,12 +45,12 @@ export function PlaceListPanel({
       <div className="flex items-center gap-3">
         {/* min-w-0 : sans lui, la largeur minimale intrinsèque de l'input (~180px) + le
             toggle de vues dépassent le viewport mobile → scroll horizontal de la page. */}
-        <input
+        <Input
           data-testid="places-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("filtrerPlaceholder")}
-          className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm outline-none focus:outline-2 focus:outline-accent"
+          className="min-w-0 flex-1 text-sm"
         />
         {views.length > 1 && (
           <div className="flex gap-1 rounded-control border border-line p-0.5">

@@ -6,6 +6,8 @@ import { DEPENSE_MODES } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
 import { Checkbox } from "@/features/shared/ui/Checkbox";
 import { DateField } from "@/features/shared/ui/DateField";
+import { Input } from "@/features/shared/ui/Input";
+import { Select } from "@/features/shared/ui/Select";
 
 type Membre = { profile_id: string; display_name: string | null };
 
@@ -14,19 +16,18 @@ export function DepenseForm({ groupeId, membres }: { groupeId: string; membres: 
   const [state, action, pending] = useActionState(addDepense, undefined);
   const [mode, setMode] = useState<"egal" | "exact">("egal");
   const nom = (m: Membre) => m.display_name ?? m.profile_id;
-  const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
   return (
     <form action={action} data-testid="depense-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="groupeId" value={groupeId} />
-      <input name="libelle" required placeholder={t("libelle")} className={inputCls} />
-      <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={inputCls} />
-      <select name="payePar" aria-label={t("payePar")} className={inputCls} defaultValue={membres[0]?.profile_id ?? ""}>
+      <Input name="libelle" required placeholder={t("libelle")} />
+      <Input name="montant" required inputMode="decimal" placeholder={t("montant")} />
+      <Select name="payePar" aria-label={t("payePar")} defaultValue={membres[0]?.profile_id ?? ""}>
         {membres.map((m) => <option key={m.profile_id} value={m.profile_id}>{nom(m)}</option>)}
-      </select>
+      </Select>
       <DateField name="date" aria-label={t("date")} />
-      <select name="mode" aria-label={t("mode")} className={inputCls} value={mode} onChange={(e) => setMode(e.target.value as "egal" | "exact")}>
+      <Select name="mode" aria-label={t("mode")} value={mode} onChange={(e) => setMode(e.target.value as "egal" | "exact")}>
         {DEPENSE_MODES.map((m) => <option key={m} value={m}>{t(`modes.${m}`)}</option>)}
-      </select>
+      </Select>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-sm font-medium text-ink">{t("participants")}</legend>
         {membres.map((m) => (
@@ -39,7 +40,7 @@ export function DepenseForm({ groupeId, membres }: { groupeId: string; membres: 
             label={<>
               <span className="flex-1 text-ink">{nom(m)}</span>
               {mode === "exact" && (
-                <input name={`exact:${m.profile_id}`} inputMode="decimal" placeholder={t("montant")} className="rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent w-24" />
+                <Input name={`exact:${m.profile_id}`} inputMode="decimal" placeholder={t("montant")} className="w-24" />
               )}
             </>}
           />

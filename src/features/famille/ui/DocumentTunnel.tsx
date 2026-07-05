@@ -6,10 +6,10 @@ import { DOC_TYPES } from "../domain/schemas";
 import { DocTypeIcon } from "./DocTypeIcon";
 import { Button } from "@/features/shared/ui/Button";
 import { EMPTY_FIELDS, type OcrFields } from "@/lib/services/ocr";
+import { Input } from "@/features/shared/ui/Input";
 
 const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
 const MAX = 10 * 1024 * 1024;
-const FIELD = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 type Step = "A" | "B" | "C" | "D";
 
@@ -188,7 +188,7 @@ function Field({ name, label, def, auto, type = "text", t }: {
         {label}
         <span className="text-xs text-accent">{auto ? t("tunnel.dLuAuto") : t("tunnel.dAVerifier")}</span>
       </span>
-      <input name={name} type={type} defaultValue={def ?? ""} className={FIELD} />
+      <Input name={name} type={type} defaultValue={def ?? ""} />
     </label>
   );
 }

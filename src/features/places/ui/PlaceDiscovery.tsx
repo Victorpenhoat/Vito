@@ -6,6 +6,7 @@ import type { Place } from "../domain/filterPlaces";
 import type { PlaceSummary } from "@/lib/services/places/types";
 import { searchEnvies, markOwned, addRecent, removeRecent } from "../domain/discovery";
 import { Button } from "@/features/shared/ui/Button";
+import { Input } from "@/features/shared/ui/Input";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 
 export function PlaceDiscovery({ places, category }: { places: Place[]; category: "resto" | "hotel" }) {
@@ -64,12 +65,12 @@ export function PlaceDiscovery({ places, category }: { places: Place[]; category
   return (
     <div className="flex flex-col gap-4">
       <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); runSearch(q); }}>
-        <input
+        <Input
           data-testid={`add-${testidBase}-search`}
           placeholder={t("searchDecouvertePlaceholder")}
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm outline-none focus:outline-2 focus:outline-accent"
+          className="flex-1 text-sm"
         />
         {searched && (
           <Button type="button" variant="ghost" data-testid="search-clear" onClick={clear}>✕</Button>

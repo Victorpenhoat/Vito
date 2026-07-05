@@ -3,6 +3,7 @@ import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { retirerResto, ajouterRestoRecherche, chercherEtablissements } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
+import { Input } from "@/features/shared/ui/Input";
 
 type Etab = { nom: string; ville: string | null } | { nom: string; ville: string | null }[] | null;
 type Resto = { etablissement_id: string; etablissement: Etab };
@@ -36,7 +37,7 @@ export function FamilleRestos({ restos }: { restos: Resto[] }) {
       </ul>
       <form action={ajouter} data-testid="resto-search" className="flex flex-col gap-2">
         <div className="flex gap-2">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("rechercher")} className="rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent flex-1" />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("rechercher")} className="flex-1" />
           <Button type="button" variant="ghost" onClick={async () => setHits(await chercherEtablissements(query))}>{t("rechercherBtn")}</Button>
         </div>
         <ul className="flex flex-col gap-1">

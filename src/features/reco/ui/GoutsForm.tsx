@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { saveGouts } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
 import { Checkbox } from "@/features/shared/ui/Checkbox";
+import { Input } from "@/features/shared/ui/Input";
 
 type Tag = { slug: string; label: string };
 type Initial = { ambiances: string[]; budgetMax: number | null; typesPreferes: string[]; zones: string[] };
@@ -31,12 +32,8 @@ export function GoutsForm({ tags, initial }: { tags: Tag[]; initial: Initial }) 
           ))}
         </div>
       </fieldset>
-      <label className="flex flex-col">{t("budget")}
-        <input name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} className="rounded-control border border-line bg-surface px-3 py-2" />
-      </label>
-      <label className="flex flex-col">{t("zones")}
-        <input name="zones" defaultValue={initial.zones.join(", ")} className="rounded-control border border-line bg-surface px-3 py-2" />
-      </label>
+      <Input label={t("budget")} name="budgetMax" type="number" min={0} step="1" defaultValue={initial.budgetMax ?? ""} />
+      <Input label={t("zones")} name="zones" defaultValue={initial.zones.join(", ")} />
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       {state?.ok && <p className="text-green-700">{t("saved")}</p>}
       <Button type="submit" pending={pending}>{t("save")}</Button>
