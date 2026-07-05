@@ -59,7 +59,10 @@ export async function toggleFavorite(_prev: unknown, formData: FormData) {
     .update({ is_favorite: parsed.data.isFavorite })
     .eq("id", parsed.data.listeItemId);
   if (error) return { error: "Mise à jour échouée" };
-  revalidatePath("/restos");
+  // type "layout" : invalide aussi les fiches /restos/[id] et /hotels/[id] où le
+  // toggle est rendu (une revalidation de liste seule laissait la fiche périmée).
+  revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return {};
 }
 
@@ -80,8 +83,8 @@ export async function toggleArchive(_prev: unknown, formData: FormData) {
     })
     .eq("id", parsed.data.listeItemId);
   if (error) return { error: "Mise à jour échouée" };
-  revalidatePath("/restos");
-  revalidatePath("/hotels");
+  revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return {};
 }
 
@@ -104,7 +107,9 @@ export async function addAvis(_prev: unknown, formData: FormData) {
     visite_le: parsed.data.visiteLe ?? null,
   });
   if (error) return { error: "Avis non enregistré" };
+  // AvisForm est rendu sur les fiches resto ET hôtel — on couvre les deux.
   revalidatePath(`/restos/${parsed.data.etablissementId}`);
+  revalidatePath(`/hotels/${parsed.data.etablissementId}`);
   return {};
 }
 
@@ -127,7 +132,8 @@ export async function setTags(_prev: unknown, formData: FormData) {
     const { error } = await supabase.from("liste_item_tags").insert(rows);
     if (error) return { error: "Tags non enregistrés" };
   }
-  revalidatePath("/restos");
+  revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
 
