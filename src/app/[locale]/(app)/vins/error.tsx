@@ -1,8 +1,10 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { useCaptureError } from "@/features/shared/ui/useCaptureError";
 
-export default function VinsError({ reset }: { error: Error; reset: () => void }) {
+export default function VinsError({ error, reset }: { error: Error; reset: () => void }) {
   const t = useTranslations("vins.error");
+  useCaptureError(error, "vins");
   return (
     <main className="p-6">
       <p role="alert">{t("title")}</p>
