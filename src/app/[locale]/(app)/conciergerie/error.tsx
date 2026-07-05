@@ -1,7 +1,9 @@
 "use client";
 import { useTranslations } from "next-intl";
-export default function ConciergerieError({ reset }: { error: Error; reset: () => void }) {
+import { useCaptureError } from "@/features/shared/ui/useCaptureError";
+export default function ConciergerieError({ error, reset }: { error: Error; reset: () => void }) {
   const t = useTranslations("conciergerie.error");
+  useCaptureError(error, "conciergerie");
   return (
     <main className="p-6">
       <p role="alert">{t("title")}</p>

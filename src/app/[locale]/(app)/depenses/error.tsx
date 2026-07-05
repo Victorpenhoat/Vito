@@ -1,7 +1,9 @@
 "use client";
 import { useTranslations } from "next-intl";
-export default function DepensesError({ reset }: { error: Error; reset: () => void }) {
+import { useCaptureError } from "@/features/shared/ui/useCaptureError";
+export default function DepensesError({ error, reset }: { error: Error; reset: () => void }) {
   const t = useTranslations("depenses.error");
+  useCaptureError(error, "depenses");
   return (
     <main className="p-6">
       <p role="alert">{t("title")}</p>
