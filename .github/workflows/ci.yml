@@ -22,6 +22,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
+      - name: RLS (pgTAP)
+        run: supabase test db
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - name: Upload Playwright report (traces + screenshots)
