@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { addRemboursement } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
+import { Input } from "@/features/shared/ui/Input";
+import { Select } from "@/features/shared/ui/Select";
 
 type Membre = { profile_id: string; display_name: string | null };
 
@@ -11,7 +13,6 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
   const t = useTranslations("depenses");
   const [state, action, pending] = useActionState(addRemboursement, undefined);
   const nom = (m: Membre) => m.display_name ?? m.profile_id;
-  const inputCls = "rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
   return (
     <form action={action} data-testid="remboursement-form" className="flex flex-col gap-2 border-t border-line pt-3">
       <input type="hidden" name="groupeId" value={groupeId} />
@@ -19,13 +20,13 @@ export function RemboursementForm({ groupeId, membres }: { groupeId: string; mem
           et flex-wrap fait passer le montant à la ligne — sinon la rangée déborde du panneau
           de 320px en desktop et fait scroller toute la page horizontalement en mobile. */}
       <div className="flex flex-wrap gap-2 items-center">
-        <select name="deProfileId" aria-label={t("de")} className={`${inputCls} min-w-0 flex-1`} defaultValue={membres[0]?.profile_id ?? ""}>
+        <Select name="deProfileId" aria-label={t("de")} className="min-w-0 flex-1" defaultValue={membres[0]?.profile_id ?? ""}>
           {membres.map((m) => <option key={m.profile_id} value={m.profile_id}>{nom(m)}</option>)}
-        </select>
-        <select name="versProfileId" aria-label={t("vers")} className={`${inputCls} min-w-0 flex-1`} defaultValue={membres[1]?.profile_id ?? ""}>
+        </Select>
+        <Select name="versProfileId" aria-label={t("vers")} className="min-w-0 flex-1" defaultValue={membres[1]?.profile_id ?? ""}>
           {membres.map((m) => <option key={m.profile_id} value={m.profile_id}>{nom(m)}</option>)}
-        </select>
-        <input name="montant" required inputMode="decimal" placeholder={t("montant")} className={`${inputCls} w-28`} />
+        </Select>
+        <Input name="montant" required inputMode="decimal" placeholder={t("montant")} className="w-28" />
       </div>
       <DateField name="date" aria-label={t("date")} />
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}

@@ -6,10 +6,10 @@ import { SEJOUR_TYPES } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
 import { Checkbox } from "@/features/shared/ui/Checkbox";
 import { DateField } from "@/features/shared/ui/DateField";
+import { Input, fieldClass } from "@/features/shared/ui/Input";
+import { Select } from "@/features/shared/ui/Select";
 
 type Hit = { placeId: string; nom: string; adresse: string | null };
-
-const inputCls = "w-full min-w-0 rounded-control border border-line bg-surface px-3 py-2 outline-none focus:outline-2 focus:outline-accent";
 
 export function DemandeHotelForm() {
   const t = useTranslations("conciergerie");
@@ -21,7 +21,7 @@ export function DemandeHotelForm() {
     <form action={action} data-testid="demande-hotel-form" className="flex flex-col gap-2">
       <div data-testid="hotel-search" className="flex flex-col gap-1">
         <div className="flex gap-2">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("chercherHotel")} className={`${inputCls} flex-1`} />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("chercherHotel")} className="w-full min-w-0 flex-1" />
           <Button type="button" variant="ghost" onClick={async () => setHits(await chercherHotels(query))}>{t("rechercher")}</Button>
         </div>
         <ul className="flex flex-col gap-1">
@@ -36,13 +36,13 @@ export function DemandeHotelForm() {
       </div>
       <div className="flex flex-col gap-2">
         <DateField name="dateDebut" required aria-label={t("dateDebut")} className="w-full min-w-0" />
-        <input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className={inputCls} />
+        <Input name="nombreNuits" type="number" min={1} required placeholder={t("nuits")} className="w-full min-w-0" />
       </div>
-      <select name="sejourType" aria-label={t("sejour")} className={inputCls} defaultValue="loisirs">
+      <Select name="sejourType" aria-label={t("sejour")} defaultValue="loisirs">
         {SEJOUR_TYPES.map((s) => <option key={s} value={s}>{t(`sejours.${s}`)}</option>)}
-      </select>
+      </Select>
       <Checkbox name="avecEnfants" label={t("avecEnfants")} />
-      <textarea name="commentaire" placeholder={t("commentaire")} className={inputCls} />
+      <textarea name="commentaire" placeholder={t("commentaire")} className={fieldClass} />
       {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
       <Button type="submit" disabled={!selected} pending={pending}>{t("envoyer")}</Button>
     </form>
