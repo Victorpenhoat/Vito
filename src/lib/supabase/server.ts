@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database.types";
@@ -25,3 +26,14 @@ export async function createServerSupabase() {
     }
   );
 }
+
+// Authentification dédupliquée par requête : chaque lecture RSC appelait
+// supabase.auth.getUser() (un aller-retour au serveur Auth), soit ~4 appels pour une
+// seule page (layout + plusieurs queries). cache() (React, request-scoped) ne fait
+// l'appel qu'une fois par requête. Retourne { user } — même forme que data de getUser,
+// pour que les sites appelants (auth.user) restent inchangés.
+export const getCachedUser = cache(async () => {
+  const supabase = await createServerSupabase();
+  const { data } = await supabase.auth.getUser();
+  return data;
+});

@@ -1,4 +1,4 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { filtersToQuery } from "../domain/filtersToQuery";
 import type { VinFilters } from "../domain/schemas";
 import type { Enums } from "@/types/database.types";
@@ -23,7 +23,7 @@ export async function getMesVins(filters: VinFilters): Promise<VinConsolide[]> {
   // Fail-safe anon : layout et page rendent en parallèle (App Router) — le
   // requireRole du layout ne garde pas cette lecture. Sans session, vins renvoie
   // 42501 (anon) et crashe le RSC ; on court-circuite (cf. #61/#63).
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
 
   // Récupère les vins (filtres intrinsèques) + leurs dégustations (filtres contextuels).
@@ -77,7 +77,7 @@ export async function getVinDetail(id: string) {
   const supabase = await createServerSupabase();
   // Fail-safe anon (cf. #61/#63) : sans session, les tables renvoient 42501 et
   // crashent le RSC. On retourne null ; le consommateur (VinDetail) fait notFound().
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return null;
   const [vinRes, degRes] = await Promise.all([
     supabase.from("vins").select("*").eq("id", id).single(),

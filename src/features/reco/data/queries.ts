@@ -1,4 +1,4 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import type { RechercheCriteria } from "../domain/schemas";
 import { buildSignauxImplicites } from "../domain/implicit";
 import { scoreEtablissement } from "../domain/scoring";
@@ -21,7 +21,7 @@ export async function getGouts() {
   // client tombe en rôle `anon` et profil_gouts renvoie 42501, ce qui crashe le RSC
   // (flake CI). On court-circuite comme rechercheRestos ; les 2 consommateurs gèrent
   // déjà `null` (banner affiché / champs par défaut).
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return null;
   const { data, error } = await supabase.from("profil_gouts").select("*").maybeSingle();
   if (error) throw error;
@@ -39,7 +39,7 @@ function matchObjectif(e: RestoResult, c: RechercheCriteria): boolean {
 
 export async function rechercheRestos(criteria: RechercheCriteria) {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return { maListe: [], recos: [] };
 
   // 1) Ta liste : etablissements présents dans liste_items de l'utilisateur

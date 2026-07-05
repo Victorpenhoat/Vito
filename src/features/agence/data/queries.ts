@@ -1,8 +1,8 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 
 export async function getMesClients() {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("agence_clients")

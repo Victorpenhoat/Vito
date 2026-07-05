@@ -1,10 +1,10 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 
 export async function getMesVoyages() {
   const supabase = await createServerSupabase();
   // Fail-safe anon (cf. #61/#63) : layout et page rendent en parallèle ; sans
   // session, voyages renvoie 42501 (anon) et crashe le RSC. On court-circuite.
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
   // RLS (can_access_voyage) renvoie automatiquement les voyages possédés + partagés.
   const { data, error } = await supabase
@@ -17,7 +17,7 @@ export async function getMesVoyages() {
 
 export async function getVoyageDetail(id: string) {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   const uid = auth.user?.id ?? null;
   // Fail-safe anon (cf. #61/#63) : sans session, les tables renvoient 42501 et
   // crashent le RSC. On retourne null ; le consommateur (VoyageDetail) fait notFound().
@@ -48,7 +48,7 @@ export async function getVoyageDocuments(voyageId: string) {
   const supabase = await createServerSupabase();
   // Fail-safe anon (cf. #61/#63) : sans session, voyage_documents renvoie 42501
   // (anon) et crashe le RSC ; on court-circuite.
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("voyage_documents")

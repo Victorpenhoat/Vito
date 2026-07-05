@@ -1,4 +1,4 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { rechercheRestos, type RestoResult } from "@/features/reco/data/queries";
 import { monthRange } from "./monthRange";
 
@@ -17,7 +17,7 @@ export async function getDashboardData() {
   // donc pas cette requête. Sans session valide (fenêtre de refresh / prefetch), le
   // client tombe en rôle `anon` et liste_items renvoie 42501 (GRANT authenticated-only
   // + RLS owner), ce qui crashe le RSC. On court-circuite comme rechercheRestos.
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) {
     return {
       kpis: { sorties: 0, nouveauxRestos: 0, vinsGoutes: 0, depensesVoyageCents: 0 },
