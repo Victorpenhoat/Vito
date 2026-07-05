@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { expiryStatus, monthsUntil } from "../domain/expiry";
 
 export type Proche = {
@@ -56,7 +56,7 @@ function worstUrgency(dates: (string | null)[], now: Date): { urgency: Proche["u
 
 export const getProches = cache(async (): Promise<Proche[]> => {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("family_members")
@@ -84,7 +84,7 @@ export const getProches = cache(async (): Promise<Proche[]> => {
 
 export async function getProche(id: string): Promise<{ proche: ProcheDetail; documents: DocMeta[] } | null> {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return null;
   const { data: m, error } = await supabase
     .from("family_members")
@@ -104,7 +104,7 @@ export async function getProche(id: string): Promise<{ proche: ProcheDetail; doc
 
 export async function getMaFamille() {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   const uid = auth.user?.id ?? null;
   if (!uid) return null;
   // RLS (can_access_famille) : l'utilisateur a 0 ou 1 famille (unicité foyer).
@@ -127,7 +127,7 @@ export async function getFamilleRestos(familleId: string) {
   const supabase = await createServerSupabase();
   // Fail-safe anon (cf. #61/#63) : protégé en amont par getMaFamille (null → non
   // rendu), mais on garde par cohérence — sans session, la lecture renverrait 42501.
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("famille_restos")

@@ -1,9 +1,9 @@
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { isPremiumFrom } from "../domain/premium";
 
 export async function getSubscription() {
   const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
+  const auth = await getCachedUser();
   if (!auth.user) return null;
   const { data } = await supabase
     .from("subscriptions")
