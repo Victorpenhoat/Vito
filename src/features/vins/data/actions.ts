@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getEnrichmentProvider } from "@/lib/services/enrichment";
 import { degustationInputSchema } from "../domain/schemas";
@@ -55,7 +56,7 @@ export async function addDegustation(_prev: unknown, formData: FormData): Promis
       cepages: norm.cepages,
     },
   });
-  if (vinErr || !vinId) return { error: "Enregistrement du vin échoué" };
+  if (vinErr || !vinId) { logActionError("vins.addDegustation", vinErr); return { error: "Enregistrement du vin échoué" }; }
 
   const { error: degErr } = await supabase.from("degustations").insert({
     user_id: auth.user.id,
@@ -67,7 +68,7 @@ export async function addDegustation(_prev: unknown, formData: FormData): Promis
     prix_paye: input.prixPaye ?? null,
     commentaire: input.commentaire ?? null,
   });
-  if (degErr) return { error: "Enregistrement de la dégustation échoué" };
+  if (degErr) { logActionError("vins.addDegustation", degErr); return { error: "Enregistrement de la dégustation échoué" }; }
 
   if (input.etablissementId) revalidatePath(`/restos/${input.etablissementId}`);
   revalidatePath("/vins");
@@ -81,7 +82,7 @@ export async function deleteDegustation(_prev: unknown, formData: FormData): Pro
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
   const { data: deleted, error } = await supabase.from("degustations").delete().eq("id", id).select("id").maybeSingle();
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("vins.deleteDegustation", error); return { error: "Suppression échouée" }; }
   if (!deleted) return { error: "Dégustation introuvable" };
   revalidatePath("/vins");
   return { ok: true as const };

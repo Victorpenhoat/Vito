@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
@@ -28,11 +29,11 @@ async function addPlace(category: "resto" | "hotel", formData: FormData) {
   const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", {
     p: { ...input, enriched_at: new Date().toISOString() },
   });
-  if (rpcErr || !etabId) return { error: "Enregistrement échoué" };
+  if (rpcErr || !etabId) { logActionError("restos.searchPlaces", rpcErr); return { error: "Enregistrement échoué" }; }
   const { error: itemErr } = await supabase
     .from("liste_items")
     .upsert({ user_id: auth.user.id, etablissement_id: etabId }, { onConflict: "user_id,etablissement_id" });
-  if (itemErr) return { error: "Ajout à la liste échoué" };
+  if (itemErr) { logActionError("restos.searchPlaces", itemErr); return { error: "Ajout à la liste échoué" }; }
   revalidatePath(category === "hotel" ? "/hotels" : "/restos");
   return {};
 }
@@ -58,7 +59,7 @@ export async function toggleFavorite(_prev: unknown, formData: FormData) {
     .from("liste_items")
     .update({ is_favorite: parsed.data.isFavorite })
     .eq("id", parsed.data.listeItemId);
-  if (error) return { error: "Mise à jour échouée" };
+  if (error) { logActionError("restos.toggleFavorite", error); return { error: "Mise à jour échouée" }; }
   // type "layout" : invalide aussi les fiches /restos/[id] et /hotels/[id] où le
   // toggle est rendu (une revalidation de liste seule laissait la fiche périmée).
   revalidatePath("/restos", "layout");
@@ -82,7 +83,7 @@ export async function toggleArchive(_prev: unknown, formData: FormData) {
       archived_at: parsed.data.isArchived ? new Date().toISOString() : null,
     })
     .eq("id", parsed.data.listeItemId);
-  if (error) return { error: "Mise à jour échouée" };
+  if (error) { logActionError("restos.toggleArchive", error); return { error: "Mise à jour échouée" }; }
   revalidatePath("/restos", "layout");
   revalidatePath("/hotels", "layout");
   return {};
@@ -106,7 +107,7 @@ export async function addAvis(_prev: unknown, formData: FormData) {
     commentaire: parsed.data.commentaire ?? null,
     visite_le: parsed.data.visiteLe ?? null,
   });
-  if (error) return { error: "Avis non enregistré" };
+  if (error) { logActionError("restos.addAvis", error); return { error: "Avis non enregistré" }; }
   // AvisForm est rendu sur les fiches resto ET hôtel — on couvre les deux.
   revalidatePath(`/restos/${parsed.data.etablissementId}`);
   revalidatePath(`/hotels/${parsed.data.etablissementId}`);
@@ -126,11 +127,11 @@ export async function setTags(_prev: unknown, formData: FormData) {
     .from("liste_item_tags")
     .delete()
     .eq("liste_item_id", parsed.data.listeItemId);
-  if (deleteErr) return { error: "Mise à jour des tags échouée" };
+  if (deleteErr) { logActionError("restos.setTags", deleteErr); return { error: "Mise à jour des tags échouée" }; }
   if (parsed.data.tagIds.length > 0) {
     const rows = parsed.data.tagIds.map((tag_id) => ({ liste_item_id: parsed.data.listeItemId, tag_id }));
     const { error } = await supabase.from("liste_item_tags").insert(rows);
-    if (error) return { error: "Tags non enregistrés" };
+    if (error) { logActionError("restos.setTags", error); return { error: "Tags non enregistrés" }; }
   }
   revalidatePath("/restos", "layout");
   revalidatePath("/hotels", "layout");

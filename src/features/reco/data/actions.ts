@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { getTranslations } from "next-intl/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { goutsInputSchema } from "../domain/schemas";
@@ -34,7 +35,7 @@ export async function saveGouts(_prev: unknown, formData: FormData) {
     },
     { onConflict: "user_id" },
   );
-  if (error) return { error: t("saveFailed") };
+  if (error) { logActionError("reco.saveGouts", error); return { error: t("saveFailed") }; }
 
   revalidatePath("/gouts");
   revalidatePath("/recherche");

@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/lib/i18n/routing";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -32,6 +33,7 @@ export async function creerFamille(_prev: unknown, formData: FormData) {
   if (error) {
     // le trigger owner-membre viole UNIQUE(profile_id) si déjà dans une famille
     if (error.code === "23505" || error.message?.includes("unique")) return { error: "Vous êtes déjà dans une famille" };
+    logActionError("famille.creerFamille", error);
     return { error: "Création échouée" };
   }
   revalidatePath("/famille");
@@ -46,7 +48,7 @@ export async function inviterMembre(_prev: unknown, formData: FormData) {
   const fam = await maFamilleId(supabase);
   if (!fam) return { error: "Aucune famille" };
   const { data, error } = await supabase.rpc("inviter_famille", { p_famille_id: fam.id, p_email: parsed.data.email });
-  if (error) return { error: "Invitation échouée" };
+  if (error) { logActionError("famille.inviterMembre", error); return { error: "Invitation échouée" }; }
   if (data === "not_found") return { error: "Aucun utilisateur avec cet e-mail" };
   if (data === "self") return { error: "Vous êtes déjà membre" };
   if (data === "deja_famille") return { error: "Cette personne est déjà dans une famille" };
@@ -62,7 +64,7 @@ export async function retirerMembre(_prev: unknown, formData: FormData) {
   const fam = await maFamilleId(supabase);
   if (!fam) return { error: "Aucune famille" };
   const { error } = await supabase.rpc("retirer_membre_famille", { p_famille_id: fam.id, p_profile_id: profileId });
-  if (error) return { error: "Retrait échoué" };
+  if (error) { logActionError("famille.retirerMembre", error); return { error: "Retrait échoué" }; }
   revalidatePath("/famille");
   return { ok: true as const };
 }
@@ -71,7 +73,7 @@ export async function quitterFamille(_prev: unknown, _formData: FormData) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { error } = await supabase.rpc("quitter_famille");
-  if (error) return { error: "Impossible de quitter" };
+  if (error) { logActionError("famille.quitterFamille", error); return { error: "Impossible de quitter" }; }
   revalidatePath("/famille");
   return { ok: true as const };
 }
@@ -84,7 +86,7 @@ export async function supprimerFamille(_prev: unknown, _formData: FormData) {
   if (!fam) return { error: "Aucune famille" };
   // RLS delete = owner-only ; .select() détecte 0 ligne (non owner)
   const { data, error } = await supabase.from("familles").delete().eq("id", fam.id).select("id").maybeSingle();
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("famille.supprimerFamille", error); return { error: "Suppression échouée" }; }
   if (!data) return { error: "Suppression non autorisée" };
   revalidatePath("/famille");
   return { ok: true as const };
@@ -102,7 +104,7 @@ export async function ajouterRestoFiche(_prev: unknown, formData: FormData) {
     { famille_id: fam.id, etablissement_id: etablissementId, added_by: uid },
     { onConflict: "famille_id,etablissement_id" },
   );
-  if (error) return { error: "Ajout échoué" };
+  if (error) { logActionError("famille.ajouterRestoFiche", error); return { error: "Ajout échoué" }; }
   revalidatePath("/famille");
   return { ok: true as const };
 }
@@ -119,12 +121,12 @@ export async function ajouterRestoRecherche(_prev: unknown, formData: FormData) 
   if (!place) return { error: "Établissement introuvable" };
   const input = mapPlaceToEtablissement(place);
   const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", { p: { ...input, enriched_at: new Date().toISOString() } });
-  if (rpcErr || !etabId) return { error: "Enregistrement échoué" };
+  if (rpcErr || !etabId) { logActionError("famille.ajouterRestoRecherche", rpcErr); return { error: "Enregistrement échoué" }; }
   const { error } = await supabase.from("famille_restos").upsert(
     { famille_id: fam.id, etablissement_id: etabId, added_by: uid },
     { onConflict: "famille_id,etablissement_id" },
   );
-  if (error) return { error: "Ajout échoué" };
+  if (error) { logActionError("famille.ajouterRestoRecherche", error); return { error: "Ajout échoué" }; }
   revalidatePath("/famille");
   return { ok: true as const };
 }
@@ -137,7 +139,7 @@ export async function retirerResto(_prev: unknown, formData: FormData) {
   const fam = await maFamilleId(supabase);
   if (!fam) return { error: "Aucune famille" };
   const { error } = await supabase.from("famille_restos").delete().eq("famille_id", fam.id).eq("etablissement_id", etablissementId);
-  if (error) return { error: "Retrait échoué" };
+  if (error) { logActionError("famille.retirerResto", error); return { error: "Retrait échoué" }; }
   revalidatePath("/famille");
   return { ok: true as const };
 }
@@ -183,7 +185,7 @@ export async function creerProche(_prev: unknown, formData: FormData) {
     })
     .select("id")
     .single();
-  if (error || !data) return { error: "Création échouée" };
+  if (error || !data) { logActionError("famille.creerProche", error); return { error: "Création échouée" }; }
   revalidatePath("/famille");
   const locale = await getLocale();
   redirect({ href: `/famille/proches/${data.id}`, locale });
@@ -219,7 +221,7 @@ export async function modifierProche(_prev: unknown, formData: FormData) {
     .eq("id", id)
     .select("id")
     .maybeSingle();
-  if (error) return { error: "Modification échouée" };
+  if (error) { logActionError("famille.modifierProche", error); return { error: "Modification échouée" }; }
   if (!data) return { error: "Introuvable" };
   revalidatePath("/famille");
   revalidatePath(`/famille/proches/${id}`);
@@ -233,7 +235,7 @@ export async function supprimerProche(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { error } = await supabase.from("family_members").delete().eq("id", id);
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("famille.supprimerProche", error); return { error: "Suppression échouée" }; }
   revalidatePath("/famille");
   const locale = await getLocale();
   redirect({ href: "/famille", locale });
@@ -294,7 +296,7 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     taille: file.size,
     ocr_raw,
   });
-  if (error) return { error: "Enregistrement échoué" };
+  if (error) { logActionError("famille.creerDocument", error); return { error: "Enregistrement échoué" }; }
   revalidatePath(`/famille/proches/${memberId}`);
   const locale = await getLocale();
   redirect({ href: `/famille/proches/${memberId}`, locale });

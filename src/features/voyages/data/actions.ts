@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { voyageInputSchema, reservationInputSchema, shareInputSchema } from "../domain/schemas";
 import { getIsPremium } from "@/features/abonnement/data/queries";
@@ -40,6 +41,7 @@ export async function createVoyage(_prev: unknown, formData: FormData) {
   });
   if (error) {
     if (error.message?.includes("limite_voyages_free")) return { error: "Limite Free atteinte", limit: true as const };
+    logActionError("voyages.createVoyage", error);
     return { error: "Création échouée" };
   }
   revalidatePath("/voyages");
@@ -66,7 +68,7 @@ export async function updateVoyage(_prev: unknown, formData: FormData) {
     date_fin: parsed.data.dateFin ?? null,
     statut: parsed.data.statut ?? "planifie",
   }).eq("id", id);
-  if (error) return { error: "Mise à jour échouée" };
+  if (error) { logActionError("voyages.updateVoyage", error); return { error: "Mise à jour échouée" }; }
   revalidatePath(`/voyages/${id}`);
   return { ok: true as const };
 }
@@ -78,7 +80,7 @@ export async function deleteVoyage(_prev: unknown, formData: FormData) {
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   // RLS delete = owner-only ; .select() détecte 0 ligne (non owner / introuvable)
   const { data, error } = await supabase.from("voyages").delete().eq("id", id).select("id").maybeSingle();
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("voyages.deleteVoyage", error); return { error: "Suppression échouée" }; }
   if (!data) return { error: "Suppression non autorisée" };
   revalidatePath("/voyages");
   return { ok: true as const };
@@ -109,7 +111,7 @@ export async function addReservation(_prev: unknown, formData: FormData) {
     conciergerie_tel: d.conciergerieTel ?? null, conciergerie_mail: d.conciergerieMail ?? null,
     lien: d.lien ?? null, notes: d.notes ?? null,
   });
-  if (error) return { error: "Ajout de réservation échoué" };
+  if (error) { logActionError("voyages.addReservation", error); return { error: "Ajout de réservation échoué" }; }
   revalidatePath(`/voyages/${d.voyageId}`);
   return { ok: true as const };
 }
@@ -122,7 +124,7 @@ export async function deleteReservation(_prev: unknown, formData: FormData) {
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   // RLS = can_access_voyage : .select() détecte 0 ligne (réservation inaccessible/introuvable)
   const { data, error } = await supabase.from("reservations").delete().eq("id", id).select("id").maybeSingle();
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("voyages.deleteReservation", error); return { error: "Suppression échouée" }; }
   if (!data) return { error: "Suppression non autorisée" };
   revalidatePath(`/voyages/${voyageId}`);
   return { ok: true as const };
@@ -139,7 +141,7 @@ export async function shareVoyage(_prev: unknown, formData: FormData) {
   const { data, error } = await supabase.rpc("share_voyage", {
     p_voyage_id: parsed.data.voyageId, p_email: parsed.data.email,
   });
-  if (error) return { error: "Partage échoué" };
+  if (error) { logActionError("voyages.shareVoyage", error); return { error: "Partage échoué" }; }
   if (data === "not_found") return { error: "Aucun utilisateur avec cet e-mail" };
   if (data === "self") return { error: "Vous êtes déjà propriétaire" };
   revalidatePath(`/voyages/${parsed.data.voyageId}`);
@@ -153,7 +155,7 @@ export async function unshareVoyage(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { error } = await supabase.rpc("unshare_voyage", { p_voyage_id: voyageId, p_profile_id: profileId });
-  if (error) return { error: "Retrait échoué" };
+  if (error) { logActionError("voyages.unshareVoyage", error); return { error: "Retrait échoué" }; }
   revalidatePath(`/voyages/${voyageId}`);
   return { ok: true as const };
 }

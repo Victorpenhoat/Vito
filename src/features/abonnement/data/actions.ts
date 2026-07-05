@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPaymentProvider } from "@/lib/services/payment";
 import { subscribeSchema } from "../domain/schemas";
@@ -13,7 +14,7 @@ export async function subscribe(_prev: unknown, formData: FormData) {
   const result = await getPaymentProvider().checkout({ period: parsed.data.period });
   if (result.mode === "redirect") return { redirect: result.url }; // Stripe réel (différé)
   const { error } = await supabase.rpc("mock_subscribe", { p_period: parsed.data.period });
-  if (error) return { error: "Souscription échouée" };
+  if (error) { logActionError("abonnement.subscribe", error); return { error: "Souscription échouée" }; }
   revalidatePath("/abonnement");
   revalidatePath("/voyages");
   return { ok: true as const };
@@ -24,7 +25,7 @@ export async function cancelSubscription(_prev: unknown, _formData: FormData) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
   const { error } = await supabase.rpc("cancel_subscription");
-  if (error) return { error: "Annulation échouée" };
+  if (error) { logActionError("abonnement.cancelSubscription", error); return { error: "Annulation échouée" }; }
   revalidatePath("/abonnement");
   return { ok: true as const };
 }
