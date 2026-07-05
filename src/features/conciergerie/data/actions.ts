@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
@@ -42,7 +43,7 @@ export async function creerDemandeResto(_prev: unknown, formData: FormData) {
     avec_enfants: d.avecEnfants, nb_enfants: d.nbEnfants, chaise_haute: d.chaiseHaute,
     occasion: d.occasion, commentaire: d.commentaire ?? null,
   });
-  if (error) return { error: "Création échouée" };
+  if (error) { logActionError("conciergerie.creerDemandeResto", error); return { error: "Création échouée" }; }
   revalidatePath("/conciergerie");
   return { ok: true as const };
 }
@@ -69,14 +70,14 @@ export async function creerDemandeHotel(_prev: unknown, formData: FormData) {
   if (!place) return { error: "Hôtel introuvable" };
   const input = mapPlaceToEtablissement(place, "hotel");
   const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", { p: { ...input, enriched_at: new Date().toISOString() } });
-  if (rpcErr || !etabId) return { error: "Enregistrement de l'hôtel échoué" };
+  if (rpcErr || !etabId) { logActionError("conciergerie.creerDemandeHotel", rpcErr); return { error: "Enregistrement de l'hôtel échoué" }; }
   const { error } = await supabase.from("conciergerie_demandes").insert({
     user_id: uid, type: "hotel", etablissement_id: etabId,
     date_debut: d.dateDebut, nombre_nuits: d.nombreNuits, sejour_type: d.sejourType,
     avec_enfants: d.avecEnfants, nb_enfants: d.nbEnfants, enfants_ages: d.enfantsAges ?? null,
     commentaire: d.commentaire ?? null,
   });
-  if (error) return { error: "Création échouée" };
+  if (error) { logActionError("conciergerie.creerDemandeHotel", error); return { error: "Création échouée" }; }
   revalidatePath("/conciergerie");
   return { ok: true as const };
 }
@@ -98,7 +99,7 @@ export async function repondreDemande(_prev: unknown, formData: FormData) {
     .eq("id", parsed.data.demandeId)
     .select("id")
     .maybeSingle();
-  if (error) return { error: "Réponse échouée" };
+  if (error) { logActionError("conciergerie.repondreDemande", error); return { error: "Réponse échouée" }; }
   if (!data) return { error: "Action réservée au concierge" };
   revalidatePath("/conciergerie");
   return { ok: true as const };
@@ -110,7 +111,7 @@ export async function supprimerDemande(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { data, error } = await supabase.from("conciergerie_demandes").delete().eq("id", id).select("id").maybeSingle();
-  if (error) return { error: "Suppression échouée" };
+  if (error) { logActionError("conciergerie.supprimerDemande", error); return { error: "Suppression échouée" }; }
   if (!data) return { error: "Suppression non autorisée" };
   revalidatePath("/conciergerie");
   return { ok: true as const };
