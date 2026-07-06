@@ -33,6 +33,12 @@ ci-dessous fait « ressembler » le kit à un package juste assez pour le conver
   bundle), donc exécuté avant tout code next-intl. NE PAS retirer / NE PAS déplacer.
 - **CSS** : `[CSS_FROM_STORYBOOK]` — Vito n'a pas de CSS dist (Tailwind v4 généré
   au build) ; le converter scrape la CSS compilée du storybook de référence. OK.
+- **`cfg.overrides` cartes overlay** (`Fab` + `Modal` → `cardMode: "single"`,
+  `primaryStory` = `AsButton` / `Open`) : leurs stories contiennent du
+  `position:fixed`/portal (`[GRID_OVERFLOW]`) qui déborde des cellules de la grille
+  du *product card*. `single` = une story full-bleed dans un wrapper qui contient
+  le fixed. Présentation-only : les grades sont portés, pas de re-grade. Le compare
+  grade toujours chaque story via `?story=`.
 
 ## Vérification
 
@@ -56,3 +62,9 @@ ci-dessous fait « ressembler » le kit à un package juste assez pour le conver
   rebuild `.design-sync/sb-reference` avant de re-grader.
 - **Nouvelles primitives** : ajouter l'export au barrel `entry.tsx` (sinon non
   bundlé) ET une story `Kit/<Name>` (sinon non découvert).
+- **Nouvelle story overlay/portal** (dialog, tooltip, FAB flottant) : vérifier le
+  warning `[GRID_OVERFLOW]` du build → ajouter le composant à `cfg.overrides` avec
+  `cardMode: "single"` (cf. Fab/Modal). Sinon la carte produit déborde.
+- **Rendu drop-in Input/Select** (#93, sans label = rendu nu) : les stories
+  passent un label → rendu inchangé, grades portés. Si une future story teste le
+  chemin sans label, la re-grader (le rendu diffère du storybook labellisé).

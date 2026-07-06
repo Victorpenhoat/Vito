@@ -9,5 +9,9 @@
   "tsconfig": "tsconfig.json",
   "extraEntries": ["./.design-sync/provider.tsx"],
   "provider": { "component": "VitoPreviewProvider" },
-  "readmeHeader": ".design-sync/conventions.md"
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "Fab": { "cardMode": "single", "primaryStory": "AsButton" },
+    "Modal": { "cardMode": "single", "primaryStory": "Open" }
+  }
 }
