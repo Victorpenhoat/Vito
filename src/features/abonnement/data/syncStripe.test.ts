@@ -62,4 +62,20 @@ describe("syncSubscriptionFromEvent", () => {
     await syncSubscriptionFromEvent(event as any, s as any);
     expect(mock.calls.length).toBe(0);
   });
+
+  it("customer.subscription.updated sans metadata.user_id → fallback par stripe_customer_id", async () => {
+    // La sub Stripe n'a pas de metadata.user_id (sub créée avant le fix checkout, ou perdue) :
+    // le select-by-customer doit prendre le relais, l'upsert doit malgré tout aboutir.
+    mock = createMockSupabase({
+      on: (table, ctx) => (ctx.op === "select" ? { data: { user_id: "u1" }, error: null } : { data: null, error: null }),
+    });
+    const s = stripeStub(sub); // sub.metadata === {}
+    const event = { type: "customer.subscription.updated", data: { object: { ...sub, metadata: {} } } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await syncSubscriptionFromEvent(event as any, s as any);
+    const call = mock.calls.find((c) => c.kind === "table" && c.op === "insert");
+    expect(call).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((call as any).payload).toMatchObject({ user_id: "u1", stripe_customer_id: "cus_1" });
+  });
 });

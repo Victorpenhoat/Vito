@@ -30,6 +30,7 @@ describe("StripePaymentProvider", () => {
         customer_email: "a@b.c",
         line_items: [{ price: "price_m", quantity: 1 }],
         success_url: expect.stringContaining("https://vito.test"),
+        subscription_data: { metadata: { user_id: "u1" } },
       })
     );
   });
