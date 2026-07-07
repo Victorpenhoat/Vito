@@ -1023,6 +1023,8 @@ export type Database = {
           id: string
           period: string
           status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           tier: string
           updated_at: string
           user_id: string
@@ -1033,6 +1035,8 @@ export type Database = {
           id?: string
           period: string
           status: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           tier?: string
           updated_at?: string
           user_id: string
@@ -1043,6 +1047,8 @@ export type Database = {
           id?: string
           period?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           tier?: string
           updated_at?: string
           user_id?: string
