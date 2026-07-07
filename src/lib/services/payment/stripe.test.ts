@@ -45,6 +45,9 @@ describe("StripePaymentProvider", () => {
         customer: "cus_1",
       })
     );
+    expect(s.checkout.sessions.create).not.toHaveBeenCalledWith(
+      expect.objectContaining({ customer_email: expect.anything() })
+    );
   });
 
   it("portalUrl crée une session de portail et renvoie l'URL", async () => {

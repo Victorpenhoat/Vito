@@ -44,7 +44,7 @@ const parsed = schema.safeParse({
 if (!parsed.success) {
   // Message lisible (sinon Zod dump un objet JSON multi-lignes au cold-start / en CI)
   const details = parsed.error.issues
-    .map((i) => `  ${i.path.join(".")}: ${i.message}`)
+    .map((i) => `  ${i.path.length ? i.path.join(".") + ": " : ""}${i.message}`)
     .join("\n");
   throw new Error(`Variables d'environnement invalides :\n${details}`);
 }
