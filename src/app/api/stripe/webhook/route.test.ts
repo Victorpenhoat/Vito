@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/env", () => ({ env: { STRIPE_SECRET_KEY: "sk", STRIPE_WEBHOOK_SECRET: "wh" } }));
+const envMock = vi.hoisted(() => ({
+  env: {
+    STRIPE_SECRET_KEY: "sk",
+    STRIPE_WEBHOOK_SECRET: "wh",
+  } as { STRIPE_SECRET_KEY?: string; STRIPE_WEBHOOK_SECRET?: string },
+}));
+vi.mock("@/lib/env", () => envMock);
 
 const constructEvent = vi.fn();
 const sync = vi.fn(async (..._args: unknown[]) => {});
@@ -19,7 +25,14 @@ function req(body = "{}") {
   });
 }
 
-beforeEach(() => { constructEvent.mockReset(); sync.mockClear(); });
+beforeEach(() => {
+  envMock.env = {
+    STRIPE_SECRET_KEY: "sk",
+    STRIPE_WEBHOOK_SECRET: "wh",
+  };
+  constructEvent.mockReset();
+  sync.mockClear();
+});
 
 describe("POST /api/stripe/webhook", () => {
   it("signature valide → 200 + synchro", async () => {
@@ -41,5 +54,13 @@ describe("POST /api/stripe/webhook", () => {
     sync.mockRejectedValueOnce(new Error("db down"));
     const res = await POST(req());
     expect(res.status).toBe(500);
+  });
+
+  it("Stripe non configuré (env manquante) → 500, pas de constructEvent ni sync", async () => {
+    envMock.env.STRIPE_SECRET_KEY = undefined;
+    const res = await POST(req());
+    expect(res.status).toBe(500);
+    expect(constructEvent).not.toHaveBeenCalled();
+    expect(sync).not.toHaveBeenCalled();
   });
 });

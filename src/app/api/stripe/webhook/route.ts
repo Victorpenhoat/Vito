@@ -7,13 +7,18 @@ import { syncSubscriptionFromEvent } from "@/features/abonnement/data/syncStripe
 export const runtime = "nodejs";
 
 export async function POST(request: Request): Promise<Response> {
-  const stripe = new Stripe(env.STRIPE_SECRET_KEY!);
+  if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) {
+    logActionError("stripe.webhook.misconfigured", new Error("Stripe non configuré"));
+    return new Response("configuration Stripe manquante", { status: 500 });
+  }
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
   const body = await request.text();
   const sig = request.headers.get("stripe-signature") ?? "";
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(body, sig, env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     logActionError("stripe.webhook.signature", err);
     return new Response("signature invalide", { status: 400 });
