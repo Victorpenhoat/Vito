@@ -1,5 +1,5 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { subscribe } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
@@ -7,6 +7,9 @@ import { Button } from "@/features/shared/ui/Button";
 export function SubscribeButtons() {
   const t = useTranslations("abonnement");
   const [state, action, pending] = useActionState(subscribe, undefined);
+  useEffect(() => {
+    if (state && "redirect" in state && state.redirect) window.location.href = state.redirect;
+  }, [state]);
   return (
     <form action={action} data-testid="subscribe-form" className="flex flex-col gap-2 max-w-sm">
       <p className="text-sm text-muted">{t("upsell")}</p>

@@ -195,6 +195,7 @@
     "monthly": "Mensuel",
     "yearly": "Annuel",
     "cancel": "Annuler l'abonnement",
+    "manage": "Gérer mon abonnement",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
     "eyebrow": "Votre formule",
     "gratuit": "Gratuit",

@@ -11,13 +11,36 @@ export async function subscribe(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
-  const result = await getPaymentProvider().checkout({ period: parsed.data.period });
-  if (result.mode === "redirect") return { redirect: result.url }; // Stripe réel (différé)
+  const { data: existing } = await supabase
+    .from("subscriptions").select("stripe_customer_id").eq("user_id", auth.user.id).maybeSingle();
+  const result = await getPaymentProvider().checkout({
+    period: parsed.data.period,
+    userId: auth.user.id,
+    email: auth.user.email ?? "",
+    customerId: existing?.stripe_customer_id ?? undefined,
+  });
+  if (result.mode === "redirect") return { redirect: result.url }; // Stripe réel
   const { error } = await supabase.rpc("mock_subscribe", { p_period: parsed.data.period });
   if (error) { logActionError("abonnement.subscribe", error); return { error: "Souscription échouée" }; }
   revalidatePath("/abonnement");
   revalidatePath("/voyages");
   return { ok: true as const };
+}
+
+export async function manageSubscription(_prev: unknown, _formData: FormData) {
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { data: sub } = await supabase
+    .from("subscriptions").select("stripe_customer_id").eq("user_id", auth.user.id).maybeSingle();
+  if (!sub?.stripe_customer_id) return { error: "Aucun abonnement à gérer" };
+  try {
+    const url = await getPaymentProvider().portalUrl(sub.stripe_customer_id);
+    return { redirect: url };
+  } catch (err) {
+    logActionError("abonnement.manageSubscription", err);
+    return { error: "Gestion indisponible" };
+  }
 }
 
 export async function cancelSubscription(_prev: unknown, _formData: FormData) {

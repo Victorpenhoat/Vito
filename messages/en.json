@@ -179,6 +179,7 @@
     "monthly": "Monthly",
     "yearly": "Yearly",
     "cancel": "Cancel subscription",
+    "manage": "Manage subscription",
     "error": { "title": "Something went wrong", "retry": "Try again" },
     "eyebrow": "Your plan",
     "gratuit": "Free",

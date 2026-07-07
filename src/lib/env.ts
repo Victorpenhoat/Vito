@@ -1,15 +1,30 @@
 import { z } from "zod";
 
-const schema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
-  GOOGLE_PLACES_API_KEY: z.string().optional(),
-  ANTHROPIC_API_KEY: z.string().optional(),
-  MERCHANT_PARTNER_URL: z.string().url().optional(),
-  STRIPE_SECRET_KEY: z.string().optional(),
-  DOCUMENTS_ENCRYPTION_KEY: z.string().optional(),
-});
+const schema = z
+  .object({
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+    GOOGLE_PLACES_API_KEY: z.string().optional(),
+    ANTHROPIC_API_KEY: z.string().optional(),
+    MERCHANT_PARTNER_URL: z.string().url().optional(),
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
+    STRIPE_PRICE_MONTHLY: z.string().optional(),
+    STRIPE_PRICE_YEARLY: z.string().optional(),
+    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    DOCUMENTS_ENCRYPTION_KEY: z.string().optional(),
+  })
+  .refine(
+    (v) =>
+      !v.STRIPE_SECRET_KEY ||
+      (v.STRIPE_WEBHOOK_SECRET &&
+        v.STRIPE_PRICE_MONTHLY &&
+        v.STRIPE_PRICE_YEARLY &&
+        v.NEXT_PUBLIC_APP_URL &&
+        v.SUPABASE_SERVICE_ROLE_KEY),
+    { message: "STRIPE_SECRET_KEY présent : STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_YEARLY, NEXT_PUBLIC_APP_URL et SUPABASE_SERVICE_ROLE_KEY sont requis" }
+  );
 
 const parsed = schema.safeParse({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -19,13 +34,17 @@ const parsed = schema.safeParse({
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
   MERCHANT_PARTNER_URL: process.env.MERCHANT_PARTNER_URL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  STRIPE_PRICE_MONTHLY: process.env.STRIPE_PRICE_MONTHLY,
+  STRIPE_PRICE_YEARLY: process.env.STRIPE_PRICE_YEARLY,
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   DOCUMENTS_ENCRYPTION_KEY: process.env.DOCUMENTS_ENCRYPTION_KEY,
 });
 
 if (!parsed.success) {
   // Message lisible (sinon Zod dump un objet JSON multi-lignes au cold-start / en CI)
   const details = parsed.error.issues
-    .map((i) => `  ${i.path.join(".")}: ${i.message}`)
+    .map((i) => `  ${i.path.length ? i.path.join(".") + ": " : ""}${i.message}`)
     .join("\n");
   throw new Error(`Variables d'environnement invalides :\n${details}`);
 }

@@ -3,6 +3,7 @@ import { formatDay } from "@/lib/format/date";
 import { getSubscription, getIsPremium } from "@/features/abonnement/data/queries";
 import { SubscribeButtons } from "@/features/abonnement/ui/SubscribeButtons";
 import { CancelButton } from "@/features/abonnement/ui/CancelButton";
+import { ManageButton } from "@/features/abonnement/ui/ManageButton";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
 
 function FeatureRow({ ok, label }: { ok: boolean; label: string }) {
@@ -51,7 +52,7 @@ export default async function AbonnementPage() {
           </ul>
           <div className="mt-5 flex flex-col gap-2">
             {!isPremium && <SubscribeButtons />}
-            {isPremium && !canceled && <CancelButton />}
+            {isPremium && !canceled && (sub?.stripe_customer_id ? <ManageButton /> : <CancelButton />)}
             {isPremium && (
               <p className="text-sm text-muted">{canceled ? t("premiumUntil", { date: periodEnd }) : t("renewsOn", { date: periodEnd })}</p>
             )}
