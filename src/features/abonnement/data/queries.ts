@@ -7,7 +7,7 @@ export async function getSubscription() {
   if (!auth.user) return null;
   const { data } = await supabase
     .from("subscriptions")
-    .select("status, period, current_period_end")
+    .select("status, period, current_period_end, stripe_customer_id")
     .eq("user_id", auth.user.id)
     .maybeSingle();
   return data;
