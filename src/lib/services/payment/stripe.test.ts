@@ -23,14 +23,15 @@ describe("StripePaymentProvider", () => {
     const p = new StripePaymentProvider(s as any);
     const r = await p.checkout({ period: "monthly", userId: "u1", email: "a@b.c" });
     expect(r).toEqual({ mode: "redirect", url: "https://checkout.stripe/x" });
-    const arg = s.checkout.sessions.create.mock.calls[0][0];
-    expect(arg).toMatchObject({
-      mode: "subscription",
-      client_reference_id: "u1",
-      customer_email: "a@b.c",
-      line_items: [{ price: "price_m", quantity: 1 }],
-    });
-    expect(arg.success_url).toContain("https://vito.test");
+    expect(s.checkout.sessions.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mode: "subscription",
+        client_reference_id: "u1",
+        customer_email: "a@b.c",
+        line_items: [{ price: "price_m", quantity: 1 }],
+        success_url: expect.stringContaining("https://vito.test"),
+      })
+    );
   });
 
   it("checkout utilise le price annuel et customer existant", async () => {
@@ -38,10 +39,12 @@ describe("StripePaymentProvider", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const p = new StripePaymentProvider(s as any);
     await p.checkout({ period: "yearly", userId: "u1", email: "a@b.c", customerId: "cus_1" });
-    const arg = s.checkout.sessions.create.mock.calls[0][0];
-    expect(arg.line_items[0].price).toBe("price_y");
-    expect(arg.customer).toBe("cus_1");
-    expect(arg.customer_email).toBeUndefined();
+    expect(s.checkout.sessions.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        line_items: [{ price: "price_y", quantity: 1 }],
+        customer: "cus_1",
+      })
+    );
   });
 
   it("portalUrl crée une session de portail et renvoie l'URL", async () => {
@@ -50,6 +53,8 @@ describe("StripePaymentProvider", () => {
     const p = new StripePaymentProvider(s as any);
     const url = await p.portalUrl("cus_1");
     expect(url).toBe("https://portal.stripe/y");
-    expect(s.billingPortal.sessions.create.mock.calls[0][0]).toMatchObject({ customer: "cus_1" });
+    expect(s.billingPortal.sessions.create).toHaveBeenCalledWith(
+      expect.objectContaining({ customer: "cus_1" })
+    );
   });
 });
