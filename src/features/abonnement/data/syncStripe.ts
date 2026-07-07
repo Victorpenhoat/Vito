@@ -35,7 +35,10 @@ export async function syncSubscriptionFromEvent(event: Stripe.Event, stripe: Str
   // metadata perdue côté Stripe).
   userId = userId ?? ((sub.metadata?.user_id as string | undefined) ?? null);
   if (!userId) {
-    const { data } = await admin.from("subscriptions").select("user_id").eq("stripe_customer_id", customerId).maybeSingle();
+    const { data, error } = await admin.from("subscriptions").select("user_id").eq("stripe_customer_id", customerId).maybeSingle();
+    // Erreur DB (≠ "aucune ligne") : on throw pour que le webhook renvoie 500 et que
+    // Stripe rejoue — sinon un event récupérable serait abandonné silencieusement.
+    if (error) throw new Error(`lookup subscriptions par customer échoué: ${error.message}`);
     userId = data?.user_id ?? null;
   }
   if (!userId) {
@@ -48,11 +51,17 @@ export async function syncSubscriptionFromEvent(event: Stripe.Event, stripe: Str
   const item = sub.items.data[0];
   const interval = item?.price.recurring?.interval ?? "month";
   const periodEndSeconds = item?.current_period_end ?? Math.floor(Date.now() / 1000);
+  // Annulation via le Billing Portal : Stripe garde status="active" mais pose
+  // cancel_at_period_end=true jusqu'à la fin de période. On mappe alors sur "canceled"
+  // (= « ne se renouvelle pas ») pour que l'UI affiche « premium jusqu'au {date} » et non
+  // « renouvellement ». isPremiumFrom garde l'accès jusqu'à current_period_end. Une reprise
+  // (cancel_at_period_end repassé à false) revient à "active" à l'event suivant.
+  const status = sub.cancel_at_period_end ? "canceled" : mapStripeStatus(sub.status);
   await admin.from("subscriptions").upsert(
     {
       user_id: userId,
       tier: "premium",
-      status: mapStripeStatus(sub.status),
+      status,
       period: intervalToPeriod(interval),
       current_period_end: new Date(periodEndSeconds * 1000).toISOString(),
       stripe_customer_id: customerId,
