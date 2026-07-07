@@ -179,6 +179,7 @@
     "monthly": "Mensile",
     "yearly": "Annuale",
     "cancel": "Annulla l'abbonamento",
+    "manage": "Gestisci abbonamento",
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
     "eyebrow": "Il tuo piano",
     "gratuit": "Gratuito",

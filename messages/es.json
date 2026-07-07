@@ -179,6 +179,7 @@
     "monthly": "Mensual",
     "yearly": "Anual",
     "cancel": "Cancelar la suscripción",
+    "manage": "Gestionar mi suscripción",
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
     "eyebrow": "Tu fórmula",
     "gratuit": "Gratis",
