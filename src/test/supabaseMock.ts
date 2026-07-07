@@ -27,6 +27,7 @@ export function createMockSupabase(opts: Opts = {}) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const q: any = {
       insert: (payload: unknown) => { state.op = "insert"; state.payload = payload; calls.push({ kind: "table", table, op: "insert", payload }); return q; },
+      upsert: (payload: unknown) => { state.op = "insert"; state.payload = payload; calls.push({ kind: "table", table, op: "insert", payload }); return q; },
       update: (payload: unknown) => { state.op = "update"; state.payload = payload; calls.push({ kind: "table", table, op: "update", payload }); return q; },
       delete: () => { state.op = "delete"; calls.push({ kind: "table", table, op: "delete" }); return q; },
       select: () => q,
