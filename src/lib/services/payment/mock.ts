@@ -5,4 +5,7 @@ export class MockPaymentProvider implements PaymentProvider {
   async checkout(_plan: CheckoutPlan): Promise<CheckoutResult> {
     return { mode: "activated" };
   }
+  async portalUrl(_customerId: string): Promise<string> {
+    return "/abonnement";
+  }
 }
