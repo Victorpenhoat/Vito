@@ -10,7 +10,7 @@ const checkout = vi.fn();
 const portalUrl = vi.fn();
 vi.mock("@/lib/services/payment", () => ({ getPaymentProvider: () => ({ checkout, portalUrl }) }));
 
-import { subscribe, cancelSubscription } from "./actions";
+import { subscribe, cancelSubscription, manageSubscription } from "./actions";
 
 const fd = (e: Array<[string, string]>) => { const f = new FormData(); e.forEach(([k, v]) => f.append(k, v)); return f; };
 const setup = (o: Parameters<typeof createMockSupabase>[0]) => { mock = createMockSupabase(o); };
@@ -55,18 +55,25 @@ describe("subscribe — provider redirect (Stripe)", () => {
     const res = await subscribe(undefined, fd([["period", "monthly"]]));
     expect(res).toEqual({ redirect: "https://checkout/x" });
   });
+  it("forwarder customerId/userId/period à checkout", async () => {
+    setup({ on: () => ({ data: { stripe_customer_id: "cus_1" }, error: null }) });
+    checkout.mockResolvedValueOnce({ mode: "redirect", url: "https://checkout/x" });
+    const res = await subscribe(undefined, fd([["period", "monthly"]]));
+    expect(res).toEqual({ redirect: "https://checkout/x" });
+    expect(checkout).toHaveBeenCalledWith(
+      expect.objectContaining({ customerId: "cus_1", userId: "u1", period: "monthly" })
+    );
+  });
 });
 
 describe("manageSubscription", () => {
   it("avec customer → {redirect} portail", async () => {
     setup({ on: () => ({ data: { stripe_customer_id: "cus_1" }, error: null }) });
     portalUrl.mockResolvedValueOnce("https://portal/y");
-    const { manageSubscription } = await import("./actions");
     expect(await manageSubscription(undefined, fd([]))).toEqual({ redirect: "https://portal/y" });
   });
   it("sans customer → {error}", async () => {
     setup({ on: () => ({ data: { stripe_customer_id: null }, error: null }) });
-    const { manageSubscription } = await import("./actions");
     expect(await manageSubscription(undefined, fd([]))).toEqual({ error: "Aucun abonnement à gérer" });
   });
 });
