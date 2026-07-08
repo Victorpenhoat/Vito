@@ -14,6 +14,8 @@ const schema = z
     STRIPE_PRICE_YEARLY: z.string().optional(),
     NEXT_PUBLIC_APP_URL: z.string().url().optional(),
     DOCUMENTS_ENCRYPTION_KEY: z.string().optional(),
+    SENTRY_DSN: z.string().optional(),
+    NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
   })
   .refine(
     (v) =>
@@ -39,6 +41,8 @@ const parsed = schema.safeParse({
   STRIPE_PRICE_YEARLY: process.env.STRIPE_PRICE_YEARLY,
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   DOCUMENTS_ENCRYPTION_KEY: process.env.DOCUMENTS_ENCRYPTION_KEY,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 });
 
 if (!parsed.success) {

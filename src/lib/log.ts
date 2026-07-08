@@ -6,6 +6,16 @@
 type Level = "error" | "warn" | "info";
 export type LogContext = Record<string, unknown>;
 
+export type ErrorSink = (event: string, ctx: LogContext) => void;
+
+let errorSink: ErrorSink | null = null;
+// Enregistre (ou détache avec null) le forward des erreurs vers un collecteur externe
+// (Sentry). Appelé par les modules d'init runtime, uniquement si un DSN est configuré.
+// log.ts reste sans dépendance : le SDK vit dans les modules d'init.
+export function setErrorSink(sink: ErrorSink | null): void {
+  errorSink = sink;
+}
+
 // Cœur pur (testable sans espionner la console) : construit la ligne à émettre.
 export function formatLog(level: Level, event: string, ctx: LogContext | undefined, iso: string): string {
   const record = { level, event, ...ctx, ts: iso };
@@ -27,6 +37,7 @@ function emit(level: Level, event: string, ctx?: LogContext): void {
   const line = formatLog(level, event, ctx, new Date().toISOString());
   const sink = level === "error" ? console.error : level === "warn" ? console.warn : console.info;
   sink(line);
+  if (level === "error" && errorSink) errorSink(event, ctx ?? {});
 }
 
 export const log = {
