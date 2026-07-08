@@ -55,6 +55,30 @@ describe("syncSubscriptionFromEvent", () => {
     expect((call as any).payload).toMatchObject({ user_id: "u1", status: "canceled" });
   });
 
+  it("cancel_at_period_end=true (status active) → mappé en canceled (premium jusqu'à échéance)", async () => {
+    // Annulation via Portail : Stripe garde status=active + cancel_at_period_end=true.
+    const s = stripeStub({ ...sub, status: "active", cancel_at_period_end: true });
+    const event = { type: "customer.subscription.updated", data: { object: { ...sub, metadata: { user_id: "u1" } } } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await syncSubscriptionFromEvent(event as any, s as any);
+    const call = mock.calls.find((c) => c.kind === "table" && c.op === "insert");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((call as any).payload).toMatchObject({ user_id: "u1", status: "canceled" });
+  });
+
+  it("erreur DB dans le fallback par customer → throw (webhook 500 → replay Stripe)", async () => {
+    // Pas de metadata.user_id → fallback select ; le select renvoie une erreur DB.
+    mock = createMockSupabase({
+      on: (table, ctx) => (ctx.op === "select" ? { data: null, error: { message: "db down" } } : { data: null, error: null }),
+    });
+    const s = stripeStub(sub); // sub.metadata === {}
+    const event = { type: "customer.subscription.updated", data: { object: { ...sub, metadata: {} } } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await expect(syncSubscriptionFromEvent(event as any, s as any)).rejects.toThrow(/db down/);
+    // et aucun upsert n'a eu lieu
+    expect(mock.calls.find((c) => c.kind === "table" && c.op === "insert")).toBeUndefined();
+  });
+
   it("type non géré → aucun appel DB", async () => {
     const s = stripeStub(sub);
     const event = { type: "invoice.paid", data: { object: {} } };

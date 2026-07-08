@@ -1,6 +1,7 @@
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { env } from "@/lib/env";
 import { logActionError } from "@/lib/actionError";
+import { createStripe } from "@/lib/services/payment/stripeClient";
 import { syncSubscriptionFromEvent } from "@/features/abonnement/data/syncStripe";
 
 // Corps brut requis pour la vérif de signature → runtime nodejs (pas edge).
@@ -12,7 +13,7 @@ export async function POST(request: Request): Promise<Response> {
     return new Response("configuration Stripe manquante", { status: 500 });
   }
 
-  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+  const stripe = createStripe(env.STRIPE_SECRET_KEY);
   const body = await request.text();
   const sig = request.headers.get("stripe-signature") ?? "";
 
