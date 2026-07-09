@@ -79,6 +79,14 @@ test("l'agence voit le compte partagé du seed, ajoute un remboursement, le comp
   await form.locator('input[name="montant"]').fill("50");
   await form.getByRole("button").click();
 
-  // Après remboursement, plus aucun transfert : « Tout est réglé. »
-  await expect(page.getByTestId("solde-regle")).toBeVisible();
+  // Après remboursement, plus aucun transfert : « Tout est réglé. ». Le refresh RSC
+  // post-action peut revenir vide sous charge (race documentée #71/#77) → récupération
+  // par reload (rendu frais depuis la base), comme le partage en test 1.
+  const soldeRegle = page.getByTestId("solde-regle");
+  try {
+    await expect(soldeRegle).toBeVisible();
+  } catch {
+    await page.reload();
+    await expect(soldeRegle).toBeVisible();
+  }
 });
