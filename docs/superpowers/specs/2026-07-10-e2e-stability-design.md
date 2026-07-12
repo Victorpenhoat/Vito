@@ -99,24 +99,34 @@ Notes :
 
 ## 4. Migration des specs
 
-Pour chaque spec à form-submit, remplacer les assertions post-action vulnérables :
+**Migrer uniquement les assertions post-action NUES/vulnérables** (`toBeVisible`/`toContainText`
+directes après un submit ou une action, sur état persistant). **Laisser intactes les mitigations
+déjà réglées — elles sont SUPÉRIEURES au helper générique** (audit du 2026-07-12) :
 
 - **`depenses.spec.ts`** : les 2 `try/reload` manuscrits (partage test 1, solde-regle test 2)
-  → `expectVisibleWithReload` ; le solde `toContainText("50,00")` → `expectTextWithReload`.
-- **`restos.spec.ts`** : les 4 `reload()` ad-hoc → helper ; assertions d'avis/tag/favori post-action.
-- **`places.spec.ts`** : le `reload()` ad-hoc (l.129) → helper.
-- **`voyages.spec.ts`** : assertions post-création voyage/réservation/partage (aujourd'hui nues).
-- **`famille.spec.ts`** : post-invite (`membre-row` count), post-création proche (heading fiche),
-  post-modif. NB : les assertions **multi-contexte** (`pageA`/`ctxA`) et les `getByRole("alert")`
-  (toast « déjà ») restent directes — pas idempotentes au reload.
-- **`agence.spec.ts`** : `toBeEnabled` d'un bouton lent → garder `{ timeout }` direct (ce n'est pas
-  une race post-action mais une activation de formulaire) ; assertions post-création voyage → helper.
-- **`abonnement.spec.ts`, `conciergerie.spec.ts`, `vins.spec.ts`** : assertions post-action de statut
-  / de ligne → helper là où l'état est persistant.
+  → `expectVisibleWithReload` (unification) ; `depense-row` (l.55) et soldes `toContainText`
+  → helper.
+- **`voyages.spec.ts`** : `voyage-card`, `reservation-row` post-action (aujourd'hui nues) → helper.
+- **`abonnement.spec.ts`** : `voyage-card` V1/V2/V3, `premium-badge` post-souscription/annulation,
+  `plan-actuel` « jusqu'au » → helper. (`voyage-limit-cta` = CTA déterministe post-blocage : helper OK.)
+- **`agence.spec.ts`** : `client-row` post-lier → helper. La `voyage-card` de `pageB` (nav fraîche)
+  → helper défensif.
+- **`restos.spec.ts`** : SEULEMENT `place-card` Recommandés (l.35) et `avis` (l.46), post-refresh.
+  **LAISSER** favori (`waitForResponse`+reload, l.62-65) et tags (signal `tags-saved`+reload,
+  l.100-118) — réglages supérieurs.
+- **`vins.spec.ts`, `conciergerie.spec.ts`** : `vin-row`/`demande-row` post-nav → helper défensif.
+  **LAISSER** les `toBeEnabled` (attente action-done) et les `toHaveText` de statut (hors périmètre :
+  on cible `toBeVisible`/`toContainText`).
+- **`places.spec.ts`** : **LAISSER** l'archivage (l.126-133) — le reload y assert une locator PLUS
+  FORTE (`tab-archives` count 0), ce que le helper générique ne fait pas.
+- **`famille.spec.ts`** : `heading` post-création proche → helper (redirect nav, reload re-rend la
+  fiche). **LAISSER** les assertions multi-contexte (`pageA`), `getByRole("alert")` (toast), et
+  `membre-row` `toHaveCount` (déjà timeout-tuné).
 
-Règle : **ne migrer que les assertions post-server-action sur état persistant**. Laisser intactes
-les assertions d'UI éphémère (toasts, `alert`, `toBeEnabled`), les navigations pures (`toHaveURL`),
-et les assertions déjà déterministes.
+Règle générale : migrer **seulement** `toBeVisible`/`toContainText` post-action sur état persistant.
+**Ne pas toucher** : `toBeEnabled` (action-done), `toHaveText`/`toHaveCount` de statut déjà tunés,
+`toHaveURL` (nav pure), assertions multi-contexte, toasts/`alert`, et les mitigations
+`waitForResponse`/signal-serveur/reload-assertion-plus-forte existantes.
 
 ## 5. Gestion des erreurs / non-régression
 
