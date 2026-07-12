@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 async function login(page: import("@playwright/test").Page) {
   await page.goto("/fr/login");
@@ -38,9 +39,7 @@ test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filt
   await page.goto("/fr/vins");
 
   // Le vin apparaît bien dans la liste
-  await expect(
-    page.getByTestId("vin-row").filter({ hasText: vinNom })
-  ).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("vin-row").filter({ hasText: vinNom }));
 
   // Filtre par couleur blanc (onglet) -> toujours visible
   await page.getByTestId("vin-tab-blanc").click();
@@ -53,5 +52,5 @@ test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filt
   await expect(page).toHaveURL(/\/fr\/vins\//);
 
   // Le bouton d'achat est visible
-  await expect(page.getByTestId("buy-button")).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("buy-button"));
 });

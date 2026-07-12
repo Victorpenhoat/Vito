@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
@@ -30,7 +31,7 @@ test("premium crée une demande resto depuis une fiche et la retrouve", async ({
   // La demande créée (commentaire unique) apparaît dans /conciergerie (vue client), statut Nouvelle
   await page.goto("/fr/conciergerie");
   const row = page.getByTestId("demande-row").filter({ hasText: tag });
-  await expect(row).toBeVisible();
+  await expectVisibleWithReload(page, row);
   await expect(row.getByTestId("demande-statut")).toHaveText("Nouvelle");
 });
 
