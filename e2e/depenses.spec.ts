@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload, expectTextWithReload } from "./helpers";
 
 const SUPABASE_URL = "http://127.0.0.1:54321";
 const SERVICE_ROLE_KEY =
@@ -39,12 +40,7 @@ test("créer un compte partagé, partager, ajouter une dépense égale, vérifie
   await page.getByTestId("share-form").locator('input[name="email"]').fill("agence@vito.test");
   await page.getByTestId("share-form").getByRole("button").click();
   const deuxMembres = page.getByTestId("member-row").filter({ hasText: "agence" }).or(page.getByTestId("member-row").nth(1));
-  try {
-    await expect(deuxMembres).toBeVisible();
-  } catch {
-    await page.reload();
-    await expect(deuxMembres).toBeVisible();
-  }
+  await expectVisibleWithReload(page, deuxMembres);
 
   // Ajouter une dépense égale de 30,00 € payée par le client, participants = tous (cochés par défaut)
   await page.getByTestId("depense-form").locator('input[name="libelle"]').fill("Taxi");
@@ -52,8 +48,8 @@ test("créer un compte partagé, partager, ajouter une dépense égale, vérifie
   await page.getByTestId("depense-form").getByRole("button").click();
 
   // La dépense apparaît (signal déterministe) et les soldes sont calculés
-  await expect(page.getByTestId("depense-row").filter({ hasText: "Taxi" })).toBeVisible();
-  await expect(page.getByTestId("soldes-panel")).toContainText("15,00");
+  await expectVisibleWithReload(page, page.getByTestId("depense-row").filter({ hasText: "Taxi" }));
+  await expectTextWithReload(page, page.getByTestId("soldes-panel"), "15,00");
 });
 
 test("l'agence voit le compte partagé du seed, ajoute un remboursement, le compte est soldé", async ({ page, request }) => {
@@ -67,7 +63,7 @@ test("l'agence voit le compte partagé du seed, ajoute un remboursement, le comp
   await expect(page).toHaveURL(/\/fr\/depenses\//);
 
   // Soldes du seed : un transfert de 50,00 € est suggéré (agence doit 50,00 € au client)
-  await expect(page.getByTestId("soldes-panel")).toContainText("50,00");
+  await expectTextWithReload(page, page.getByTestId("soldes-panel"), "50,00");
 
   // L'agence rembourse 50,00 € au client (de=agence, vers=client) — sélection par
   // valeur (profile_id du seed) pour un sens déterministe, indépendant de l'ordre d'affichage.
@@ -82,11 +78,5 @@ test("l'agence voit le compte partagé du seed, ajoute un remboursement, le comp
   // Après remboursement, plus aucun transfert : « Tout est réglé. ». Le refresh RSC
   // post-action peut revenir vide sous charge (race documentée #71/#77) → récupération
   // par reload (rendu frais depuis la base), comme le partage en test 1.
-  const soldeRegle = page.getByTestId("solde-regle");
-  try {
-    await expect(soldeRegle).toBeVisible();
-  } catch {
-    await page.reload();
-    await expect(soldeRegle).toBeVisible();
-  }
+  await expectVisibleWithReload(page, page.getByTestId("solde-regle"));
 });
