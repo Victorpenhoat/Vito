@@ -69,7 +69,7 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
   await page.goto("/fr/famille");
   await page.getByTestId("proche-row").filter({ hasText: "Camille Durand" }).click();
   await expect(page).toHaveURL(/\/famille\/proches\//);
-  await expect(page.getByRole("heading", { name: "Camille Durand" })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: "Camille Durand" }));
 
   await page.getByRole("link", { name: "Ajouter un document" }).click();
   await expect(page.getByTestId("document-tunnel")).toBeVisible();
