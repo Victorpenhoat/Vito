@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 const PDF = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF");
 
@@ -15,7 +16,7 @@ async function openTunnel(page: Page) {
   await page.getByTestId("proche-row").filter({ hasText: "Camille Durand" }).first().click();
   // le skeleton loading.tsx (Slice 6) peut retarder l'affichage de la fiche sur CI : attendre le contenu
   await expect(page).toHaveURL(/\/famille\/proches\//);
-  await expect(page.getByRole("heading", { name: "Camille Durand" })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: "Camille Durand" }));
   await page.getByRole("link", { name: "Ajouter un document" }).click();
   await expect(page.getByTestId("document-tunnel")).toBeVisible();
   await page.getByRole("button", { name: "Continuer" }).click(); // étape A -> B

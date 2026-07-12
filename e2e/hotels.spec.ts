@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 async function login(page: Page) {
   await page.goto("/fr/login");
@@ -43,7 +44,7 @@ test("ajouter un hôtel via la recherche externe", async ({ page }) => {
   await expect(voyageurs.getByTestId("result-added")).toBeVisible({ timeout: 15_000 });
   // L'hôtel ajouté est non-favori + statut='a_faire' → il apparaît dans Recommandés
   await page.getByTestId("tab-recommandes").click();
-  await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel des Voyageurs" }).first()).toBeVisible({ timeout: 15_000 });
+  await expectVisibleWithReload(page, page.getByTestId("place-card").filter({ hasText: "Hôtel des Voyageurs" }).first());
 });
 
 test("onglet Recherche hôtel : chips « Explorer par envie »", async ({ page }) => {
