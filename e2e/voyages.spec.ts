@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 async function login(page: Page, email: string) {
   await page.goto("/fr/login");
@@ -18,7 +19,7 @@ test("créer un voyage, ajouter une réservation, partager avec l'agence", async
   await page.getByTestId("voyage-form").getByRole("button").click();
 
   // Le voyage apparaît dans la liste
-  await expect(page.getByTestId("voyage-card").filter({ hasText: "Lisbonne" }).first()).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("voyage-card").filter({ hasText: "Lisbonne" }).first());
 
   // Ouvrir le voyage (cliquer sur le lien dans la card)
   await page.getByTestId("voyage-card").filter({ hasText: "Lisbonne" }).first().getByRole("link").click();
@@ -28,19 +29,20 @@ test("créer un voyage, ajouter une réservation, partager avec l'agence", async
   await page.getByTestId("reservation-form").locator('select[name="type"]').selectOption("hotel");
   await page.getByTestId("reservation-form").locator('input[name="fournisseur"]').fill("Hotel Lisboa");
   await page.getByTestId("reservation-form").getByRole("button").click();
-  await expect(page.getByTestId("reservation-row").filter({ hasText: "Hotel Lisboa" })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("reservation-row").filter({ hasText: "Hotel Lisboa" }));
 
   // Partager avec l'agence
   await page.getByTestId("share-form").locator('input[name="email"]').fill("agence@vito.test");
   await page.getByTestId("share-form").getByRole("button").click();
 
   // Un member-row pour l'agence doit apparaître (en plus du owner)
-  await expect(
+  await expectVisibleWithReload(
+    page,
     page
       .getByTestId("member-row")
       .filter({ hasText: "agence" })
       .or(page.getByTestId("member-row").nth(1)),
-  ).toBeVisible();
+  );
 });
 
 test("l'agence voit le voyage partagé par le seed", async ({ page }) => {

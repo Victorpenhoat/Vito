@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
@@ -68,7 +69,7 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
   await page.goto("/fr/famille");
   await page.getByTestId("proche-row").filter({ hasText: "Camille Durand" }).click();
   await expect(page).toHaveURL(/\/famille\/proches\//);
-  await expect(page.getByRole("heading", { name: "Camille Durand" })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: "Camille Durand" }));
 
   await page.getByRole("link", { name: "Ajouter un document" }).click();
   await expect(page.getByTestId("document-tunnel")).toBeVisible();
@@ -109,7 +110,7 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
 
   // Redirigé vers la fiche
-  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: `${PRENOM} Martin` }));
 
   // Visible dans la liste, section Amis
   await page.goto("/fr/famille");
@@ -121,11 +122,11 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   // maintenant que le test est idempotent, comme pour les autres tests de nav cliente.
   await page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` }).click();
   await expect(page).toHaveURL(/\/famille\/proches\//);
-  await expect(page.getByRole("heading", { name: `${PRENOM} Martin` })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: `${PRENOM} Martin` }));
   await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Bernard");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
-  await expect(page.getByRole("heading", { name: `${PRENOM} Bernard` })).toBeVisible();
+  await expectVisibleWithReload(page, page.getByRole("heading", { name: `${PRENOM} Bernard` }));
 
   // Supprimer (confirm auto-accepté)
   page.on("dialog", (d) => d.accept());
