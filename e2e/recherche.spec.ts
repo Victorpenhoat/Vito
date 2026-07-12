@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 async function login(page: import("@playwright/test").Page) {
   await page.goto("/fr/login");
@@ -18,8 +19,8 @@ test("régler ses goûts puis rechercher : ta liste d'abord + recommandations", 
 
   // Recherche par zone 17e
   await page.goto("/fr/recherche?zone=17e");
-  await expect(page.getByTestId("ma-liste-section")).toBeVisible();
-  await expect(page.getByTestId("recos-section")).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("ma-liste-section"));
+  await expectVisibleWithReload(page, page.getByTestId("recos-section"));
   // Le pool démo contient des restos du 17e absents de la liste -> au moins une reco
-  await expect(page.getByTestId("recos-section").getByTestId("resto-result").first()).toBeVisible();
+  await expectVisibleWithReload(page, page.getByTestId("recos-section").getByTestId("resto-result").first());
 });
