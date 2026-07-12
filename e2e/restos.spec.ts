@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 async function login(page: import("@playwright/test").Page) {
   await page.goto("/fr/login");
@@ -32,7 +33,7 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
   // Le Bistrot du Coin est ajouté sans is_favorite + statut='a_faire' → il apparaît dans
   // Recommandés (poussé par le refresh RSC post-action, lent sous charge CI → timeout élargi)
   await page.getByTestId("tab-recommandes").click();
-  await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible({ timeout: 15_000 });
+  await expectVisibleWithReload(page, page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first());
 
   // Ouvrir la fiche de "Le Bistrot du Coin" (ajouté via mock — a un UUID v4 valide pour la RPC avis)
   await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
@@ -43,7 +44,7 @@ test("ajouter un resto via recherche, puis consulter sa fiche et ajouter un avis
   const avis = `Très bonne adresse ${Date.now()}, revenir le samedi`;
   await page.getByTestId("avis-form").locator("textarea").fill(avis);
   await page.getByTestId("avis-form").getByRole("button").click();
-  await expect(page.getByText(avis)).toBeVisible({ timeout: 15_000 });
+  await expectVisibleWithReload(page, page.getByText(avis));
 });
 
 test("basculer un favori", async ({ page }) => {

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { expectVisibleWithReload } from "./helpers";
 
 // display_name du seed client7b@vito.test — avant la policy profiles_select_co_membre
 // (00021), l'agence ne pouvait pas lire le profil et la ligne affichait l'UUID ;
@@ -23,7 +24,7 @@ test("l'agence relie un client, lui crée un voyage, le client le voit", async (
   await pageA.getByTestId("lier-client-form").locator('input[name="email"]').fill("client7b@vito.test");
   await pageA.getByTestId("lier-client-form").getByRole("button").click();
   const row = pageA.getByTestId("client-row").filter({ hasText: CLIENT7B });
-  await expect(row).toBeVisible();
+  await expectVisibleWithReload(pageA, row);
 
   // Créer un voyage pour ce client
   const titre = `Voyage Agence ${Date.now()}`;
@@ -37,7 +38,7 @@ test("l'agence relie un client, lui crée un voyage, le client le voit", async (
   const pageB = await ctxB.newPage();
   await login(pageB, "client7b@vito.test");
   await pageB.goto("/fr/voyages");
-  await expect(pageB.getByTestId("voyage-card").filter({ hasText: titre })).toBeVisible();
+  await expectVisibleWithReload(pageB, pageB.getByTestId("voyage-card").filter({ hasText: titre }));
 
   await ctxA.close();
   await ctxB.close();
