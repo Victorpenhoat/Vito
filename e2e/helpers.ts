@@ -33,3 +33,23 @@ export async function expectTextWithReload(
     await expect(locator).toContainText(text, { timeout });
   }
 }
+
+// Variante compte (disparition après suppression, apparition d'un nouveau membre…) : même
+// stratégie sur toHaveCount. Utile quand l'assertion porte sur le NOMBRE d'items persistants
+// (un toHaveCount(0) qui ne se réalise jamais si le slot supprimé n'est pas re-commité, ou un
+// toHaveCount(n) qui reste bloqué sous l'ancien état). Un vrai écart de compte échoue quand
+// même après le reload → les bugs ne sont pas masqués.
+export async function expectCountWithReload(
+  page: Page,
+  locator: Locator,
+  count: number,
+  opts: { timeout?: number } = {},
+): Promise<void> {
+  const timeout = opts.timeout ?? 10_000;
+  try {
+    await expect(locator).toHaveCount(count, { timeout });
+  } catch {
+    await page.reload();
+    await expect(locator).toHaveCount(count, { timeout });
+  }
+}

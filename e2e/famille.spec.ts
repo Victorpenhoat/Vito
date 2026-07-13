@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { expectVisibleWithReload, expectCountWithReload } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
@@ -35,12 +35,13 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   await pageA.getByTestId("ajouter-famille").click();
   await expect(pageA.getByTestId("ajouter-famille")).toBeEnabled({ timeout: 10000 });
 
-  // A invite famille2 — le refresh RSC post-action peut être lent sous charge CI (flake du
-  // 27/06, antérieur aux retries) → timeout élargi, aligné sur les conventions de la suite
+  // A invite famille2 — le refresh RSC post-action peut ne jamais se commiter sous charge CI
+  // (flake du 27/06) : un timeout élargi ne suffit pas (l'UI garde l'ancien état pour de bon),
+  // reload-guard sur le compte de membres → rendu frais depuis la base si le slot n'est pas commité.
   await pageA.goto("/fr/famille");
   await pageA.getByTestId("invite-form").locator('input[name="email"]').fill("famille2@vito.test");
   await pageA.getByTestId("invite-form").getByRole("button").click();
-  await expect(pageA.getByTestId("membre-row")).toHaveCount(2, { timeout: 15_000 });
+  await expectCountWithReload(pageA, pageA.getByTestId("membre-row"), 2, { timeout: 15_000 });
   // Le co-membre s'affiche par son display_name, pas par son UUID (policy profiles_select_co_membre)
   await expect(pageA.getByTestId("membre-row").filter({ hasText: "Famille Deux" })).toBeVisible();
 
@@ -83,10 +84,11 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
   await expect(page.locator('input[name="country"]')).toHaveValue("France");
   await page.getByRole("button", { name: "Enregistrer le document" }).click();
 
-  // Retour fiche : le document apparaît, et la route déchiffrée renvoie 200
+  // Retour fiche : le document apparaît, et la route déchiffrée renvoie 200. Le retour se fait
+  // par redirect issu de l'action → reload-guard si le slot de la fiche fraîche n'est pas commité.
   await expect(page).toHaveURL(/\/famille\/proches\/[^/]+$/);
   const row = page.getByTestId("document-row").filter({ hasText: "Passeport" });
-  await expect(row.first()).toBeVisible();
+  await expectVisibleWithReload(page, row.first());
   const href = await row.first().getByRole("link", { name: "Voir le document" }).getAttribute("href");
   expect(href).toBeTruthy();
   const resp = await page.request.get(href!);
