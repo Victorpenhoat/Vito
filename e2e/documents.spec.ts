@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { expectVisibleWithReload, expectCountWithReload } from "./helpers";
 
 const ROME = "11111111-2222-4333-8444-555555555555";
 // PDF minimal valide
@@ -35,9 +35,10 @@ test("déposer, lister, télécharger puis supprimer un document chiffré", asyn
   expect(resp.headers()["content-type"]).toContain("application/pdf");
   expect(Buffer.from(await resp.body()).equals(PDF)).toBe(true);
 
-  // Suppression
+  // Suppression — reload-guard : si le refresh RSC post-action n'est pas commité, la ligne
+  // supprimée resterait affichée pour de bon (rouge flaky) ; le reload re-rend la liste sans elle.
   await row.getByRole("button").click();
-  await expect(page.getByTestId("document-row").filter({ hasText: tag })).toHaveCount(0);
+  await expectCountWithReload(page, page.getByTestId("document-row").filter({ hasText: tag }), 0);
 });
 
 test("un non-membre obtient 404 sur la route de téléchargement", async ({ browser }) => {

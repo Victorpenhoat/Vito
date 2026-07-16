@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { expectVisibleWithReload, expectTextWithReload } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 
@@ -46,10 +46,13 @@ test("le staff traite la demande démo du seed (statut + réponse)", async ({ pa
   await row.getByTestId("reponse-form").locator('textarea[name="reponse"]').fill("Réservé, table confirmée");
   await row.getByTestId("reponse-form").getByRole("button").click();
 
-  // La ligne reflète le nouveau statut
-  await expect(
+  // La ligne reflète le nouveau statut (persistant serveur, rendu par revalidation en place →
+  // reload-guard si le slot RSC post-action n'est pas commité sous charge CI)
+  await expectTextWithReload(
+    page,
     page.getByTestId("demande-row").filter({ hasText: "Demande démo conciergerie" }).getByTestId("demande-statut"),
-  ).toHaveText("Confirmée");
+    "Confirmée",
+  );
 });
 
 test("un compte Free voit le CTA premium, pas le formulaire", async ({ page }) => {

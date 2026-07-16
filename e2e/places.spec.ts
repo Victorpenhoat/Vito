@@ -131,10 +131,14 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
     // du tout (PlacesTabs: archived.length > 0) — assertion plus forte que le compte à 0.
     await expect(page.getByTestId("tab-archives")).toHaveCount(0);
   }
-  // RESTAURER : ouvrir la fiche et ré-archiver
+  // RESTAURER : ouvrir la fiche et ré-archiver. Attendre la réponse POST du toggle (signal de
+  // commit déterministe) avant le goto qui re-fetch la liste — networkidle peut se déclencher
+  // AVANT le POST et le goto lirait alors un état stale (item pas encore ré-archivé en base).
   await page.goto(`/fr/restos/${ARCHIVED_ID}`);
-  await page.getByTestId("archive-toggle").click();
-  await page.waitForLoadState("networkidle");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/")),
+    page.getByTestId("archive-toggle").click(),
+  ]);
   // De retour sur la liste, il est de nouveau archivé
   await page.goto("/fr/restos");
   await page.getByTestId("tab-archives").click();
