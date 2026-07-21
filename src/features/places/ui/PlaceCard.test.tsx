@@ -82,6 +82,18 @@ describe("PlaceCard — variants & chips", () => {
   });
 });
 
+describe("PlaceCard — sous-titre par catégorie", () => {
+  it("resto : sous-titre « cuisine · ville » (type inclus)", () => {
+    renderCard(makePlace({ categorie: "resto", type: "Bistrot", ville: "Paris" }), "liste");
+    expect(screen.getByText("Bistrot · Paris")).toBeInTheDocument();
+  });
+  it("hôtel : sous-titre = ville seule (type exclu)", () => {
+    renderCard(makePlace({ categorie: "hotel", type: "Resort", ville: "Nice" }), "liste");
+    expect(screen.getByText("Nice")).toBeInTheDocument();
+    expect(screen.queryByText(/Resort/)).toBeNull();
+  });
+});
+
 describe("PlaceCard — conseillé par (reco_source)", () => {
   it("liste : affiche « Conseillé par X » quand reco_source présent", () => {
     renderCard(makePlace({}, [], "Camille"));

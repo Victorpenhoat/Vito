@@ -5,7 +5,7 @@ import { Badge } from "@/features/shared/ui/Badge";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { avatarColor } from "@/features/famille/domain/avatarColor";
 import type { Place } from "../domain/filterPlaces";
-import { computeNotation, chipsForVariant } from "../domain/categoryConfig";
+import { computeNotation, chipsForVariant, categoryConfig } from "../domain/categoryConfig";
 
 type Variant = "liste" | "vignette";
 
@@ -14,7 +14,13 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
   const t = useTranslations("places");
   const format = useFormatter();
   const base = etablissement.categorie === "hotel" ? "hotels" : "restos";
-  const subtitle = [etablissement.type, etablissement.ville].filter(Boolean).join(" · ");
+  const subtitle = (
+    categoryConfig[etablissement.categorie].subtitleShowsType
+      ? [etablissement.type, etablissement.ville]
+      : [etablissement.ville]
+  )
+    .filter(Boolean)
+    .join(" · ");
   const photoUrl = etablissement.photo_ref
     ? `/api/places/photo?ref=${encodeURIComponent(etablissement.photo_ref)}&w=800`
     : null;
