@@ -6,6 +6,7 @@ import type { PlaceView } from "../domain/placesTabsConfig";
 import { categoryConfig } from "../domain/categoryConfig";
 import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlaceCard } from "./PlaceCard";
+import { PlaceEmptyState } from "./PlaceEmptyState";
 import { PlacesMapLazy } from "./PlacesMapLazy";
 import { Input } from "@/features/shared/ui/Input";
 
@@ -18,11 +19,15 @@ export function PlaceListPanel({
   views,
   locale,
   category,
+  emptyKind,
+  onDiscover,
 }: {
   places: Place[];
   views: PlaceView[];
   locale: string;
   category: "resto" | "hotel";
+  emptyKind: "favoris" | "recommandes";
+  onDiscover: () => void;
 }) {
   const t = useTranslations("places");
   const [q, setQ] = useState("");
@@ -32,9 +37,9 @@ export function PlaceListPanel({
   const tags = showTagFilter ? tagsForMap(places) : [];
   const shown = filterByTag(filterPlaces(places, q), selectedTag);
   const gridCls =
-    view === "vignettes"
-      ? "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-      : "grid grid-cols-1 gap-5 sm:grid-cols-2";
+    view === "liste"
+      ? "divide-y divide-line"
+      : "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3";
   const viewLabel: Record<PlaceView, string> = {
     liste: t("vueListe"),
     vignettes: t("vueVignettes"),
@@ -96,8 +101,10 @@ export function PlaceListPanel({
       )}
       {view === "carte" ? (
         <PlacesMapLazy places={shown} locale={locale} />
+      ) : places.length === 0 ? (
+        <PlaceEmptyState category={category} kind={emptyKind} onDiscover={onDiscover} />
       ) : shown.length === 0 ? (
-        <p className="text-sm text-muted">{t("empty")}</p>
+        <p className="text-sm text-muted">{t("emptyRecherche")}</p>
       ) : (
         <ul className={gridCls}>
           {shown.map((p) => (

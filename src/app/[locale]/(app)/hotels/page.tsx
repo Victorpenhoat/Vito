@@ -9,7 +9,7 @@ export default async function HotelsPage() {
   const archived = await getArchivedPlaces("hotel");
   return (
     <main className="flex flex-col gap-6 p-4 md:p-8 lg:mx-auto lg:w-full lg:max-w-[1200px]">
-      <PageHeader title={t("title")} />
+      <PageHeader eyebrow={t("eyebrow")} title={t("title")} />
       <PlacesTabs category="hotel" places={places} archived={archived} />
     </main>
   );

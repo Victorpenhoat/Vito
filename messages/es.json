@@ -58,7 +58,8 @@
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "restos": {
-    "title": "Mis restaurantes",
+    "title": "Restaurantes",
+    "eyebrow": "Mi cuaderno",
     "archiver": "Archivar",
     "desarchiver": "Desarchivar",
     "favorite": "Favorito",
@@ -361,10 +362,16 @@
     "recherche": "Buscar",
     "vueVignettes": "Mosaicos",
     "filtrerPlaceholder": "Buscar en esta lista…",
-    "empty": "Nada aquí por ahora",
+    "emptyFavorisTitle": "Aún no hay favoritos",
+    "emptyFavorisBody": "Añade tus favoritos para encontrarlos de un vistazo, incluso sin conexión.",
+    "emptyRecommandesTitle": "Nada que probar por ahora",
+    "emptyRecommandesBody": "Cuando te recomienden un sitio, añádelo aquí para no olvidarlo.",
+    "emptyCtaHotel": "Descubrir hoteles",
+    "emptyCtaResto": "Descubrir restaurantes",
+    "emptyRecherche": "Nada aquí por ahora",
     "vueListe": "Lista",
     "vueCarte": "Mapa",
-    "noteSur10": "/10",
+    "noteMaNote": "/ mi nota",
     "conseilléPar": "Recomendado por {name}",
     "sansLocalisation": "{n} sin ubicación",
     "add": "Añadir",
@@ -388,7 +395,8 @@
     "archivesVide": "Ningún sitio archivado"
   },
   "hotels": {
-    "title": "Mis hoteles",
+    "title": "Hoteles",
+    "eyebrow": "Mi cuaderno",
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "accueil": {

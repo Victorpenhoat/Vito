@@ -58,7 +58,8 @@
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "restos": {
-    "title": "My restaurants",
+    "title": "Restaurants",
+    "eyebrow": "My journal",
     "archiver": "Archive",
     "desarchiver": "Unarchive",
     "favorite": "Favourite",
@@ -361,10 +362,16 @@
     "recherche": "Search",
     "vueVignettes": "Tiles",
     "filtrerPlaceholder": "Search this list…",
-    "empty": "Nothing here yet",
+    "emptyFavorisTitle": "No favourites yet",
+    "emptyFavorisBody": "Add your favourites to find them at a glance, even offline.",
+    "emptyRecommandesTitle": "Nothing to try yet",
+    "emptyRecommandesBody": "When someone recommends a place, add it here so you don't forget.",
+    "emptyCtaHotel": "Discover hotels",
+    "emptyCtaResto": "Discover restaurants",
+    "emptyRecherche": "Nothing here yet",
     "vueListe": "List",
     "vueCarte": "Map",
-    "noteSur10": "/10",
+    "noteMaNote": "/ my rating",
     "conseilléPar": "Recommended by {name}",
     "sansLocalisation": "{n} without location",
     "add": "Add",
@@ -388,7 +395,8 @@
     "archivesVide": "No archived places"
   },
   "hotels": {
-    "title": "My hotels",
+    "title": "Hotels",
+    "eyebrow": "My journal",
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "accueil": {

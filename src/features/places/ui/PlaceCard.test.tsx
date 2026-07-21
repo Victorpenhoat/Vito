@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { PlaceCard } from "./PlaceCard";
 import type { Place } from "../domain/filterPlaces";
 
-const messages = { places: { noteSur10: "/10", "conseilléPar": "Conseillé par {name}" } };
+const messages = { places: { noteMaNote: "/ ma note", "conseilléPar": "Conseillé par {name}" } };
 
 const makePlace = (over: Partial<Place["etablissement"]> = {}, tags: Place["tags"] = [], reco_source: string | null = null): Place => ({
   id: "li1",
@@ -34,14 +34,14 @@ describe("PlaceCard — note", () => {
     const note = screen.getByTestId("place-note");
     expect(note).toHaveTextContent("★");
     expect(note).toHaveTextContent("4,6");
-    expect(note).not.toHaveTextContent("/10");
+    expect(note).not.toHaveTextContent("/ ma note");
   });
 
-  it("hôtel : affiche le score /10 (= rating × 2) formaté", () => {
+  it("hôtel : affiche le score /10 (= rating × 2) avec le label « / ma note »", () => {
     renderCard(makePlace({ categorie: "hotel", rating: 4.5 }));
     const note = screen.getByTestId("place-note");
     expect(note).toHaveTextContent("9,0");
-    expect(note).toHaveTextContent("/10");
+    expect(note).toHaveTextContent("/ ma note");
   });
 
   it("rating null : aucune note rendue", () => {
@@ -70,6 +70,15 @@ describe("PlaceCard — variants & chips", () => {
     expect(screen.getByText("Bistrot")).toBeInTheDocument();
     expect(screen.queryByText("Classique")).toBeNull();
     expect(screen.getByTestId("place-card-vignette")).toBeInTheDocument();
+  });
+
+  it("liste : racine liste présente, favori et miniature rendus", () => {
+    renderCard({ ...makePlace({ nom: "Zébu", ville: "Paris", photo_ref: "ref1" }, tags), is_favorite: true }, "liste");
+    expect(screen.getByTestId("place-card-liste")).toBeInTheDocument();
+    expect(screen.queryByTestId("place-card-vignette")).toBeNull();
+    expect(screen.getByText("Paris")).toBeInTheDocument();
+    expect(screen.getByLabelText("favori")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Zébu" })).toBeInTheDocument();
   });
 });
 

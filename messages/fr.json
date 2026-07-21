@@ -74,7 +74,8 @@
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
   "restos": {
-    "title": "Mes restos",
+    "title": "Restaurants",
+    "eyebrow": "Mon carnet",
     "archiver": "Archiver",
     "desarchiver": "Désarchiver",
     "favorite": "Favori",
@@ -399,10 +400,16 @@
     "recherche": "Recherche",
     "vueVignettes": "Vignettes",
     "filtrerPlaceholder": "Rechercher dans cette liste…",
-    "empty": "Aucune adresse ici pour l'instant",
+    "emptyFavorisTitle": "Aucun favori pour l'instant",
+    "emptyFavorisBody": "Ajoute tes coups de cœur pour les retrouver d'un coup d'œil, même hors connexion.",
+    "emptyRecommandesTitle": "Rien à tester pour l'instant",
+    "emptyRecommandesBody": "Quand on te conseille une adresse, ajoute-la ici pour ne pas l'oublier.",
+    "emptyCtaHotel": "Découvrir des hôtels",
+    "emptyCtaResto": "Découvrir des restos",
+    "emptyRecherche": "Aucune adresse ici pour l'instant",
     "vueListe": "Liste",
     "vueCarte": "Carte",
-    "noteSur10": "/10",
+    "noteMaNote": "/ ma note",
     "conseilléPar": "Conseillé par {name}",
     "sansLocalisation": "{n} sans localisation",
     "add": "Ajouter",
@@ -426,7 +433,8 @@
     "archivesVide": "Aucun établissement archivé"
   },
   "hotels": {
-    "title": "Mes hôtels",
+    "title": "Hôtels",
+    "eyebrow": "Mon carnet",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
   "accueil": {

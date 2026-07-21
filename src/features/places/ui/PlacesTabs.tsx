@@ -61,8 +61,8 @@ export function PlacesTabs({ category, places, archived }: { category: "resto" |
       )}
       {tab !== "archives" && (
         <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} data-testid="places-panel">
-          {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} category={category} />}
-          {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} category={category} />}
+          {tab === "favoris" && <PlaceListPanel places={favoris} views={TAB_VIEWS.favoris} locale={locale} category={category} emptyKind="favoris" onDiscover={() => setTab("recherche")} />}
+          {tab === "recommandes" && <PlaceListPanel places={recommandes} views={TAB_VIEWS.recommandes} locale={locale} category={category} emptyKind="recommandes" onDiscover={() => setTab("recherche")} />}
           {tab === "carte" && <PlacesMapCombined places={cartePlaces} locale={locale} />}
           {tab === "recherche" && <PlaceDiscovery places={places} category={category} />}
         </div>

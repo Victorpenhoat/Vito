@@ -58,7 +58,8 @@
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "restos": {
-    "title": "I miei ristoranti",
+    "title": "Ristoranti",
+    "eyebrow": "Il mio taccuino",
     "archiver": "Archivia",
     "desarchiver": "Rimuovi dall'archivio",
     "favorite": "Preferito",
@@ -361,10 +362,16 @@
     "recherche": "Cerca",
     "vueVignettes": "Riquadri",
     "filtrerPlaceholder": "Cerca in questo elenco…",
-    "empty": "Ancora niente qui",
+    "emptyFavorisTitle": "Ancora nessun preferito",
+    "emptyFavorisBody": "Aggiungi i tuoi preferiti per ritrovarli a colpo d'occhio, anche offline.",
+    "emptyRecommandesTitle": "Niente da provare per ora",
+    "emptyRecommandesBody": "Quando ti consigliano un posto, aggiungilo qui per non dimenticarlo.",
+    "emptyCtaHotel": "Scopri hotel",
+    "emptyCtaResto": "Scopri ristoranti",
+    "emptyRecherche": "Ancora niente qui",
     "vueListe": "Elenco",
     "vueCarte": "Mappa",
-    "noteSur10": "/10",
+    "noteMaNote": "/ il mio voto",
     "conseilléPar": "Consigliato da {name}",
     "sansLocalisation": "{n} senza posizione",
     "add": "Aggiungi",
@@ -388,7 +395,8 @@
     "archivesVide": "Nessun locale archiviato"
   },
   "hotels": {
-    "title": "I miei hotel",
+    "title": "Hotel",
+    "eyebrow": "Il mio taccuino",
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "accueil": {
