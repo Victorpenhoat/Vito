@@ -34,7 +34,7 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
       ) : (
         <>
           <span className="font-semibold">{fmt(notation.value)}</span>
-          <span className="text-muted">{t("noteSur10")}</span>
+          <span className="text-muted">{t("noteMaNote")}</span>
         </>
       )}
     </span>

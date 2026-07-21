@@ -365,7 +365,7 @@
     "empty": "Nothing here yet",
     "vueListe": "List",
     "vueCarte": "Map",
-    "noteSur10": "/10",
+    "noteMaNote": "/ my rating",
     "conseilléPar": "Recommended by {name}",
     "sansLocalisation": "{n} without location",
     "add": "Add",

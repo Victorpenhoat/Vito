@@ -403,7 +403,7 @@
     "empty": "Aucune adresse ici pour l'instant",
     "vueListe": "Liste",
     "vueCarte": "Carte",
-    "noteSur10": "/10",
+    "noteMaNote": "/ ma note",
     "conseilléPar": "Conseillé par {name}",
     "sansLocalisation": "{n} sans localisation",
     "add": "Ajouter",
