@@ -93,24 +93,24 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
     <li data-testid="place-card">
       <Link
         href={`/${base}/${etablissement.id}`}
-        className="block overflow-hidden rounded-card border border-line bg-surface"
+        data-testid="place-card-liste"
+        className="flex gap-3 py-3.5"
       >
-        <div className="relative h-40 bg-[linear-gradient(135deg,var(--hero-from),var(--hero-to))]">
+        <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-card bg-[linear-gradient(135deg,var(--hero-from),var(--hero-to))]">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photoUrl} alt={etablissement.nom} className="h-full w-full object-cover" />
           ) : (
-            <span className="flex h-full w-full items-center justify-center font-serif text-4xl text-faint">{initial}</span>
-          )}
-          {is_favorite && (
-            <span aria-label="favori" className="absolute right-3 top-3 text-lg text-gold drop-shadow">★</span>
+            <span className="flex h-full w-full items-center justify-center font-serif text-2xl text-faint">{initial}</span>
           )}
         </div>
-        <div className="flex flex-col gap-1 p-4">
-          {etablissement.type && (
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">{etablissement.type}</span>
-          )}
-          <span className="font-serif text-xl font-medium text-ink">{etablissement.nom}</span>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex items-start justify-between gap-2">
+            <span className="font-serif text-lg font-medium leading-tight text-ink">{etablissement.nom}</span>
+            {is_favorite && (
+              <span aria-label="favori" className="shrink-0 text-base text-gold">★</span>
+            )}
+          </div>
           {subtitle && <span className="text-sm text-muted">{subtitle}</span>}
           {reco}
           {(note || chips) && (

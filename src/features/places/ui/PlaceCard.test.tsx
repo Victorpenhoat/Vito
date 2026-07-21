@@ -71,6 +71,14 @@ describe("PlaceCard — variants & chips", () => {
     expect(screen.queryByText("Classique")).toBeNull();
     expect(screen.getByTestId("place-card-vignette")).toBeInTheDocument();
   });
+
+  it("liste : racine liste présente, favori et miniature rendus", () => {
+    renderCard(makePlace({ nom: "Le Bistrot Démo", ville: "Paris" }, tags));
+    expect(screen.getByTestId("place-card-liste")).toBeInTheDocument();
+    expect(screen.queryByTestId("place-card-vignette")).toBeNull();
+    // sous-titre (type · ville) rendu à droite de la miniature
+    expect(screen.getByText("Paris")).toBeInTheDocument();
+  });
 });
 
 describe("PlaceCard — conseillé par (reco_source)", () => {

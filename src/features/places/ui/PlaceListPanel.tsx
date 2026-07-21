@@ -32,9 +32,9 @@ export function PlaceListPanel({
   const tags = showTagFilter ? tagsForMap(places) : [];
   const shown = filterByTag(filterPlaces(places, q), selectedTag);
   const gridCls =
-    view === "vignettes"
-      ? "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-      : "grid grid-cols-1 gap-5 sm:grid-cols-2";
+    view === "liste"
+      ? "divide-y divide-line"
+      : "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3";
   const viewLabel: Record<PlaceView, string> = {
     liste: t("vueListe"),
     vignettes: t("vueVignettes"),
