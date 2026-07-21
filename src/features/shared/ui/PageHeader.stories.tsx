@@ -5,7 +5,7 @@ import { Button } from "./Button";
 const meta: Meta<typeof PageHeader> = {
   title: "Kit/PageHeader",
   component: PageHeader,
-  args: { title: "Mes restos" },
+  args: { title: "Restaurants" },
 };
 export default meta;
 type Story = StoryObj<typeof PageHeader>;
@@ -13,9 +13,9 @@ type Story = StoryObj<typeof PageHeader>;
 export const Full: Story = {
   args: {
     eyebrow: "Découvrir",
-    title: "Mes restos",
+    title: "Restaurants",
     subtitle: "Vos adresses favorites, au même endroit.",
     action: <Button variant="primary">Ajouter</Button>,
   },
 };
-export const TitleOnly: Story = { args: { title: "Mes restos" } };
+export const TitleOnly: Story = { args: { title: "Restaurants" } };

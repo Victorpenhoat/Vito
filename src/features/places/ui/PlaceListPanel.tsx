@@ -101,8 +101,10 @@ export function PlaceListPanel({
       )}
       {view === "carte" ? (
         <PlacesMapLazy places={shown} locale={locale} />
-      ) : shown.length === 0 ? (
+      ) : places.length === 0 ? (
         <PlaceEmptyState category={category} kind={emptyKind} onDiscover={onDiscover} />
+      ) : shown.length === 0 ? (
+        <p className="text-sm text-muted">{t("emptyRecherche")}</p>
       ) : (
         <ul className={gridCls}>
           {shown.map((p) => (
