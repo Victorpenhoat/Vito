@@ -6,6 +6,7 @@ import type { PlaceView } from "../domain/placesTabsConfig";
 import { categoryConfig } from "../domain/categoryConfig";
 import { tagsForMap, filterByTag } from "../domain/mapFilters";
 import { PlaceCard } from "./PlaceCard";
+import { PlaceEmptyState } from "./PlaceEmptyState";
 import { PlacesMapLazy } from "./PlacesMapLazy";
 import { Input } from "@/features/shared/ui/Input";
 
@@ -18,11 +19,15 @@ export function PlaceListPanel({
   views,
   locale,
   category,
+  emptyKind,
+  onDiscover,
 }: {
   places: Place[];
   views: PlaceView[];
   locale: string;
   category: "resto" | "hotel";
+  emptyKind: "favoris" | "recommandes";
+  onDiscover: () => void;
 }) {
   const t = useTranslations("places");
   const [q, setQ] = useState("");
@@ -97,7 +102,7 @@ export function PlaceListPanel({
       {view === "carte" ? (
         <PlacesMapLazy places={shown} locale={locale} />
       ) : shown.length === 0 ? (
-        <p className="text-sm text-muted">{t("empty")}</p>
+        <PlaceEmptyState category={category} kind={emptyKind} onDiscover={onDiscover} />
       ) : (
         <ul className={gridCls}>
           {shown.map((p) => (

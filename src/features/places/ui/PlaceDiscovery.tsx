@@ -146,7 +146,7 @@ export function PlaceDiscovery({ places, category }: { places: Place[]; category
       )}
 
       {searched && !pending && results.length === 0 && (
-        <p className="text-sm text-muted">{t("empty")}</p>
+        <p className="text-sm text-muted">{t("emptyRecherche")}</p>
       )}
     </div>
   );
