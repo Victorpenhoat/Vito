@@ -30,10 +30,17 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   }
   await expect(foyerHeading).toBeVisible();
 
-  // A ajoute un resto via une fiche (resto seed pré-sélectionné)
+  // A ajoute un resto via une fiche (resto seed pré-sélectionné). Le bouton passe par
+  // useActionState → `pending` (disabled) ne repasse false qu'au COMMIT de la transition React
+  // post-action ; sous charge CI la race du routeur client Next peut ne jamais commiter ce slot,
+  // laissant le bouton disabled pour de bon (toBeEnabled échouait les 3 retries — pas un simple
+  // timeout). On attend le signal serveur DÉTERMINISTE (réponse du POST de l'action) plutôt que
+  // le ré-enable du bouton, comme le favori dans restos.spec.
   await pageA.goto(`/fr/restos/${BISTROT}`);
-  await pageA.getByTestId("ajouter-famille").click();
-  await expect(pageA.getByTestId("ajouter-famille")).toBeEnabled({ timeout: 10000 });
+  await Promise.all([
+    pageA.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/")),
+    pageA.getByTestId("ajouter-famille").click(),
+  ]);
 
   // A invite famille2 — le refresh RSC post-action peut ne jamais se commiter sous charge CI
   // (flake du 27/06) : un timeout élargi ne suffit pas (l'UI garde l'ancien état pour de bon),
