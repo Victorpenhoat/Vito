@@ -58,7 +58,8 @@
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "restos": {
-    "title": "I miei ristoranti",
+    "title": "Ristoranti",
+    "eyebrow": "Il mio taccuino",
     "archiver": "Archivia",
     "desarchiver": "Rimuovi dall'archivio",
     "favorite": "Preferito",
@@ -388,7 +389,8 @@
     "archivesVide": "Nessun locale archiviato"
   },
   "hotels": {
-    "title": "I miei hotel",
+    "title": "Hotel",
+    "eyebrow": "Il mio taccuino",
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "accueil": {

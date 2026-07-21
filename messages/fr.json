@@ -74,7 +74,8 @@
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
   "restos": {
-    "title": "Mes restos",
+    "title": "Restaurants",
+    "eyebrow": "Mon carnet",
     "archiver": "Archiver",
     "desarchiver": "Désarchiver",
     "favorite": "Favori",
@@ -426,7 +427,8 @@
     "archivesVide": "Aucun établissement archivé"
   },
   "hotels": {
-    "title": "Mes hôtels",
+    "title": "Hôtels",
+    "eyebrow": "Mon carnet",
     "error": { "title": "Une erreur est survenue", "retry": "Réessayer" }
   },
   "accueil": {

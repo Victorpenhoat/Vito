@@ -58,7 +58,8 @@
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "restos": {
-    "title": "My restaurants",
+    "title": "Restaurants",
+    "eyebrow": "My journal",
     "archiver": "Archive",
     "desarchiver": "Unarchive",
     "favorite": "Favourite",
@@ -388,7 +389,8 @@
     "archivesVide": "No archived places"
   },
   "hotels": {
-    "title": "My hotels",
+    "title": "Hotels",
+    "eyebrow": "My journal",
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "accueil": {

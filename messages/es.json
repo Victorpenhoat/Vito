@@ -58,7 +58,8 @@
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "restos": {
-    "title": "Mis restaurantes",
+    "title": "Restaurantes",
+    "eyebrow": "Mi cuaderno",
     "archiver": "Archivar",
     "desarchiver": "Desarchivar",
     "favorite": "Favorito",
@@ -388,7 +389,8 @@
     "archivesVide": "Ningún sitio archivado"
   },
   "hotels": {
-    "title": "Mis hoteles",
+    "title": "Hoteles",
+    "eyebrow": "Mi cuaderno",
     "error": { "title": "Se ha producido un error", "retry": "Reintentar" }
   },
   "accueil": {
