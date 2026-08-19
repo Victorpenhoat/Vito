@@ -31,6 +31,9 @@ const eslintConfig = defineConfig([
     "ds-bundle/**",
     ".ds-sync/**",
     ".design-sync/**",
+    // Artefacts générés par `supabase start` en CI (bundle edge-runtime minifié, gitignoré) —
+    // eslint flat config les capte via ses globs `**/*.ts` par défaut, ils cassaient le lint CI.
+    "supabase/.temp/**",
   ]),
   ...storybook.configs["flat/recommended"]
 ]);
