@@ -24,9 +24,13 @@ test("premium crée une demande resto depuis une fiche et la retrouve", async ({
   await form.locator('input[name="nombreConvives"]').fill("3");
   await form.locator('textarea[name="commentaire"]').fill(tag);
   const submitBtn = form.getByRole("button");
-  await submitBtn.click();
-  // Attendre que l'action serveur se termine (le bouton repasse enabled)
-  await expect(submitBtn).toBeEnabled({ timeout: 10000 });
+  // Signal serveur DÉTERMINISTE (réponse du POST de l'action) plutôt que le ré-enable du
+  // bouton : le `pending` disabled ne repasse false qu'au commit de la transition React
+  // post-action, jamais garanti sous charge CI (jumelle de la famille fixée PR #112).
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/")),
+    submitBtn.click(),
+  ]);
 
   // La demande créée (commentaire unique) apparaît dans /conciergerie (vue client), statut Nouvelle
   await page.goto("/fr/conciergerie");
