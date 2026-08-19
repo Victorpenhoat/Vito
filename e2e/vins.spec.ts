@@ -29,11 +29,15 @@ test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filt
   await form.locator('select[name="couleur"]').selectOption("blanc");
   await form.locator('input[name="note"]').fill("4");
 
-  // Soumet le formulaire (le bouton submit de la form)
-  await form.getByRole("button").click();
-
-  // Attend que l'action server se termine : le bouton redevient actif (pending=false)
-  await expect(form.getByRole("button")).toBeEnabled({ timeout: 15_000 });
+  // Soumet le formulaire (le bouton submit de la form). On attend le signal serveur
+  // DÉTERMINISTE (réponse du POST de l'action) plutôt que le ré-enable du bouton : le
+  // `pending` (disabled) via useActionState ne repasse false qu'au commit de la transition
+  // React post-action, que la race routeur client Next peut ne jamais commiter sous charge CI
+  // (jumelle de la famille fixée PR #112).
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/")),
+    form.getByRole("button").click(),
+  ]);
 
   // Va dans Mes vins
   await page.goto("/fr/vins");

@@ -30,8 +30,13 @@ test("l'agence relie un client, lui crée un voyage, le client le voit", async (
   const titre = `Voyage Agence ${Date.now()}`;
   await row.getByTestId("voyage-client-form").locator('input[name="titre"]').fill(titre);
   await row.getByTestId("voyage-client-form").locator('input[name="destination"]').fill("Lisbonne");
-  await row.getByTestId("voyage-client-form").getByRole("button").click();
-  await expect(row.getByTestId("voyage-client-form").getByRole("button")).toBeEnabled({ timeout: 10000 });
+  // Signal serveur DÉTERMINISTE (réponse du POST de l'action) plutôt que le ré-enable du
+  // bouton : le `pending` disabled ne repasse false qu'au commit de la transition React
+  // post-action, jamais garanti sous charge CI (jumelle de la famille fixée PR #112).
+  await Promise.all([
+    pageA.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/agence")),
+    row.getByTestId("voyage-client-form").getByRole("button").click(),
+  ]);
 
   // Le client voit le voyage dans « Mes voyages » (il en est owner)
   const ctxB = await browser.newContext();
