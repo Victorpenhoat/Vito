@@ -3,26 +3,30 @@ import { useEffect, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ChevronDown, ChevronRight, LocateFixed } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
-import { searchPlaces, addResto } from "../data/actions";
-import type { Place } from "@/features/places/domain/filterPlaces";
+import { searchPlaces } from "@/features/restos/data/actions";
+import { addActionFor } from "../data/categoryActions";
+import type { Place } from "../domain/filterPlaces";
 import type { PlaceSummary, SearchOpts } from "@/lib/services/places/types";
-import { searchEnvies, addRecent, removeRecent } from "@/features/places/domain/discovery";
-import { restoStatut, RESTO_STATUTS, type RestoStatut } from "../domain/statut";
-import { haversineKm, formatDistance } from "../domain/distance";
+import { searchEnvies, addRecent, removeRecent } from "../domain/discovery";
+import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
+import { restoStatut, RESTO_STATUTS, type RestoStatut } from "@/features/restos/domain/statut";
+import { haversineKm, formatDistance } from "@/features/restos/domain/distance";
 import { Button } from "@/features/shared/ui/Button";
 import { Input } from "@/features/shared/ui/Input";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 
 // Recherche externe priorisée (design Onglet_Resto_v2, écran 7) : « Déjà dans
 // Vito » d'abord (avec statut), puis résultats externes enrichis (photo, ouvert,
-// distance) ; l'ajout propose le statut du sous-onglet d'origine. Spécifique
-// restos — les hôtels gardent PlaceDiscovery.
+// distance) ; l'ajout propose le statut du sous-onglet d'origine. Brique
+// générique Restos/Hôtels (chips de type et dates/occupation hôtel : lot H4).
 
-const CUISINES = ["italian_restaurant", "japanese_restaurant", "french_restaurant", "pizza_restaurant"] as const;
-
-export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; statutDefaut: RestoStatut }) {
+export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }: {
+  places: Place[]; statutDefaut: RestoStatut; categorie?: CategorieUi;
+}) {
+  const config = CATEGORY_UI[categorie];
+  const addPlace = addActionFor[categorie];
   const t = useTranslations("places");
-  const tr = useTranslations("restos");
+  const tr = useTranslations(config.ns);
   const locale = useLocale();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<PlaceSummary[]>([]);
@@ -39,8 +43,8 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
   const [menuOuvert, setMenuOuvert] = useState<string | null>(null);
   const [prixOuvert, setPrixOuvert] = useState(false);
   const [cuisineOuverte, setCuisineOuverte] = useState(false);
-  const storageKey = "vito.recents.resto";
-  const envies = searchEnvies("resto");
+  const storageKey = config.storageKey;
+  const envies = searchEnvies(categorie);
 
   useEffect(() => {
     try {
@@ -48,7 +52,7 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
       // eslint-disable-next-line react-hooks/set-state-in-effect -- hydratation localStorage SSR-safe (pattern PlaceDiscovery)
       if (raw) setRecents(JSON.parse(raw) as string[]);
     } catch { /* localStorage indisponible */ }
-  }, []);
+  }, [storageKey]);
 
   const persistRecents = (next: string[]) => {
     setRecents(next);
@@ -107,7 +111,7 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
   return (
     <div className="flex flex-col gap-4">
       <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); runSearch(q); }}>
-        <Input data-testid="add-resto-search" placeholder={t("searchDecouvertePlaceholder")}
+        <Input data-testid={config.searchTestId} placeholder={t("searchDecouvertePlaceholder")}
           value={q} onChange={(e) => setQ(e.target.value)} className="flex-1 text-sm" />
         {searched && (
           <Button type="button" variant="ghost" data-testid="search-clear" onClick={clear}>✕</Button>
@@ -139,18 +143,18 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
         </div>
         <div className="relative">
           <button type="button" aria-expanded={cuisineOuverte} className={chipCls(cuisine !== null)} onClick={() => setCuisineOuverte((v) => !v)}>
-            {cuisine ? tr(`recherche.cuisines.${cuisine}`) : tr("recherche.cuisine")} ▾
+            {cuisine ? tr(`${config.typeChipsNs}.${cuisine}`) : tr(config.typeFiltreKeys.label)} ▾
           </button>
           {cuisineOuverte && (
             <div className="absolute z-10 mt-1 flex flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-lg">
               <button type="button" className="px-4 py-2 text-left text-sm text-ink hover:bg-surface-hover"
                 onClick={() => { setCuisine(null); setCuisineOuverte(false); if (searched) setTimeout(() => runSearch(q), 0); }}>
-                {tr("recherche.toutesCuisines")}
+                {tr(config.typeFiltreKeys.tous)}
               </button>
-              {CUISINES.map((c) => (
+              {config.typeChips.map((c) => (
                 <button key={c} type="button" className="px-4 py-2 text-left text-sm text-ink hover:bg-surface-hover"
                   onClick={() => { setCuisine(c); setCuisineOuverte(false); if (searched) setTimeout(() => runSearch(q), 0); }}>
-                  {tr(`recherche.cuisines.${c}`)}
+                  {tr(`${config.typeChipsNs}.${c}`)}
                 </button>
               ))}
             </div>
@@ -204,7 +208,7 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
               const s = restoStatut(place);
               return (
                 <li key={result.placeId} data-testid="search-result" className="border-b border-line-soft">
-                  <Link href={`/restos/${place.etablissement.id}`} className="flex items-center gap-3 py-2.5 focus-visible:outline-2 focus-visible:outline-accent">
+                  <Link href={`${config.basePath}/${place.etablissement.id}`} className="flex items-center gap-3 py-2.5 focus-visible:outline-2 focus-visible:outline-accent">
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-2">
                         <span className="truncate font-serif text-base text-ink">{result.nom}</span>
@@ -252,7 +256,7 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
                   ) : (
                     <span className="relative flex shrink-0 items-center gap-1">
                       <form action={(fd) => start(async () => {
-                        const res = await addResto(undefined, fd);
+                        const res = await addPlace(undefined, fd);
                         if (res?.error) setAddError(res.error);
                         else { setAddError(null); setAddedIds((s) => new Set(s).add(r.placeId)); }
                       })}>
@@ -273,7 +277,7 @@ export function RestoDiscovery({ places, statutDefaut }: { places: Place[]; stat
                           {RESTO_STATUTS.map((s) => (
                             <form key={s} action={(fd) => start(async () => {
                               setMenuOuvert(null);
-                              const res = await addResto(undefined, fd);
+                              const res = await addPlace(undefined, fd);
                               if (res?.error) setAddError(res.error);
                               else { setAddError(null); setAddedIds((prev) => new Set(prev).add(r.placeId)); }
                             })}>

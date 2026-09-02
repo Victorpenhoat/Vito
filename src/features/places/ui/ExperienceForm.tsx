@@ -1,8 +1,9 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { marquerVisite } from "../data/actions";
-import { creerTag } from "../data/tagActions";
+import { marquerVisite } from "@/features/restos/data/actions";
+import { creerTag } from "@/features/restos/data/tagActions";
+import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
 import { fieldClass } from "@/features/shared/ui/Input";
@@ -11,9 +12,13 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 
 // « J'y suis allé » (design Onglet_Resto_v2, écran 8) : date, note /10 au dixième
 // (slider), tags de verdict (ajoutés à l'item, création à la volée), commentaire,
-// « Passer en favori ? ».
-export function VisiteForm({ listeItemId, tags, onDone }: { listeItemId: string; tags: TagLite[]; onDone?: () => void }) {
-  const t = useTranslations("restos");
+// « Passer en favori ? ». Brique générique : le namespace i18n et la portée des
+// tags viennent de la catégorie (le mode « séjour » hôtel arrive au lot H3).
+export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto" }: {
+  listeItemId: string; tags: TagLite[]; onDone?: () => void; categorie?: CategorieUi;
+}) {
+  const config = CATEGORY_UI[categorie];
+  const t = useTranslations(config.ns);
   const format = useFormatter();
   const [state, action, pending] = useActionState(marquerVisite, undefined);
   const [note, setNote] = useState(8);
@@ -123,7 +128,7 @@ export function VisiteForm({ listeItemId, tags, onDone }: { listeItemId: string;
       {/* création de tag à la volée — formulaire séparé (pas de form imbriqué) */}
       {nouveau !== null && (
         <form action={creerTagVolee} className="flex items-center gap-2 border-t border-line pt-3">
-          <input type="hidden" name="scope" value="restaurant" />
+          <input type="hidden" name="scope" value={config.tagScope} />
           <input name="label" value={labelNouveau} onChange={(e) => setLabelNouveau(e.target.value)}
             placeholder={t("tags.label")} aria-label={t("tags.label")} required
             className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />

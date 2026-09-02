@@ -185,7 +185,9 @@ export async function marquerVisite(_prev: unknown, formData: FormData) {
       .upsert(rows, { onConflict: "liste_item_id,tag_id", ignoreDuplicates: true });
     if (tErr) { logActionError("restos.marquerVisite", tErr); return { error: "Tags non enregistrés" }; }
   }
+  // Brique générique H0 : ces actions servent aussi les hôtels — les deux layouts.
   revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
 
@@ -206,7 +208,9 @@ export async function changerStatut(_prev: unknown, formData: FormData) {
     : { is_favorite: false, statut: "a_faire" as const };
   const { error } = await supabase.from("liste_items").update(values).eq("id", parsed.data.listeItemId);
   if (error) { logActionError("restos.changerStatut", error); return { error: "Mise à jour échouée" }; }
+  // Brique générique H0 : ces actions servent aussi les hôtels — les deux layouts.
   revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
 
@@ -248,7 +252,9 @@ export async function setOrigine(_prev: unknown, formData: FormData) {
     })
     .eq("id", d.listeItemId);
   if (error) { logActionError("restos.setOrigine", error); return { error: "Origine non enregistrée" }; }
+  // Brique générique H0 : ces actions servent aussi les hôtels — les deux layouts.
   revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
 

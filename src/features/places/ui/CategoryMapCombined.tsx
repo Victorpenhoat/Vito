@@ -2,16 +2,19 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/routing";
-import type { Place } from "@/features/places/domain/filterPlaces";
-import { tagsForMap, filterByTag } from "@/features/places/domain/mapFilters";
-import { restoStatut, RESTO_STATUTS, type RestoStatut } from "../domain/statut";
-import { RestosMapLazy } from "./RestosMapLazy";
+import type { Place } from "../domain/filterPlaces";
+import { tagsForMap, filterByTag } from "../domain/mapFilters";
+import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
+import { restoStatut, RESTO_STATUTS, type RestoStatut } from "@/features/restos/domain/statut";
+import { CategoryMapLazy } from "./CategoryMapLazy";
 
 // Sous-onglet Carte v2 (design écran 5 + desktop) : légende par statut TOGGLABLE,
-// filtre par tags, compteur, liste synchronisée au survol (desktop).
-export function RestosMapCombined({ places }: { places: Place[] }) {
+// filtre par tags, compteur, liste synchronisée au survol (desktop). Brique
+// générique Restos/Hôtels.
+export function CategoryMapCombined({ places, categorie = "resto" }: { places: Place[]; categorie?: CategorieUi }) {
+  const config = CATEGORY_UI[categorie];
   const t = useTranslations("places");
-  const tr = useTranslations("restos");
+  const tr = useTranslations(config.ns);
   const [actifs, setActifs] = useState<Set<RestoStatut>>(new Set(RESTO_STATUTS));
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [surbrillance, setSurbrillance] = useState<string | null>(null);
@@ -48,7 +51,7 @@ export function RestosMapCombined({ places }: { places: Place[] }) {
           <button key={s} type="button" data-testid={`map-statut-${s}`} aria-pressed={actifs.has(s)}
             onClick={() => toggleStatut(s)} className={chipCls(actifs.has(s))}>
             <span className={`h-2 w-2 ${s === "teste" ? "rounded-[2px]" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
-            {tr(`onglets.${s === "favori" ? "favoris" : s === "teste" ? "testes" : "a_tester"}`)}
+            {tr(`onglets.${s === "favori" ? "favoris" : s === "teste" ? config.slugTeste : "a_tester"}`)}
           </button>
         ))}
       </div>
@@ -84,7 +87,7 @@ export function RestosMapCombined({ places }: { places: Place[] }) {
                 <li key={p.id} data-testid="map-list-item"
                   onMouseEnter={() => setSurbrillance(p.id)} onMouseLeave={() => setSurbrillance(null)}
                   className={`border-b border-line-soft py-2 ${surbrillance === p.id ? "bg-surface-hover" : ""}`}>
-                  <Link href={`/restos/${p.etablissement.id}`} className="flex items-center gap-2 text-sm text-accent hover:underline">
+                  <Link href={`${config.basePath}/${p.etablissement.id}`} className="flex items-center gap-2 text-sm text-accent hover:underline">
                     <span className={`h-2 w-2 shrink-0 ${s === "teste" ? "rounded-[2px]" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
                     <span className="truncate">
                       {p.etablissement.nom}
@@ -96,7 +99,7 @@ export function RestosMapCombined({ places }: { places: Place[] }) {
             })}
           </ul>
         </aside>
-        <RestosMapLazy places={filtered} surbrillanceId={surbrillance} />
+        <CategoryMapLazy places={filtered} surbrillanceId={surbrillance} categorie={categorie} />
       </div>
     </div>
   );
