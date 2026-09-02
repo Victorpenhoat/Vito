@@ -94,14 +94,18 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   if (isChecked) {
     await firstCheckbox.uncheck();
     await tagPicker.getByRole("button").click();
-    await expect(page.getByTestId("tags-saved")).toBeVisible();
+    // timeout élargi : sous la charge de la suite complète, l'action setTags peut
+  // dépasser les 5 s par défaut (flake observé run e2e-rc2) — même recette que result-added.
+  await expect(page.getByTestId("tags-saved")).toBeVisible({ timeout: 15_000 });
     await page.reload();
     await expect(page.getByTestId("tag-picker")).toBeVisible();
   }
 
   await page.getByTestId("tag-picker").locator("label").first().locator("input[type='checkbox']").check();
   await page.getByTestId("tag-picker").getByRole("button").click();
-  await expect(page.getByTestId("tags-saved")).toBeVisible();
+  // timeout élargi : sous la charge de la suite complète, l'action setTags peut
+  // dépasser les 5 s par défaut (flake observé run e2e-rc2) — même recette que result-added.
+  await expect(page.getByTestId("tags-saved")).toBeVisible({ timeout: 15_000 });
 
   await page.reload();
   const tagPickerReloaded = page.getByTestId("tag-picker");
