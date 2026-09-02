@@ -192,6 +192,12 @@
       "rayon": "< 2 km",
       "choisirStatut": "Choose status",
       "statutSuit": "The suggested status follows the current sub-tab"
+    },
+    "carte": {
+      "autourDeMoi": "Around me",
+      "ouvrirFiche": "Open page",
+      "itineraire": "Directions",
+      "fermer": "Close"
     }
   },
   "voyages": {

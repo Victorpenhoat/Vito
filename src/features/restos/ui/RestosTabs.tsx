@@ -1,7 +1,7 @@
 "use client";
 import { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Plus, Search } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/lib/i18n/routing";
 import { changerStatut } from "../data/actions";
@@ -9,8 +9,8 @@ import { filterPlaces, type Place } from "@/features/places/domain/filterPlaces"
 import { tagsForMap, filterByTag } from "@/features/places/domain/mapFilters";
 import { PlaceCard } from "@/features/places/ui/PlaceCard";
 import { RestoDiscovery } from "./RestoDiscovery";
-import { PlacesMapCombined } from "@/features/places/ui/PlacesMapCombined";
-import { PlacesMapLazy } from "@/features/places/ui/PlacesMapLazy";
+import { RestosMapCombined } from "./RestosMapCombined";
+import { RestosMapLazy } from "./RestosMapLazy";
 import { ArchivedPanel } from "@/features/places/ui/ArchivedPanel";
 import { subsetForRestoStatut, restoStatut, type RestoStatut } from "../domain/statut";
 import { VisiteForm } from "./VisiteForm";
@@ -32,7 +32,6 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 export function RestosTabs({ places, archived, tags }: { places: Place[]; archived: Place[]; tags: TagLite[] }) {
   const t = useTranslations("places");
   const tr = useTranslations("restos");
-  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -185,11 +184,11 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
       {!archives && (
       <div role="tabpanel" id="restos-panel" aria-labelledby={`tab-${onglet}`} data-testid="places-panel">
         {onglet === "carte" ? (
-          <PlacesMapCombined places={filterByTag(places, tag)} locale={locale} />
+          <RestosMapCombined places={places} />
         ) : triees.length === 0 ? (
           <EtatVide onglet={onglet} filtre={q.trim() !== "" || tag !== null} q={q} t={tr} onTrouver={() => setRecherche(true)} />
         ) : view === "carte" ? (
-          <PlacesMapLazy places={triees} locale={locale} />
+          <RestosMapLazy places={triees} />
         ) : view === "vignettes" ? (
           <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {triees.map((p) => <PlaceCard key={p.id} place={p} variant="vignette" />)}

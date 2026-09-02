@@ -208,6 +208,12 @@
       "rayon": "< 2 km",
       "choisirStatut": "Choisir le statut",
       "statutSuit": "Le statut proposé suit le sous-onglet d'origine"
+    },
+    "carte": {
+      "autourDeMoi": "Autour de moi",
+      "ouvrirFiche": "Ouvrir la fiche",
+      "itineraire": "Itinéraire",
+      "fermer": "Fermer"
     }
   },
   "voyages": {
