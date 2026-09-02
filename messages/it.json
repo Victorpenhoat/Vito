@@ -192,6 +192,12 @@
       "rayon": "< 2 km",
       "choisirStatut": "Scegli lo stato",
       "statutSuit": "Lo stato proposto segue la sotto-scheda corrente"
+    },
+    "carte": {
+      "autourDeMoi": "Vicino a me",
+      "ouvrirFiche": "Apri scheda",
+      "itineraire": "Indicazioni",
+      "fermer": "Chiudi"
     }
   },
   "voyages": {

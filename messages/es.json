@@ -192,6 +192,12 @@
       "rayon": "< 2 km",
       "choisirStatut": "Elegir estado",
       "statutSuit": "El estado propuesto sigue la subpestaña actual"
+    },
+    "carte": {
+      "autourDeMoi": "Cerca de mí",
+      "ouvrirFiche": "Abrir ficha",
+      "itineraire": "Cómo llegar",
+      "fermer": "Cerrar"
     }
   },
   "voyages": {
