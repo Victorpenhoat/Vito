@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(8);
+select plan(14);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -74,6 +74,34 @@ select throws_ok(
        'with u as (update public.profiles set role=''admin'' where id=''11111111-1111-1111-1111-111111111111'' returning 1) select count(*) from u') $$,
   'role non modifiable',
   'client ne peut pas se promouvoir admin');
+
+-- ── Restos v2 (00030/00031) ────────────────────────────────────────────────
+
+-- 9) anon ne voit AUCUNE visite
+select is(tests.count_as_anon('select count(*) from public.visites'), 0::bigint, 'anon ne voit aucune visite');
+
+-- 10) le client voit sa visite seedée ; 11) l'agence n'en voit aucune (isolation owner)
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.visites'),
+          1::bigint, 'client voit sa visite (RLS owner)');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222', 'select count(*) from public.visites'),
+          0::bigint, 'agence ne voit pas les visites du client');
+
+-- 12) tags perso : le client peut créer un tag à lui
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.tags (user_id, slug, label, categorie, scope, is_system) values (''11111111-1111-1111-1111-111111111111'', ''test_pgtap'', ''Test pgTAP'', ''ambiance'', ''restaurant'', false) returning 1) select count(*) from u'),
+          1::bigint, 'client crée un tag perso');
+
+-- 13) tags système : intouchables (update → 0 ligne, la RLS filtre)
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.tags set label = ''hack'' where slug = ''terrasse'' and user_id is null returning 1) select count(*) from u'),
+          0::bigint, 'client ne peut pas modifier un tag système');
+
+-- 14) fusionner_tags refuse un tag système en source
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (select public.fusionner_tags((select id from public.tags where slug = ''terrasse'' and user_id is null), (select id from public.tags where slug = ''en_famille'' and user_id is null))) select 1 from u') $$,
+  'tag source introuvable ou non modifiable',
+  'fusion depuis un tag système rejetée');
 
 select finish();
 rollback;

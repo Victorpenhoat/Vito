@@ -1116,6 +1116,7 @@ export type Database = {
           label: string
           scope: string
           slug: string
+          user_id: string | null
         }
         Insert: {
           categorie?: string
@@ -1126,6 +1127,7 @@ export type Database = {
           label: string
           scope?: string
           slug: string
+          user_id?: string | null
         }
         Update: {
           categorie?: string
@@ -1136,8 +1138,17 @@ export type Database = {
           label?: string
           scope?: string
           slug?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tags_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vins: {
         Row: {
@@ -1398,6 +1409,10 @@ export type Database = {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       delier_client: { Args: { p_client_id: string }; Returns: undefined }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
+      fusionner_tags: {
+        Args: { p_cible: string; p_source: string }
+        Returns: undefined
+      }
       inviter_famille: {
         Args: { p_email: string; p_famille_id: string }
         Returns: string

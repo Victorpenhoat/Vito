@@ -53,3 +53,29 @@ export const setOrigineSchema = z.object({
   origineFamilyMemberId: z.string().uuid().optional().or(z.literal("")),
   origineSource: z.string().max(120).optional().or(z.literal("")),
 });
+
+// ── Tags v2 (Lot R-B) ───────────────────────────────────────────────────────
+
+export const TAG_SCOPES = ["common", "restaurant", "hotel"] as const;
+
+export const creerTagSchema = z.object({
+  label: z.string().min(1).max(60),
+  scope: z.enum(TAG_SCOPES),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().or(z.literal("")),
+});
+
+export const updateTagSchema = z.object({
+  tagId: z.string().uuid(),
+  label: z.string().min(1).max(60),
+  scope: z.enum(TAG_SCOPES),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().or(z.literal("")),
+});
+
+export const fusionnerTagsSchema = z.object({
+  sourceId: z.string().uuid(),
+  cibleId: z.string().uuid(),
+});
+
+export const supprimerTagSchema = z.object({
+  tagId: z.string().uuid(),
+});
