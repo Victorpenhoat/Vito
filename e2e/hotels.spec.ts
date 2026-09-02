@@ -21,7 +21,9 @@ test("l'onglet Hôtels montre l'hôtel seedé", async ({ page }) => {
 test("l'hôtel n'apparaît PAS dans Restos (getPlaces resto exclut les hôtels)", async ({ page }) => {
   await login(page);
   await page.goto("/fr/restos");
-  await expect(page.getByTestId("places-tabs")).toBeVisible();
+  // Restos v2 : la page monte RestosTabs (restos-tabs) — l'onglet Hôtels garde places-tabs
+  await expect(page.getByTestId("restos-tabs")).toBeVisible();
+  await page.getByTestId("tab-tous").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel Démo" })).toHaveCount(0);
 });
 

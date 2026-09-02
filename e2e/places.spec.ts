@@ -9,49 +9,65 @@ async function login(page: import("@playwright/test").Page) {
   await page.goto("/fr/restos");
 }
 
-// Seed: client@vito.test a 1 resto "Le Bistrot Démo" (is_favorite=true, statut='a_faire',
-// reco_source='Camille', rating=4.6) → présent dans Favoris ET Recommandés.
+// Seed : client@vito.test a « Le Bistrot Démo » (is_favorite=true, statut='a_faire',
+// origine reco 'Camille' — backfill 00030, rating=4.6) → statut v2 « Favori », et
+// « Le Comptoir Démo » (a_faire, non favori) → « À tester ». Restos v2 : 5 sous-onglets.
 
-test("les 4 onglets sont visibles, Favoris actif par défaut", async ({ page }) => {
+test("les 5 sous-onglets sont visibles, Favoris actif par défaut", async ({ page }) => {
   await login(page);
-  await expect(page.getByTestId("places-tabs")).toBeVisible();
-  for (const id of ["tab-favoris", "tab-recommandes", "tab-carte", "tab-recherche"]) {
+  await expect(page.getByTestId("restos-tabs")).toBeVisible();
+  for (const id of ["tab-favoris", "tab-a-tester", "tab-testes", "tab-tous", "tab-carte"]) {
     await expect(page.getByTestId(id)).toBeVisible();
   }
   await expect(page.getByTestId("tab-favoris")).toHaveAttribute("aria-selected", "true");
   await expect(page.getByTestId("place-card")).toHaveCount(1);
 });
 
-test("Favoris : note affichée + toggle 3 vues (Vignettes puis Carte)", async ({ page }) => {
+test("Favoris : note + « Conseillé par » + toggle 3 vues (Vignettes puis Carte)", async ({ page }) => {
   await login(page);
   await expect(page.getByTestId("place-note").first()).toContainText("4,6");
+  await expect(page.getByTestId("place-reco")).toContainText("Camille");
   await expect(page.getByTestId("view-liste")).toBeVisible();
-  await expect(page.getByTestId("view-vignettes")).toBeVisible();
   await page.getByTestId("view-vignettes").click();
   await expect(page.getByTestId("place-card-vignette")).toHaveCount(1);
   await page.getByTestId("view-carte").click();
   await expect(page.getByTestId("places-map")).toBeVisible();
 });
 
-test("Recommandés : pas de toggle, « Conseillé par X » visible", async ({ page }) => {
+test("À tester : le Comptoir y est, avec le filtre d'origine", async ({ page }) => {
   await login(page);
-  await page.getByTestId("tab-recommandes").click();
-  await expect(page.getByTestId("view-vignettes")).toHaveCount(0);
-  await expect(page.getByTestId("place-reco")).toContainText("Camille");
+  await page.getByTestId("tab-a-tester").click();
+  await expect(page.getByTestId("place-card").filter({ hasText: "Le Comptoir Démo" })).toBeVisible();
+  // le Bistrot (favori) ne doit PAS apparaître : partition exclusive v2
+  await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot Démo" })).toHaveCount(0);
+  for (const id of ["origine-toutes", "origine-reco", "origine-trouve"]) {
+    await expect(page.getByTestId(id)).toBeVisible();
+  }
+  // le Comptoir n'a pas d'origine → le filtre « Recommandations » le masque
+  await page.getByTestId("origine-reco").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(0);
 });
 
-test("filtre local d'un onglet filtre les place-cards", async ({ page }) => {
+test("Tous : filtres de statut cumulables + compteur", async ({ page }) => {
+  await login(page);
+  await page.getByTestId("tab-tous").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(2);
+  await expect(page.getByTestId("tous-count")).toContainText("2");
+  await page.getByTestId("statut-favori").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(1);
+  await expect(page.getByTestId("tous-count")).toContainText("1");
+  await page.getByTestId("statut-favori").click();
+  await expect(page.getByTestId("place-card")).toHaveCount(2);
+});
+
+test("filtre local d'un sous-onglet filtre les place-cards", async ({ page }) => {
   await login(page);
   await page.getByTestId("places-search").fill("bistrot");
   await expect(page.getByTestId("place-card")).toHaveCount(1);
   await page.getByTestId("places-search").fill("xyzabsent999");
   await expect(page.getByTestId("place-card")).toHaveCount(0);
-});
-
-test("onglet Recherche affiche le champ de recherche (Découverte)", async ({ page }) => {
-  await login(page);
-  await page.getByTestId("tab-recherche").click();
-  await expect(page.getByTestId("add-resto-search")).toBeVisible();
+  // état « aucun résultat » avec proposition de recherche externe
+  await expect(page.getByTestId("place-empty-state")).toBeVisible();
 });
 
 test("onglet Carte : carte combinée — légende, filtre tag, comptage", async ({ page }) => {
@@ -60,7 +76,7 @@ test("onglet Carte : carte combinée — légende, filtre tag, comptage", async 
   await expect(page.getByTestId("places-map")).toBeVisible();
   await expect(page.getByTestId("map-legend")).toBeVisible();
   await expect(page.getByTestId("map-tag-filter")).toBeVisible();
-  // 2 adresses resto (Bistrot favori + Comptoir recommandé)
+  // 2 adresses resto (Bistrot favori + Comptoir à tester)
   await expect(page.getByTestId("map-count")).toContainText("2");
   // filtrer par « Terrasse » → seul le Bistrot
   await page.getByTestId("map-tag-terrasse").click();
@@ -70,9 +86,9 @@ test("onglet Carte : carte combinée — légende, filtre tag, comptage", async 
   await expect(page.getByTestId("map-count")).toContainText("2");
 });
 
-test("onglet Recherche : découverte (envies, submit, récentes)", async ({ page }) => {
+test("« Trouver un restaurant » : découverte (envies, submit, récentes) accessible partout", async ({ page }) => {
   await login(page);
-  await page.getByTestId("tab-recherche").click();
+  await page.getByTestId("trouver-restaurant").click();
   // état initial : chips d'envie rendues
   await expect(page.getByTestId("envies")).toBeVisible();
   await expect(page.getByTestId("envie-envieItalien")).toBeVisible();
@@ -88,7 +104,7 @@ test("onglet Recherche : découverte (envies, submit, récentes)", async ({ page
   await expect(page.getByTestId("search-result").first()).toBeVisible();
 });
 
-test("a11y : le panneau d'onglet expose role=tabpanel lié à l'onglet actif", async ({ page }) => {
+test("a11y : le panneau expose role=tabpanel lié au sous-onglet actif", async ({ page }) => {
   await login(page);
   const panel = page.getByTestId("places-panel");
   await expect(panel).toHaveAttribute("role", "tabpanel");
@@ -101,7 +117,7 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
   // Idempotence : ce test désarchive l'unique item archivé du seed puis le ré-archive.
   // Si une tentative précédente a échoué entre les deux, l'item reste désarchivé — et
   // comme les retries Playwright ne réinitialisent pas la base, la tentative suivante
-  // échouerait à L102 (onglet Archivés masqué car archived.length === 0). On restaure
+  // échouerait (bouton Archivés masqué car archived.length === 0). On restaure
   // donc l'état « archivé » au départ pour que le test se répare au retry.
   await page.goto(`/fr/restos/${ARCHIVED_ID}`);
   const toggle = page.getByTestId("archive-toggle");
@@ -117,10 +133,8 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
   await expect(page.getByTestId("tab-archives")).toBeVisible();
   await page.getByTestId("tab-archives").click();
   await expect(archived()).toBeVisible();
-  // Désarchiver inline → quitte la liste Archivés. L'action commite en ~300 ms, mais sous
-  // charge CI le refresh RSC post-action peut revenir VIDE (race routeur client — trace du
-  // run 28607271257, 3 tentatives de suite) : l'UI garde alors l'ancien état pour de bon,
-  // rallonger le timeout ne sert à rien. Récupération : reload → rendu frais depuis la base.
+  // Désarchiver inline → quitte la liste Archivés. Sous charge CI le refresh RSC
+  // post-action peut revenir VIDE (race routeur client) : reload → rendu frais.
   await archived().getByTestId("archive-unarchive").click();
   await page.waitForLoadState("networkidle");
   try {
@@ -128,12 +142,9 @@ test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la f
   } catch {
     await page.reload();
     // L'item du seed est l'unique archivé : désarchivé, le bouton Archivés n'est plus rendu
-    // du tout (PlacesTabs: archived.length > 0) — assertion plus forte que le compte à 0.
     await expect(page.getByTestId("tab-archives")).toHaveCount(0);
   }
-  // RESTAURER : ouvrir la fiche et ré-archiver. Attendre la réponse POST du toggle (signal de
-  // commit déterministe) avant le goto qui re-fetch la liste — networkidle peut se déclencher
-  // AVANT le POST et le goto lirait alors un état stale (item pas encore ré-archivé en base).
+  // RESTAURER : ouvrir la fiche et ré-archiver (attendre le POST — signal déterministe).
   await page.goto(`/fr/restos/${ARCHIVED_ID}`);
   await Promise.all([
     page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/fr/restos/")),

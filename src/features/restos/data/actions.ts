@@ -6,6 +6,7 @@ import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
 import {
   addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema, toggleArchiveSchema,
+  marquerVisiteSchema, changerStatutSchema, setOrigineSchema,
 } from "../domain/schemas";
 
 export async function searchPlaces(query: string) {
@@ -135,6 +136,112 @@ export async function setTags(_prev: unknown, formData: FormData) {
   }
   revalidatePath("/restos", "layout");
   revalidatePath("/hotels", "layout");
+  return { ok: true as const };
+}
+
+// ── Restos v2 (Lot R-A) ─────────────────────────────────────────────────────
+
+export async function marquerVisite(_prev: unknown, formData: FormData) {
+  const parsed = marquerVisiteSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    note: formData.get("note") || undefined,
+    commentaire: formData.get("commentaire") || undefined,
+    visiteLe: formData.get("visiteLe") || undefined,
+    passerEnFavori: formData.get("passerEnFavori") || undefined,
+    tagIds: formData.getAll("tagIds"),
+  });
+  if (!parsed.success) return { error: "Visite invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const d = parsed.data;
+  const { error: vErr } = await supabase.from("visites").insert({
+    user_id: auth.user.id,
+    liste_item_id: d.listeItemId,
+    note: d.note ?? null,
+    commentaire: d.commentaire ?? null,
+    ...(d.visiteLe ? { visite_le: d.visiteLe } : {}),
+  });
+  if (vErr) { logActionError("restos.marquerVisite", vErr); return { error: "Visite non enregistrée" }; }
+  // L'item passe « testé » (statut='visite') ; « Passer en favori ? » du formulaire
+  // pose is_favorite=true PAR-DESSUS (le statut stocké reste 'visite' — dérivation v2).
+  const { error: sErr } = await supabase
+    .from("liste_items")
+    .update({ statut: "visite", ...(d.passerEnFavori ? { is_favorite: true } : {}) })
+    .eq("id", d.listeItemId);
+  if (sErr) { logActionError("restos.marquerVisite", sErr); return { error: "Statut non mis à jour" }; }
+  // Tags de verdict : AJOUT aux tags de l'item (merge — pas le delete-all de setTags)
+  if (d.tagIds && d.tagIds.length > 0) {
+    const rows = d.tagIds.map((tag_id) => ({ liste_item_id: d.listeItemId, tag_id }));
+    const { error: tErr } = await supabase
+      .from("liste_item_tags")
+      .upsert(rows, { onConflict: "liste_item_id,tag_id", ignoreDuplicates: true });
+    if (tErr) { logActionError("restos.marquerVisite", tErr); return { error: "Tags non enregistrés" }; }
+  }
+  revalidatePath("/restos", "layout");
+  return { ok: true as const };
+}
+
+export async function changerStatut(_prev: unknown, formData: FormData) {
+  const parsed = changerStatutSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    statut: formData.get("statut"),
+  });
+  if (!parsed.success) return { error: "Statut invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  // favori → is_favorite=true SANS toucher au statut stocké (visites conservées) ;
+  // a_tester / teste → retire le favori et pose le statut correspondant.
+  const values =
+    parsed.data.statut === "favori" ? { is_favorite: true }
+    : parsed.data.statut === "teste" ? { is_favorite: false, statut: "visite" as const }
+    : { is_favorite: false, statut: "a_faire" as const };
+  const { error } = await supabase.from("liste_items").update(values).eq("id", parsed.data.listeItemId);
+  if (error) { logActionError("restos.changerStatut", error); return { error: "Mise à jour échouée" }; }
+  revalidatePath("/restos", "layout");
+  return { ok: true as const };
+}
+
+export async function setOrigine(_prev: unknown, formData: FormData) {
+  const parsed = setOrigineSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    origineType: formData.get("origineType"),
+    origineQui: formData.get("origineQui") ?? "",
+    origineFamilyMemberId: formData.get("origineFamilyMemberId") ?? "",
+    origineSource: formData.get("origineSource") ?? "",
+  });
+  if (!parsed.success) return { error: "Origine invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const d = parsed.data;
+  let origineQui = d.origineQui || null;
+  let fmId: string | null = null;
+  if (d.origineType === "reco" && d.origineFamilyMemberId) {
+    // La FK ne vérifie pas l'ownership : SELECT sous RLS (owner-only) — un
+    // family_member étranger est simplement introuvable.
+    const { data: fm, error: fmErr } = await supabase
+      .from("family_members")
+      .select("id, first_name, last_name")
+      .eq("id", d.origineFamilyMemberId)
+      .maybeSingle();
+    if (fmErr) { logActionError("restos.setOrigine", fmErr); return { error: "Origine non enregistrée" }; }
+    if (!fm) return { error: "Proche introuvable" };
+    fmId = fm.id;
+    origineQui = origineQui ?? `${fm.first_name} ${fm.last_name}`;
+  }
+  const { error } = await supabase
+    .from("liste_items")
+    .update({
+      origine_type: d.origineType,
+      origine_qui: d.origineType === "reco" ? origineQui : null,
+      origine_family_member_id: d.origineType === "reco" ? fmId : null,
+      origine_source: d.origineType === "trouve" ? (d.origineSource || null) : null,
+    })
+    .eq("id", d.listeItemId);
+  if (error) { logActionError("restos.setOrigine", error); return { error: "Origine non enregistrée" }; }
+  revalidatePath("/restos", "layout");
   return { ok: true as const };
 }
 

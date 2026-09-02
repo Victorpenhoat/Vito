@@ -27,3 +27,29 @@ export const toggleArchiveSchema = z.object({
   listeItemId: z.string().uuid(),
   isArchived: z.enum(["true", "false"]).transform((v) => v === "true"),
 });
+
+// ── Restos v2 (Lot R-A) ─────────────────────────────────────────────────────
+
+export const marquerVisiteSchema = z.object({
+  listeItemId: z.string().uuid(),
+  // Note /10 au dixième (slider « 8,2 »). Pas de multipleOf(0.1) : les flottants
+  // font échouer le reste (8.2 % 0.1 ≠ 0) — on arrondit au dixième à la place.
+  note: z.coerce.number().min(0).max(10).transform((v) => Math.round(v * 10) / 10).optional(),
+  commentaire: z.string().max(2000).optional(),
+  visiteLe: z.string().date().optional(),
+  passerEnFavori: z.enum(["true", "false"]).transform((v) => v === "true").optional(),
+  tagIds: z.array(z.string().uuid()).optional(),
+});
+
+export const changerStatutSchema = z.object({
+  listeItemId: z.string().uuid(),
+  statut: z.enum(["favori", "a_tester", "teste"]),
+});
+
+export const setOrigineSchema = z.object({
+  listeItemId: z.string().uuid(),
+  origineType: z.enum(["reco", "trouve"]),
+  origineQui: z.string().max(120).optional().or(z.literal("")),
+  origineFamilyMemberId: z.string().uuid().optional().or(z.literal("")),
+  origineSource: z.string().max(120).optional().or(z.literal("")),
+});

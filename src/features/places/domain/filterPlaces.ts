@@ -3,6 +3,11 @@ export type Place = {
   statut: "a_faire" | "visite";
   is_favorite: boolean;
   reco_source: string | null;
+  // Restos v2 — OPTIONNELS pour ne pas casser les fixtures de tests existantes
+  origine_type?: "reco" | "trouve" | null;
+  origine_qui?: string | null;
+  origine_source?: string | null;
+  derniere_visite?: { note: number | null; visite_le: string } | null;
   etablissement: { id: string; nom: string; type: string | null; ville: string | null; arrondissement: string | null; categorie: "resto" | "hotel"; photo_ref: string | null; lat: number | null; lng: number | null; place_id: string | null; rating: number | null; rating_count: number | null };
   tags: { slug: string; label: string; color: string | null }[];
 };
