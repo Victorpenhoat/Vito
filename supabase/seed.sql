@@ -374,3 +374,16 @@ update public.family_members set address_inherit = true, relation = 'fils'
  where id = 'fa000001-0000-4000-8000-000000000002';
 update public.family_members set relation = 'mere'
  where id = 'fa000001-0000-4000-8000-000000000003';
+
+-- Refonte Voyages Lot A : couvertures + une « idée » (compte démo).
+-- Le démo passe premium (comme la maquette) — sinon le trigger limite_voyages_free
+-- (2 voyages en Free) rejette l'insert ci-dessous et AVORTE TOUT le seed.
+insert into public.subscriptions (user_id, tier, status, period, current_period_end)
+values ('de110000-0000-4000-8000-000000000000', 'premium', 'active', 'yearly', now() + interval '1 year');
+
+update public.voyages set cover_url = 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80&auto=format&fit=crop'
+ where id in ('11111111-2222-4333-8444-555555555555', 'de110001-0000-4000-8000-000000000001');
+update public.voyages set cover_url = 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=1200&q=80&auto=format&fit=crop'
+ where id = 'de110001-0000-4000-8000-000000000002';
+insert into public.voyages (id, owner_id, titre, destination, statut, periode_texte) values
+ ('de110009-0000-4000-8000-000000000001', 'de110000-0000-4000-8000-000000000000', 'Japon', 'Japon', 'idee', 'printemps 2028');

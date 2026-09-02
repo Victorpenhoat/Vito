@@ -16,7 +16,10 @@ async function creerVoyage(page: Page, titre: string) {
 
 test("Free atteint la limite de voyages, souscrit, puis crée au-delà", async ({ page }) => {
   await login(page, "free@vito.test");
-  await page.goto("/fr/voyages");
+  // refonte Lot A : liste filtrée par sous-onglets ; un voyage créé sans statut
+  // explicite naît « En préparation » — on ouvre ce sous-onglet (piloté par l'URL,
+  // il survit aux reload-guards).
+  await page.goto("/fr/voyages?chip=en_preparation");
 
   const tag = Date.now();
   // 2 créations OK (limite Free = 2)
@@ -36,7 +39,7 @@ test("Free atteint la limite de voyages, souscrit, puis crée au-delà", async (
   await expectVisibleWithReload(page, page.getByTestId("premium-badge"));
 
   // Le 3e voyage passe désormais
-  await page.goto("/fr/voyages");
+  await page.goto("/fr/voyages?chip=en_preparation");
   await creerVoyage(page, `V3 ${tag}`);
   await expectVisibleWithReload(page, page.getByTestId("voyage-card").filter({ hasText: `V3 ${tag}` }));
 });

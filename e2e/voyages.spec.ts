@@ -18,7 +18,9 @@ test("créer un voyage, ajouter une réservation, partager avec l'agence", async
   await page.getByTestId("voyage-form").locator('input[name="titre"]').fill(titre);
   await page.getByTestId("voyage-form").getByRole("button").click();
 
-  // Le voyage apparaît dans la liste
+  // Le voyage apparaît dans la liste — refonte Lot A : la liste est filtrée par
+  // sous-onglets ; un voyage créé sans statut explicite naît « En préparation ».
+  await page.getByRole("button", { name: "En préparation" }).click();
   await expectVisibleWithReload(page, page.getByTestId("voyage-card").filter({ hasText: "Lisbonne" }).first());
 
   // Ouvrir le voyage (cliquer sur le lien dans la card)
