@@ -1253,32 +1253,47 @@ export type Database = {
       }
       voyages: {
         Row: {
+          cover_fetched_at: string | null
+          cover_photo_ref: string | null
+          cover_url: string | null
           created_at: string
           date_debut: string | null
           date_fin: string | null
           destination: string | null
+          devise: string
           id: string
           owner_id: string
+          periode_texte: string | null
           statut: Database["public"]["Enums"]["voyage_statut"]
           titre: string
         }
         Insert: {
+          cover_fetched_at?: string | null
+          cover_photo_ref?: string | null
+          cover_url?: string | null
           created_at?: string
           date_debut?: string | null
           date_fin?: string | null
           destination?: string | null
+          devise?: string
           id?: string
           owner_id: string
+          periode_texte?: string | null
           statut?: Database["public"]["Enums"]["voyage_statut"]
           titre: string
         }
         Update: {
+          cover_fetched_at?: string | null
+          cover_photo_ref?: string | null
+          cover_url?: string | null
           created_at?: string
           date_debut?: string | null
           date_fin?: string | null
           destination?: string | null
+          devise?: string
           id?: string
           owner_id?: string
+          periode_texte?: string | null
           statut?: Database["public"]["Enums"]["voyage_statut"]
           titre?: string
         }
@@ -1369,7 +1384,13 @@ export type Database = {
       liste_statut: "a_faire" | "visite"
       reservation_type: "hotel" | "vol" | "voiture" | "hebergement" | "autre"
       vin_couleur: "rouge" | "blanc" | "rose" | "petillant" | "autre"
-      voyage_statut: "planifie" | "confirme" | "en_cours" | "termine"
+      voyage_statut:
+        | "idee"
+        | "en_preparation"
+        | "planifie"
+        | "confirme"
+        | "en_cours"
+        | "termine"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1508,7 +1529,14 @@ export const Constants = {
       liste_statut: ["a_faire", "visite"],
       reservation_type: ["hotel", "vol", "voiture", "hebergement", "autre"],
       vin_couleur: ["rouge", "blanc", "rose", "petillant", "autre"],
-      voyage_statut: ["planifie", "confirme", "en_cours", "termine"],
+      voyage_statut: [
+        "idee",
+        "en_preparation",
+        "planifie",
+        "confirme",
+        "en_cours",
+        "termine",
+      ],
     },
   },
 } as const

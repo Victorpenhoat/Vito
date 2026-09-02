@@ -1,6 +1,8 @@
 const TINTS: Record<string, string> = {
   confirme: "linear-gradient(135deg,#2f5a3f,#3f7a55)",
   planifie: "linear-gradient(135deg,#2a3a5e,#3a5080)",
+  en_preparation: "linear-gradient(135deg,#2a3a5e,#3a5080)",
+  idee: "linear-gradient(135deg,#4a4436,#5e5744)",
   en_cours: "linear-gradient(135deg,#7a5a2a,#a07a3a)",
   termine: "linear-gradient(135deg,#3a3632,#4a443e)",
 };

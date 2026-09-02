@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-export const VOYAGE_STATUTS = ["planifie", "confirme", "en_cours", "termine"] as const;
+// idee/en_preparation : refonte Voyages (00028). planifie/en_cours restent valides
+// (données existantes) ; « En cours » est normalement dérivé des dates (affichageVoyage).
+export const VOYAGE_STATUTS = ["idee", "en_preparation", "planifie", "confirme", "en_cours", "termine"] as const;
+// Choix proposés au formulaire (planifie = legacy, en_cours = dérivé — non proposés)
+export const VOYAGE_STATUTS_FORM = ["idee", "en_preparation", "confirme", "termine"] as const;
 export const RESERVATION_TYPES = ["hotel", "vol", "voiture", "hebergement", "autre"] as const;
 
 const datesOk = (d: { dateDebut?: string; dateFin?: string }) =>
@@ -13,6 +17,9 @@ export const voyageInputSchema = z
     dateDebut: z.string().date().optional(),
     dateFin: z.string().date().optional(),
     statut: z.enum(VOYAGE_STATUTS).optional(),
+    periodeTexte: z.string().max(120).optional(),
+    coverPhotoRef: z.string().max(1000).optional(),
+    coverUrl: z.string().url().startsWith("https://").max(1000).optional(),
   })
   .refine(datesOk, { message: "dateFin doit être >= dateDebut", path: ["dateFin"] });
 export type VoyageInput = z.infer<typeof voyageInputSchema>;

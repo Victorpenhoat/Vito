@@ -11,14 +11,35 @@ async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>
   return data.user?.id ?? null;
 }
 
-export async function createVoyage(_prev: unknown, formData: FormData) {
-  const parsed = voyageInputSchema.safeParse({
+function parseVoyage(formData: FormData) {
+  return voyageInputSchema.safeParse({
     titre: formData.get("titre"),
     destination: formData.get("destination") || undefined,
     dateDebut: formData.get("dateDebut") || undefined,
     dateFin: formData.get("dateFin") || undefined,
     statut: formData.get("statut") || undefined,
+    periodeTexte: formData.get("periodeTexte") || undefined,
+    coverPhotoRef: formData.get("coverPhotoRef") || undefined,
+    coverUrl: formData.get("coverUrl") || undefined,
   });
+}
+
+// cover : une seule source (contrainte voyages_cover_unique) — la ref Places
+// prime, l'URL libre sinon ; l'autre est explicitement remise à null.
+function voyageValues(d: ReturnType<typeof parseVoyage> extends { data?: infer T } ? NonNullable<T> : never) {
+  return {
+    titre: d.titre,
+    destination: d.destination ?? null,
+    date_debut: d.dateDebut ?? null,
+    date_fin: d.dateFin ?? null,
+    periode_texte: d.periodeTexte ?? null,
+    cover_photo_ref: d.coverPhotoRef ?? null,
+    cover_url: d.coverPhotoRef ? null : (d.coverUrl ?? null),
+  };
+}
+
+export async function createVoyage(_prev: unknown, formData: FormData) {
+  const parsed = parseVoyage(formData);
   if (!parsed.success) return { error: "Voyage invalide" };
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
@@ -33,10 +54,7 @@ export async function createVoyage(_prev: unknown, formData: FormData) {
   }
   const { error } = await supabase.from("voyages").insert({
     owner_id: uid,
-    titre: parsed.data.titre,
-    destination: parsed.data.destination ?? null,
-    date_debut: parsed.data.dateDebut ?? null,
-    date_fin: parsed.data.dateFin ?? null,
+    ...voyageValues(parsed.data),
     statut: parsed.data.statut ?? "planifie",
   });
   if (error) {
@@ -51,21 +69,12 @@ export async function createVoyage(_prev: unknown, formData: FormData) {
 export async function updateVoyage(_prev: unknown, formData: FormData) {
   const id = formData.get("voyageId");
   if (typeof id !== "string") return { error: "Entrée invalide" };
-  const parsed = voyageInputSchema.safeParse({
-    titre: formData.get("titre"),
-    destination: formData.get("destination") || undefined,
-    dateDebut: formData.get("dateDebut") || undefined,
-    dateFin: formData.get("dateFin") || undefined,
-    statut: formData.get("statut") || undefined,
-  });
+  const parsed = parseVoyage(formData);
   if (!parsed.success) return { error: "Voyage invalide" };
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { error } = await supabase.from("voyages").update({
-    titre: parsed.data.titre,
-    destination: parsed.data.destination ?? null,
-    date_debut: parsed.data.dateDebut ?? null,
-    date_fin: parsed.data.dateFin ?? null,
+    ...voyageValues(parsed.data),
     statut: parsed.data.statut ?? "planifie",
   }).eq("id", id);
   if (error) { logActionError("voyages.updateVoyage", error); return { error: "Mise à jour échouée" }; }

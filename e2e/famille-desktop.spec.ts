@@ -22,7 +22,9 @@ test.describe("desktop", () => {
     await expect(page).toHaveURL(/\/famille\/proches\//);
     await expectVisibleWithReload(page, page.getByRole("heading", { name: "Camille Durand" }));
     // aperçu : depuis la refonte Cercle, le scan s'affiche sur le détail du document
-    await page.getByTestId("document-row").getByRole("link", { name: /Passeport/ }).click();
+    // .first() : les re-runs locaux accumulent des passeports sur Camille (DB non
+    // réinitialisée entre runs) — plusieurs lignes matchent sinon (strict mode).
+    await page.getByTestId("document-row").getByRole("link", { name: /Passeport/ }).first().click();
     await expect(page).toHaveURL(/\/documents\/[^/]+$/);
     await expect(page.locator('iframe[title="Aperçu"]')).toBeVisible();
   });

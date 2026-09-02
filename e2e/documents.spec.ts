@@ -50,7 +50,11 @@ test("un non-membre obtient 404 sur la route de téléchargement", async ({ brow
   const tag = `priv-${Date.now()}.pdf`;
   await pageA.getByTestId("document-upload-form").locator('input[type="file"]').setInputFiles({ name: tag, mimeType: "application/pdf", buffer: PDF });
   await pageA.getByTestId("document-upload-form").locator('button[type="submit"]').click();
-  const href = await pageA.getByTestId("document-row").filter({ hasText: tag }).getByRole("link").getAttribute("href");
+  // reload-guard (race RSC post-action documentée #71/#77) : même garde que le test 1,
+  // la ligne peut ne jamais apparaître si le refresh n'est pas commité sous charge.
+  const row = pageA.getByTestId("document-row").filter({ hasText: tag });
+  await expectVisibleWithReload(pageA, row);
+  const href = await row.getByRole("link").getAttribute("href");
   expect(href).toBeTruthy();
 
   // free@vito.test n'est pas membre du voyage Rome -> 404

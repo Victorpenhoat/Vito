@@ -87,7 +87,14 @@
     "dateDebut": "Start date",
     "dateFin": "End date",
     "statut": "Status",
-    "statuts": { "planifie": "Planned", "confirme": "Confirmed", "en_cours": "Ongoing", "termine": "Done" },
+    "statuts": {
+      "planifie": "Planned",
+      "confirme": "Confirmed",
+      "en_cours": "Ongoing",
+      "termine": "Done",
+      "idee": "Idea",
+      "en_preparation": "In planning"
+    },
     "vide": "No trips yet.",
     "partage": "Shared with you",
     "reservations": "Bookings",
@@ -97,7 +104,13 @@
     "roleOwner": "owner",
     "addReservation": "Add a booking",
     "type": "Type",
-    "types": { "hotel": "Hotel", "vol": "Flight", "voiture": "Car", "hebergement": "Accommodation", "autre": "Other" },
+    "types": {
+      "hotel": "Hotel",
+      "vol": "Flight",
+      "voiture": "Car",
+      "hebergement": "Accommodation",
+      "autre": "Other"
+    },
     "fournisseur": "Provider",
     "reference": "Reference",
     "lien": "Link (Airbnb, PAP…)",
@@ -111,7 +124,10 @@
     "retirer": "Remove",
     "supprimer": "Delete trip",
     "save": "Save",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
     "ouvrirCompte": "Shared accounts",
     "limitCta": "Free limit reached — go Premium",
     "documents": {
@@ -125,12 +141,39 @@
       "typeNonSupporte": "Unsupported type (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "File too large (max 5 MB)"
     },
-    "eyebrow": "My trips",
+    "eyebrow": "My journal",
     "heading": "Trips",
     "prochainDepart": "Next departure",
     "carnetRoute": "Travel log",
     "compte": "{avenir} upcoming · {passes} past",
-    "depenses": "Expenses"
+    "depenses": "Expenses",
+    "chips": {
+      "a_venir": "Upcoming",
+      "en_cours": "Ongoing",
+      "en_preparation": "In planning",
+      "idees": "Ideas",
+      "termines": "Past",
+      "idee_courte": "idea"
+    },
+    "dansNJours": "In {n} days",
+    "dansNJoursCourt": "in {n} days",
+    "nuits": "{n, plural, one {# night} other {# nights}}",
+    "videChip": "No trips in this category.",
+    "preparer": "Plan it",
+    "periodeTexte": "Rough timing (e.g. spring 2028)",
+    "coverUrl": "Cover photo (https URL)",
+    "nouveauVoyage": "New trip",
+    "modifierTitre": "Edit trip",
+    "annuler": "Cancel",
+    "confirmSuppr": "Delete this trip and everything in it?",
+    "retourListe": "Back to trips",
+    "fiche": {
+      "apercu": "Overview",
+      "partage": "Sharing",
+      "participants": "Travellers",
+      "prochaineEtape": "Next step",
+      "organisateur": "Organizer"
+    }
   },
   "depenses": {
     "title": "Expenses",

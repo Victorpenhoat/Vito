@@ -103,7 +103,14 @@
     "dateDebut": "Date de début",
     "dateFin": "Date de fin",
     "statut": "Statut",
-    "statuts": { "planifie": "Planifié", "confirme": "Confirmé", "en_cours": "En cours", "termine": "Terminé" },
+    "statuts": {
+      "planifie": "Planifié",
+      "confirme": "Confirmé",
+      "en_cours": "En cours",
+      "termine": "Terminé",
+      "idee": "Idée",
+      "en_preparation": "En préparation"
+    },
     "vide": "Aucun voyage pour l'instant.",
     "partage": "Partagé avec vous",
     "reservations": "Réservations",
@@ -113,7 +120,13 @@
     "roleOwner": "propriétaire",
     "addReservation": "Ajouter une réservation",
     "type": "Type",
-    "types": { "hotel": "Hôtel", "vol": "Vol", "voiture": "Voiture", "hebergement": "Hébergement", "autre": "Autre" },
+    "types": {
+      "hotel": "Hôtel",
+      "vol": "Vol",
+      "voiture": "Voiture",
+      "hebergement": "Hébergement",
+      "autre": "Autre"
+    },
     "fournisseur": "Fournisseur",
     "reference": "Référence",
     "lien": "Lien (Airbnb, PAP…)",
@@ -127,7 +140,10 @@
     "retirer": "Retirer",
     "supprimer": "Supprimer le voyage",
     "save": "Enregistrer",
-    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
+    "error": {
+      "title": "Une erreur est survenue",
+      "retry": "Réessayer"
+    },
     "ouvrirCompte": "Comptes partagés",
     "limitCta": "Limite Free atteinte — passez Premium",
     "documents": {
@@ -141,12 +157,39 @@
       "typeNonSupporte": "Type non supporté (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "Fichier trop volumineux (max 5 Mo)"
     },
-    "eyebrow": "Mes voyages",
+    "eyebrow": "Mon carnet",
     "heading": "Voyages",
     "prochainDepart": "Prochain départ",
     "carnetRoute": "Carnet de route",
     "compte": "{avenir} à venir · {passes} passés",
-    "depenses": "Dépenses"
+    "depenses": "Dépenses",
+    "chips": {
+      "a_venir": "À venir",
+      "en_cours": "En cours",
+      "en_preparation": "En préparation",
+      "idees": "Idées",
+      "termines": "Terminés",
+      "idee_courte": "idée"
+    },
+    "dansNJours": "Dans {n} jours",
+    "dansNJoursCourt": "dans {n} jours",
+    "nuits": "{n, plural, one {# nuit} other {# nuits}}",
+    "videChip": "Aucun voyage dans cette catégorie.",
+    "preparer": "Préparer",
+    "periodeTexte": "Période envisagée (ex. printemps 2028)",
+    "coverUrl": "Photo de couverture (URL https)",
+    "nouveauVoyage": "Nouveau voyage",
+    "modifierTitre": "Modifier le voyage",
+    "annuler": "Annuler",
+    "confirmSuppr": "Supprimer ce voyage et tout son contenu ?",
+    "retourListe": "Retour aux voyages",
+    "fiche": {
+      "apercu": "Aperçu",
+      "partage": "Partage",
+      "participants": "Participants",
+      "prochaineEtape": "Prochaine étape",
+      "organisateur": "Organisateur"
+    }
   },
   "depenses": {
     "title": "Dépenses",

@@ -87,7 +87,14 @@
     "dateDebut": "Fecha de inicio",
     "dateFin": "Fecha de fin",
     "statut": "Estado",
-    "statuts": { "planifie": "Planificado", "confirme": "Confirmado", "en_cours": "En curso", "termine": "Finalizado" },
+    "statuts": {
+      "planifie": "Planificado",
+      "confirme": "Confirmado",
+      "en_cours": "En curso",
+      "termine": "Finalizado",
+      "idee": "Idea",
+      "en_preparation": "En preparación"
+    },
     "vide": "Ningún viaje por el momento.",
     "partage": "Compartido contigo",
     "reservations": "Reservas",
@@ -97,7 +104,13 @@
     "roleOwner": "propietario",
     "addReservation": "Añadir una reserva",
     "type": "Tipo",
-    "types": { "hotel": "Hotel", "vol": "Vuelo", "voiture": "Coche", "hebergement": "Alojamiento", "autre": "Otro" },
+    "types": {
+      "hotel": "Hotel",
+      "vol": "Vuelo",
+      "voiture": "Coche",
+      "hebergement": "Alojamiento",
+      "autre": "Otro"
+    },
     "fournisseur": "Proveedor",
     "reference": "Referencia",
     "lien": "Enlace (Airbnb, PAP…)",
@@ -111,7 +124,10 @@
     "retirer": "Quitar",
     "supprimer": "Eliminar el viaje",
     "save": "Guardar",
-    "error": { "title": "Se ha producido un error", "retry": "Reintentar" },
+    "error": {
+      "title": "Se ha producido un error",
+      "retry": "Reintentar"
+    },
     "ouvrirCompte": "Cuentas compartidas",
     "limitCta": "Límite Free alcanzado — pásate a Premium",
     "documents": {
@@ -125,12 +141,39 @@
       "typeNonSupporte": "Tipo no admitido (PDF, JPEG, PNG, WebP)",
       "tropVolumineux": "Archivo demasiado grande (máx. 5 MB)"
     },
-    "eyebrow": "Mis viajes",
+    "eyebrow": "Mi cuaderno",
     "heading": "Viajes",
     "prochainDepart": "Próxima salida",
     "carnetRoute": "Diario de ruta",
     "compte": "{avenir} próximos · {passes} pasados",
-    "depenses": "Gastos"
+    "depenses": "Gastos",
+    "chips": {
+      "a_venir": "Próximos",
+      "en_cours": "En curso",
+      "en_preparation": "En preparación",
+      "idees": "Ideas",
+      "termines": "Pasados",
+      "idee_courte": "idea"
+    },
+    "dansNJours": "En {n} días",
+    "dansNJoursCourt": "en {n} días",
+    "nuits": "{n, plural, one {# noche} other {# noches}}",
+    "videChip": "Ningún viaje en esta categoría.",
+    "preparer": "Preparar",
+    "periodeTexte": "Período previsto (ej. primavera 2028)",
+    "coverUrl": "Foto de portada (URL https)",
+    "nouveauVoyage": "Nuevo viaje",
+    "modifierTitre": "Editar el viaje",
+    "annuler": "Cancelar",
+    "confirmSuppr": "¿Eliminar este viaje y todo su contenido?",
+    "retourListe": "Volver a los viajes",
+    "fiche": {
+      "apercu": "Resumen",
+      "partage": "Compartir",
+      "participants": "Participantes",
+      "prochaineEtape": "Próxima etapa",
+      "organisateur": "Organizador"
+    }
   },
   "depenses": {
     "title": "Gastos",

@@ -42,7 +42,9 @@ test("l'agence relie un client, lui crée un voyage, le client le voit", async (
   const ctxB = await browser.newContext();
   const pageB = await ctxB.newPage();
   await login(pageB, "client7b@vito.test");
-  await pageB.goto("/fr/voyages");
+  // refonte Lot A : le voyage créé par l'agence naît « planifie » → sous-onglet
+  // « En préparation » (chip piloté par l'URL, survit aux reload-guards)
+  await pageB.goto("/fr/voyages?chip=en_preparation");
   await expectVisibleWithReload(pageB, pageB.getByTestId("voyage-card").filter({ hasText: titre }));
 
   await ctxA.close();
