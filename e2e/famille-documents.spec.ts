@@ -18,6 +18,12 @@ test("l'owner télécharge le document déchiffré (200, pdf)", async ({ page })
   expect(Buffer.from(await resp.body()).toString()).toContain("%PDF-1.4");
 });
 
+test("le verso absent renvoie 404, même pour l'owner (?face=verso)", async ({ page }) => {
+  await login(page, "client@vito.test");
+  const resp = await page.request.get(`/api/famille/documents/${DOC_ID}?face=verso`);
+  expect(resp.status()).toBe(404);
+});
+
 test("un non-owner obtient 404 (aucune fuite) et ne voit pas le proche", async ({ page }) => {
   await login(page, "free@vito.test");
   const resp = await page.request.get(`/api/famille/documents/${DOC_ID}`);

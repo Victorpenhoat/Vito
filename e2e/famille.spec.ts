@@ -20,7 +20,8 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   const ctxA = await browser.newContext();
   const pageA = await ctxA.newPage();
   await login(pageA, "famille1@vito.test");
-  await pageA.goto("/fr/famille");
+  // Refonte Cercle : le foyer partagé vit sur sa sous-page dédiée
+  await pageA.goto("/fr/famille/foyer");
   const familleForm = pageA.getByTestId("famille-form");
   const foyerHeading = pageA.getByRole("heading", { name: "Foyer Démo" });
   await expect(familleForm.or(foyerHeading)).toBeVisible();
@@ -45,7 +46,7 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   // A invite famille2 — le refresh RSC post-action peut ne jamais se commiter sous charge CI
   // (flake du 27/06) : un timeout élargi ne suffit pas (l'UI garde l'ancien état pour de bon),
   // reload-guard sur le compte de membres → rendu frais depuis la base si le slot n'est pas commité.
-  await pageA.goto("/fr/famille");
+  await pageA.goto("/fr/famille/foyer");
   await pageA.getByTestId("invite-form").locator('input[name="email"]').fill("famille2@vito.test");
   await pageA.getByTestId("invite-form").getByRole("button").click();
   await expectCountWithReload(pageA, pageA.getByTestId("membre-row"), 2, { timeout: 15_000 });
@@ -56,7 +57,7 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
   const ctxB = await browser.newContext();
   const pageB = await ctxB.newPage();
   await login(pageB, "famille2@vito.test");
-  await pageB.goto("/fr/famille");
+  await pageB.goto("/fr/famille/foyer");
   await expect(pageB.getByRole("heading", { name: "Foyer Démo" })).toBeVisible();
   await expect(pageB.getByTestId("famille-resto-row")).toHaveCount(1);
   await expect(pageB.getByTestId("membre-row").filter({ hasText: "Famille Un" })).toBeVisible();
@@ -96,8 +97,13 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
   await expect(page).toHaveURL(/\/famille\/proches\/[^/]+$/);
   const row = page.getByTestId("document-row").filter({ hasText: "Passeport" });
   await expectVisibleWithReload(page, row.first());
-  const href = await row.first().getByRole("link", { name: "Voir le document" }).getAttribute("href");
+  // Refonte Cercle : le tap sur la ligne ouvre le détail du document ; le scan
+  // déchiffré s'ouvre depuis le détail (« Voir le document » → route API, 200)
+  await row.first().getByRole("link", { name: /Passeport/ }).click();
+  await expect(page).toHaveURL(/\/documents\/[^/]+$/);
+  const href = await page.getByRole("link", { name: "Voir le document" }).first().getAttribute("href");
   expect(href).toBeTruthy();
+  expect(href).toContain("/api/famille/documents/");
   const resp = await page.request.get(href!);
   expect(resp.status()).toBe(200);
 });
@@ -115,13 +121,12 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
 
   await page.getByTestId("proche-form").locator('input[name="first_name"]').fill(PRENOM);
   await page.getByTestId("proche-form").locator('input[name="last_name"]').fill("Martin");
-  await page.getByTestId("proche-form").locator('select[name="circle"]').selectOption("amis");
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
 
   // Redirigé vers la fiche
   await expectVisibleWithReload(page, page.getByRole("heading", { name: `${PRENOM} Martin` }));
 
-  // Visible dans la liste, section Amis
+  // Visible dans la liste (groupe « Amis & autres », relation par défaut)
   await page.goto("/fr/famille");
   await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Martin` })).toBeVisible();
 
@@ -137,8 +142,10 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   await page.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
   await expectVisibleWithReload(page, page.getByRole("heading", { name: `${PRENOM} Bernard` }));
 
-  // Supprimer (confirm auto-accepté)
+  // Supprimer (confirm auto-accepté) — depuis le formulaire Modifier :
+  // la fiche redessinée (refonte Cercle) n'a plus de bouton de suppression direct
   page.on("dialog", (d) => d.accept());
+  await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByRole("button", { name: "Supprimer" }).click();
   await expect(page).toHaveURL(/\/fr\/famille$/);
   await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Bernard` })).toHaveCount(0);

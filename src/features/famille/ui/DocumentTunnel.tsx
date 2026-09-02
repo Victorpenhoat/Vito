@@ -1,9 +1,9 @@
 "use client";
 import { useActionState, useEffect, useState, startTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Camera, FileUp, Plus } from "lucide-react";
 import { creerDocument } from "../data/actions";
 import { DOC_TYPES } from "../domain/schemas";
-import { DocTypeIcon } from "./DocTypeIcon";
 import { Button } from "@/features/shared/ui/Button";
 import { EMPTY_FIELDS, type OcrFields } from "@/lib/services/ocr";
 import { Input } from "@/features/shared/ui/Input";
@@ -13,11 +13,17 @@ const MAX = 10 * 1024 * 1024;
 
 type Step = "A" | "B" | "C" | "D";
 
+// Tunnel d'ajout de document — 4 étapes + OCR conservés (décision PO), restylé
+// design Onglet_Cercle (écran 5) : chips de type (+ type libre), segments de
+// progression, verso optionnel à la vérification, CTA plein pied.
 export function DocumentTunnel({ memberId }: { memberId: string }) {
   const t = useTranslations("famille");
   const [step, setStep] = useState<Step>("A");
   const [docType, setDocType] = useState<string>("passeport");
+  const [docLabel, setDocLabel] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [verso, setVerso] = useState<File | null>(null);
+  const [versoError, setVersoError] = useState(false);
   const [fields, setFields] = useState<OcrFields>(EMPTY_FIELDS);
   const [ocrRaw, setOcrRaw] = useState<string | null>(null);
   const [manual, setManual] = useState(false);
@@ -31,6 +37,11 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
   function pick(f: File) {
     if (!ALLOWED.includes(f.type) || f.size <= 0 || f.size > MAX) { setUploadError({ name: f.name, size: f.size }); return; }
     setUploadError(null); setFile(f); setStep("C");
+  }
+
+  function pickVerso(f: File) {
+    if (!ALLOWED.includes(f.type) || f.size <= 0 || f.size > MAX) { setVersoError(true); setVerso(null); return; }
+    setVersoError(false); setVerso(f);
   }
 
   // Étape C : lecture OCR (la route ne persiste rien). Échec → bloc d'erreur à l'étape C.
@@ -59,6 +70,8 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
     if (!file) return;
     const fd = new FormData(e.currentTarget);
     fd.set("memberId", memberId); fd.set("docType", docType); fd.set("file", file);
+    if (docType === "autre" && docLabel.trim()) fd.set("doc_label", docLabel.trim());
+    if (verso) fd.set("file_verso", verso);
     if (ocrRaw) fd.set("ocrRaw", ocrRaw);
     startTransition(() => dispatch(fd));
   }
@@ -66,23 +79,39 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
   return (
     <div data-testid="document-tunnel" className="flex max-w-md flex-col gap-4">
       <div className="text-sm text-muted">{t("tunnel.titre")} · {t("tunnel.stepOf", { n: stepN })}</div>
+      {/* segments de progression (mobile) + stepper libellé (desktop, e2e « Vérification ») */}
+      <div className="flex gap-1.5 lg:hidden" aria-hidden="true">
+        {[1, 2, 3, 4].map((n) => (
+          <span key={n} className={`h-[3px] flex-1 rounded-full ${n <= stepN ? "bg-accent" : "bg-line"}`} />
+        ))}
+      </div>
       <StepIndicator step={step} t={t} />
 
       {step === "A" && (
         <div className="flex flex-col gap-3">
           <h2 className="font-serif text-2xl text-ink">{t("tunnel.aTitre")}</h2>
           <p className="text-muted">{t("tunnel.aSous")}</p>
-          <ul className="grid grid-cols-2 gap-2">
-            {DOC_TYPES.map((dt) => (
-              <li key={dt}>
-                <button type="button" onClick={() => setDocType(dt)}
-                  className={`flex w-full items-center gap-2 rounded-card border p-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${docType === dt ? "border-accent" : "border-line"}`}>
-                  <DocTypeIcon docType={dt} /><span className="text-sm text-ink">{t(`docTypes.${dt}`)}</span>
-                </button>
-              </li>
+          <div className="flex flex-wrap gap-2">
+            {DOC_TYPES.filter((dt) => dt !== "autre").map((dt) => (
+              <button key={dt} type="button" onClick={() => setDocType(dt)} aria-pressed={docType === dt}
+                className={`rounded-full px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                  docType === dt ? "bg-ink font-semibold text-app" : "border border-line bg-surface text-muted hover:bg-surface-hover"
+                }`}>
+                {t(`docTypes.${dt}`)}
+              </button>
             ))}
-          </ul>
-          <Button onClick={() => setStep("B")}>{t("tunnel.continuer")}</Button>
+            <button type="button" onClick={() => setDocType("autre")} aria-pressed={docType === "autre"}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                docType === "autre" ? "bg-ink font-semibold text-app" : "border border-dashed border-accent/40 bg-accent-50 text-accent"
+              }`}>
+              <Plus size={11} aria-hidden />
+              {t("tunnel.autreType")}
+            </button>
+          </div>
+          {docType === "autre" && (
+            <Input label={t("tunnel.autreTypeNom")} value={docLabel} onChange={(e) => setDocLabel(e.target.value)} name="doc_label_saisie" />
+          )}
+          <Button onClick={() => setStep("B")} disabled={docType === "autre" && !docLabel.trim()}>{t("tunnel.continuer")}</Button>
         </div>
       )}
 
@@ -105,7 +134,8 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
               </div>
             </div>
           )}
-          <label className="flex cursor-pointer flex-col items-center gap-1 rounded-card border border-dashed border-line p-6 text-center">
+          <label className="flex cursor-pointer flex-col items-center gap-1 rounded-[6px] border border-dashed border-line bg-surface-hover p-7 text-center">
+            <Camera size={22} className="mb-1 text-faint" aria-hidden />
             <span className="text-ink">{t("tunnel.bDepose")}</span>
             <span className="text-sm text-muted">{t("tunnel.bOu")}</span>
             <span className="text-xs text-muted">{t("tunnel.bContraintes")}</span>
@@ -113,8 +143,8 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
               data-testid="tunnel-file" className="sr-only"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) pick(f); }} />
             <span className="mt-2 inline-flex gap-2">
-              <span className="rounded-control border border-line px-3 py-1.5 text-sm">{t("tunnel.bPhoto")}</span>
-              <span className="rounded-control border border-line px-3 py-1.5 text-sm">{t("tunnel.bImporter")}</span>
+              <span className="inline-flex items-center gap-1.5 rounded-control border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink"><Camera size={13} aria-hidden />{t("tunnel.bPhoto")}</span>
+              <span className="inline-flex items-center gap-1.5 rounded-control border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink"><FileUp size={13} aria-hidden />{t("tunnel.bImporter")}</span>
             </span>
           </label>
         </div>
@@ -149,8 +179,24 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
           <Field name="issue_date" label={t("tunnel.dEmission")} def={fields.issue_date} auto={!manual && !!fields.issue_date} t={t} type="date" />
           <Field name="expiry_date" label={t("tunnel.dExpiration")} def={fields.expiry_date} auto={!manual && !!fields.expiry_date} t={t} type="date" />
           <Field name="issue_place" label={t("tunnel.dLieu")} def={fields.issue_place} auto={!manual && !!fields.issue_place} t={t} />
+
+          {/* verso optionnel (design : recto puis verso) — hors OCR, simple seconde face */}
+          <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[6px] border border-dashed border-line bg-surface-hover px-3.5 py-3">
+            <span className="flex flex-col">
+              <span className="text-sm font-medium text-ink">{t("tunnel.versoOptionnel")}</span>
+              <span className="text-xs text-muted">{verso ? verso.name : t("tunnel.bContraintes")}</span>
+              {versoError && <span role="alert" className="text-xs text-danger">{t("tunnel.bNonSupporte")}</span>}
+            </span>
+            <input type="file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+              data-testid="tunnel-verso" className="sr-only"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) pickVerso(f); }} />
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold ${verso ? "border border-current/20 bg-kpi-green-bg text-kpi-green" : "border border-line bg-surface text-muted"}`}>
+              {verso ? `${t("doc.verso")} ✓` : t("doc.verso")}
+            </span>
+          </label>
+
           {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
-          <Button type="submit" pending={pending}>{t("tunnel.dEnregistrer")}</Button>
+          <Button type="submit" pending={pending} className="w-full py-3.5 shadow-[0_6px_18px_rgba(37,99,235,.3)]">{t("tunnel.dEnregistrer")}</Button>
         </form>
       )}
     </div>

@@ -626,8 +626,10 @@ export type Database = {
       family_documents: {
         Row: {
           contenu_chiffre: string
+          contenu_chiffre_verso: string | null
           country: string | null
           created_at: string
+          doc_label: string | null
           doc_number: string | null
           doc_type: string
           expiry_date: string | null
@@ -637,15 +639,20 @@ export type Database = {
           issue_place: string | null
           member_id: string
           mime_type: string
+          mime_type_verso: string | null
           ocr_raw: Json | null
+          reminder: boolean
           taille: number
+          taille_verso: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           contenu_chiffre: string
+          contenu_chiffre_verso?: string | null
           country?: string | null
           created_at?: string
+          doc_label?: string | null
           doc_number?: string | null
           doc_type: string
           expiry_date?: string | null
@@ -655,15 +662,20 @@ export type Database = {
           issue_place?: string | null
           member_id: string
           mime_type: string
+          mime_type_verso?: string | null
           ocr_raw?: Json | null
+          reminder?: boolean
           taille: number
+          taille_verso?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           contenu_chiffre?: string
+          contenu_chiffre_verso?: string | null
           country?: string | null
           created_at?: string
+          doc_label?: string | null
           doc_number?: string | null
           doc_type?: string
           expiry_date?: string | null
@@ -673,8 +685,11 @@ export type Database = {
           issue_place?: string | null
           member_id?: string
           mime_type?: string
+          mime_type_verso?: string | null
           ocr_raw?: Json | null
+          reminder?: boolean
           taille?: number
+          taille_verso?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -697,8 +712,11 @@ export type Database = {
       }
       family_members: {
         Row: {
+          address: string | null
+          address_inherit: boolean
           avatar_color: string | null
           birth_date: string | null
+          birth_place: string | null
           circle: string
           created_at: string
           email: string | null
@@ -711,8 +729,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address?: string | null
+          address_inherit?: boolean
           avatar_color?: string | null
           birth_date?: string | null
+          birth_place?: string | null
           circle?: string
           created_at?: string
           email?: string | null
@@ -725,8 +746,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address?: string | null
+          address_inherit?: boolean
           avatar_color?: string | null
           birth_date?: string | null
+          birth_place?: string | null
           circle?: string
           created_at?: string
           email?: string | null

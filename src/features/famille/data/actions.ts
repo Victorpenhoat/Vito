@@ -6,7 +6,7 @@ import { redirect } from "@/lib/i18n/routing";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
-import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchema } from "../domain/schemas";
+import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchema, type ProcheInput } from "../domain/schemas";
 import { encryptDocument } from "@/lib/crypto/documents";
 import { getDocumentKey } from "@/lib/crypto/documentKey";
 import type { Json } from "@/types/database.types";
@@ -155,16 +155,37 @@ function clean(v: FormDataEntryValue | null): string | null {
   return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
 }
 
-export async function creerProche(_prev: unknown, formData: FormData) {
-  const parsed = procheInputSchema.safeParse({
+function parseProche(formData: FormData) {
+  return procheInputSchema.safeParse({
     first_name: formData.get("first_name"),
     last_name: formData.get("last_name"),
     relation: formData.get("relation"),
-    circle: formData.get("circle"),
     phone: formData.get("phone") ?? "",
     email: formData.get("email") ?? "",
     birth_date: formData.get("birth_date") ?? "",
+    birth_place: formData.get("birth_place") ?? "",
+    address: formData.get("address") ?? "",
+    address_inherit: formData.get("address_inherit") === "on",
   });
+}
+
+// Valeurs communes insert/update (circle : défaut DB 'proche', plus exposé au formulaire)
+function procheValues(p: ProcheInput, formData: FormData) {
+  return {
+    first_name: p.first_name,
+    last_name: p.last_name,
+    relation: p.relation,
+    phone: clean(formData.get("phone")),
+    email: clean(formData.get("email")),
+    birth_date: clean(formData.get("birth_date")),
+    birth_place: clean(formData.get("birth_place")),
+    address: clean(formData.get("address")),
+    address_inherit: p.address_inherit,
+  };
+}
+
+export async function creerProche(_prev: unknown, formData: FormData) {
+  const parsed = parseProche(formData);
   if (!parsed.success) return { error: "Champs invalides" };
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
@@ -174,18 +195,17 @@ export async function creerProche(_prev: unknown, formData: FormData) {
     .from("family_members")
     .insert({
       user_id: uid,
-      first_name: p.first_name,
-      last_name: p.last_name,
-      relation: p.relation,
-      circle: p.circle,
-      phone: clean(formData.get("phone")),
-      email: clean(formData.get("email")),
-      birth_date: clean(formData.get("birth_date")),
+      ...procheValues(p, formData),
       avatar_color: avatarColor(`${p.first_name} ${p.last_name}`),
     })
     .select("id")
     .single();
-  if (error || !data) { logActionError("famille.creerProche", error); return { error: "Création échouée" }; }
+  if (error || !data) {
+    // index partiel family_members_moi_unique : une seule fiche « Moi » par compte
+    if (error?.code === "23505") return { error: "Vous avez déjà une fiche « Moi »" };
+    logActionError("famille.creerProche", error);
+    return { error: "Création échouée" };
+  }
   revalidatePath("/famille");
   const locale = await getLocale();
   redirect({ href: `/famille/proches/${data.id}`, locale });
@@ -194,34 +214,22 @@ export async function creerProche(_prev: unknown, formData: FormData) {
 export async function modifierProche(_prev: unknown, formData: FormData) {
   const id = formData.get("id");
   if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
-  const parsed = procheInputSchema.safeParse({
-    first_name: formData.get("first_name"),
-    last_name: formData.get("last_name"),
-    relation: formData.get("relation"),
-    circle: formData.get("circle"),
-    phone: formData.get("phone") ?? "",
-    email: formData.get("email") ?? "",
-    birth_date: formData.get("birth_date") ?? "",
-  });
+  const parsed = parseProche(formData);
   if (!parsed.success) return { error: "Champs invalides" };
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const p = parsed.data;
   const { data, error } = await supabase
     .from("family_members")
-    .update({
-      first_name: p.first_name,
-      last_name: p.last_name,
-      relation: p.relation,
-      circle: p.circle,
-      phone: clean(formData.get("phone")),
-      email: clean(formData.get("email")),
-      birth_date: clean(formData.get("birth_date")),
-    })
+    .update(procheValues(p, formData))
     .eq("id", id)
     .select("id")
     .maybeSingle();
-  if (error) { logActionError("famille.modifierProche", error); return { error: "Modification échouée" }; }
+  if (error) {
+    if (error.code === "23505") return { error: "Vous avez déjà une fiche « Moi »" };
+    logActionError("famille.modifierProche", error);
+    return { error: "Modification échouée" };
+  }
   if (!data) return { error: "Introuvable" };
   revalidatePath("/famille");
   revalidatePath(`/famille/proches/${id}`);
@@ -251,8 +259,17 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
   if (!DOC_ALLOWED.includes(file.type)) return { error: "Type non supporté" };
   if (file.size <= 0 || file.size > DOC_MAX) return { error: "Fichier vide ou trop volumineux (max 10 Mo)" };
 
+  // Verso optionnel (refonte Cercle) : mêmes gardes que le recto, 10 Mo par face.
+  const versoEntry = formData.get("file_verso");
+  const verso = versoEntry instanceof File && versoEntry.size > 0 ? versoEntry : null;
+  if (verso) {
+    if (!DOC_ALLOWED.includes(verso.type)) return { error: "Type non supporté" };
+    if (verso.size > DOC_MAX) return { error: "Fichier vide ou trop volumineux (max 10 Mo)" };
+  }
+
   const parsed = documentInputSchema.safeParse({
     doc_type: formData.get("docType"),
+    doc_label: formData.get("doc_label") ?? "",
     doc_number: formData.get("doc_number") ?? "",
     country: formData.get("country") ?? "",
     holder_name: formData.get("holder_name") ?? "",
@@ -270,8 +287,11 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
   if (!member) return { error: "Proche introuvable" };
 
   let chiffre: string;
+  let chiffreVerso: string | null = null;
   try {
-    chiffre = encryptDocument(Buffer.from(await file.arrayBuffer()), getDocumentKey()).toString("base64");
+    const key = getDocumentKey();
+    chiffre = encryptDocument(Buffer.from(await file.arrayBuffer()), key).toString("base64");
+    if (verso) chiffreVerso = encryptDocument(Buffer.from(await verso.arrayBuffer()), key).toString("base64");
   } catch {
     return { error: "Chiffrement indisponible" };
   }
@@ -285,6 +305,7 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     user_id: uid,
     member_id: memberId,
     doc_type: p.doc_type,
+    doc_label: p.doc_type === "autre" ? clean(formData.get("doc_label")) : null,
     doc_number: clean(formData.get("doc_number")),
     country: clean(formData.get("country")),
     holder_name: clean(formData.get("holder_name")),
@@ -294,10 +315,90 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     contenu_chiffre: chiffre,
     mime_type: file.type,
     taille: file.size,
+    contenu_chiffre_verso: chiffreVerso,
+    mime_type_verso: verso ? verso.type : null,
+    taille_verso: verso ? verso.size : null,
     ocr_raw,
   });
   if (error) { logActionError("famille.creerDocument", error); return { error: "Enregistrement échoué" }; }
   revalidatePath(`/famille/proches/${memberId}`);
   const locale = await getLocale();
   redirect({ href: `/famille/proches/${memberId}`, locale });
+}
+
+export async function modifierDocument(_prev: unknown, formData: FormData) {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
+  const parsed = documentInputSchema.safeParse({
+    doc_type: formData.get("docType"),
+    doc_label: formData.get("doc_label") ?? "",
+    doc_number: formData.get("doc_number") ?? "",
+    country: formData.get("country") ?? "",
+    holder_name: formData.get("holder_name") ?? "",
+    issue_date: formData.get("issue_date") ?? "",
+    expiry_date: formData.get("expiry_date") ?? "",
+    issue_place: formData.get("issue_place") ?? "",
+  });
+  if (!parsed.success) return { error: "Champs invalides" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const p = parsed.data;
+  const { data, error } = await supabase
+    .from("family_documents")
+    .update({
+      doc_type: p.doc_type,
+      doc_label: p.doc_type === "autre" ? clean(formData.get("doc_label")) : null,
+      doc_number: clean(formData.get("doc_number")),
+      country: clean(formData.get("country")),
+      holder_name: clean(formData.get("holder_name")),
+      issue_date: clean(formData.get("issue_date")),
+      expiry_date: clean(formData.get("expiry_date")),
+      issue_place: clean(formData.get("issue_place")),
+    })
+    .eq("id", id)
+    .select("member_id")
+    .maybeSingle();
+  if (error) { logActionError("famille.modifierDocument", error); return { error: "Modification échouée" }; }
+  if (!data) return { error: "Introuvable" };
+  revalidatePath(`/famille/proches/${data.member_id}`);
+  const locale = await getLocale();
+  redirect({ href: `/famille/proches/${data.member_id}/documents/${id}`, locale });
+}
+
+export async function supprimerDocument(_prev: unknown, formData: FormData) {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  // member_id vient du returning (RLS) — pas de confiance dans le formulaire
+  const { data, error } = await supabase
+    .from("family_documents")
+    .delete()
+    .eq("id", id)
+    .select("member_id")
+    .maybeSingle();
+  if (error) { logActionError("famille.supprimerDocument", error); return { error: "Suppression échouée" }; }
+  if (!data) return { error: "Introuvable" };
+  revalidatePath(`/famille/proches/${data.member_id}`);
+  const locale = await getLocale();
+  redirect({ href: `/famille/proches/${data.member_id}`, locale });
+}
+
+export async function toggleReminder(_prev: unknown, formData: FormData) {
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return { error: "Entrée invalide" };
+  // valeur cible explicite (pas de flip serveur : évite un read-then-write)
+  const reminder = formData.get("reminder") === "true";
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { data, error } = await supabase
+    .from("family_documents")
+    .update({ reminder })
+    .eq("id", id)
+    .select("member_id")
+    .maybeSingle();
+  if (error) { logActionError("famille.toggleReminder", error); return { error: "Modification échouée" }; }
+  if (!data) return { error: "Introuvable" };
+  revalidatePath(`/famille/proches/${data.member_id}/documents/${id}`);
+  return { ok: true as const };
 }

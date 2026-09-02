@@ -1,61 +1,44 @@
+import { Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
-import { getMaFamille, getFamilleRestos, getProches } from "@/features/famille/data/queries";
-import { FamilleForm } from "@/features/famille/ui/FamilleForm";
-import { InviteForm } from "@/features/famille/ui/InviteForm";
-import { MembresList } from "@/features/famille/ui/MembresList";
-import { FamilleRestos } from "@/features/famille/ui/FamilleRestos";
-import { ProchesList } from "@/features/famille/ui/ProchesList";
+import { getProches } from "@/features/famille/data/queries";
+import { CercleList } from "@/features/famille/ui/CercleList";
 import { ProchesEmptyState } from "@/features/famille/ui/ProchesEmptyState";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
-import { SectionLabel } from "@/features/shared/ui/SectionLabel";
-import { Button } from "@/features/shared/ui/Button";
 
+// Onglet Cercle (design Onglet_Cercle, écran 1) : carnet de personnes.
+// Le « Foyer partagé » (comptes) vit désormais sur /famille/foyer.
 export default async function FamillePage() {
   const t = await getTranslations("famille");
   const proches = await getProches();
-  const ma = await getMaFamille();
+
+  let userName: string | null = null;
+  if (proches.length === 0) {
+    const auth = await getCachedUser();
+    if (auth.user) {
+      const supabase = await createServerSupabase();
+      const { data } = await supabase.from("profiles").select("display_name").eq("id", auth.user.id).maybeSingle();
+      userName = data?.display_name ?? null;
+    }
+  }
 
   return (
-    <main className="flex flex-col gap-8 p-4 md:p-8">
-      {/* Le CTA vit dans le slot action du header — un SectionLabel « Mes proches » sous le
-          titre « Mes proches » dupliquait le même libellé trois fois avec les groupes de la liste. */}
+    <main className="flex min-h-full flex-col gap-4 p-4 md:p-8">
       <PageHeader
         eyebrow={t("eyebrow")}
-        title={t("proches.titre")}
-        action={<Link href="/famille/proches/nouveau"><Button className="text-sm py-1.5">{t("proches.ajouter")}</Button></Link>}
+        title={t("cercleTitre")}
+        action={
+          <Link
+            href="/famille/proches/nouveau"
+            aria-label={t("proches.ajouter")}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-white shadow-[0_6px_16px_rgba(37,99,235,.35)] transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            <Plus size={18} aria-hidden />
+          </Link>
+        }
       />
-
-      {/* Répertoire de proches (héros) */}
-      <section className="flex flex-col gap-4">
-        {proches.length === 0 ? <ProchesEmptyState /> : <ProchesList proches={proches} />}
-      </section>
-
-      {/* Foyer partagé (bloc réutilisant l'existant) */}
-      <section className="flex flex-col gap-4 border-t border-line pt-8">
-        <SectionLabel>{t("foyerPartage")}</SectionLabel>
-        {!ma ? <FamilleForm /> : <FoyerPartage ma={ma} />}
-      </section>
+      {proches.length === 0 ? <ProchesEmptyState userName={userName} /> : <CercleList proches={proches} />}
     </main>
-  );
-}
-
-type MaFamille = NonNullable<Awaited<ReturnType<typeof getMaFamille>>>;
-
-async function FoyerPartage({ ma }: { ma: MaFamille }) {
-  const t = await getTranslations("famille");
-  const restos = await getFamilleRestos(ma.famille.id);
-  const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
-  const currentProfileId = auth.user?.id ?? "";
-  return (
-    <div className="flex flex-col gap-4">
-      <h2 className="font-serif text-2xl text-ink">{ma.famille.nom}</h2>
-      <MembresList membres={ma.membres} isOwner={ma.isOwner} currentProfileId={currentProfileId} />
-      {ma.isOwner && <InviteForm />}
-      <SectionLabel>{t("restos")}</SectionLabel>
-      <FamilleRestos restos={restos} />
-    </div>
   );
 }

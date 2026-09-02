@@ -251,15 +251,23 @@
     "ajouterFamille": "Aggiungi alla mia famiglia",
     "vide": "Nessun ristorante condiviso per ora.",
     "pasDeFamille": "Nessuna famiglia condivisa per ora. Creane una per condividere i tuoi indirizzi con i tuoi cari.",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
-    "eyebrow": "Il mio nucleo",
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
+    "eyebrow": "Il mio taccuino",
     "relations": {
       "conjoint": "Coniuge",
       "enfant": "Figlio",
       "parent": "Genitore",
       "beau_parent": "Suocero",
       "ami": "Amico",
-      "autre": "Altro"
+      "autre": "Altro",
+      "moi": "Io",
+      "fille": "Figlia",
+      "fils": "Figlio",
+      "pere": "Padre",
+      "mere": "Madre"
     },
     "docTypes": {
       "passeport": "Passaporto",
@@ -268,17 +276,79 @@
       "permis_bateau": "Patente nautica",
       "visa": "Visto",
       "titre_sejour": "Permesso di soggiorno",
-      "autre": "Altro"
+      "autre": "Altro",
+      "securite_sociale": "Previdenza sociale"
     },
     "expiry": {
       "valide": "Valido",
       "expireDans": "Scade tra {n} mesi",
-      "expire": "Scaduto"
+      "expire": "Scaduto",
+      "valideAnnee": "Valido · {annee}",
+      "expireBientotDoc": "{doc} scade presto",
+      "expireDoc": "{doc} scaduto"
     },
-    "proches": { "titre": "I miei cari", "ajouter": "Aggiungi una persona", "vide": "Ancora nessuno", "videTexte": "Aggiungi le persone di cui conservi i documenti a portata di mano.", "documentsCount": "{n, plural, =0 {Nessun documento} one {# documento} other {# documenti}}" },
-    "circles": { "proche": "Famiglia stretta", "elargie": "Famiglia allargata", "amis": "Amici" },
-    "fiche": { "contacts": "Contatti", "naissance": "Nascita", "documents": "Documenti", "aucunDocument": "Nessun documento registrato.", "voirDocument": "Vedi il documento", "modifier": "Modifica", "revelerNumero": "Mostra il numero", "apercu": "Anteprima" },
-    "form": { "prenom": "Nome", "nom": "Cognome", "relation": "Relazione", "cercle": "Cerchia", "telephone": "Telefono", "email": "E-mail", "naissance": "Data di nascita", "enregistrer": "Salva", "supprimer": "Elimina", "confirmSuppr": "Eliminare questa persona e i suoi documenti?" },
+    "proches": {
+      "titre": "I miei cari",
+      "ajouter": "Aggiungi una persona",
+      "vide": "La tua cerchia è vuota",
+      "videTexte": "Aggiungi le persone a te vicine per ritrovare i loro dati e documenti in pochi secondi.",
+      "documentsCount": "{n, plural, =0 {Nessun documento} one {# documento} other {# documenti}}",
+      "rechercher": "Cerca per nome o parentela",
+      "effacer": "Cancella la ricerca",
+      "epingle": "Fissato",
+      "ajouterPersonne": "Aggiungi una persona",
+      "nouveauTitre": "Nuovo membro",
+      "aucunResultat": "Nessun risultato",
+      "aucunResultatTexte": "Nessuno nella tua cerchia corrisponde a «{q}».",
+      "ajouterAuCercle": "Aggiungi «{q}» alla cerchia",
+      "foyerLien": "Nucleo condiviso"
+    },
+    "circles": {
+      "proche": "Famiglia stretta",
+      "elargie": "Famiglia allargata",
+      "amis": "Amici"
+    },
+    "fiche": {
+      "contacts": "Contatti",
+      "naissance": "Nascita",
+      "documents": "Documenti",
+      "aucunDocument": "Nessun documento registrato.",
+      "voirDocument": "Vedi il documento",
+      "modifier": "Modifica",
+      "revelerNumero": "Mostra il numero",
+      "apercu": "Anteprima",
+      "contact": "Contatto",
+      "identite": "Identità",
+      "docsComplementaires": "Altri documenti",
+      "age": "{n, plural, one {# anno} other {# anni}}",
+      "appeler": "Chiama",
+      "message": "Messaggio",
+      "email": "E-mail",
+      "itineraire": "Indicazioni",
+      "heriteeFoyer": "Ereditato dal nucleo",
+      "copier": "Copia",
+      "masquerNumero": "Nascondi il numero",
+      "aucunDocTitre": "Nessun documento",
+      "aucunDocTexte": "Aggiungi un primo documento d'identità per averlo sempre a portata di mano."
+    },
+    "form": {
+      "prenom": "Nome",
+      "nom": "Cognome",
+      "relation": "Relazione",
+      "cercle": "Cerchia",
+      "telephone": "Telefono",
+      "email": "E-mail",
+      "naissance": "Data di nascita",
+      "enregistrer": "Salva",
+      "supprimer": "Elimina",
+      "confirmSuppr": "Eliminare questa persona e i suoi documenti?",
+      "lieuNaissance": "Luogo di nascita",
+      "adresse": "Indirizzo postale",
+      "heriterFoyer": "Eredita dal nucleo",
+      "optionnel": "Facoltativo",
+      "lienParente": "Parentela",
+      "annuler": "Annulla"
+    },
     "tunnel": {
       "ajouterDocument": "Aggiungi un documento",
       "titre": "Nuovo documento",
@@ -317,7 +387,41 @@
         "document": "Documento",
         "lecture": "Lettura",
         "verification": "Verifica"
-      }
+      },
+      "autreType": "Altro tipo…",
+      "autreTypeNom": "Nome del documento",
+      "versoOptionnel": "Retro (facoltativo)"
+    },
+    "cercleTitre": "Cerchia",
+    "eyebrowFoyer": "La mia famiglia",
+    "groupes": {
+      "foyer": "Il mio nucleo",
+      "parents": "Genitori",
+      "autres": "Amici e altri"
+    },
+    "docTypesShort": {
+      "passeport": "Passaporto",
+      "carte_identite": "CI",
+      "permis_conduire": "Patente",
+      "securite_sociale": "Prev. sociale",
+      "permis_bateau": "Patente nautica",
+      "visa": "Visto",
+      "titre_sejour": "Permesso di soggiorno",
+      "autre": "Documento"
+    },
+    "doc": {
+      "numero": "Numero",
+      "emission": "Rilascio",
+      "expiration": "Scadenza",
+      "autorite": "Autorità",
+      "pays": "Paese",
+      "recto": "Fronte",
+      "verso": "Retro",
+      "rappelTitre": "Promemoria di scadenza",
+      "rappelTexte": "Notifica 6 mesi prima della scadenza",
+      "partager": "Condividi la scansione",
+      "supprimerConfirm": "Eliminare questo documento?",
+      "modifierTitre": "Modifica il documento"
     }
   },
   "agence": {
@@ -354,7 +458,7 @@
     "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
   },
   "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
-  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Famiglia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro", "hotels": "Hotel", "group": { "carnet": "Taccuino", "voyages": "Viaggi", "cercle": "Cerchia" } },
+  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Cerchia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro", "hotels": "Hotel", "group": { "carnet": "Taccuino", "voyages": "Viaggi", "cercle": "Cerchia" } },
   "places": {
     "favoris": "Preferiti",
     "recommandes": "Consigliati",
