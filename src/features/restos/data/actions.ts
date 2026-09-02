@@ -3,24 +3,27 @@ import { revalidatePath } from "next/cache";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
+import type { SearchOpts } from "@/lib/services/places/types";
 import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
 import {
   addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema, toggleArchiveSchema,
   marquerVisiteSchema, changerStatutSchema, setOrigineSchema,
 } from "../domain/schemas";
 
-export async function searchPlaces(query: string) {
+export async function searchPlaces(query: string, opts?: SearchOpts) {
   if (!query.trim()) return [];
   // Garde d'auth : searchPlaces appelle l'API Places (payante) — on évite l'abus anonyme.
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return [];
-  return getPlacesProvider().search(query);
+  return getPlacesProvider().search(query, opts);
 }
 
 async function addPlace(category: "resto" | "hotel", formData: FormData) {
   const parsed = addRestoSchema.safeParse({ placeId: formData.get("placeId") });
   if (!parsed.success) return { error: "Place invalide" };
+  // statut v2 optionnel (recherche externe : « le statut proposé suit le sous-onglet »)
+  const statutV2 = formData.get("statutV2");
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
@@ -31,9 +34,13 @@ async function addPlace(category: "resto" | "hotel", formData: FormData) {
     p: { ...input, enriched_at: new Date().toISOString() },
   });
   if (rpcErr || !etabId) { logActionError("restos.searchPlaces", rpcErr); return { error: "Enregistrement échoué" }; }
+  const extra =
+    statutV2 === "favori" ? { is_favorite: true }
+    : statutV2 === "teste" ? { statut: "visite" as const }
+    : {};
   const { error: itemErr } = await supabase
     .from("liste_items")
-    .upsert({ user_id: auth.user.id, etablissement_id: etabId }, { onConflict: "user_id,etablissement_id" });
+    .upsert({ user_id: auth.user.id, etablissement_id: etabId, ...extra }, { onConflict: "user_id,etablissement_id" });
   if (itemErr) { logActionError("restos.searchPlaces", itemErr); return { error: "Ajout à la liste échoué" }; }
   revalidatePath(category === "hotel" ? "/hotels" : "/restos");
   return {};

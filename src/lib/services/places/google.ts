@@ -1,27 +1,63 @@
-import type { PlacesProvider, PlaceResult, PlaceSummary } from "./types";
+import type { PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
 
 // Places API (New). Conforme ToS : on ne stocke jamais les bytes des photos.
 export class GooglePlacesProvider implements PlacesProvider {
   constructor(private readonly apiKey: string) {}
 
-  async search(query: string): Promise<PlaceSummary[]> {
+  async search(query: string, opts?: SearchOpts): Promise<PlaceSummary[]> {
+    // FieldMask de base (SKU Essentials). Les enrichissements du design v2
+    // (position, ouvert maintenant, photo) ne sont demandés QUE si des opts
+    // sont fournies — ils font passer la recherche au SKU Text Search Pro.
+    const enrichi = opts !== undefined;
+    const fieldMask = enrichi
+      ? "places.id,places.displayName,places.formattedAddress,places.location,places.currentOpeningHours.openNow,places.photos,places.types"
+      : "places.id,places.displayName,places.formattedAddress";
+    const body: Record<string, unknown> = { textQuery: query, languageCode: "fr" };
+    if (opts?.openNow) body.openNow = true;
+    if (opts?.priceLevels?.length) body.priceLevels = opts.priceLevels.map(intToPriceLevel).filter(Boolean);
+    if (opts?.includedType) body.includedType = opts.includedType;
+    if (opts?.center && opts.radiusKm) {
+      body.locationBias = {
+        circle: {
+          center: { latitude: opts.center.lat, longitude: opts.center.lng },
+          radius: Math.min(opts.radiusKm, 50) * 1000,
+        },
+      };
+    }
     const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": this.apiKey,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress",
+        "X-Goog-FieldMask": fieldMask,
       },
-      body: JSON.stringify({ textQuery: query, languageCode: "fr" }),
+      body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`Places search ${res.status}`);
     const json = (await res.json()) as {
-      places?: { id: string; displayName?: { text: string }; formattedAddress?: string }[];
+      places?: {
+        id: string;
+        displayName?: { text: string };
+        formattedAddress?: string;
+        location?: { latitude?: number; longitude?: number };
+        currentOpeningHours?: { openNow?: boolean };
+        photos?: { name: string }[];
+        types?: string[];
+      }[];
     };
     return (json.places ?? []).map((p) => ({
       placeId: p.id,
       nom: p.displayName?.text ?? "",
       adresse: p.formattedAddress ?? null,
+      ...(enrichi
+        ? {
+            lat: p.location?.latitude ?? null,
+            lng: p.location?.longitude ?? null,
+            openNow: p.currentOpeningHours?.openNow ?? null,
+            photoRef: p.photos?.[0]?.name ?? null,
+            types: p.types ?? [],
+          }
+        : {}),
     }));
   }
 
@@ -75,4 +111,14 @@ function priceLevelToInt(level: string | undefined): number | null {
     PRICE_LEVEL_VERY_EXPENSIVE: 4,
   };
   return level && level in map ? map[level]! : null;
+}
+
+function intToPriceLevel(n: number): string | null {
+  const map: Record<number, string> = {
+    1: "PRICE_LEVEL_INEXPENSIVE",
+    2: "PRICE_LEVEL_MODERATE",
+    3: "PRICE_LEVEL_EXPENSIVE",
+    4: "PRICE_LEVEL_VERY_EXPENSIVE",
+  };
+  return map[n] ?? null;
 }

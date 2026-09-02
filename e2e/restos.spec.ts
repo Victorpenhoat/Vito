@@ -23,7 +23,9 @@ test("ajouter un resto via « Trouver », puis marquer une visite depuis sa fich
   const coin = page.getByTestId("search-result").filter({ hasText: "Le Bistrot du Coin" }).first();
   await expect(coin).toBeVisible();
   if ((await coin.getByTestId("result-added").count()) === 0) {
-    await coin.getByRole("button").click();
+    // .first() : la ligne externe v2 porte deux boutons (ajout au statut par
+    // défaut + menu ▾ de choix de statut) — le premier ajoute directement.
+    await coin.getByRole("button").first().click();
   }
   // Le badge « Ajouté » n'apparaît qu'après résolution de l'action serveur (commit garanti)
   await expect(coin.getByTestId("result-added")).toBeVisible({ timeout: 15_000 });

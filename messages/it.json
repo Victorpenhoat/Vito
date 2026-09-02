@@ -173,6 +173,25 @@
       "supprimer": "Elimina tag",
       "supprimerConfirm": "{n} indirizzo/i perderanno «{label}». Eliminare?",
       "ajouterVolee": "+ Nuovo tag"
+    },
+    "recherche": {
+      "dejaDansVito": "Già in Vito",
+      "resultatsExternes": "Risultati esterni",
+      "ouvert": "aperto",
+      "ouvertMnt": "Aperto ora",
+      "prix": "Prezzo",
+      "tousPrix": "Tutti i prezzi",
+      "cuisine": "Cucina",
+      "toutesCuisines": "Tutte le cucine",
+      "cuisines": {
+        "italian_restaurant": "Italiana",
+        "japanese_restaurant": "Giapponese",
+        "french_restaurant": "Francese",
+        "pizza_restaurant": "Pizza"
+      },
+      "rayon": "< 2 km",
+      "choisirStatut": "Scegli lo stato",
+      "statutSuit": "Lo stato proposto segue la sotto-scheda corrente"
     }
   },
   "voyages": {
