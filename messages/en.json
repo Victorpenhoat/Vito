@@ -251,15 +251,23 @@
     "ajouterFamille": "Add to my family",
     "vide": "No shared restaurants yet.",
     "pasDeFamille": "No shared household yet. Create one to share your addresses with your loved ones.",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
-    "eyebrow": "My household",
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
+    "eyebrow": "My journal",
     "relations": {
       "conjoint": "Partner",
       "enfant": "Child",
       "parent": "Parent",
       "beau_parent": "In-law",
       "ami": "Friend",
-      "autre": "Other"
+      "autre": "Other",
+      "moi": "Me",
+      "fille": "Daughter",
+      "fils": "Son",
+      "pere": "Father",
+      "mere": "Mother"
     },
     "docTypes": {
       "passeport": "Passport",
@@ -268,17 +276,79 @@
       "permis_bateau": "Boat licence",
       "visa": "Visa",
       "titre_sejour": "Residence permit",
-      "autre": "Other"
+      "autre": "Other",
+      "securite_sociale": "Social security"
     },
     "expiry": {
       "valide": "Valid",
       "expireDans": "Expires in {n} months",
-      "expire": "Expired"
+      "expire": "Expired",
+      "valideAnnee": "Valid · {annee}",
+      "expireBientotDoc": "{doc} expires soon",
+      "expireDoc": "{doc} expired"
     },
-    "proches": { "titre": "My circle", "ajouter": "Add a person", "vide": "No one yet", "videTexte": "Add the people whose documents you keep close at hand.", "documentsCount": "{n, plural, =0 {No documents} one {# document} other {# documents}}" },
-    "circles": { "proche": "Close family", "elargie": "Extended family", "amis": "Friends" },
-    "fiche": { "contacts": "Contacts", "naissance": "Birth", "documents": "Documents", "aucunDocument": "No document on file.", "voirDocument": "View document", "modifier": "Edit", "revelerNumero": "Reveal number", "apercu": "Preview" },
-    "form": { "prenom": "First name", "nom": "Last name", "relation": "Relationship", "cercle": "Circle", "telephone": "Phone", "email": "Email", "naissance": "Date of birth", "enregistrer": "Save", "supprimer": "Delete", "confirmSuppr": "Delete this person and their documents?" },
+    "proches": {
+      "titre": "My circle",
+      "ajouter": "Add a person",
+      "vide": "Your circle is empty",
+      "videTexte": "Add the people around you to find their details and documents in seconds.",
+      "documentsCount": "{n, plural, =0 {No documents} one {# document} other {# documents}}",
+      "rechercher": "Search by name or relationship",
+      "effacer": "Clear search",
+      "epingle": "Pinned",
+      "ajouterPersonne": "Add someone",
+      "nouveauTitre": "New member",
+      "aucunResultat": "No results",
+      "aucunResultatTexte": "No one in your circle matches “{q}”.",
+      "ajouterAuCercle": "Add “{q}” to the circle",
+      "foyerLien": "Shared household"
+    },
+    "circles": {
+      "proche": "Close family",
+      "elargie": "Extended family",
+      "amis": "Friends"
+    },
+    "fiche": {
+      "contacts": "Contacts",
+      "naissance": "Birth",
+      "documents": "Documents",
+      "aucunDocument": "No document on file.",
+      "voirDocument": "View document",
+      "modifier": "Edit",
+      "revelerNumero": "Reveal number",
+      "apercu": "Preview",
+      "contact": "Contact",
+      "identite": "Identity",
+      "docsComplementaires": "Other documents",
+      "age": "{n, plural, one {# year old} other {# years old}}",
+      "appeler": "Call",
+      "message": "Message",
+      "email": "Email",
+      "itineraire": "Directions",
+      "heriteeFoyer": "Inherited from household",
+      "copier": "Copy",
+      "masquerNumero": "Hide number",
+      "aucunDocTitre": "No documents",
+      "aucunDocTexte": "Add a first identity document to keep it always at hand."
+    },
+    "form": {
+      "prenom": "First name",
+      "nom": "Last name",
+      "relation": "Relationship",
+      "cercle": "Circle",
+      "telephone": "Phone",
+      "email": "Email",
+      "naissance": "Date of birth",
+      "enregistrer": "Save",
+      "supprimer": "Delete",
+      "confirmSuppr": "Delete this person and their documents?",
+      "lieuNaissance": "Birthplace",
+      "adresse": "Postal address",
+      "heriterFoyer": "Inherit from household",
+      "optionnel": "Optional",
+      "lienParente": "Relationship",
+      "annuler": "Cancel"
+    },
     "tunnel": {
       "ajouterDocument": "Add a document",
       "titre": "New document",
@@ -317,7 +387,41 @@
         "document": "Document",
         "lecture": "Reading",
         "verification": "Review"
-      }
+      },
+      "autreType": "Other type…",
+      "autreTypeNom": "Document name",
+      "versoOptionnel": "Back (optional)"
+    },
+    "cercleTitre": "Circle",
+    "eyebrowFoyer": "My household",
+    "groupes": {
+      "foyer": "My household",
+      "parents": "Parents",
+      "autres": "Friends & others"
+    },
+    "docTypesShort": {
+      "passeport": "Passport",
+      "carte_identite": "ID card",
+      "permis_conduire": "License",
+      "securite_sociale": "SSN",
+      "permis_bateau": "Boat license",
+      "visa": "Visa",
+      "titre_sejour": "Residence permit",
+      "autre": "Document"
+    },
+    "doc": {
+      "numero": "Number",
+      "emission": "Issued",
+      "expiration": "Expires",
+      "autorite": "Authority",
+      "pays": "Country",
+      "recto": "Front",
+      "verso": "Back",
+      "rappelTitre": "Expiry reminder",
+      "rappelTexte": "Notification 6 months before expiry",
+      "partager": "Share scan",
+      "supprimerConfirm": "Delete this document?",
+      "modifierTitre": "Edit document"
     }
   },
   "agence": {
@@ -354,7 +458,7 @@
     "error": { "title": "Something went wrong", "retry": "Try again" }
   },
   "shell": { "theme": "Toggle theme (light / dark)", "close": "Close", "language": "Language", "settings": "Settings", "menu": "Menu" },
-  "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Family", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "hotels": "Hotels", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
+  "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Circle", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "hotels": "Hotels", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
   "places": {
     "favoris": "Favourites",
     "recommandes": "Recommended",

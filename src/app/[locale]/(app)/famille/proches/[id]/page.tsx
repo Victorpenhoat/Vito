@@ -8,7 +8,7 @@ export default async function FichePersonnePage({ params }: { params: Promise<{ 
   if (!data) notFound();
   return (
     <main className="flex flex-col gap-6 p-4 md:p-8">
-      <FichePersonne proche={data.proche} documents={data.documents} />
+      <FichePersonne proche={data.proche} documents={data.documents} foyerAddress={data.foyerAddress} />
     </main>
   );
 }

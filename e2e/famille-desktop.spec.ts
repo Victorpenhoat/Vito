@@ -21,7 +21,9 @@ test.describe("desktop", () => {
     await railLink.first().click();
     await expect(page).toHaveURL(/\/famille\/proches\//);
     await expectVisibleWithReload(page, page.getByRole("heading", { name: "Camille Durand" }));
-    // aperçu : le document seedé est un PDF -> <iframe> d'aperçu
+    // aperçu : depuis la refonte Cercle, le scan s'affiche sur le détail du document
+    await page.getByTestId("document-row").getByRole("link", { name: /Passeport/ }).click();
+    await expect(page).toHaveURL(/\/documents\/[^/]+$/);
     await expect(page.locator('iframe[title="Aperçu"]')).toBeVisible();
   });
 

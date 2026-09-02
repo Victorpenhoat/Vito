@@ -21,7 +21,9 @@ export const NAV_ITEMS: NavEntry[] = [
   { key: "admin", href: "/admin", group: "cercle", roles: ["admin"] },
 ];
 
-export const BOTTOM_KEYS: NavKey[] = ["accueil", "restos", "voyages", "recherche"];
+// Décision PO 2026-09 (design Onglet Cercle) : Cercle remplace Recherche dans la
+// bottom nav ; Recherche reste accessible via « Plus » (drawer) et la sidebar.
+export const BOTTOM_KEYS: NavKey[] = ["accueil", "restos", "voyages", "famille"];
 
 export const NAV_GROUPS: NavGroup[] = ["carnet", "voyages", "cercle"];
 

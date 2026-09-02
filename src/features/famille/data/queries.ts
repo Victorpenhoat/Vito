@@ -9,20 +9,26 @@ export type Proche = {
   relation: string;
   circle: string;
   avatar_color: string | null;
+  phone: string | null;
   doc_count: number;
   urgency: "expired" | "soon" | "valid" | null;
   urgency_months: number | null;
+  urgency_doc_type: string | null;
 };
 
 export type DocMeta = {
   id: string;
   doc_type: string;
+  doc_label: string | null;
   doc_number: string | null;
   country: string | null;
   holder_name: string | null;
   issue_date: string | null;
   expiry_date: string | null;
+  issue_place: string | null;
   mime_type: string;
+  reminder: boolean;
+  has_verso: boolean;
 };
 
 export type ProcheDetail = {
@@ -35,23 +41,35 @@ export type ProcheDetail = {
   phone: string | null;
   email: string | null;
   birth_date: string | null;
+  birth_place: string | null;
+  address: string | null;
+  address_inherit: boolean;
 };
 
-// pire statut d'expiration + mois restants si "soon" (expired > soon > valid > null)
-function worstUrgency(dates: (string | null)[], now: Date): { urgency: Proche["urgency"]; urgency_months: number | null } {
+// pire statut d'expiration + mois restants si "soon" + type du doc fautif
+// (expired > soon > valid > null) — le type alimente le badge « CNI expire bientôt »
+function worstUrgency(
+  docs: { expiry_date: string | null; doc_type: string }[],
+  now: Date,
+): { urgency: Proche["urgency"]; urgency_months: number | null; urgency_doc_type: string | null } {
   const rank = { expired: 3, soon: 2, valid: 1 } as const;
   let worst: Proche["urgency"] = null;
+  let worstDocType: string | null = null;
   let soonMonths: number | null = null;
-  for (const d of dates) {
-    const s = expiryStatus(d, now);
+  for (const d of docs) {
+    const s = expiryStatus(d.expiry_date, now);
     if (!s) continue;
-    if (worst === null || rank[s] > rank[worst]) worst = s;
-    if (s === "soon" && d) {
-      const m = monthsUntil(d, now);
+    if (worst === null || rank[s] > rank[worst]) { worst = s; worstDocType = d.doc_type; }
+    if (s === "soon" && d.expiry_date) {
+      const m = monthsUntil(d.expiry_date, now);
       if (soonMonths === null || m < soonMonths) soonMonths = m;
     }
   }
-  return { urgency: worst, urgency_months: worst === "soon" ? soonMonths : null };
+  return {
+    urgency: worst,
+    urgency_months: worst === "soon" ? soonMonths : null,
+    urgency_doc_type: worst === "expired" || worst === "soon" ? worstDocType : null,
+  };
 }
 
 export const getProches = cache(async (): Promise<Proche[]> => {
@@ -60,14 +78,13 @@ export const getProches = cache(async (): Promise<Proche[]> => {
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("family_members")
-    .select("id, first_name, last_name, relation, circle, avatar_color, family_documents(expiry_date)")
+    .select("id, first_name, last_name, relation, circle, avatar_color, phone, family_documents(expiry_date, doc_type)")
     .order("last_name", { ascending: true })
     .order("first_name", { ascending: true });
   if (error) throw error;
   const now = new Date();
-  return (data ?? []).map((m) => {
-    const docs = (m.family_documents ?? []) as { expiry_date: string | null }[];
-    const { urgency, urgency_months } = worstUrgency(docs.map((d) => d.expiry_date), now);
+  const rows = (data ?? []).map((m) => {
+    const docs = (m.family_documents ?? []) as { expiry_date: string | null; doc_type: string }[];
     return {
       id: m.id,
       first_name: m.first_name,
@@ -75,31 +92,65 @@ export const getProches = cache(async (): Promise<Proche[]> => {
       relation: m.relation,
       circle: m.circle,
       avatar_color: m.avatar_color,
+      phone: m.phone,
       doc_count: docs.length,
-      urgency,
-      urgency_months,
+      ...worstUrgency(docs, now),
     };
   });
+  // « Moi » épinglé en tête (sort stable : l'ordre nom/prénom du SQL est conservé pour le reste)
+  rows.sort((a, b) => (b.relation === "moi" ? 1 : 0) - (a.relation === "moi" ? 1 : 0));
+  return rows;
 });
 
-export async function getProche(id: string): Promise<{ proche: ProcheDetail; documents: DocMeta[] } | null> {
+export async function getProche(
+  id: string,
+): Promise<{ proche: ProcheDetail; documents: DocMeta[]; foyerAddress: string | null } | null> {
   const supabase = await createServerSupabase();
   const auth = await getCachedUser();
   if (!auth.user) return null;
   const { data: m, error } = await supabase
     .from("family_members")
-    .select("id, first_name, last_name, relation, circle, avatar_color, phone, email, birth_date")
+    .select("id, first_name, last_name, relation, circle, avatar_color, phone, email, birth_date, birth_place, address, address_inherit")
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
   if (!m) return null;
+  // jamais contenu_chiffre(_verso) hors route API — taille_verso suffit pour has_verso
   const { data: docs, error: dErr } = await supabase
     .from("family_documents")
-    .select("id, doc_type, doc_number, country, holder_name, issue_date, expiry_date, mime_type")
+    .select("id, doc_type, doc_label, doc_number, country, holder_name, issue_date, expiry_date, issue_place, mime_type, reminder, taille_verso")
     .eq("member_id", id)
     .order("expiry_date", { ascending: true, nullsFirst: false });
   if (dErr) throw dErr;
-  return { proche: m as ProcheDetail, documents: (docs ?? []) as DocMeta[] };
+  // adresse du foyer = adresse de la fiche « moi » (RLS scope déjà l'utilisateur)
+  let foyerAddress: string | null = null;
+  if (m.address_inherit) {
+    const { data: moi, error: moiErr } = await supabase
+      .from("family_members")
+      .select("address")
+      .eq("relation", "moi")
+      .maybeSingle();
+    if (moiErr) throw moiErr;
+    foyerAddress = moi?.address ?? null;
+  }
+  return {
+    proche: m as ProcheDetail,
+    documents: (docs ?? []).map((d) => ({
+      id: d.id,
+      doc_type: d.doc_type,
+      doc_label: d.doc_label,
+      doc_number: d.doc_number,
+      country: d.country,
+      holder_name: d.holder_name,
+      issue_date: d.issue_date,
+      expiry_date: d.expiry_date,
+      issue_place: d.issue_place,
+      mime_type: d.mime_type,
+      reminder: d.reminder,
+      has_verso: d.taille_verso !== null,
+    })),
+    foyerAddress,
+  };
 }
 
 export async function getMaFamille() {

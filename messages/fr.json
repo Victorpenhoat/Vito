@@ -267,15 +267,23 @@
     "ajouterFamille": "Ajouter à ma famille",
     "vide": "Aucun resto partagé pour l'instant.",
     "pasDeFamille": "Pas encore de foyer partagé. Créez-en un pour partager vos adresses avec vos proches.",
-    "error": { "title": "Une erreur est survenue", "retry": "Réessayer" },
-    "eyebrow": "Mon foyer",
+    "error": {
+      "title": "Une erreur est survenue",
+      "retry": "Réessayer"
+    },
+    "eyebrow": "Mon carnet",
     "relations": {
       "conjoint": "Conjoint·e",
       "enfant": "Enfant",
       "parent": "Parent",
       "beau_parent": "Beau-parent",
       "ami": "Ami·e",
-      "autre": "Autre"
+      "autre": "Autre",
+      "moi": "Moi",
+      "fille": "Fille",
+      "fils": "Fils",
+      "pere": "Père",
+      "mere": "Mère"
     },
     "docTypes": {
       "passeport": "Passeport",
@@ -284,17 +292,79 @@
       "permis_bateau": "Permis bateau",
       "visa": "Visa",
       "titre_sejour": "Titre de séjour",
-      "autre": "Autre"
+      "autre": "Autre",
+      "securite_sociale": "Sécurité sociale"
     },
     "expiry": {
       "valide": "Valide",
       "expireDans": "Expire dans {n} mois",
-      "expire": "Expiré"
+      "expire": "Expiré",
+      "valideAnnee": "Valide · {annee}",
+      "expireBientotDoc": "{doc} expire bientôt",
+      "expireDoc": "{doc} expiré"
     },
-    "proches": { "titre": "Mes proches", "ajouter": "Ajouter un proche", "vide": "Aucun proche pour l'instant", "videTexte": "Ajoute les personnes dont tu gardes les papiers à portée de main.", "documentsCount": "{n, plural, =0 {Aucun document} one {# document} other {# documents}}" },
-    "circles": { "proche": "Proches", "elargie": "Famille élargie", "amis": "Amis" },
-    "fiche": { "contacts": "Contacts", "naissance": "Naissance", "documents": "Documents", "aucunDocument": "Aucun document enregistré.", "voirDocument": "Voir le document", "modifier": "Modifier", "revelerNumero": "Révéler le numéro", "apercu": "Aperçu" },
-    "form": { "prenom": "Prénom", "nom": "Nom", "relation": "Relation", "cercle": "Cercle", "telephone": "Téléphone", "email": "E-mail", "naissance": "Date de naissance", "enregistrer": "Enregistrer", "supprimer": "Supprimer", "confirmSuppr": "Supprimer ce proche et ses documents ?" },
+    "proches": {
+      "titre": "Mes proches",
+      "ajouter": "Ajouter un proche",
+      "vide": "Votre cercle est vide",
+      "videTexte": "Ajoutez les personnes de votre entourage pour retrouver leurs coordonnées et documents en dix secondes.",
+      "documentsCount": "{n, plural, =0 {Aucun document} one {# document} other {# documents}}",
+      "rechercher": "Rechercher un nom, un lien de parenté",
+      "effacer": "Effacer la recherche",
+      "epingle": "Épinglé",
+      "ajouterPersonne": "Ajouter une personne",
+      "nouveauTitre": "Nouveau membre",
+      "aucunResultat": "Aucun résultat",
+      "aucunResultatTexte": "Personne ne correspond à « {q} » dans votre cercle.",
+      "ajouterAuCercle": "Ajouter « {q} » au cercle",
+      "foyerLien": "Foyer partagé"
+    },
+    "circles": {
+      "proche": "Proches",
+      "elargie": "Famille élargie",
+      "amis": "Amis"
+    },
+    "fiche": {
+      "contacts": "Contacts",
+      "naissance": "Naissance",
+      "documents": "Documents",
+      "aucunDocument": "Aucun document enregistré.",
+      "voirDocument": "Voir le document",
+      "modifier": "Modifier",
+      "revelerNumero": "Révéler le numéro",
+      "apercu": "Aperçu",
+      "contact": "Contact",
+      "identite": "Identité",
+      "docsComplementaires": "Documents complémentaires",
+      "age": "{n, plural, one {# an} other {# ans}}",
+      "appeler": "Appeler",
+      "message": "Message",
+      "email": "E-mail",
+      "itineraire": "Itinéraire",
+      "heriteeFoyer": "Héritée du foyer",
+      "copier": "Copier",
+      "masquerNumero": "Masquer le numéro",
+      "aucunDocTitre": "Aucun document",
+      "aucunDocTexte": "Ajoutez un premier document d'identité pour l'avoir toujours sous la main."
+    },
+    "form": {
+      "prenom": "Prénom",
+      "nom": "Nom",
+      "relation": "Relation",
+      "cercle": "Cercle",
+      "telephone": "Téléphone",
+      "email": "E-mail",
+      "naissance": "Date de naissance",
+      "enregistrer": "Enregistrer",
+      "supprimer": "Supprimer",
+      "confirmSuppr": "Supprimer ce proche et ses documents ?",
+      "lieuNaissance": "Lieu de naissance",
+      "adresse": "Adresse postale",
+      "heriterFoyer": "Hériter du foyer",
+      "optionnel": "Optionnel",
+      "lienParente": "Lien de parenté",
+      "annuler": "Annuler"
+    },
     "tunnel": {
       "ajouterDocument": "Ajouter un document",
       "titre": "Nouveau document",
@@ -333,7 +403,41 @@
         "document": "Document",
         "lecture": "Lecture",
         "verification": "Vérification"
-      }
+      },
+      "autreType": "Autre type…",
+      "autreTypeNom": "Nom du document",
+      "versoOptionnel": "Verso (optionnel)"
+    },
+    "cercleTitre": "Cercle",
+    "eyebrowFoyer": "Mon foyer",
+    "groupes": {
+      "foyer": "Mon foyer",
+      "parents": "Parents",
+      "autres": "Amis & autres"
+    },
+    "docTypesShort": {
+      "passeport": "Passeport",
+      "carte_identite": "CNI",
+      "permis_conduire": "Permis",
+      "securite_sociale": "Sécu",
+      "permis_bateau": "Permis bateau",
+      "visa": "Visa",
+      "titre_sejour": "Titre de séjour",
+      "autre": "Document"
+    },
+    "doc": {
+      "numero": "Numéro",
+      "emission": "Émission",
+      "expiration": "Expiration",
+      "autorite": "Autorité",
+      "pays": "Pays",
+      "recto": "Recto",
+      "verso": "Verso",
+      "rappelTitre": "Rappel d'expiration",
+      "rappelTexte": "Notification 6 mois avant l'échéance",
+      "partager": "Partager le scan",
+      "supprimerConfirm": "Supprimer ce document ?",
+      "modifierTitre": "Modifier le document"
     }
   },
   "agence": {
@@ -380,7 +484,7 @@
     "restos": "Restos",
     "voyages": "Voyages",
     "depenses": "Dépenses",
-    "famille": "Famille",
+    "famille": "Cercle",
     "conciergerie": "Conciergerie",
     "vins": "Vins",
     "abonnement": "Abonnement",

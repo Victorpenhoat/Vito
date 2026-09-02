@@ -366,3 +366,11 @@ insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, da
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
  ('d2000001-0000-4000-8000-0000000000a3','de110000-0000-4000-8000-000000000000',2000),
  ('d2000001-0000-4000-8000-0000000000a3','22222222-2222-2222-2222-222222222222',2000);
+
+-- Refonte Cercle (00027) : fiche « moi » épinglée + héritage d'adresse du foyer (compte démo)
+insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color, address, birth_date, birth_place, phone) values
+ ('fa000001-0000-4000-8000-000000000009','de110000-0000-4000-8000-000000000000','Damien','Martin','moi','proche','#211E1A','18 rue des Acacias, 75017 Paris','1986-04-12','Paris','+33612345678');
+update public.family_members set address_inherit = true, relation = 'fils'
+ where id = 'fa000001-0000-4000-8000-000000000002';
+update public.family_members set relation = 'mere'
+ where id = 'fa000001-0000-4000-8000-000000000003';
