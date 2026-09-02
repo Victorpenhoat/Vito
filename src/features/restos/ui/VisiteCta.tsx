@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/features/shared/ui/Modal";
-import { VisiteForm } from "./VisiteForm";
+import { ExperienceForm } from "@/features/places/ui/ExperienceForm";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
@@ -17,7 +17,7 @@ export function VisiteCta({ listeItemId, nom, tags }: { listeItemId: string; nom
         ✓ {t("visite.cta")}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t("visite.titre", { nom })}>
-        <VisiteForm listeItemId={listeItemId} tags={tags} onDone={() => setOpen(false)} />
+        <ExperienceForm listeItemId={listeItemId} tags={tags} categorie="resto" onDone={() => setOpen(false)} />
       </Modal>
     </>
   );

@@ -4,34 +4,35 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Plus, Search } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/lib/i18n/routing";
-import { changerStatut } from "../data/actions";
-import { filterPlaces, type Place } from "@/features/places/domain/filterPlaces";
-import { tagsForMap, filterByTag } from "@/features/places/domain/mapFilters";
-import { PlaceCard } from "@/features/places/ui/PlaceCard";
-import { RestoDiscovery } from "./RestoDiscovery";
-import { RestosMapCombined } from "./RestosMapCombined";
-import { RestosMapLazy } from "./RestosMapLazy";
-import { ArchivedPanel } from "@/features/places/ui/ArchivedPanel";
-import { subsetForRestoStatut, restoStatut, type RestoStatut } from "../domain/statut";
-import { VisiteForm } from "./VisiteForm";
+import { changerStatut } from "@/features/restos/data/actions";
+import { filterPlaces, type Place } from "../domain/filterPlaces";
+import { tagsForMap, filterByTag } from "../domain/mapFilters";
+import { PlaceCard } from "./PlaceCard";
+import { CategoryDiscovery } from "./CategoryDiscovery";
+import { CategoryMapCombined } from "./CategoryMapCombined";
+import { CategoryMapLazy } from "./CategoryMapLazy";
+import { ArchivedPanel } from "./ArchivedPanel";
+import { CATEGORY_UI, tabTestId, type CategorieUi } from "../domain/categoryUiConfig";
+import { subsetForRestoStatut, restoStatut, type RestoStatut } from "@/features/restos/domain/statut";
+import { ExperienceForm } from "./ExperienceForm";
 import { Modal } from "@/features/shared/ui/Modal";
 
-// Onglet Restaurants v2 (design Onglet_Resto_v2) : 5 sous-onglets Favoris /
-// À tester / Testés / Tous / Carte pilotés par l'URL (?onglet=), recherche
-// interne + « Trouver un restaurant » (recherche externe) accessibles partout.
-// Hôtels reste sur PlacesTabs — ce composant est spécifique aux restos.
-
-type Onglet = "favoris" | "a_tester" | "testes" | "tous" | "carte";
-const ONGLETS: readonly Onglet[] = ["favoris", "a_tester", "testes", "tous", "carte"];
-const TESTIDS: Record<Onglet, string> = {
-  favoris: "tab-favoris", a_tester: "tab-a-tester", testes: "tab-testes", tous: "tab-tous", carte: "tab-carte",
-};
+// Onglets v2 (design Onglet_Resto_v2 / Onglet_Hotels_v2) : 5 sous-onglets
+// Favoris / À tester / Testés-ou-Séjours / Tous / Carte pilotés par l'URL
+// (?onglet=), recherche interne + « Trouver » (recherche externe) partout.
+// Brique générique Restos/Hôtels paramétrée par CATEGORY_UI.
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
-export function RestosTabs({ places, archived, tags }: { places: Place[]; archived: Place[]; tags: TagLite[] }) {
+export function CategoryTabs({ places, archived, tags, categorie = "resto" }: {
+  places: Place[]; archived: Place[]; tags: TagLite[]; categorie?: CategorieUi;
+}) {
+  const config = CATEGORY_UI[categorie];
+  const ONGLETS = ["favoris", "a_tester", config.slugTeste, "tous", "carte"] as const;
+  type Onglet = (typeof ONGLETS)[number];
+
   const t = useTranslations("places");
-  const tr = useTranslations("restos");
+  const tr = useTranslations(config.ns);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -60,7 +61,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
       ? statutsFiltre.size === 0 || onglet === "carte"
         ? places
         : places.filter((p) => statutsFiltre.has(restoStatut(p)))
-      : subsetForRestoStatut(places, onglet === "testes" ? "teste" : onglet === "a_tester" ? "a_tester" : "favori");
+      : subsetForRestoStatut(places, onglet === config.slugTeste ? "teste" : onglet === "a_tester" ? "a_tester" : "favori");
 
   const filtresOrigine =
     onglet === "a_tester" && origine !== "toutes"
@@ -68,7 +69,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
       : actifs;
   const shown = filterByTag(filterPlaces(filtresOrigine, q), tag);
   const triees =
-    onglet === "testes"
+    onglet === config.slugTeste
       ? [...shown].sort((a, b) => (b.derniere_visite?.visite_le ?? "").localeCompare(a.derniere_visite?.visite_le ?? ""))
       : shown;
   const tagsDispo = tagsForMap(filtresOrigine);
@@ -83,14 +84,14 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
   }
 
   return (
-    <div data-testid="restos-tabs" className="flex flex-col gap-3.5">
+    <div data-testid={config.rootTestId} className="flex flex-col gap-3.5">
       {/* sous-onglets */}
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 [scrollbar-width:none]" role="tablist">
         {ONGLETS.map((o) => {
           const active = onglet === o;
           return (
-            <button key={o} type="button" role="tab" id={`tab-${o}`} aria-controls="restos-panel"
-              data-testid={TESTIDS[o]} aria-selected={active} onClick={() => selectOnglet(o)}
+            <button key={o} type="button" role="tab" id={`tab-${o}`} aria-controls={config.panelId}
+              data-testid={tabTestId(o)} aria-selected={active} onClick={() => selectOnglet(o)}
               className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
                 active ? "bg-ink font-semibold text-app" : "border border-line bg-surface text-muted hover:bg-surface-hover"
               }`}>
@@ -109,7 +110,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
               placeholder={tr("rechercherPlaceholder")} aria-label={tr("rechercherPlaceholder")}
               className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden" />
           </label>
-          <button type="button" data-testid="trouver-restaurant" onClick={() => setRecherche(true)}
+          <button type="button" data-testid={config.trouverTestId} onClick={() => setRecherche(true)}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-accent/25 bg-accent-50 px-3.5 py-2.5 text-xs font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
             <Plus size={13} aria-hidden />
             {tr("trouver")}
@@ -166,7 +167,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
               {tg.label}
             </button>
           ))}
-          <Link href="/restos/tags" className="ml-auto text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+          <Link href={`${config.basePath}/tags`} className="ml-auto text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
             {tr("tags.gerer")}
           </Link>
         </div>
@@ -182,13 +183,13 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
 
       {/* panneau */}
       {!archives && (
-      <div role="tabpanel" id="restos-panel" aria-labelledby={`tab-${onglet}`} data-testid="places-panel">
+      <div role="tabpanel" id={config.panelId} aria-labelledby={`tab-${onglet}`} data-testid="places-panel">
         {onglet === "carte" ? (
-          <RestosMapCombined places={places} />
+          <CategoryMapCombined places={places} categorie={categorie} />
         ) : triees.length === 0 ? (
           <EtatVide onglet={onglet} filtre={q.trim() !== "" || tag !== null} q={q} t={tr} onTrouver={() => setRecherche(true)} />
         ) : view === "carte" ? (
-          <RestosMapLazy places={triees} />
+          <CategoryMapLazy places={triees} categorie={categorie} />
         ) : view === "vignettes" ? (
           <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {triees.map((p) => <PlaceCard key={p.id} place={p} variant="vignette" />)}
@@ -198,7 +199,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
             {triees.map((p) => (
               <li key={p.id} className="relative">
                 <ul><PlaceCard place={p} variant="liste" /></ul>
-                <RowExtras place={p} onglet={onglet} tr={tr} onVisite={() => setVisitePour(p)} />
+                <RowExtras place={p} onglet={onglet} slugTeste={config.slugTeste} tr={tr} onVisite={() => setVisitePour(p)} />
               </li>
             ))}
           </ul>
@@ -208,22 +209,22 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
 
       {/* recherche externe priorisée (écran 7) — le statut proposé suit le sous-onglet */}
       <Modal open={recherche} onClose={() => setRecherche(false)} title={tr("trouverTitre")}>
-        <RestoDiscovery places={places}
-          statutDefaut={onglet === "favoris" ? "favori" : onglet === "testes" ? "teste" : "a_tester"} />
+        <CategoryDiscovery places={places} categorie={categorie}
+          statutDefaut={onglet === "favoris" ? "favori" : onglet === config.slugTeste ? "teste" : "a_tester"} />
       </Modal>
 
       {/* marquer une visite depuis la liste */}
       <Modal open={visitePour !== null} onClose={() => setVisitePour(null)} title={visitePour ? tr("visite.titre", { nom: visitePour.etablissement.nom }) : ""}>
         {visitePour && (
-          <VisiteForm listeItemId={visitePour.id} tags={tags} onDone={() => setVisitePour(null)} />
+          <ExperienceForm listeItemId={visitePour.id} tags={tags} categorie={categorie} onDone={() => setVisitePour(null)} />
         )}
       </Modal>
     </div>
   );
 }
 
-function RowExtras({ place: p, onglet, tr, onVisite }: {
-  place: Place; onglet: Onglet; tr: ReturnType<typeof useTranslations>; onVisite: () => void;
+function RowExtras({ place: p, onglet, slugTeste, tr, onVisite }: {
+  place: Place; onglet: string; slugTeste: string; tr: ReturnType<typeof useTranslations>; onVisite: () => void;
 }) {
   if (onglet === "a_tester") {
     return (
@@ -244,7 +245,7 @@ function RowExtras({ place: p, onglet, tr, onVisite }: {
       </div>
     );
   }
-  if (onglet === "testes") {
+  if (onglet === slugTeste) {
     return (
       <div className="flex items-center justify-between gap-2 pb-3 pl-[84px] -mt-1.5">
         <span className="text-[11px] text-faint">
@@ -273,7 +274,7 @@ function PasserFavoriButton({ listeItemId, label }: { listeItemId: string; label
 }
 
 function EtatVide({ onglet, filtre, q, t, onTrouver }: {
-  onglet: Onglet; filtre: boolean; q: string; t: ReturnType<typeof useTranslations>; onTrouver: () => void;
+  onglet: string; filtre: boolean; q: string; t: ReturnType<typeof useTranslations>; onTrouver: () => void;
 }) {
   return (
     <div data-testid="place-empty-state" className="flex flex-col items-center px-8 py-16 text-center">

@@ -6,14 +6,15 @@ import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { useTranslations } from "next-intl";
 import { LocateFixed } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
-import { mapCenter } from "@/features/places/domain/mapCenter";
-import type { Place } from "@/features/places/domain/filterPlaces";
-import { restoStatut, type RestoStatut } from "../domain/statut";
+import { mapCenter } from "../domain/mapCenter";
+import type { Place } from "../domain/filterPlaces";
+import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
+import { restoStatut, type RestoStatut } from "@/features/restos/domain/statut";
 
-// Carte des restaurants (design Onglet_Resto_v2, écran 5) : marqueurs distincts
-// par statut (pin bleu favori / triangle ambre à tester / carré gris testé),
-// fiche compacte au tap, « Autour de moi ». Spécifique restos — les hôtels
-// gardent PlacesMap.
+// Carte v2 (design Onglet_Resto_v2, écran 5) : marqueurs distincts par statut
+// (pin accent favori / triangle ambre à tester / carré gris testé), fiche
+// compacte au tap, « Autour de moi ». Brique générique Restos/Hôtels
+// (les clusters hôtels arrivent au lot H5).
 
 function pinHtml(statut: RestoStatut, surbrillance: boolean): string {
   const scale = surbrillance ? "transform:scale(1.3);transform-origin:bottom center;" : "";
@@ -54,9 +55,12 @@ function AutourDeMoi({ label }: { label: string }) {
   );
 }
 
-export function RestosMap({ places, surbrillanceId }: { places: Place[]; surbrillanceId?: string | null }) {
+export function CategoryMap({ places, surbrillanceId, categorie = "resto" }: {
+  places: Place[]; surbrillanceId?: string | null; categorie?: CategorieUi;
+}) {
+  const config = CATEGORY_UI[categorie];
   const t = useTranslations("places");
-  const tr = useTranslations("restos");
+  const tr = useTranslations(config.ns);
   const [selection, setSelection] = useState<Place | null>(null);
 
   const withCoords = places.filter((p) => p.etablissement.lat != null && p.etablissement.lng != null);
@@ -99,7 +103,7 @@ export function RestosMap({ places, surbrillanceId }: { places: Place[]; surbril
                 {[selection.etablissement.type, selection.etablissement.ville].filter(Boolean).join(" · ")}
               </div>
               <div className="mt-1 flex gap-3">
-                <Link href={`/restos/${selection.etablissement.id}`} className="text-xs font-semibold text-accent hover:underline">
+                <Link href={`${config.basePath}/${selection.etablissement.id}`} className="text-xs font-semibold text-accent hover:underline">
                   {tr("carte.ouvrirFiche")}
                 </Link>
                 <a
