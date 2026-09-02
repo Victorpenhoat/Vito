@@ -189,6 +189,25 @@
       "supprimer": "Supprimer le tag",
       "supprimerConfirm": "{n} adresse(s) perdront « {label} ». Supprimer ?",
       "ajouterVolee": "+ Nouveau tag"
+    },
+    "recherche": {
+      "dejaDansVito": "Déjà dans Vito",
+      "resultatsExternes": "Résultats externes",
+      "ouvert": "ouvert",
+      "ouvertMnt": "Ouvert mnt",
+      "prix": "Prix",
+      "tousPrix": "Tous les prix",
+      "cuisine": "Cuisine",
+      "toutesCuisines": "Toutes les cuisines",
+      "cuisines": {
+        "italian_restaurant": "Italien",
+        "japanese_restaurant": "Japonais",
+        "french_restaurant": "Français",
+        "pizza_restaurant": "Pizza"
+      },
+      "rayon": "< 2 km",
+      "choisirStatut": "Choisir le statut",
+      "statutSuit": "Le statut proposé suit le sous-onglet d'origine"
     }
   },
   "voyages": {

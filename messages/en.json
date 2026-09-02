@@ -173,6 +173,25 @@
       "supprimer": "Delete tag",
       "supprimerConfirm": "{n} place(s) will lose “{label}”. Delete?",
       "ajouterVolee": "+ New tag"
+    },
+    "recherche": {
+      "dejaDansVito": "Already in Vito",
+      "resultatsExternes": "External results",
+      "ouvert": "open",
+      "ouvertMnt": "Open now",
+      "prix": "Price",
+      "tousPrix": "All prices",
+      "cuisine": "Cuisine",
+      "toutesCuisines": "All cuisines",
+      "cuisines": {
+        "italian_restaurant": "Italian",
+        "japanese_restaurant": "Japanese",
+        "french_restaurant": "French",
+        "pizza_restaurant": "Pizza"
+      },
+      "rayon": "< 2 km",
+      "choisirStatut": "Choose status",
+      "statutSuit": "The suggested status follows the current sub-tab"
     }
   },
   "voyages": {

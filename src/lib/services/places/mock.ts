@@ -1,6 +1,8 @@
-import type { PlacesProvider, PlaceResult, PlaceSummary } from "./types";
+import type { PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
 
-const FIXTURES: PlaceResult[] = [
+type Fixture = PlaceResult & { openNow: boolean };
+
+const FIXTURES: Fixture[] = [
   {
     placeId: "mock_bistrot_1",
     nom: "Le Bistrot du Coin",
@@ -16,6 +18,7 @@ const FIXTURES: PlaceResult[] = [
     ratingCount: 320,
     types: ["restaurant", "bistro"],
     photoRefs: ["mock_photo_1"],
+    openNow: true,
   },
   {
     placeId: "mock_etoile_1",
@@ -32,6 +35,7 @@ const FIXTURES: PlaceResult[] = [
     ratingCount: 156,
     types: ["restaurant", "fine_dining"],
     photoRefs: ["mock_photo_2"],
+    openNow: false,
   },
   {
     placeId: "mock_hotel_1",
@@ -48,6 +52,7 @@ const FIXTURES: PlaceResult[] = [
     ratingCount: 210,
     types: ["lodging", "hotel"],
     photoRefs: ["mock_photo_h1"],
+    openNow: true,
   },
   {
     placeId: "mock_hotel_2",
@@ -64,18 +69,35 @@ const FIXTURES: PlaceResult[] = [
     ratingCount: 487,
     types: ["lodging", "hotel"],
     photoRefs: ["mock_photo_h2"],
+    openNow: true,
   },
 ];
 
 export class MockPlacesProvider implements PlacesProvider {
-  async search(query: string): Promise<PlaceSummary[]> {
+  async search(query: string, opts?: SearchOpts): Promise<PlaceSummary[]> {
     const q = query.toLowerCase();
-    return FIXTURES.filter(
+    let hits = FIXTURES.filter(
       (f) => f.nom.toLowerCase().includes(q) || f.types.some((t) => t.includes(q))
-    ).map((f) => ({ placeId: f.placeId, nom: f.nom, adresse: f.adresse }));
+    );
+    // Filtres v2 (mêmes sémantiques que Google, pour les e2e du Lot R-C)
+    if (opts?.openNow) hits = hits.filter((f) => f.openNow);
+    if (opts?.priceLevels?.length) hits = hits.filter((f) => f.priceLevel != null && opts.priceLevels!.includes(f.priceLevel));
+    if (opts?.includedType) hits = hits.filter((f) => f.types.includes(opts.includedType!));
+    const enrichi = opts !== undefined;
+    return hits.map((f) => ({
+      placeId: f.placeId,
+      nom: f.nom,
+      adresse: f.adresse,
+      ...(enrichi
+        ? { lat: f.lat, lng: f.lng, openNow: f.openNow, photoRef: f.photoRefs[0] ?? null, types: f.types }
+        : {}),
+    }));
   }
   async details(placeId: string): Promise<PlaceResult | null> {
-    return FIXTURES.find((f) => f.placeId === placeId) ?? null;
+    const f = FIXTURES.find((x) => x.placeId === placeId);
+    if (!f) return null;
+    const { openNow: _openNow, ...result } = f;
+    return result;
   }
   photoUrl(photoRef: string, _maxWidth: number): string | null {
     if (!photoRef) return null;

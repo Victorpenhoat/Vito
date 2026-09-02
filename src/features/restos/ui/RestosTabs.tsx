@@ -8,7 +8,7 @@ import { changerStatut } from "../data/actions";
 import { filterPlaces, type Place } from "@/features/places/domain/filterPlaces";
 import { tagsForMap, filterByTag } from "@/features/places/domain/mapFilters";
 import { PlaceCard } from "@/features/places/ui/PlaceCard";
-import { PlaceDiscovery } from "@/features/places/ui/PlaceDiscovery";
+import { RestoDiscovery } from "./RestoDiscovery";
 import { PlacesMapCombined } from "@/features/places/ui/PlacesMapCombined";
 import { PlacesMapLazy } from "@/features/places/ui/PlacesMapLazy";
 import { ArchivedPanel } from "@/features/places/ui/ArchivedPanel";
@@ -207,9 +207,10 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
       </div>
       )}
 
-      {/* recherche externe (plein écran mobile / panneau) */}
+      {/* recherche externe priorisée (écran 7) — le statut proposé suit le sous-onglet */}
       <Modal open={recherche} onClose={() => setRecherche(false)} title={tr("trouverTitre")}>
-        <PlaceDiscovery places={places} category="resto" />
+        <RestoDiscovery places={places}
+          statutDefaut={onglet === "favoris" ? "favori" : onglet === "testes" ? "teste" : "a_tester"} />
       </Modal>
 
       {/* marquer une visite depuis la liste */}
