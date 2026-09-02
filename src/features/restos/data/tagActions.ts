@@ -11,6 +11,9 @@ import { tagSlug } from "../domain/tagSlug";
 function revalidate() {
   revalidatePath("/restos", "layout");
   revalidatePath("/hotels", "layout");
+  // explicite : la page d'admin elle-même (le layout seul ne rafraîchissait pas
+  // ses props serveur de façon fiable — l'e2e retombait sur reload à chaque étape)
+  revalidatePath("/restos/tags");
 }
 
 export async function creerTag(_prev: unknown, formData: FormData) {
