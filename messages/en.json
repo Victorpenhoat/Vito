@@ -63,7 +63,13 @@
     "archiver": "Archive",
     "desarchiver": "Unarchive",
     "favorite": "Favourite",
-    "statut": { "a_faire": "To try", "visite": "Visited" },
+    "statut": {
+      "a_faire": "To try",
+      "visite": "Visited",
+      "favori": "Favorite",
+      "a_tester": "To try",
+      "teste": "Tried"
+    },
     "avis": "My reviews",
     "addAvis": "Add a review",
     "saveTags": "Save tags",
@@ -77,6 +83,70 @@
     "error": {
       "title": "Something went wrong",
       "retry": "Try again"
+    },
+    "onglets": {
+      "favoris": "Favorites",
+      "a_tester": "To try",
+      "testes": "Tried",
+      "tous": "All",
+      "carte": "Map"
+    },
+    "rechercherPlaceholder": "Name, city, tag…",
+    "trouver": "Find",
+    "trouverTitre": "Find a restaurant",
+    "passerFavori": "Make favorite",
+    "origines": {
+      "filtre_toutes": "All",
+      "filtre_reco": "Recommendations",
+      "filtre_trouve": "Found by me",
+      "recoPar": "Rec by {qui}",
+      "trouvePar": "Found by me · {source}",
+      "reco": "Recommendation",
+      "recoSous": "Someone recommended it",
+      "trouve": "Found by me",
+      "trouveSous": "Instagram, press, by chance…",
+      "par": "Recommended by",
+      "cercleSuffixe": "(Circle)",
+      "source": "Source",
+      "sourcePlaceholder": "Instagram, press, by chance…",
+      "enregistrer": "Save origin",
+      "titre": "Why it's here",
+      "modifier": "Edit",
+      "aucune": "No origin recorded",
+      "sheetTitre": "Where does this place come from?"
+    },
+    "visite": {
+      "titre": "I went — {nom}",
+      "cta": "I went",
+      "date": "Visit date",
+      "note": "My rating",
+      "avecNote": "Rate",
+      "verdict": "Verdict tags",
+      "commentaire": "Comment (optional)",
+      "passerFavoriQ": "Make it a favorite?",
+      "enregistrer": "Save visit",
+      "visiteLe": "visited {date}",
+      "mesVisites": "My visits",
+      "count": "{n, plural, =0 {none yet} one {# visit} other {# visits}}"
+    },
+    "vide": {
+      "aucunResultat": "No results",
+      "aucunResultatTexte": "No “{q}” restaurant matches these filters in your journal.",
+      "chercherExterne": "Search “{q}” on Google",
+      "favorisTitre": "No favorites yet",
+      "favorisTexte": "Your go-to spots will live here — start by finding a restaurant.",
+      "a_testerTitre": "Nothing to try yet",
+      "a_testerTexte": "Save the places people recommend or you spot, so you never forget them.",
+      "testesTitre": "No visits recorded",
+      "testesTexte": "Mark “I went” on a place to try to keep track of your outings.",
+      "tousTitre": "Your journal is empty",
+      "tousTexte": "Find a restaurant to start your address book."
+    },
+    "pratique": {
+      "maps": "Maps",
+      "appeler": "Call",
+      "reserver": "Book",
+      "donnees": "Google Places data"
     }
   },
   "voyages": {

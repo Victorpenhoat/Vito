@@ -63,7 +63,13 @@
     "archiver": "Archivia",
     "desarchiver": "Rimuovi dall'archivio",
     "favorite": "Preferito",
-    "statut": { "a_faire": "Da fare", "visite": "Visitato" },
+    "statut": {
+      "a_faire": "Da fare",
+      "visite": "Visitato",
+      "favori": "Preferito",
+      "a_tester": "Da provare",
+      "teste": "Provato"
+    },
     "avis": "Le mie recensioni",
     "addAvis": "Aggiungi una recensione",
     "saveTags": "Salva i tag",
@@ -77,6 +83,70 @@
     "error": {
       "title": "Si è verificato un errore",
       "retry": "Riprova"
+    },
+    "onglets": {
+      "favoris": "Preferiti",
+      "a_tester": "Da provare",
+      "testes": "Provati",
+      "tous": "Tutti",
+      "carte": "Mappa"
+    },
+    "rechercherPlaceholder": "Nome, città, tag…",
+    "trouver": "Trova",
+    "trouverTitre": "Trova un ristorante",
+    "passerFavori": "Rendi preferito",
+    "origines": {
+      "filtre_toutes": "Tutte",
+      "filtre_reco": "Consigli",
+      "filtre_trouve": "Trovati da me",
+      "recoPar": "Consigliato da {qui}",
+      "trouvePar": "Trovato da me · {source}",
+      "reco": "Consiglio",
+      "recoSous": "Qualcuno me l'ha consigliato",
+      "trouve": "Trovato da me",
+      "trouveSous": "Instagram, stampa, caso…",
+      "par": "Consigliato da",
+      "cercleSuffixe": "(Cerchia)",
+      "source": "Fonte",
+      "sourcePlaceholder": "Instagram, stampa, caso…",
+      "enregistrer": "Salva origine",
+      "titre": "Perché è qui",
+      "modifier": "Modifica",
+      "aucune": "Origine non registrata",
+      "sheetTitre": "Da dove viene questo indirizzo?"
+    },
+    "visite": {
+      "titre": "Ci sono stato — {nom}",
+      "cta": "Ci sono stato",
+      "date": "Data della visita",
+      "note": "Il mio voto",
+      "avecNote": "Votare",
+      "verdict": "Tag di verdetto",
+      "commentaire": "Commento (facoltativo)",
+      "passerFavoriQ": "Rendere preferito?",
+      "enregistrer": "Salva la visita",
+      "visiteLe": "visitato il {date}",
+      "mesVisites": "Le mie visite",
+      "count": "{n, plural, =0 {nessuna finora} one {# visita} other {# visite}}"
+    },
+    "vide": {
+      "aucunResultat": "Nessun risultato",
+      "aucunResultatTexte": "Nessun ristorante «{q}» con questi filtri nel tuo taccuino.",
+      "chercherExterne": "Cerca «{q}» su Google",
+      "favorisTitre": "Ancora nessun preferito",
+      "favorisTexte": "I tuoi posti del cuore vivranno qui — inizia trovando un ristorante.",
+      "a_testerTitre": "Niente da provare",
+      "a_testerTexte": "Salva gli indirizzi consigliati o scovati, per non dimenticarli mai.",
+      "testesTitre": "Nessuna visita registrata",
+      "testesTexte": "Segna «Ci sono stato» su un indirizzo da provare per tenerne traccia.",
+      "tousTitre": "Il tuo taccuino è vuoto",
+      "tousTexte": "Trova un ristorante per iniziare la tua rubrica."
+    },
+    "pratique": {
+      "maps": "Maps",
+      "appeler": "Chiama",
+      "reserver": "Prenota",
+      "donnees": "Dati Google Places"
     }
   },
   "voyages": {

@@ -8,11 +8,13 @@ export async function getFiche(etablissementId: string) {
   // et crashent le RSC. FicheResto gère déjà `!etab` (notFound) ; on court-circuite.
   const auth = await getCachedUser();
   if (!auth.user) {
-    return { etab: null, item: null, avis: [], appliedTagIds: [] as string[] };
+    return { etab: null, item: null, avis: [], appliedTagIds: [] as string[], visites: [] };
   }
   const [etabRes, itemRes, avisRes] = await Promise.all([
     supabase.from("etablissements").select("*").eq("id", etablissementId).single(),
-    supabase.from("liste_items").select("id, statut, is_favorite, is_archived").eq("etablissement_id", etablissementId).maybeSingle(),
+    supabase.from("liste_items")
+      .select("id, statut, is_favorite, is_archived, origine_type, origine_qui, origine_family_member_id, origine_source")
+      .eq("etablissement_id", etablissementId).maybeSingle(),
     supabase.from("avis").select("*").eq("etablissement_id", etablissementId).order("created_at", { ascending: false }),
   ]);
   // Un établissement introuvable n'est pas une fiche valide : on remonte l'erreur.
@@ -20,18 +22,24 @@ export async function getFiche(etablissementId: string) {
   if (itemRes.error) throw itemRes.error;
   if (avisRes.error) throw avisRes.error;
 
-  // Récupère les tags appliqués à l'item de l'utilisateur (si l'item existe).
+  // Récupère les tags appliqués et les visites de l'item (si l'item existe).
   let appliedTagIds: string[] = [];
+  let visites: { id: string; note: number | null; commentaire: string | null; visite_le: string }[] = [];
   if (itemRes.data) {
-    const { data: tagRows, error: tagErr } = await supabase
-      .from("liste_item_tags")
-      .select("tag_id")
-      .eq("liste_item_id", itemRes.data.id);
-    if (tagErr) throw tagErr;
-    appliedTagIds = (tagRows ?? []).map((r) => r.tag_id);
+    const [tagRes, visRes] = await Promise.all([
+      supabase.from("liste_item_tags").select("tag_id").eq("liste_item_id", itemRes.data.id),
+      supabase.from("visites")
+        .select("id, note, commentaire, visite_le")
+        .eq("liste_item_id", itemRes.data.id)
+        .order("visite_le", { ascending: false }),
+    ]);
+    if (tagRes.error) throw tagRes.error;
+    if (visRes.error) throw visRes.error;
+    appliedTagIds = (tagRes.data ?? []).map((r) => r.tag_id);
+    visites = visRes.data ?? [];
   }
 
-  return { etab: etabRes.data, item: itemRes.data, avis: avisRes.data ?? [], appliedTagIds };
+  return { etab: etabRes.data, item: itemRes.data, avis: avisRes.data ?? [], appliedTagIds, visites };
 }
 
 export async function getTags() {

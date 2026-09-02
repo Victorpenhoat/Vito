@@ -811,6 +811,10 @@ export type Database = {
           is_archived: boolean
           is_favorite: boolean
           montant_par_personne: number | null
+          origine_family_member_id: string | null
+          origine_qui: string | null
+          origine_source: string | null
+          origine_type: string | null
           reco_source: string | null
           statut: Database["public"]["Enums"]["liste_statut"]
           user_id: string
@@ -823,6 +827,10 @@ export type Database = {
           is_archived?: boolean
           is_favorite?: boolean
           montant_par_personne?: number | null
+          origine_family_member_id?: string | null
+          origine_qui?: string | null
+          origine_source?: string | null
+          origine_type?: string | null
           reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id: string
@@ -835,6 +843,10 @@ export type Database = {
           is_archived?: boolean
           is_favorite?: boolean
           montant_par_personne?: number | null
+          origine_family_member_id?: string | null
+          origine_qui?: string | null
+          origine_source?: string | null
+          origine_type?: string | null
           reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id?: string
@@ -845,6 +857,13 @@ export type Database = {
             columns: ["etablissement_id"]
             isOneToOne: false
             referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "liste_items_origine_family_member_id_fkey"
+            columns: ["origine_family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
             referencedColumns: ["id"]
           },
           {
@@ -1160,6 +1179,51 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "vins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visites: {
+        Row: {
+          commentaire: string | null
+          created_at: string
+          id: string
+          liste_item_id: string
+          note: number | null
+          user_id: string
+          visite_le: string
+        }
+        Insert: {
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          liste_item_id: string
+          note?: number | null
+          user_id: string
+          visite_le?: string
+        }
+        Update: {
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          liste_item_id?: string
+          note?: number | null
+          user_id?: string
+          visite_le?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visites_liste_item_id_fkey"
+            columns: ["liste_item_id"]
+            isOneToOne: false
+            referencedRelation: "liste_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visites_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

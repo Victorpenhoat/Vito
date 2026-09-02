@@ -48,8 +48,10 @@ values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_place_1', 'resto', 'bistro
   'Le Bistrot Démo', '10 rue de Démo', 'Paris', '75017', '17e', 'seed', 'mock_photo_1', now(), 4.6, 48.8841, 2.3219);
 
 -- Le client a déjà un resto dans sa liste
-insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, reco_source)
-values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001', '11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true, 'Camille');
+-- origine structurée (restos v2, 00030) seedée directement : le backfill de la
+-- migration tourne AVANT le seed et ne peut donc pas convertir ces lignes.
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, reco_source, origine_type, origine_qui)
+values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001', '11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', true, 'Camille', 'reco', 'Camille');
 
 -- Tag « Terrasse » lié au liste_item du Bistrot
 insert into public.liste_item_tags (liste_item_id, tag_id)
