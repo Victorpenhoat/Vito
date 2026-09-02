@@ -3,7 +3,7 @@ import { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Plus, Search } from "lucide-react";
-import { usePathname, useRouter } from "@/lib/i18n/routing";
+import { Link, usePathname, useRouter } from "@/lib/i18n/routing";
 import { changerStatut } from "../data/actions";
 import { filterPlaces, type Place } from "@/features/places/domain/filterPlaces";
 import { tagsForMap, filterByTag } from "@/features/places/domain/mapFilters";
@@ -156,7 +156,7 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
         </div>
       )}
       {onglet !== "carte" && tagsDispo.length > 0 && (
-        <div data-testid="list-tag-filter" className="flex flex-wrap gap-1.5">
+        <div data-testid="list-tag-filter" className="flex flex-wrap items-center gap-1.5">
           <button type="button" data-testid="list-tag-tous" aria-pressed={tag === null} onClick={() => setTag(null)}
             className={`rounded-full px-3 py-1 text-[11px] ${tag === null ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"}`}>
             {t("tagTous")}
@@ -167,6 +167,9 @@ export function RestosTabs({ places, archived, tags }: { places: Place[]; archiv
               {tg.label}
             </button>
           ))}
+          <Link href="/restos/tags" className="ml-auto text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+            {tr("tags.gerer")}
+          </Link>
         </div>
       )}
 

@@ -147,6 +147,32 @@
       "appeler": "Llamar",
       "reserver": "Reservar",
       "donnees": "Datos de Google Places"
+    },
+    "tags": {
+      "titre": "Gestionar etiquetas",
+      "gerer": "Gestionar etiquetas",
+      "nouveau": "Nueva etiqueta",
+      "scopes": {
+        "tous": "Todas",
+        "common": "Común",
+        "restaurant": "Restaurante",
+        "hotel": "Hotel"
+      },
+      "usages": "{n, plural, =0 {ninguna dirección} one {# dirección} other {# direcciones}}",
+      "systeme": "sistema",
+      "label": "Nombre",
+      "couleur": "Color",
+      "portee": "Ámbito",
+      "enregistrer": "Guardar",
+      "creer": "Crear",
+      "modifierTitre": "Editar etiqueta",
+      "fusionnerTitre": "Fusionar",
+      "fusionnerVers": "Fusionar en…",
+      "fusionnerInfo": "{n, plural, =0 {Ninguna dirección} one {# dirección se re-etiquetará} other {# direcciones se re-etiquetarán}} «{cible}». Irreversible.",
+      "fusionnerBtn": "Fusionar",
+      "supprimer": "Eliminar etiqueta",
+      "supprimerConfirm": "{n} dirección(es) perderán «{label}». ¿Eliminar?",
+      "ajouterVolee": "+ Nueva etiqueta"
     }
   },
   "voyages": {

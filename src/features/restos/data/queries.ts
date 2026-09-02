@@ -53,6 +53,29 @@ export async function getTags() {
   return data;
 }
 
+// Tags v2 : liste d'administration avec portée, propriété et nombre d'usages.
+// Le count de liste_item_tags est restreint aux items du user par la RLS.
+export async function getTagsAvecUsage() {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, slug, label, color, scope, is_system, user_id, usages:liste_item_tags(count)")
+    .order("label");
+  if (error) throw error;
+  return (data ?? []).map((t) => ({
+    id: t.id,
+    slug: t.slug,
+    label: t.label,
+    color: t.color,
+    scope: t.scope as "common" | "restaurant" | "hotel",
+    is_system: t.is_system,
+    user_id: t.user_id,
+    usages: (t.usages?.[0] as { count?: number } | undefined)?.count ?? 0,
+  }));
+}
+
 export async function getTagsForCategory(category: "restaurant" | "hotel") {
   const supabase = await createServerSupabase();
   // Fail-safe anon : `tags` est authenticated-only. Cette lecture est dans le même
