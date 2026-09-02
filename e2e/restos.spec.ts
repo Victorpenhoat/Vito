@@ -13,7 +13,9 @@ async function login(page: import("@playwright/test").Page) {
 test("ajouter un resto via « Trouver », puis marquer une visite depuis sa fiche", async ({ page }) => {
   await login(page);
 
-  // Recherche externe (v2 : accessible partout via le bouton « Trouver »)
+  // Depuis « À tester » (URL — déterministe) : le statut proposé par la recherche
+  // externe suit le sous-onglet d'origine → l'ajout crée bien un « À tester ».
+  await page.goto("/fr/restos?onglet=a_tester");
   await page.getByTestId("trouver-restaurant").click();
 
   // Recherche (provider mock) + ajout — idempotent : si une tentative précédente a déjà ajouté
@@ -76,9 +78,10 @@ test("changer le statut depuis la fiche (chip v2) et le restaurer", async ({ pag
 test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", async ({ page }) => {
   await login(page);
 
-  // "Le Bistrot du Coin" a été ajouté PUIS visité par le 1er test (état DB partagé,
-  // workers:1) → statut v2 « Testé »
-  await page.getByTestId("tab-testes").click();
+  // "Le Bistrot du Coin" a été ajouté (à tester) PUIS visité par le 1er test (état DB
+  // partagé, workers:1) → statut v2 « Testé ». Navigation par URL : le clic d'onglet
+  // peut asserter contre le panneau périmé avant le swap RSC (faux positif).
+  await page.goto("/fr/restos?onglet=testes");
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
   await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
 
@@ -117,8 +120,8 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
 test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)", async ({ page }) => {
   await login(page);
 
-  // visité par le 1er test → sous-onglet « Testés »
-  await page.getByTestId("tab-testes").click();
+  // visité par le 1er test → « Testés » (URL : évite le faux positif du panneau périmé)
+  await page.goto("/fr/restos?onglet=testes");
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first()).toBeVisible();
   await page.getByTestId("place-card").filter({ hasText: "Le Bistrot du Coin" }).first().getByRole("link").click();
 
