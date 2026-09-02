@@ -147,6 +147,32 @@
       "appeler": "Chiama",
       "reserver": "Prenota",
       "donnees": "Dati Google Places"
+    },
+    "tags": {
+      "titre": "Gestisci i tag",
+      "gerer": "Gestisci i tag",
+      "nouveau": "Nuovo tag",
+      "scopes": {
+        "tous": "Tutti",
+        "common": "Comune",
+        "restaurant": "Ristorante",
+        "hotel": "Hotel"
+      },
+      "usages": "{n, plural, =0 {nessun indirizzo} one {# indirizzo} other {# indirizzi}}",
+      "systeme": "sistema",
+      "label": "Nome",
+      "couleur": "Colore",
+      "portee": "Ambito",
+      "enregistrer": "Salva",
+      "creer": "Crea",
+      "modifierTitre": "Modifica tag",
+      "fusionnerTitre": "Unisci",
+      "fusionnerVers": "Unisci in…",
+      "fusionnerInfo": "{n, plural, =0 {Nessun indirizzo} one {# indirizzo sarà ri-taggato} other {# indirizzi saranno ri-taggati}} «{cible}». Irreversibile.",
+      "fusionnerBtn": "Unisci",
+      "supprimer": "Elimina tag",
+      "supprimerConfirm": "{n} indirizzo/i perderanno «{label}». Eliminare?",
+      "ajouterVolee": "+ Nuovo tag"
     }
   },
   "voyages": {

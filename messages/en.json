@@ -147,6 +147,32 @@
       "appeler": "Call",
       "reserver": "Book",
       "donnees": "Google Places data"
+    },
+    "tags": {
+      "titre": "Manage tags",
+      "gerer": "Manage tags",
+      "nouveau": "New tag",
+      "scopes": {
+        "tous": "All",
+        "common": "Shared",
+        "restaurant": "Restaurant",
+        "hotel": "Hotel"
+      },
+      "usages": "{n, plural, =0 {no places} one {# place} other {# places}}",
+      "systeme": "system",
+      "label": "Name",
+      "couleur": "Color",
+      "portee": "Scope",
+      "enregistrer": "Save",
+      "creer": "Create",
+      "modifierTitre": "Edit tag",
+      "fusionnerTitre": "Merge",
+      "fusionnerVers": "Merge into…",
+      "fusionnerInfo": "{n, plural, =0 {No places} one {# place will be re-tagged} other {# places will be re-tagged}} “{cible}”. This cannot be undone.",
+      "fusionnerBtn": "Merge",
+      "supprimer": "Delete tag",
+      "supprimerConfirm": "{n} place(s) will lose “{label}”. Delete?",
+      "ajouterVolee": "+ New tag"
     }
   },
   "voyages": {

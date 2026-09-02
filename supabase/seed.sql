@@ -57,6 +57,12 @@ values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001', '11111111-1111-1111-1111-1111111
 insert into public.liste_item_tags (liste_item_id, tag_id)
 select 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001', id from public.tags where slug = 'terrasse';
 
+-- Restos v2 : une visite passée sur le Bistrot (favori — l'historique de visites
+-- est indépendant du statut). Sert aux asserts pgTAP d'isolation des visites.
+insert into public.visites (id, user_id, liste_item_id, note, commentaire, visite_le)
+values ('cccccccc-cccc-4ccc-8ccc-cccccccc0001', '11111111-1111-1111-1111-111111111111',
+        'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001', 9.0, 'terrasse au calme', '2026-06-14');
+
 -- 2e resto « Le Comptoir Démo » (a_faire, non-favori, avec coords, sans tag)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, lat, lng)
 values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'demo_place_2', 'resto', 'bistrot', 'Le Comptoir Démo', 'Paris', '75001', '1er', 'seed', 48.8566, 2.3522);

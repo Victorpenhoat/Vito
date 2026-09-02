@@ -163,6 +163,32 @@
       "appeler": "Appeler",
       "reserver": "Réserver",
       "donnees": "Données Google Places"
+    },
+    "tags": {
+      "titre": "Gérer les tags",
+      "gerer": "Gérer les tags",
+      "nouveau": "Nouveau tag",
+      "scopes": {
+        "tous": "Tous",
+        "common": "Commun",
+        "restaurant": "Restaurant",
+        "hotel": "Hôtel"
+      },
+      "usages": "{n, plural, =0 {aucune adresse} one {# adresse} other {# adresses}}",
+      "systeme": "système",
+      "label": "Nom",
+      "couleur": "Couleur",
+      "portee": "Portée",
+      "enregistrer": "Enregistrer",
+      "creer": "Créer",
+      "modifierTitre": "Modifier le tag",
+      "fusionnerTitre": "Fusionner",
+      "fusionnerVers": "Fusionner vers…",
+      "fusionnerInfo": "{n, plural, =0 {Aucune adresse} one {# adresse sera re-taguée} other {# adresses seront re-taguées}} « {cible} ». Action irréversible.",
+      "fusionnerBtn": "Fusionner",
+      "supprimer": "Supprimer le tag",
+      "supprimerConfirm": "{n} adresse(s) perdront « {label} ». Supprimer ?",
+      "ajouterVolee": "+ Nouveau tag"
     }
   },
   "voyages": {
