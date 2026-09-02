@@ -1,6 +1,6 @@
-import type { PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
+import type { DetailsOpts, Equipements, PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
 
-type Fixture = PlaceResult & { openNow: boolean };
+type Fixture = PlaceResult & { openNow: boolean; equipementsFixture?: Equipements };
 
 const FIXTURES: Fixture[] = [
   {
@@ -53,6 +53,7 @@ const FIXTURES: Fixture[] = [
     types: ["lodging", "hotel"],
     photoRefs: ["mock_photo_h1"],
     openNow: true,
+    equipementsFixture: { breakfast: true, parking: true, accessibility: null, goodForChildren: true, allowsDogs: false },
   },
   {
     placeId: "mock_hotel_2",
@@ -93,11 +94,12 @@ export class MockPlacesProvider implements PlacesProvider {
         : {}),
     }));
   }
-  async details(placeId: string): Promise<PlaceResult | null> {
+  async details(placeId: string, opts?: DetailsOpts): Promise<PlaceResult | null> {
     const f = FIXTURES.find((x) => x.placeId === placeId);
     if (!f) return null;
-    const { openNow: _openNow, ...result } = f;
-    return result;
+    // Même sémantique que Google : les équipements ne sont servis que si demandés.
+    const { openNow: _openNow, equipementsFixture, ...result } = f;
+    return opts?.hotel ? { ...result, equipements: equipementsFixture ?? null } : result;
   }
   photoUrl(photoRef: string, _maxWidth: number): string | null {
     if (!photoRef) return null;

@@ -2,7 +2,7 @@ import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import type { Place } from "../domain/filterPlaces";
 
 const SELECT =
-  "id, statut, is_favorite, reco_source, origine_type, origine_qui, origine_source, etablissement:etablissements!inner(id, nom, type, ville, arrondissement, categorie, photo_ref, lat, lng, place_id, rating, rating_count), tags:liste_item_tags(tag:tags(slug, label, color)), visites(note, visite_le)";
+  "id, statut, is_favorite, reco_source, origine_type, origine_qui, origine_source, etoiles, prix_nuit, etablissement:etablissements!inner(id, nom, type, ville, arrondissement, categorie, photo_ref, lat, lng, place_id, rating, rating_count, type_hebergement, equipements), tags:liste_item_tags(tag:tags(slug, label, color)), visites(note, visite_le, date_fin)";
 
 async function queryPlaces(category: "resto" | "hotel", archived: boolean): Promise<Place[]> {
   const supabase = await createServerSupabase();
@@ -19,7 +19,7 @@ async function queryPlaces(category: "resto" | "hotel", archived: boolean): Prom
     .order("added_at", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((row) => {
-    const visites = (row.visites ?? []) as { note: number | null; visite_le: string }[];
+    const visites = (row.visites ?? []) as { note: number | null; visite_le: string; date_fin: string | null }[];
     const derniere = visites.length
       ? visites.reduce((a, b) => (a.visite_le >= b.visite_le ? a : b))
       : null;
@@ -27,6 +27,8 @@ async function queryPlaces(category: "resto" | "hotel", archived: boolean): Prom
       id: row.id,
       statut: row.statut,
       is_favorite: row.is_favorite,
+      etoiles: row.etoiles,
+      prix_nuit: row.prix_nuit,
       // v2 : origine_qui prime ; reco_source conservé en repli (déprécié, backfillé en 00030)
       reco_source: row.origine_qui ?? row.reco_source,
       origine_type: row.origine_type,

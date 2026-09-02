@@ -13,7 +13,7 @@ export async function getFiche(etablissementId: string) {
   const [etabRes, itemRes, avisRes] = await Promise.all([
     supabase.from("etablissements").select("*").eq("id", etablissementId).single(),
     supabase.from("liste_items")
-      .select("id, statut, is_favorite, is_archived, origine_type, origine_qui, origine_family_member_id, origine_source")
+      .select("id, statut, is_favorite, is_archived, origine_type, origine_qui, origine_family_member_id, origine_source, etoiles, prix_nuit, checkin_heure, checkout_heure")
       .eq("etablissement_id", etablissementId).maybeSingle(),
     supabase.from("avis").select("*").eq("etablissement_id", etablissementId).order("created_at", { ascending: false }),
   ]);
@@ -24,12 +24,17 @@ export async function getFiche(etablissementId: string) {
 
   // Récupère les tags appliqués et les visites de l'item (si l'item existe).
   let appliedTagIds: string[] = [];
-  let visites: { id: string; note: number | null; commentaire: string | null; visite_le: string }[] = [];
+  let visites: {
+    id: string; note: number | null; commentaire: string | null; visite_le: string;
+    date_fin: string | null; voyage_id: string | null; adultes: number | null; enfants: number | null; chambres: number | null;
+    voyage: { id: string; titre: string } | null;
+  }[] = [];
   if (itemRes.data) {
     const [tagRes, visRes] = await Promise.all([
       supabase.from("liste_item_tags").select("tag_id").eq("liste_item_id", itemRes.data.id),
       supabase.from("visites")
-        .select("id, note, commentaire, visite_le")
+        // Hôtels v2 : séjour = plage de dates + voyage lié (titre via join sous RLS)
+        .select("id, note, commentaire, visite_le, date_fin, voyage_id, adultes, enfants, chambres, voyage:voyages(id, titre)")
         .eq("liste_item_id", itemRes.data.id)
         .order("visite_le", { ascending: false }),
     ]);

@@ -1,5 +1,6 @@
-import type { PlaceResult } from "@/lib/services/places/types";
+import type { Equipements, PlaceResult } from "@/lib/services/places/types";
 import { classifyFallback } from "./classifyFallback";
+import { classifyHebergement, type TypeHebergement } from "@/features/places/domain/classifyHebergement";
 
 export type EtablissementInput = {
   place_id: string;
@@ -19,6 +20,9 @@ export type EtablissementInput = {
   rating_count: number | null;
   source: string;
   photo_ref: string | null;
+  // Hôtels v2 (00032) — données fournisseur, null côté resto.
+  type_hebergement: TypeHebergement | null;
+  equipements: Equipements | null;
 };
 
 function arrondissementParisien(codePostal: string | null, ville: string | null): string | null {
@@ -48,5 +52,7 @@ export function mapPlaceToEtablissement(p: PlaceResult, categorie: "resto" | "ho
     rating_count: p.ratingCount,
     source: "places",
     photo_ref: p.photoRefs[0] ?? null,
+    type_hebergement: categorie === "hotel" ? classifyHebergement(p.types) : null,
+    equipements: categorie === "hotel" ? (p.equipements ?? null) : null,
   };
 }

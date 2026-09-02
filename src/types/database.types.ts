@@ -451,6 +451,7 @@ export type Database = {
           code_postal: string | null
           created_at: string
           enriched_at: string | null
+          equipements: Json | null
           id: string
           lat: number | null
           lng: number | null
@@ -464,6 +465,7 @@ export type Database = {
           source: string
           telephone: string | null
           type: string | null
+          type_hebergement: string | null
           ville: string | null
           website: string | null
         }
@@ -474,6 +476,7 @@ export type Database = {
           code_postal?: string | null
           created_at?: string
           enriched_at?: string | null
+          equipements?: Json | null
           id?: string
           lat?: number | null
           lng?: number | null
@@ -487,6 +490,7 @@ export type Database = {
           source?: string
           telephone?: string | null
           type?: string | null
+          type_hebergement?: string | null
           ville?: string | null
           website?: string | null
         }
@@ -497,6 +501,7 @@ export type Database = {
           code_postal?: string | null
           created_at?: string
           enriched_at?: string | null
+          equipements?: Json | null
           id?: string
           lat?: number | null
           lng?: number | null
@@ -510,6 +515,7 @@ export type Database = {
           source?: string
           telephone?: string | null
           type?: string | null
+          type_hebergement?: string | null
           ville?: string | null
           website?: string | null
         }
@@ -806,7 +812,10 @@ export type Database = {
         Row: {
           added_at: string
           archived_at: string | null
+          checkin_heure: string | null
+          checkout_heure: string | null
           etablissement_id: string
+          etoiles: number | null
           id: string
           is_archived: boolean
           is_favorite: boolean
@@ -815,6 +824,7 @@ export type Database = {
           origine_qui: string | null
           origine_source: string | null
           origine_type: string | null
+          prix_nuit: number | null
           reco_source: string | null
           statut: Database["public"]["Enums"]["liste_statut"]
           user_id: string
@@ -822,7 +832,10 @@ export type Database = {
         Insert: {
           added_at?: string
           archived_at?: string | null
+          checkin_heure?: string | null
+          checkout_heure?: string | null
           etablissement_id: string
+          etoiles?: number | null
           id?: string
           is_archived?: boolean
           is_favorite?: boolean
@@ -831,6 +844,7 @@ export type Database = {
           origine_qui?: string | null
           origine_source?: string | null
           origine_type?: string | null
+          prix_nuit?: number | null
           reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id: string
@@ -838,7 +852,10 @@ export type Database = {
         Update: {
           added_at?: string
           archived_at?: string | null
+          checkin_heure?: string | null
+          checkout_heure?: string | null
           etablissement_id?: string
+          etoiles?: number | null
           id?: string
           is_archived?: boolean
           is_favorite?: boolean
@@ -847,6 +864,7 @@ export type Database = {
           origine_qui?: string | null
           origine_source?: string | null
           origine_type?: string | null
+          prix_nuit?: number | null
           reco_source?: string | null
           statut?: Database["public"]["Enums"]["liste_statut"]
           user_id?: string
@@ -1199,31 +1217,46 @@ export type Database = {
       }
       visites: {
         Row: {
+          adultes: number | null
+          chambres: number | null
           commentaire: string | null
           created_at: string
+          date_fin: string | null
+          enfants: number | null
           id: string
           liste_item_id: string
           note: number | null
           user_id: string
           visite_le: string
+          voyage_id: string | null
         }
         Insert: {
+          adultes?: number | null
+          chambres?: number | null
           commentaire?: string | null
           created_at?: string
+          date_fin?: string | null
+          enfants?: number | null
           id?: string
           liste_item_id: string
           note?: number | null
           user_id: string
           visite_le?: string
+          voyage_id?: string | null
         }
         Update: {
+          adultes?: number | null
+          chambres?: number | null
           commentaire?: string | null
           created_at?: string
+          date_fin?: string | null
+          enfants?: number | null
           id?: string
           liste_item_id?: string
           note?: number | null
           user_id?: string
           visite_le?: string
+          voyage_id?: string | null
         }
         Relationships: [
           {
@@ -1238,6 +1271,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visites_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
             referencedColumns: ["id"]
           },
         ]
