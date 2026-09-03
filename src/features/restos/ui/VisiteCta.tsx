@@ -10,8 +10,9 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 
 // CTA « J'y suis allé » / « J'y ai séjourné » de la fiche (design Resto v2
 // écran 6, Hôtels v2 écran 6) → formulaire en modale.
-export function VisiteCta({ listeItemId, nom, tags, categorie = "resto", voyages = [] }: {
+export function VisiteCta({ listeItemId, nom, tags, categorie = "resto", voyages = [], encart }: {
   listeItemId: string; nom: string; tags: TagLite[]; categorie?: CategorieUi; voyages?: VoyageLite[];
+  encart?: React.ReactNode;
 }) {
   const t = useTranslations(CATEGORY_UI[categorie].ns);
   const [open, setOpen] = useState(false);
@@ -23,7 +24,7 @@ export function VisiteCta({ listeItemId, nom, tags, categorie = "resto", voyages
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t("visite.titre", { nom })}>
         <ExperienceForm listeItemId={listeItemId} tags={tags} categorie={categorie} voyages={voyages}
-          onDone={() => setOpen(false)} />
+          encart={encart} onDone={() => setOpen(false)} />
       </Modal>
     </>
   );

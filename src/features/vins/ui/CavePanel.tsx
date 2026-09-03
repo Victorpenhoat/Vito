@@ -76,9 +76,17 @@ export function CavePanel({ vins, vinsConnus, tags }: {
       </div>
 
       {visibles.length === 0 ? (
-        <p data-testid="cave-vide" className="py-8 text-center text-sm text-muted">
-          {vins.length === 0 ? t("cave.videTotal") : t("cave.videFiltre")}
-        </p>
+        <div data-testid="cave-vide" className="flex flex-col items-center gap-2 py-10 text-center">
+          {vins.length === 0 ? (
+            <>
+              <p className="font-serif text-lg text-ink">{t("cave.videTitre")}</p>
+              <p className="max-w-xs text-[12.5px] text-muted">{t("cave.videTotal")}</p>
+              <AjouterVinButton vinsConnus={vinsConnus} tags={tags} />
+            </>
+          ) : (
+            <p className="text-sm text-muted">{t("cave.videFiltre")}</p>
+          )}
+        </div>
       ) : (
         <ul className="flex flex-col">
           {visibles.map((v) => (

@@ -169,8 +169,9 @@
       "buNFois": "bebido {n, plural, one {# vez} other {# veces}}",
       "jamaisBu": "nunca bebido",
       "dernierLieu": "último: {lieu}",
-      "videTotal": "Tu bodega está vacía. Fotografía una etiqueta para empezar.",
-      "videFiltre": "Ningún vino coincide con estos filtros."
+      "videTotal": "Fotografía la etiqueta del próximo vino que bebas: Vito se encarga del resto.",
+      "videFiltre": "Ningún vino coincide con estos filtros.",
+      "videTitre": "Tu bodega está vacía"
     },
     "analyse": {
       "avertissement": "Análisis generado automáticamente a partir de la etiqueta. Verifica la información importante.",
@@ -217,7 +218,15 @@
         }
       }
     },
-    "echecDegustation": "No se pudo guardar. Inténtalo de nuevo."
+    "echecDegustation": "No se pudo guardar. Inténtalo de nuevo.",
+    "busIci": {
+      "titre": "Vinos bebidos aquí",
+      "vide": "Aún no hay ningún vino anotado aquí.",
+      "sansVisite": "cata sin visita",
+      "sectionVisite": "Vinos",
+      "ajoutes": "{n, plural, one {# añadido} other {# añadidos}}",
+      "vinSansNom": "Vino sin nombre"
+    }
   },
   "gouts": {
     "title": "Mis gustos",

@@ -84,10 +84,13 @@ test("capturer un vin enchaîne sur ma dégustation, notée en verres", async ({
     degustation.getByTestId("enregistrer-degustation").click(),
   ]);
 
-  // le vin rejoint la Cave, et le tri « À retrouver » le retient
-  await expectVisibleWithReload(page, page.getByTestId("cave-row").filter({ hasText: "Bandol" }).first(), { timeout: 15_000 });
+  // Le vin rejoint la Cave, et « À retrouver » le retient. On vise le MILLÉSIME,
+  // unique à ce run : « Bandol » désigne aussi les vins laissés par les autres
+  // specs, et l'assertion aurait porté sur le mauvais.
+  const monVin = page.getByTestId("cave-row").filter({ hasText: millesime });
+  await expectVisibleWithReload(page, monVin, { timeout: 15_000 });
   await page.getByTestId("cave-onglet-a_retrouver").click();
-  await expect(page.getByTestId("cave-row").filter({ hasText: "Bandol" }).first()).toBeVisible();
+  await expect(monVin).toBeVisible();
 });
 
 test("la fiche annonce son analyse générée, se corrige et se relance", async ({ page }) => {
@@ -116,4 +119,54 @@ test("la fiche annonce son analyse générée, se corrige et se relance", async 
 
   await expectVisibleWithReload(page, page.getByTestId("analyse-avertissement"), { timeout: 15_000 });
   await expect(page.getByTestId("profil-corps")).toBeVisible();
+});
+
+test("la fiche resto montre les vins bus ici, et en accepte un sans visite", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos");
+  await page.getByTestId("place-card").first().getByRole("link").click();
+  await expect(page).toHaveURL(/\/fr\/restos\//);
+
+  // le bloc existe et montre déjà le vin du seed, bu dans ce restaurant
+  const bloc = page.getByTestId("vins-bus-ici");
+  await expect(bloc).toBeVisible();
+  await expect(bloc.getByTestId("vin-bu-ici").filter({ hasText: "Domaine de Démo" })).toBeVisible();
+
+  // ajouter un vin depuis la fiche : le lieu est déjà connu, on ne le redemande pas
+  await ouvrirModale(page, "ajouter-vin", "etiquette-tunnel");
+  await page.getByTestId("etiquette-input").setInputFiles({
+    name: "etiquette.png", mimeType: "image/png", buffer: Buffer.concat([PNG, PNG]),
+  });
+  await expect(page.getByTestId("etiquette-form")).toBeVisible({ timeout: 15_000 });
+  const millesime = String(1900 + ((Date.now() + 7) % 100));
+  await page.getByTestId("champ-millesime").fill(millesime);
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    page.getByTestId("etiquette-enregistrer").click(),
+  ]);
+
+  const degustation = page.getByTestId("ma-degustation");
+  await expect(degustation).toBeVisible({ timeout: 15_000 });
+  await expect(degustation.getByTestId("lieu-visite")).toBeVisible();
+  await degustation.getByTestId("verre-5").click();
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    degustation.getByTestId("enregistrer-degustation").click(),
+  ]);
+
+  // il rejoint le bloc, et se dit « sans visite » : aucune visite n'a été saisie
+  const ajoute = page.getByTestId("vin-bu-ici").filter({ hasText: millesime });
+  await expectVisibleWithReload(page, ajoute, { timeout: 15_000 });
+  await expect(ajoute).toContainText("sans visite");
+});
+
+test("le formulaire de visite porte sa section Vins", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos");
+  await page.getByTestId("place-card").first().getByRole("link").click();
+  await ouvrirModale(page, "visite-cta", "visite-form");
+  // la section est là, avec son propre bouton d'ajout
+  const section = page.getByTestId("vins-de-la-visite");
+  await expect(section).toBeVisible();
+  await expect(section.getByTestId("ajouter-vin")).toBeVisible();
 });
