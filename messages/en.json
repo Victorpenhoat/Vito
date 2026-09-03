@@ -31,7 +31,16 @@
     "renvoyer": "Resend the link",
     "corrigerAdresse": "Change the address",
     "lienExpire": "This link is no longer valid. Please request a new one.",
-    "sansMotDePasse": "We send you a link to continue. No password to remember."
+    "sansMotDePasse": "We send you a link to continue. No password to remember.",
+    "continuerAvec": "Continue with {moyen}",
+    "passkeyEchec": "Passkey sign-in failed.",
+    "biometrie": {
+      "faceId": "Face ID",
+      "touchId": "Touch ID",
+      "windowsHello": "Windows Hello",
+      "android": "your fingerprint",
+      "passkey": "a passkey"
+    }
   },
   "vins": {
     "title": "My wines",
@@ -1058,6 +1067,53 @@
       "deverrouiller": "Unlock",
       "echec": "Could not unlock.",
       "aucuneDonnee": "No data shown before unlocking"
+    },
+    "passkeys": {
+      "titre": "Passkeys",
+      "explication": "Sign in without a password, with your face or fingerprint. The key stays on your device.",
+      "aucune": "No passkey saved yet.",
+      "chargement": "Loading…",
+      "sansNom": "Device",
+      "ajouteeLe": "Added on {date}",
+      "revoquer": "Revoke",
+      "echecAjout": "Could not add this passkey.",
+      "echecRevocation": "Could not revoke this passkey."
+    },
+    "totp": {
+      "titre": "Two-factor authentication",
+      "explication": "A six-digit code from your authenticator app, on top of your sign-in.",
+      "activer": "Enable",
+      "desactiver": "Disable",
+      "active": "Enabled",
+      "scanner": "Scan this QR code with your authenticator app, then enter the code it shows.",
+      "secret": "Or enter this key:",
+      "code": "6-digit code",
+      "confirmer": "Confirm",
+      "codeRefuse": "Code rejected. Check your device clock and try again.",
+      "echecActivation": "Could not enable two-factor authentication.",
+      "echecDesactivation": "Could not disable two-factor authentication."
+    },
+    "sessions": {
+      "titre": "Devices and sessions",
+      "explication": "Where your account is signed in.",
+      "aucune": "No active session.",
+      "cetAppareil": "This device",
+      "revoquer": "Revoke",
+      "deconnecterAutres": "{n, plural, one {Sign out the other device} other {Sign out the # other devices}}",
+      "connexionsRecentes": "Recent sign-ins",
+      "approximatif": "Indicative timestamps, no precise location.",
+      "type": {
+        "mobile": "Mobile",
+        "tablette": "Tablet",
+        "ordinateur": "Computer"
+      },
+      "actions": {
+        "login": "Sign-in",
+        "logout": "Sign-out",
+        "token_refreshed": "Session extended",
+        "user_signedup": "Account created",
+        "autre": "Activity"
+      }
     }
   },
   "invitations": {

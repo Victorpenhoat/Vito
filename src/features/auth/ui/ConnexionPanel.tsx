@@ -3,6 +3,7 @@ import { useActionState, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Mail, KeyRound } from "lucide-react";
 import { useRouter } from "@/lib/i18n/routing";
+import { BoutonPasskey } from "./BoutonPasskey";
 
 type ActionMdp = (prev: unknown, fd: FormData) => Promise<{ error: string } | undefined>;
 type ActionLien = (prev: unknown, fd: FormData) => Promise<{ error?: string; envoye?: true; email?: string }>;
@@ -18,6 +19,7 @@ export function ConnexionPanel({ signIn, envoyerLienMagique }: {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [avecMdp, setAvecMdp] = useState(false);
+  const [erreurPasskey, setErreurPasskey] = useState<string | null>(null);
   const [lienState, envoyerLien, lienPending] = useActionState(envoyerLienMagique, undefined);
   const [mdpState, connexionMdp, mdpPending] = useActionState(signIn, undefined);
 
@@ -39,6 +41,10 @@ export function ConnexionPanel({ signIn, envoyerLienMagique }: {
 
   return (
     <div data-testid="connexion-panel" className="flex w-full flex-col gap-3 text-left">
+      {/* Passkey d'abord quand l'appareil en présente une (design écran 9) ;
+          le composant ne s'affiche pas si le navigateur n'en gère pas. */}
+      <BoutonPasskey onEchec={setErreurPasskey} />
+      {erreurPasskey && <p role="alert" className="text-sm text-danger">{erreurPasskey}</p>}
       <form action={envoyerLien} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("email")}

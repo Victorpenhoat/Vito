@@ -31,7 +31,16 @@
     "renvoyer": "Reenviar el enlace",
     "corrigerAdresse": "Corregir la dirección",
     "lienExpire": "Este enlace ya no es válido. Solicita uno nuevo.",
-    "sansMotDePasse": "Te enviamos un enlace para continuar. Sin contraseña que recordar."
+    "sansMotDePasse": "Te enviamos un enlace para continuar. Sin contraseña que recordar.",
+    "continuerAvec": "Continuar con {moyen}",
+    "passkeyEchec": "No se ha podido iniciar sesión con passkey.",
+    "biometrie": {
+      "faceId": "Face ID",
+      "touchId": "Touch ID",
+      "windowsHello": "Windows Hello",
+      "android": "tu huella",
+      "passkey": "una passkey"
+    }
   },
   "vins": {
     "title": "Mis vinos",
@@ -1058,6 +1067,53 @@
       "deverrouiller": "Desbloquear",
       "echec": "No se ha podido desbloquear.",
       "aucuneDonnee": "Ningún dato visible antes de desbloquear"
+    },
+    "passkeys": {
+      "titre": "Passkeys",
+      "explication": "Inicia sesión sin contraseña, con tu cara o tu huella. La clave se queda en tu dispositivo.",
+      "aucune": "Ninguna passkey guardada.",
+      "chargement": "Cargando…",
+      "sansNom": "Dispositivo",
+      "ajouteeLe": "Añadida el {date}",
+      "revoquer": "Revocar",
+      "echecAjout": "No se ha podido añadir esta passkey.",
+      "echecRevocation": "No se ha podido revocar esta passkey."
+    },
+    "totp": {
+      "titre": "Doble autenticación",
+      "explication": "Un código de seis dígitos desde tu aplicación de autenticación, además de tu inicio de sesión.",
+      "activer": "Activar",
+      "desactiver": "Desactivar",
+      "active": "Activada",
+      "scanner": "Escanea este código QR con tu aplicación de autenticación e introduce el código que muestre.",
+      "secret": "O introduce esta clave:",
+      "code": "Código de 6 dígitos",
+      "confirmer": "Confirmar",
+      "codeRefuse": "Código rechazado. Comprueba la hora de tu dispositivo e inténtalo de nuevo.",
+      "echecActivation": "No se ha podido activar la doble autenticación.",
+      "echecDesactivation": "No se ha podido desactivar la doble autenticación."
+    },
+    "sessions": {
+      "titre": "Dispositivos y sesiones",
+      "explication": "Dónde está conectada tu cuenta.",
+      "aucune": "Ninguna sesión activa.",
+      "cetAppareil": "Este dispositivo",
+      "revoquer": "Revocar",
+      "deconnecterAutres": "{n, plural, one {Desconectar el otro dispositivo} other {Desconectar los # otros dispositivos}}",
+      "connexionsRecentes": "Inicios de sesión recientes",
+      "approximatif": "Marcas de tiempo indicativas, sin ubicación precisa.",
+      "type": {
+        "mobile": "Móvil",
+        "tablette": "Tableta",
+        "ordinateur": "Ordenador"
+      },
+      "actions": {
+        "login": "Inicio de sesión",
+        "logout": "Cierre de sesión",
+        "token_refreshed": "Sesión prolongada",
+        "user_signedup": "Cuenta creada",
+        "autre": "Actividad"
+      }
     }
   },
   "invitations": {

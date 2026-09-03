@@ -70,3 +70,32 @@ export async function setPreferencesVerrou(_prev: unknown, formData: FormData) {
   revalidatePath("/", "layout");
   return { ok: true as const };
 }
+
+// ── Appareils et sessions (Onboarding lot O-E, écrans 14 et 15) ─────────────
+
+/** Révoque une session : l'appareil visé retombe sur l'écran de connexion. */
+export async function revoquerSession(_prev: unknown, formData: FormData) {
+  const id = formData.get("sessionId");
+  if (typeof id !== "string" || id === "") return { error: "Session inconnue" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  // La fonction refuse la session courante (on ne se déconnecte pas soi-même
+  // par mégarde) et n'agit que sur les sessions de l'appelant.
+  const { data, error } = await supabase.rpc("revoquer_session", { p_session_id: id });
+  if (error) { logActionError("compte.revoquerSession", error); return { error: "Révocation échouée" }; }
+  if (data !== true) return { error: "Révocation impossible" };
+  revalidatePath("/reglages");
+  return { ok: true as const };
+}
+
+/** « Déconnecter tous les autres appareils » — la session courante est conservée. */
+export async function revoquerAutresSessions() {
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { error } = await supabase.rpc("revoquer_autres_sessions");
+  if (error) { logActionError("compte.revoquerAutresSessions", error); return { error: "Révocation échouée" }; }
+  revalidatePath("/reglages");
+  return { ok: true as const };
+}
