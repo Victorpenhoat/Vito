@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(32);
+select plan(40);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -191,6 +191,81 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('22222222-2222-2222-2222-222222222222',
           'select case when public.revoquer_session(''00000000-0000-4000-8000-000000000000'') then 1 else 0 end'),
           0::bigint, 'révoquer une session étrangère est refusé');
+
+-- ── Données et comptes (00039) ─────────────────────────────────────────────
+
+-- is_admin() lit le claim JWT « user_role » posé par custom_access_token_hook :
+-- pour éprouver les fonctions d'administration il faut donc une identité qui
+-- porte ce claim, comme en production.
+create function tests.count_as_admin(p_uid uuid, p_sql text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', 'admin')::text, true);
+  set local role authenticated;
+  execute p_sql into n;
+  reset role;
+  return n;
+end $$;
+
+-- 33) une demande de suppression s'enregistre…
+select is(tests.count_as('44444444-4444-4444-8444-444444444444',
+          'select case when public.demander_suppression_compte() is not null then 1 else 0 end'),
+          1::bigint, 'un compte peut demander sa suppression');
+
+-- 34) …et n'efface rien tout de suite : c'est tout l'objet du délai de rétractation
+select is(tests.count_as('44444444-4444-4444-8444-444444444444',
+          'select count(*) from public.profiles'),
+          1::bigint, 'le compte existe toujours après la demande');
+
+-- 35) l'annulation remet le compte en état normal.
+--     Deux ordres distincts, et non un CTE : dans une seule requête l'update ne
+--     serait pas visible du select (même snapshot).
+create function tests.annuler_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.annuler_suppression_compte();
+  select count(*) into n from public.profiles where suppression_demandee_le is null;
+  reset role;
+  return n;
+end $$;
+
+select is(tests.annuler_puis_compter('44444444-4444-4444-8444-444444444444'),
+          1::bigint, 'la demande de suppression est annulable');
+
+-- 36) l'administration des comptes est réservée aux administrateurs
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'select count(*) from public.admin_lister_comptes()') $$,
+  'réservé à l''administrateur',
+  'un compte standard ne liste pas les comptes');
+
+-- 37) un administrateur ne peut pas se suspendre lui-même (ni un autre admin)
+select is(tests.count_as_admin('33333333-3333-3333-3333-333333333333',
+          'select case when public.admin_suspendre_compte(''33333333-3333-3333-3333-333333333333'', true) then 1 else 0 end'),
+          0::bigint, 'un administrateur ne se suspend pas lui-même');
+
+-- 38) l'administrateur gère les ACCÈS, pas les CONTENUS : même admin, il ne voit
+--     aucune ligne appartenant à un autre compte (aucune policy admin-read ici)
+select is(tests.count_as_admin('33333333-3333-3333-3333-333333333333',
+          'select count(*) from public.liste_items
+            where user_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'un administrateur ne voit aucun contenu des autres comptes');
+
+-- 39) suspendre coupe RÉELLEMENT l'accès : les sessions du compte sont révoquées,
+--     sinon son jeton en cours resterait valable jusqu'à expiration.
+insert into auth.sessions (id, user_id, created_at, updated_at)
+  values ('aaaaaaaa-0000-4000-8000-00000000f39a', '11111111-1111-1111-1111-111111111111', now(), now());
+
+select is(tests.count_as_admin('33333333-3333-3333-3333-333333333333',
+          'select case when public.admin_suspendre_compte(''11111111-1111-1111-1111-111111111111'', true) then 1 else 0 end'),
+          1::bigint, 'un administrateur suspend un compte standard');
+
+select is((select count(*) from auth.sessions where user_id = '11111111-1111-1111-1111-111111111111'),
+          0::bigint, 'la suspension révoque les sessions du compte');
 
 select finish();
 rollback;

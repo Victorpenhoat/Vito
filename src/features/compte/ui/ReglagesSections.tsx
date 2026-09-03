@@ -12,11 +12,11 @@ const SECTIONS: Section[] = [
   { cle: "securite", href: "/reglages" },
   { cle: "appareils", href: "/reglages" },
   { cle: "partages", bientot: true },
-  { cle: "donnees", bientot: true },
+  { cle: "donnees", href: "/reglages" },
   { cle: "tags", href: "/restos/tags" },
   { cle: "gouts", href: "/gouts" },
   { cle: "abonnement", href: "/abonnement" },
-  { cle: "comptes", href: "/admin", adminSeul: true },
+  { cle: "comptes", href: "/reglages/comptes", adminSeul: true },
 ];
 
 export async function ReglagesSections({ role }: { role: string }) {

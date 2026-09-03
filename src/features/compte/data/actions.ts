@@ -99,3 +99,60 @@ export async function revoquerAutresSessions() {
   revalidatePath("/reglages");
   return { ok: true as const };
 }
+
+// ── Suppression du compte (Onboarding lot O-F, écran 16) ────────────────────
+
+/**
+ * Enregistre une demande de suppression, après vérification d'identité.
+ * Rien n'est effacé sur le moment : le délai de rétractation court, et se
+ * reconnecter annule la demande. La purge effective est faite par une tâche
+ * planifiée (fonction purger_comptes_supprimes) — non branchée à ce jour, ce
+ * qui est indiqué à l'utilisateur.
+ */
+export async function demanderSuppressionCompte(_prev: unknown, formData: FormData) {
+  const motDePasse = formData.get("motDePasse");
+  if (typeof motDePasse !== "string" || motDePasse === "") return { error: "Vérification impossible" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user?.email) return { error: "Non authentifié" };
+  // Un geste irréversible à terme mérite une identité confirmée (design : la
+  // 3ᵉ étape est une re-authentification).
+  if (!(await verifierMotDePasse(auth.user.email, motDePasse))) {
+    return { error: "Vérification impossible" };
+  }
+  const { error } = await supabase.rpc("demander_suppression_compte");
+  if (error) { logActionError("compte.demanderSuppression", error); return { error: "Demande non enregistrée" }; }
+  revalidatePath("/", "layout");
+  return { ok: true as const };
+}
+
+/** Annule la demande (« vous pouvez annuler en vous reconnectant »). */
+export async function annulerSuppressionCompte() {
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { error } = await supabase.rpc("annuler_suppression_compte");
+  if (error) { logActionError("compte.annulerSuppression", error); return { error: "Annulation échouée" }; }
+  revalidatePath("/", "layout");
+  return { ok: true as const };
+}
+
+// ── Administration des accès (écran « Comptes ») ────────────────────────────
+
+/** Suspend ou réactive un accès. Les contenus ne sont jamais touchés. */
+export async function suspendreCompte(_prev: unknown, formData: FormData) {
+  const userId = formData.get("userId");
+  const suspendre = formData.get("suspendre") === "true";
+  if (typeof userId !== "string" || userId === "") return { error: "Compte inconnu" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { data, error } = await supabase.rpc("admin_suspendre_compte", {
+    p_user_id: userId,
+    p_suspendre: suspendre,
+  });
+  if (error) { logActionError("compte.suspendreCompte", error); return { error: "Action refusée" }; }
+  if (data !== true) return { error: "Action impossible sur ce compte" };
+  revalidatePath("/reglages/comptes");
+  return { ok: true as const };
+}

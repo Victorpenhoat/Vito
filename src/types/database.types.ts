@@ -1058,6 +1058,8 @@ export type Database = {
           last_name: string | null
           locale: string
           role: Database["public"]["Enums"]["app_role"]
+          suppression_demandee_le: string | null
+          suspendu_le: string | null
           verrou_delai_minutes: number
         }
         Insert: {
@@ -1070,6 +1072,8 @@ export type Database = {
           last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
+          suppression_demandee_le?: string | null
+          suspendu_le?: string | null
           verrou_delai_minutes?: number
         }
         Update: {
@@ -1082,6 +1086,8 @@ export type Database = {
           last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
+          suppression_demandee_le?: string | null
+          suspendu_le?: string | null
           verrou_delai_minutes?: number
         }
         Relationships: []
@@ -1626,6 +1632,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_lister_comptes: {
+        Args: never
+        Returns: {
+          created_at: string
+          derniere_connexion: string
+          display_name: string
+          email: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          statut: string
+        }[]
+      }
+      admin_suspendre_compte: {
+        Args: { p_suspendre: boolean; p_user_id: string }
+        Returns: boolean
+      }
+      annuler_suppression_compte: { Args: never; Returns: undefined }
       cache_etablissement_photo: {
         Args: { p_etab: string; p_ref: string }
         Returns: undefined
@@ -1651,7 +1674,9 @@ export type Database = {
         Returns: string
       }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      delai_retractation_jours: { Args: never; Returns: number }
       delier_client: { Args: { p_client_id: string }; Returns: undefined }
+      demander_suppression_compte: { Args: never; Returns: string }
       emettre_reauth_ticket: {
         Args: { p_cible: string; p_hash: string }
         Returns: undefined
@@ -1699,6 +1724,7 @@ export type Database = {
         }[]
       }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
+      purger_comptes_supprimes: { Args: never; Returns: number }
       quitter_famille: { Args: never; Returns: undefined }
       retirer_membre_famille: {
         Args: { p_famille_id: string; p_profile_id: string }

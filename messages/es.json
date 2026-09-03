@@ -1114,6 +1114,57 @@
         "user_signedup": "Cuenta creada",
         "autre": "Actividad"
       }
+    },
+    "donnees": {
+      "exportTitre": "Exportar mis datos",
+      "exportExplication": "Un archivo completo de todo lo que has introducido, descargado al instante. Los escaneos de documentos y fotos de etiquetas no se incluyen: están cifrados y se consultan uno a uno.",
+      "exporter": "Descargar mi archivo",
+      "exporterAvant": "Exportar mis datos primero",
+      "suppressionTitre": "Eliminar mi cuenta",
+      "supprimerCompte": "Eliminar mi cuenta",
+      "etape": "Paso {n} de {total}",
+      "cequiPart": "Lo que se eliminará",
+      "inventaire": "{adresses} direcciones, {voyages} viajes y {vins} vinos.",
+      "inventaireProches": "{proches} fichas del Círculo y sus documentos de identidad.",
+      "inventaireInvites": "Tus invitados perderán el acceso a los viajes compartidos.",
+      "retractation": "Plazo de desistimiento",
+      "delai": "{jours} días para cambiar de opinión.",
+      "annulationPossible": "Puedes cancelar volviendo a iniciar sesión.",
+      "confirmation": "Confirmación",
+      "confirmezIdentite": "Confirma tu identidad para registrar la solicitud.",
+      "verifierEtSupprimer": "Verificar y eliminar",
+      "continuer": "Continuar",
+      "retour": "Volver",
+      "renoncer": "Renunciar",
+      "echecSuppression": "No se ha podido verificar.",
+      "suppressionEnCours": "Eliminación solicitada",
+      "effacementLe": "Tus datos se borrarán definitivamente el {date}.",
+      "annulerSuppression": "Cancelar la eliminación",
+      "echecAnnulation": "No se ha podido cancelar."
+    },
+    "comptes": {
+      "eyebrow": "Administración",
+      "titre": "Cuentas",
+      "gereLesAcces": "Como administrador, gestionas los accesos — nunca los contenidos.",
+      "aucunContenu": "Ninguna ficha, documento o viaje de otra cuenta te es accesible.",
+      "creeLe": "creada el {date}",
+      "vuLe": "vista el {date}",
+      "jamaisConnecte": "nunca conectada",
+      "suspendre": "Suspender",
+      "reactiver": "Reactivar",
+      "statuts": {
+        "actif": "Activa",
+        "invite": "Invitada",
+        "suspendu": "Suspendida",
+        "suppression": "Eliminación solicitada",
+        "administrateur": "Administrador"
+      }
+    },
+    "suspendu": {
+      "titre": "Acceso suspendido",
+      "explication": "Un administrador ha suspendido tu acceso a Vito.",
+      "contenusIntacts": "Tus datos están intactos: no se ha eliminado nada.",
+      "seDeconnecter": "Cerrar sesión"
     }
   },
   "invitations": {

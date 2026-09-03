@@ -23,7 +23,9 @@ export async function signIn(_prev: unknown, formData: FormData) {
 
 export async function signOut() {
   const supabase = await createServerSupabase();
-  await supabase.auth.signOut();
+  // Scope local : on ne déconnecte que CET appareil. Fermer les autres est une
+  // action distincte et explicite (Réglages > Appareils et sessions).
+  await supabase.auth.signOut({ scope: "local" });
   const locale = await getLocale();
   redirect({ href: "/login", locale });
 }
