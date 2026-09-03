@@ -81,3 +81,28 @@ test("le numéro n'est pas dans la page, et se révèle après vérification", a
   await page.getByTestId("masquer-numero").click();
   await expect(page.getByTestId("numero-protege")).toContainText("•");
 });
+
+test("vérifier son mot de passe ne déconnecte pas les autres appareils", async ({ page, browser }) => {
+  // Non-régression : signOut() de Supabase est GLOBAL par défaut. Le
+  // vérificateur de mot de passe ouvre une session éphémère puis la ferme — s'il
+  // la fermait globalement, révéler un numéro déconnecterait l'utilisateur de
+  // partout, y compris de l'appareil courant.
+  await login(page, "client@vito.test");
+
+  // second appareil, connecté au même compte
+  const autre = await browser.newContext();
+  const autrePage = await autre.newPage();
+  await login(autrePage, "client@vito.test");
+
+  // révélation d'un numéro : elle vérifie le mot de passe
+  await page.goto(`/fr/famille/proches/${PROCHE_ID}/documents/${DOC_ID}`);
+  await page.getByTestId("reveler-numero").click();
+  await page.getByTestId("reauth-mot-de-passe").fill("password123");
+  await page.getByTestId("reauth-form").getByRole("button", { name: "Vérifier" }).click();
+  await expect(page.getByTestId("numero-protege")).toHaveText("19FR99892", { timeout: 15_000 });
+
+  // l'autre appareil est toujours connecté : sa session n'a pas été révoquée
+  await autrePage.goto("/fr/reglages");
+  await expect(autrePage.getByTestId("reglages-sections")).toBeVisible({ timeout: 20_000 });
+  await autre.close();
+});

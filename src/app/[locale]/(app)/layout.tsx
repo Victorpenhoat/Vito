@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { AppShell } from "@/features/shell/ui/AppShell";
 import { NAV_ITEMS, filterNav, type Role } from "@/features/shell/nav-config";
 import { VerrouApp } from "@/features/compte/ui/VerrouApp";
+import { CompteSuspendu } from "@/features/compte/ui/CompteSuspendu";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   await requireRole(["client", "agence", "admin"]);
@@ -15,11 +16,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (auth.user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("display_name, verrou_delai_minutes")
+      .select("display_name, verrou_delai_minutes, suspendu_le")
       .eq("id", auth.user.id)
       .maybeSingle();
     if (profile?.display_name) userName = profile.display_name;
     if (profile) delaiVerrou = profile.verrou_delai_minutes;
+    // Compte suspendu : la révocation des sessions coupe l'accès côté serveur,
+    // cette garde coupe l'affichage immédiatement, sans attendre l'expiration
+    // du jeton en cours.
+    if (profile?.suspendu_le) return <CompteSuspendu />;
   }
 
   return (

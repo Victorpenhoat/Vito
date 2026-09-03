@@ -1114,6 +1114,57 @@
         "user_signedup": "Création du compte",
         "autre": "Activité"
       }
+    },
+    "donnees": {
+      "exportTitre": "Exporter mes données",
+      "exportExplication": "Une archive complète de tout ce que vous avez saisi, téléchargée immédiatement. Les scans de documents et photos d'étiquettes n'y figurent pas : ils sont chiffrés et se consultent un par un.",
+      "exporter": "Télécharger mon archive",
+      "exporterAvant": "Exporter mes données d'abord",
+      "suppressionTitre": "Supprimer mon compte",
+      "supprimerCompte": "Supprimer mon compte",
+      "etape": "Étape {n} sur {total}",
+      "cequiPart": "Ce qui sera supprimé",
+      "inventaire": "{adresses} adresses, {voyages} voyages et {vins} vins.",
+      "inventaireProches": "{proches} fiches du Cercle et leurs documents d'identité.",
+      "inventaireInvites": "Vos invités perdront l'accès aux voyages partagés.",
+      "retractation": "Délai de rétractation",
+      "delai": "{jours} jours pour changer d'avis.",
+      "annulationPossible": "Vous pouvez annuler en vous reconnectant.",
+      "confirmation": "Confirmation",
+      "confirmezIdentite": "Confirmez votre identité pour enregistrer la demande.",
+      "verifierEtSupprimer": "Vérifier et supprimer",
+      "continuer": "Continuer",
+      "retour": "Retour",
+      "renoncer": "Renoncer",
+      "echecSuppression": "Vérification impossible.",
+      "suppressionEnCours": "Suppression demandée",
+      "effacementLe": "Vos données seront effacées définitivement le {date}.",
+      "annulerSuppression": "Annuler la suppression",
+      "echecAnnulation": "Annulation impossible."
+    },
+    "comptes": {
+      "eyebrow": "Administration",
+      "titre": "Comptes",
+      "gereLesAcces": "En tant qu'administrateur, vous gérez les accès — jamais les contenus.",
+      "aucunContenu": "Aucune fiche, aucun document, aucun voyage d'un autre compte ne vous est accessible.",
+      "creeLe": "créé le {date}",
+      "vuLe": "vu le {date}",
+      "jamaisConnecte": "jamais connecté",
+      "suspendre": "Suspendre",
+      "reactiver": "Réactiver",
+      "statuts": {
+        "actif": "Actif",
+        "invite": "Invité",
+        "suspendu": "Suspendu",
+        "suppression": "Suppression demandée",
+        "administrateur": "Administrateur"
+      }
+    },
+    "suspendu": {
+      "titre": "Accès suspendu",
+      "explication": "Votre accès à Vito a été suspendu par un administrateur.",
+      "contenusIntacts": "Vos données sont intactes : rien n'a été supprimé.",
+      "seDeconnecter": "Se déconnecter"
     }
   },
   "invitations": {

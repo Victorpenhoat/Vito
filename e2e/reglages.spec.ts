@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { login } from "./helpers";
 
-// Réglages (design Onboarding_Compte écran 13) — premier lot : profil éditable
-// et sommaire des sections. Les sections à venir sont annoncées « Bientôt ».
+// Réglages (design Onboarding_Compte écran 13) : profil éditable et sommaire des
+// sections. Les sections pas encore livrées sont annoncées « Bientôt » — aucune
+// assertion ne les nomme, pour ne pas devoir corriger ce test à chaque lot.
 
 test("les réglages sont accessibles depuis le menu et montrent le sommaire", async ({ page }) => {
   await login(page);
@@ -10,11 +11,11 @@ test("les réglages sont accessibles depuis le menu et montrent le sommaire", as
   await expect(page.getByTestId("reglages-sections")).toBeVisible();
   await expect(page.getByTestId("section-profil")).toBeVisible();
   await expect(page.getByTestId("section-tags")).toBeVisible();
-  // Sécurité (O-D) et Appareils (O-E) sont actives ; les sections encore à
-  // venir restent annoncées « Bientôt » (Données arrive au lot O-F).
-  await expect(page.getByTestId("section-securite")).not.toContainText("Bientôt");
-  await expect(page.getByTestId("section-appareils")).not.toContainText("Bientôt");
-  await expect(page.getByTestId("section-donnees")).toContainText("Bientôt");
+  // Les sections livrées sont navigables. On ne nomme plus la section « à venir »
+  // dans l'assertion : elle a rendu ce test caduc à chaque lot qui en activait une.
+  for (const cle of ["profil", "tags", "securite", "appareils", "donnees"]) {
+    await expect(page.getByTestId(`section-${cle}`)).not.toContainText("Bientôt");
+  }
   // « Comptes » est réservé à l'administrateur
   await expect(page.getByTestId("section-comptes")).toHaveCount(0);
 });

@@ -16,6 +16,9 @@ export async function verifierMotDePasse(email: string, motDePasse: string): Pro
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { error } = await ephemere.auth.signInWithPassword({ email, password: motDePasse });
-  if (!error) await ephemere.auth.signOut();
+  // ⚠ signOut() est GLOBAL par défaut : il révoque les sessions de TOUS les
+  // appareils. Ici on ne ferme que la session éphémère créée à l'instant —
+  // vérifier son mot de passe ne doit jamais déconnecter l'utilisateur.
+  if (!error) await ephemere.auth.signOut({ scope: "local" });
   return !error;
 }

@@ -1114,6 +1114,57 @@
         "user_signedup": "Account created",
         "autre": "Activity"
       }
+    },
+    "donnees": {
+      "exportTitre": "Export my data",
+      "exportExplication": "A complete archive of everything you entered, downloaded right away. Document scans and label photos are not included: they are encrypted and viewed one at a time.",
+      "exporter": "Download my archive",
+      "exporterAvant": "Export my data first",
+      "suppressionTitre": "Delete my account",
+      "supprimerCompte": "Delete my account",
+      "etape": "Step {n} of {total}",
+      "cequiPart": "What will be deleted",
+      "inventaire": "{adresses} places, {voyages} trips and {vins} wines.",
+      "inventaireProches": "{proches} Circle cards and their identity documents.",
+      "inventaireInvites": "Your guests will lose access to shared trips.",
+      "retractation": "Cooling-off period",
+      "delai": "{jours} days to change your mind.",
+      "annulationPossible": "You can cancel by signing in again.",
+      "confirmation": "Confirmation",
+      "confirmezIdentite": "Confirm your identity to record the request.",
+      "verifierEtSupprimer": "Verify and delete",
+      "continuer": "Continue",
+      "retour": "Back",
+      "renoncer": "Cancel",
+      "echecSuppression": "Verification failed.",
+      "suppressionEnCours": "Deletion requested",
+      "effacementLe": "Your data will be permanently erased on {date}.",
+      "annulerSuppression": "Cancel deletion",
+      "echecAnnulation": "Could not cancel."
+    },
+    "comptes": {
+      "eyebrow": "Administration",
+      "titre": "Accounts",
+      "gereLesAcces": "As an administrator, you manage access — never content.",
+      "aucunContenu": "No card, document or trip from another account is accessible to you.",
+      "creeLe": "created {date}",
+      "vuLe": "seen {date}",
+      "jamaisConnecte": "never signed in",
+      "suspendre": "Suspend",
+      "reactiver": "Reactivate",
+      "statuts": {
+        "actif": "Active",
+        "invite": "Guest",
+        "suspendu": "Suspended",
+        "suppression": "Deletion requested",
+        "administrateur": "Administrator"
+      }
+    },
+    "suspendu": {
+      "titre": "Access suspended",
+      "explication": "Your access to Vito has been suspended by an administrator.",
+      "contenusIntacts": "Your data is untouched: nothing has been deleted.",
+      "seDeconnecter": "Sign out"
     }
   },
   "invitations": {

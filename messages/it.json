@@ -1114,6 +1114,57 @@
         "user_signedup": "Account creato",
         "autre": "Attività"
       }
+    },
+    "donnees": {
+      "exportTitre": "Esporta i miei dati",
+      "exportExplication": "Un archivio completo di tutto ciò che hai inserito, scaricato subito. Le scansioni dei documenti e le foto delle etichette non sono incluse: sono cifrate e si consultano una per una.",
+      "exporter": "Scarica il mio archivio",
+      "exporterAvant": "Esporta prima i miei dati",
+      "suppressionTitre": "Elimina il mio account",
+      "supprimerCompte": "Elimina il mio account",
+      "etape": "Passo {n} di {total}",
+      "cequiPart": "Cosa verrà eliminato",
+      "inventaire": "{adresses} indirizzi, {voyages} viaggi e {vins} vini.",
+      "inventaireProches": "{proches} schede della Cerchia e i loro documenti d'identità.",
+      "inventaireInvites": "I tuoi ospiti perderanno l'accesso ai viaggi condivisi.",
+      "retractation": "Periodo di recesso",
+      "delai": "{jours} giorni per cambiare idea.",
+      "annulationPossible": "Puoi annullare accedendo di nuovo.",
+      "confirmation": "Conferma",
+      "confirmezIdentite": "Conferma la tua identità per registrare la richiesta.",
+      "verifierEtSupprimer": "Verifica ed elimina",
+      "continuer": "Continua",
+      "retour": "Indietro",
+      "renoncer": "Rinuncia",
+      "echecSuppression": "Verifica non riuscita.",
+      "suppressionEnCours": "Eliminazione richiesta",
+      "effacementLe": "I tuoi dati saranno cancellati definitivamente il {date}.",
+      "annulerSuppression": "Annulla l'eliminazione",
+      "echecAnnulation": "Impossibile annullare."
+    },
+    "comptes": {
+      "eyebrow": "Amministrazione",
+      "titre": "Account",
+      "gereLesAcces": "Come amministratore gestisci gli accessi — mai i contenuti.",
+      "aucunContenu": "Nessuna scheda, documento o viaggio di un altro account ti è accessibile.",
+      "creeLe": "creato il {date}",
+      "vuLe": "visto il {date}",
+      "jamaisConnecte": "mai connesso",
+      "suspendre": "Sospendi",
+      "reactiver": "Riattiva",
+      "statuts": {
+        "actif": "Attivo",
+        "invite": "Ospite",
+        "suspendu": "Sospeso",
+        "suppression": "Eliminazione richiesta",
+        "administrateur": "Amministratore"
+      }
+    },
+    "suspendu": {
+      "titre": "Accesso sospeso",
+      "explication": "Il tuo accesso a Vito è stato sospeso da un amministratore.",
+      "contenusIntacts": "I tuoi dati sono intatti: nulla è stato eliminato.",
+      "seDeconnecter": "Disconnetti"
     }
   },
   "invitations": {
