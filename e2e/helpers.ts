@@ -71,4 +71,17 @@ export async function login(
   await page.getByTestId("champ-mot-de-passe").fill(password);
   await page.getByRole("button", { name: "Connexion", exact: true }).click();
   await expect(page).toHaveURL(/\/fr\/accueil/);
+  await deverrouillerSiBesoin(page, password);
+}
+
+/**
+ * Le carnet peut être verrouillé (réglage « Immédiat » ou inactivité) : les
+ * specs qui ne testent pas le verrou doivent pouvoir entrer quand même.
+ */
+export async function deverrouillerSiBesoin(page: Page, password = "password123"): Promise<void> {
+  const verrou = page.getByTestId("verrou-app");
+  if ((await verrou.count()) === 0) return;
+  await page.getByTestId("verrou-mot-de-passe").fill(password);
+  await page.getByTestId("verrou-deverrouiller").click();
+  await expect(verrou).toHaveCount(0, { timeout: 15_000 });
 }

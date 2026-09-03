@@ -8,8 +8,9 @@ import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
 import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchema, type ProcheInput } from "../domain/schemas";
 import { encryptDocument } from "@/lib/crypto/documents";
+import { chiffrerChamp, dechiffrerChamp } from "@/lib/crypto/champs";
+import { verifierMotDePasse } from "@/lib/auth/motDePasse";
 import { getDocumentKey } from "@/lib/crypto/documentKey";
-import type { Json } from "@/types/database.types";
 import { avatarColor } from "../domain/avatarColor";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
@@ -296,9 +297,11 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     return { error: "Chiffrement indisponible" };
   }
 
+  // La lecture brute du modèle contient le plus souvent le numéro en toutes
+  // lettres : elle est chiffrée au repos comme le scan (lot O-D bis).
   const ocrRawStr = formData.get("ocrRaw");
-  let ocr_raw: Json | null = null;
-  if (typeof ocrRawStr === "string" && ocrRawStr) { try { ocr_raw = JSON.parse(ocrRawStr) as Json; } catch { ocr_raw = null; } }
+  const ocr_raw_chiffre =
+    typeof ocrRawStr === "string" && ocrRawStr ? chiffrerChamp(ocrRawStr) : null;
 
   const p = parsed.data;
   const { error } = await supabase.from("family_documents").insert({
@@ -306,7 +309,11 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     member_id: memberId,
     doc_type: p.doc_type,
     doc_label: p.doc_type === "autre" ? clean(formData.get("doc_label")) : null,
-    doc_number: clean(formData.get("doc_number")),
+    // numéro chiffré au repos comme les scans (lot O-D)
+    doc_number_chiffre: (() => {
+      const brut = clean(formData.get("doc_number"));
+      return brut ? chiffrerChamp(brut) : null;
+    })(),
     country: clean(formData.get("country")),
     holder_name: clean(formData.get("holder_name")),
     issue_date: clean(formData.get("issue_date")),
@@ -318,7 +325,7 @@ export async function creerDocument(_prev: unknown, formData: FormData) {
     contenu_chiffre_verso: chiffreVerso,
     mime_type_verso: verso ? verso.type : null,
     taille_verso: verso ? verso.size : null,
-    ocr_raw,
+    ocr_raw_chiffre,
   });
   if (error) { logActionError("famille.creerDocument", error); return { error: "Enregistrement échoué" }; }
   revalidatePath(`/famille/proches/${memberId}`);
@@ -348,7 +355,12 @@ export async function modifierDocument(_prev: unknown, formData: FormData) {
     .update({
       doc_type: p.doc_type,
       doc_label: p.doc_type === "autre" ? clean(formData.get("doc_label")) : null,
-      doc_number: clean(formData.get("doc_number")),
+      // champ vide = « ne pas toucher » (le formulaire ne réaffiche jamais
+      // l'ancien numéro, il ne peut donc pas le renvoyer tel quel)
+      ...(() => {
+        const brut = clean(formData.get("doc_number"));
+        return brut ? { doc_number_chiffre: chiffrerChamp(brut) } : {};
+      })(),
       country: clean(formData.get("country")),
       holder_name: clean(formData.get("holder_name")),
       issue_date: clean(formData.get("issue_date")),
@@ -401,4 +413,67 @@ export async function toggleReminder(_prev: unknown, formData: FormData) {
   if (!data) return { error: "Introuvable" };
   revalidatePath(`/famille/proches/${data.member_id}/documents/${id}`);
   return { ok: true as const };
+}
+
+// ── Données protégées (Onboarding lot O-D) ─────────────────────────────────
+
+
+/**
+ * Révèle le numéro d'un document après vérification d'identité.
+ * Le numéro n'est JAMAIS envoyé au navigateur avant cet appel : la page ne
+ * reçoit qu'une forme masquée. Une vérification vaut pour UNE révélation
+ * (décision PO : pas de fenêtre de validité).
+ */
+export async function revelerNumero(_prev: unknown, formData: FormData) {
+  const docId = formData.get("docId");
+  const motDePasse = formData.get("motDePasse");
+  if (typeof docId !== "string" || typeof motDePasse !== "string" || motDePasse === "") {
+    return { error: "Vérification impossible" };
+  }
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user?.email) return { error: "Non authentifié" };
+
+  if (!(await verifierMotDePasse(auth.user.email, motDePasse))) {
+    // message identique quelle que soit la cause : on ne renseigne pas un tiers
+    return { error: "Vérification impossible" };
+  }
+  // La RLS owner-only fait le contrôle d'accès au document.
+  const { data: doc, error } = await supabase
+    .from("family_documents")
+    .select("doc_number_chiffre")
+    .eq("id", docId)
+    .maybeSingle();
+  if (error || !doc) return { error: "Vérification impossible" };
+  const numero = dechiffrerChamp(doc.doc_number_chiffre);
+  if (!numero) return { error: "Vérification impossible" };
+  return { ok: true as const, numero };
+}
+
+/**
+ * Ouvre un scan : délivre un ticket à usage unique (2 minutes) que la route de
+ * lecture exigera. Le secret ne transite qu'une fois ; la base n'en garde que
+ * le haché.
+ */
+export async function ouvrirScanProtege(_prev: unknown, formData: FormData) {
+  const docId = formData.get("docId");
+  const motDePasse = formData.get("motDePasse");
+  const face = formData.get("face") === "verso" ? "verso" : "recto";
+  if (typeof docId !== "string" || typeof motDePasse !== "string" || motDePasse === "") {
+    return { error: "Vérification impossible" };
+  }
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user?.email) return { error: "Non authentifié" };
+  if (!(await verifierMotDePasse(auth.user.email, motDePasse))) return { error: "Vérification impossible" };
+
+  const { randomBytes, createHash } = await import("node:crypto");
+  const ticket = randomBytes(32).toString("base64url");
+  const hash = createHash("sha256").update(ticket).digest("hex");
+  const { error } = await supabase.rpc("emettre_reauth_ticket", {
+    p_hash: hash,
+    p_cible: `document:${docId}:${face}`,
+  });
+  if (error) { logActionError("famille.ouvrirScanProtege", error); return { error: "Vérification impossible" }; }
+  return { ok: true as const, ticket };
 }

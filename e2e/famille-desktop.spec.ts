@@ -18,7 +18,10 @@ test.describe("desktop", () => {
     // réinitialisée entre runs) — plusieurs lignes matchent sinon (strict mode).
     await page.getByTestId("document-row").getByRole("link", { name: /Passeport/ }).first().click();
     await expect(page).toHaveURL(/\/documents\/[^/]+$/);
-    await expect(page.locator('iframe[title="Aperçu"]')).toBeVisible();
+    // Depuis le lot O-D, le scan est verrouillé tant que l'identité n'a pas été
+    // vérifiée : c'est le bouton de déverrouillage qui est visible, pas l'aperçu.
+    await expect(page.getByTestId("afficher-scan")).toBeVisible();
+    await expect(page.locator('iframe[title="Aperçu"]')).toHaveCount(0);
   });
 
   test("tunnel desktop : stepper horizontal visible", async ({ page }) => {

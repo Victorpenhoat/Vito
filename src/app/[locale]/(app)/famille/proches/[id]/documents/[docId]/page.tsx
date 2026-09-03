@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
-import { ChevronLeft, Maximize2 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import { getProche } from "@/features/famille/data/queries";
 import { ExpiryBadge } from "@/features/famille/ui/ExpiryBadge";
 import { MaskedNumber } from "@/features/famille/ui/MaskedNumber";
+import { ScanProtege } from "@/features/famille/ui/ScanProtege";
 import { ReminderToggle } from "@/features/famille/ui/ReminderToggle";
 import { ShareScanButton } from "@/features/famille/ui/ShareScanButton";
 import { DeleteDocumentButton } from "@/features/famille/ui/DeleteDocumentButton";
@@ -50,19 +51,19 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
 
       {/* scans recto / verso */}
       <div className={`mt-4 grid gap-2.5 ${doc.has_verso ? "grid-cols-2" : "grid-cols-1"}`}>
-        <Scan docId={doc.id} mime={doc.mime_type} caption={t("doc.recto")} apercu={t("fiche.apercu")} voirLabel={t("fiche.voirDocument")} />
+        <ScanProtege docId={doc.id} mime={doc.mime_type} caption={t("doc.recto")} apercu={t("fiche.apercu")} voirLabel={t("fiche.voirDocument")} />
         {doc.has_verso && (
-          <Scan docId={doc.id} face="verso" mime={doc.mime_type} caption={t("doc.verso")} apercu={t("doc.verso")} voirLabel={t("fiche.voirDocument")} />
+          <ScanProtege docId={doc.id} face="verso" mime={doc.mime_type} caption={t("doc.verso")} apercu={t("doc.verso")} voirLabel={t("fiche.voirDocument")} />
         )}
       </div>
 
       {/* champs */}
       <div className="mt-4 overflow-hidden rounded-[5px] border border-line bg-surface">
-        {doc.doc_number && (
+        {doc.doc_number_masque && (
           <div className="flex items-center justify-between gap-3 border-b border-line-soft px-3.5 py-3">
             <div className="min-w-0 flex-1">
               <div className="text-[11px] text-faint">{t("doc.numero")}</div>
-              <div className="mt-0.5"><MaskedNumber number={doc.doc_number} /></div>
+              <div className="mt-0.5"><MaskedNumber docId={doc.id} masque={doc.doc_number_masque} /></div>
             </div>
           </div>
         )}
@@ -104,26 +105,3 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
   );
 }
 
-function Scan({ docId, face, mime, caption, apercu, voirLabel }: {
-  docId: string; face?: "verso"; mime: string; caption: string; apercu: string; voirLabel: string;
-}) {
-  const src = `/api/famille/documents/${docId}${face ? "?face=verso" : ""}`;
-  const isImage = mime.startsWith("image/");
-  return (
-    <figure className="m-0">
-      <div className="relative overflow-hidden rounded-[6px] border border-line bg-badge">
-        {isImage ? (
-          // eslint-disable-next-line @next/next/no-img-element -- route privée no-store, incompatible next/image
-          <img src={src} alt={apercu} className="h-[180px] w-full object-cover" />
-        ) : (
-          <iframe src={src} title={apercu} className="h-[180px] w-full" />
-        )}
-        <a href={src} target="_blank" rel="noopener" aria-label={voirLabel}
-          className="absolute bottom-2 right-2 grid h-7 w-7 place-items-center rounded-full bg-surface/90 text-muted shadow focus-visible:outline-2 focus-visible:outline-accent">
-          <Maximize2 size={13} aria-hidden />
-        </a>
-      </div>
-      <figcaption className="mt-1.5 text-center text-[11px] text-faint">{caption}</figcaption>
-    </figure>
-  );
-}

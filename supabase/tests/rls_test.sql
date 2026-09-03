@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(25);
+select plan(29);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -154,6 +154,27 @@ select is(
   (select (public.invitation_infos('e2e-invitation-expiree-00000000001') ->> 'valide')),
   (select (public.invitation_infos('jeton-totalement-inexistant-00000') ->> 'valide')),
   'invitation expirée et jeton inconnu donnent la même réponse');
+
+-- ── Données protégées (00036) ──────────────────────────────────────────────
+
+-- 26) le numéro n'existe plus en clair : la colonne dépréciée est vide partout
+select is((select count(*) from public.family_documents where doc_number is not null), 0::bigint,
+          'aucun numéro de document en clair en base');
+
+-- 27) anon ne lit aucun ticket de re-authentification (aucun grant)
+select is(tests.count_as_anon('select count(*) from public.reauth_tickets'), 0::bigint,
+          'anon ne lit aucun ticket');
+
+-- 28) un ticket inconnu n'est jamais consommable
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select case when public.consommer_reauth_ticket(''hash-inconnu'', ''document:x:recto'') then 1 else 0 end'),
+          0::bigint, 'un ticket inconnu est refusé');
+
+-- 29) un ticket émis pour une cible ne vaut pas pour une autre
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with e as (select public.emettre_reauth_ticket(''hash-test-cible'', ''document:aaa:recto''))
+           select case when (select public.consommer_reauth_ticket(''hash-test-cible'', ''document:bbb:recto'') from e) then 1 else 0 end'),
+          0::bigint, 'un ticket ne vaut que pour sa cible');
 
 select finish();
 rollback;

@@ -712,7 +712,8 @@
       "rappelTexte": "Notification 6 mois avant l'échéance",
       "partager": "Partager le scan",
       "supprimerConfirm": "Supprimer ce document ?",
-      "modifierTitre": "Modifier le document"
+      "modifierTitre": "Modifier le document",
+      "numeroRemplacer": "Laissez vide pour conserver le numéro actuel."
     }
   },
   "agence": {
@@ -1044,6 +1045,19 @@
       "abonnementSous": "Formule et facturation",
       "comptes": "Comptes",
       "comptesSous": "Gérer les accès — jamais les contenus"
+    },
+    "verrou": {
+      "titre": "Verrouiller Vito",
+      "marqueSous": "le carnet",
+      "explication": "Vos documents d'identité ne s'affichent qu'après déverrouillage.",
+      "immediat": "Immédiat",
+      "minutes": "{n} min",
+      "enregistre": "Délai enregistré",
+      "depuis": "Vito est verrouillé depuis {minutes} min.",
+      "motDePasse": "Votre mot de passe",
+      "deverrouiller": "Déverrouiller",
+      "echec": "Déverrouillage impossible.",
+      "aucuneDonnee": "Aucune donnée affichée avant déverrouillage"
     }
   },
   "invitations": {
@@ -1100,5 +1114,17 @@
       "voyage": "Créez une idée de voyage",
       "voyageSous": "Même sans dates précises"
     }
+  },
+  "protege": {
+    "bandeau": "Données protégées — une vérification est demandée à chaque révélation.",
+    "chaqueRevelation": "Vérification demandée à chaque révélation",
+    "confirmer": {
+      "titre": "Confirmer votre identité",
+      "pourquoi": "Pour afficher cette donnée protégée.",
+      "motDePasse": "Votre mot de passe",
+      "verifier": "Vérifier",
+      "echec": "Vérification impossible."
+    },
+    "afficherDocument": "Afficher le document"
   }
 }

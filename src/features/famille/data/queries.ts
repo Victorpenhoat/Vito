@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { dechiffrerChamp } from "@/lib/crypto/champs";
+import { maskDocNumber } from "../domain/mask";
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { expiryStatus, monthsUntil } from "../domain/expiry";
 
@@ -20,7 +22,9 @@ export type DocMeta = {
   id: string;
   doc_type: string;
   doc_label: string | null;
-  doc_number: string | null;
+  /** Forme masquée UNIQUEMENT : le numéro en clair ne quitte jamais le serveur
+   *  sans re-authentification (lot O-D). */
+  doc_number_masque: string | null;
   country: string | null;
   holder_name: string | null;
   issue_date: string | null;
@@ -118,7 +122,7 @@ export async function getProche(
   // jamais contenu_chiffre(_verso) hors route API — taille_verso suffit pour has_verso
   const { data: docs, error: dErr } = await supabase
     .from("family_documents")
-    .select("id, doc_type, doc_label, doc_number, country, holder_name, issue_date, expiry_date, issue_place, mime_type, reminder, taille_verso")
+    .select("id, doc_type, doc_label, doc_number_chiffre, country, holder_name, issue_date, expiry_date, issue_place, mime_type, reminder, taille_verso")
     .eq("member_id", id)
     .order("expiry_date", { ascending: true, nullsFirst: false });
   if (dErr) throw dErr;
@@ -139,7 +143,8 @@ export async function getProche(
       id: d.id,
       doc_type: d.doc_type,
       doc_label: d.doc_label,
-      doc_number: d.doc_number,
+      // masque calculé serveur : le clair reste en base, chiffré
+      doc_number_masque: maskDocNumber(dechiffrerChamp(d.doc_number_chiffre)),
       country: d.country,
       holder_name: d.holder_name,
       issue_date: d.issue_date,

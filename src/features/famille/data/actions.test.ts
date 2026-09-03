@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createMockSupabase, type OpResult } from "@/test/supabaseMock";
 
+// "server-only" throw inconditionnellement hors bundler Next (le vérificateur
+// de mot de passe est un module serveur) — no-op pour ce test unitaire.
+vi.mock("server-only", () => ({}));
+
 const revalidatePath = vi.fn();
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePath(...a) }));
 let mock: ReturnType<typeof createMockSupabase>;

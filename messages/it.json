@@ -712,7 +712,8 @@
       "rappelTexte": "Notifica 6 mesi prima della scadenza",
       "partager": "Condividi la scansione",
       "supprimerConfirm": "Eliminare questo documento?",
-      "modifierTitre": "Modifica il documento"
+      "modifierTitre": "Modifica il documento",
+      "numeroRemplacer": "Lascia vuoto per conservare il numero attuale."
     }
   },
   "agence": {
@@ -1044,6 +1045,19 @@
       "abonnementSous": "Piano e fatturazione",
       "comptes": "Account",
       "comptesSous": "Gestire gli accessi — mai i contenuti"
+    },
+    "verrou": {
+      "titre": "Blocca Vito",
+      "marqueSous": "il taccuino",
+      "explication": "I tuoi documenti d'identità appaiono solo dopo lo sblocco.",
+      "immediat": "Immediato",
+      "minutes": "{n} min",
+      "enregistre": "Ritardo salvato",
+      "depuis": "Vito è bloccato da {minutes} min.",
+      "motDePasse": "La tua password",
+      "deverrouiller": "Sblocca",
+      "echec": "Sblocco non riuscito.",
+      "aucuneDonnee": "Nessun dato visibile prima dello sblocco"
     }
   },
   "invitations": {
@@ -1100,5 +1114,17 @@
       "voyage": "Crea un'idea di viaggio",
       "voyageSous": "Anche senza date precise"
     }
+  },
+  "protege": {
+    "bandeau": "Dati protetti — è richiesta una verifica a ogni rivelazione.",
+    "chaqueRevelation": "Verifica richiesta a ogni rivelazione",
+    "confirmer": {
+      "titre": "Conferma la tua identità",
+      "pourquoi": "Per mostrare questo dato protetto.",
+      "motDePasse": "La tua password",
+      "verifier": "Verifica",
+      "echec": "Verifica non riuscita."
+    },
+    "afficherDocument": "Mostra il documento"
   }
 }

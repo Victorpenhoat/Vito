@@ -10,8 +10,10 @@ test("les réglages sont accessibles depuis le menu et montrent le sommaire", as
   await expect(page.getByTestId("reglages-sections")).toBeVisible();
   await expect(page.getByTestId("section-profil")).toBeVisible();
   await expect(page.getByTestId("section-tags")).toBeVisible();
-  // sections des lots suivants : annoncées, pas cliquables
-  await expect(page.getByTestId("section-securite")).toContainText("Bientôt");
+  // Sécurité est active depuis le lot O-D (verrouillage) ; les sections encore
+  // à venir restent annoncées « Bientôt ».
+  await expect(page.getByTestId("section-securite")).not.toContainText("Bientôt");
+  await expect(page.getByTestId("section-appareils")).toContainText("Bientôt");
   // « Comptes » est réservé à l'administrateur
   await expect(page.getByTestId("section-comptes")).toHaveCount(0);
 });

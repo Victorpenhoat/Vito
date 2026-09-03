@@ -5,6 +5,7 @@ import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { getMonProfil } from "@/features/compte/data/queries";
 import { ProfilForm } from "@/features/compte/ui/ProfilForm";
 import { ReglagesSections } from "@/features/compte/ui/ReglagesSections";
+import { VerrouForm } from "@/features/compte/ui/VerrouForm";
 
 // Réglages (design Onboarding_Compte, écran 13). Premier lot : profil, sommaire
 // des sections et apparence ; Sécurité / Appareils / Partages / Données arrivent
@@ -22,6 +23,11 @@ export default async function ReglagesPage() {
       <section className="flex flex-col gap-2.5">
         <SectionLabel>{t("sections.profil")}</SectionLabel>
         <ProfilForm firstName={profil.first_name} lastName={profil.last_name} email={profil.email} />
+      </section>
+
+      <section className="flex flex-col gap-2.5">
+        <SectionLabel>{t("sections.securite")}</SectionLabel>
+        <VerrouForm delaiMinutes={profil.verrou_delai_minutes} />
       </section>
 
       <section className="flex flex-col gap-2.5">

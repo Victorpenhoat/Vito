@@ -50,17 +50,20 @@ test("le lien reçu par email connecte et mène à l'accueil", async ({ page, re
   await page.getByTestId("envoyer-lien").click();
   await expect(page.getByTestId("attente-lien")).toBeVisible();
 
-  // le message arrive dans Inbucket (envoi asynchrone côté Supabase)
-  let message: Awaited<ReturnType<typeof dernierMessage>> = null;
+  // Le mail part de façon asynchrone : on attend qu'un message CONTENANT le lien
+  // soit disponible, plutôt qu'un message quelconque (un mail d'un autre test
+  // pouvait être lu en premier).
+  let lien: string | undefined;
   await expect(async () => {
-    message = await dernierMessage(request, email);
-    expect(message).not.toBeNull();
-  }).toPass({ timeout: 20_000 });
-
-  const corps = `${message!.Text ?? ""} ${message!.HTML ?? ""}`;
-  // le lien pointe sur notre route de confirmation, avec le jeton à usage unique
-  const lien = corps.match(/https?:\/\/[^\s"'<>]*token_hash=[^\s"'<>]+/)?.[0];
-  expect(lien, "le mail doit contenir un lien de confirmation").toBeTruthy();
+    const message = await dernierMessage(request, email);
+    expect(message, "aucun message reçu").not.toBeNull();
+    const corps = `${message!.Text ?? ""} ${message!.HTML ?? ""}`;
+    lien = corps.match(/https?:\/\/[^\s"'<>]*token_hash=[^\s"'<>]+/)?.[0];
+    expect(lien,
+      "le mail doit porter un lien token_hash — si le sujet n'est pas « Votre lien de connexion Vito », "
+      + "les conteneurs tournent avec l'ancienne config : relancer `supabase stop && supabase start`.",
+    ).toBeTruthy();
+  }).toPass({ timeout: 30_000 });
 
   await page.goto(lien!.replace(/&amp;/g, "&"));
   await expect(page).toHaveURL(/\/fr\/accueil/);

@@ -7,6 +7,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const face = req.nextUrl.searchParams.get("face");
   const supabase = await createServerSupabase();
+
+  // Données protégées (lot O-D) : un scan d'identité ne s'ouvre qu'avec un
+  // ticket à usage unique, obtenu après vérification du mot de passe. La RLS
+  // seule ne suffit pas — une session valide ne vaut pas consentement récent.
+  const ticket = req.nextUrl.searchParams.get("ticket");
+  if (!ticket) return NextResponse.json({ error: "verification_requise" }, { status: 401 });
+  const { createHash } = await import("node:crypto");
+  const hash = createHash("sha256").update(ticket).digest("hex");
+  const { data: valide, error: ticketErr } = await supabase.rpc("consommer_reauth_ticket", {
+    p_hash: hash,
+    p_cible: `document:${id}:${face === "verso" ? "verso" : "recto"}`,
+  });
+  if (ticketErr || valide !== true) {
+    return NextResponse.json({ error: "verification_requise" }, { status: 401 });
+  }
   // RLS owner-only : un non-owner n'obtient aucune ligne -> 404 (aucune fuite).
   const { data, error } = await supabase
     .from("family_documents")

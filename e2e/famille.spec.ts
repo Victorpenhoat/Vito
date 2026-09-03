@@ -89,15 +89,16 @@ test("ajouter un document à un proche via le tunnel OCR (mock) et le voir sur l
   await expect(page).toHaveURL(/\/famille\/proches\/[^/]+$/);
   const row = page.getByTestId("document-row").filter({ hasText: "Passeport" });
   await expectVisibleWithReload(page, row.first());
-  // Refonte Cercle : le tap sur la ligne ouvre le détail du document ; le scan
-  // déchiffré s'ouvre depuis le détail (« Voir le document » → route API, 200)
+  // Le tap sur la ligne ouvre le détail ; depuis le lot O-D, le scan est
+  // verrouillé tant que l'identité n'a pas été vérifiée.
   await row.first().getByRole("link", { name: /Passeport/ }).click();
   await expect(page).toHaveURL(/\/documents\/[^/]+$/);
-  const href = await page.getByRole("link", { name: "Voir le document" }).first().getAttribute("href");
-  expect(href).toBeTruthy();
-  expect(href).toContain("/api/famille/documents/");
-  const resp = await page.request.get(href!);
-  expect(resp.status()).toBe(200);
+  await expect(page.getByTestId("afficher-scan")).toBeVisible();
+  await page.getByTestId("afficher-scan").click();
+  await page.getByTestId("reauth-scan-mot-de-passe").fill("password123");
+  await page.getByTestId("reauth-scan-form").getByRole("button", { name: "Vérifier" }).click();
+  const cadre = page.locator('iframe[src*="/api/famille/documents/"]');
+  await expect(cadre).toBeVisible({ timeout: 15_000 });
 });
 
 test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
