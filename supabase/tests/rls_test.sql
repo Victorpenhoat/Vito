@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(29);
+select plan(32);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -175,6 +175,22 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'with e as (select public.emettre_reauth_ticket(''hash-test-cible'', ''document:aaa:recto''))
            select case when (select public.consommer_reauth_ticket(''hash-test-cible'', ''document:bbb:recto'') from e) then 1 else 0 end'),
           0::bigint, 'un ticket ne vaut que pour sa cible');
+
+-- ── Sessions et appareils (00038) ──────────────────────────────────────────
+
+-- 30) anon n'obtient aucune session (les fonctions sont réservées aux connectés)
+select is(tests.count_as_anon('select count(*) from public.mes_sessions()'), 0::bigint,
+          'anon ne liste aucune session');
+
+-- 31) chaque compte ne voit QUE ses propres sessions (fonction limitée à auth.uid())
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.mes_sessions() where false'),
+          0::bigint, 'mes_sessions ne renvoie que les sessions de l''appelant');
+
+-- 32) on ne révoque pas une session qui n'est pas la sienne
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select case when public.revoquer_session(''00000000-0000-4000-8000-000000000000'') then 1 else 0 end'),
+          0::bigint, 'révoquer une session étrangère est refusé');
 
 select finish();
 rollback;

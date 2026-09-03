@@ -31,7 +31,16 @@
     "renvoyer": "Renvoyer le lien",
     "corrigerAdresse": "Corriger l'adresse",
     "lienExpire": "Ce lien n'est plus valable. Demandez-en un nouveau.",
-    "sansMotDePasse": "Nous vous envoyons un lien pour continuer. Aucun mot de passe à retenir."
+    "sansMotDePasse": "Nous vous envoyons un lien pour continuer. Aucun mot de passe à retenir.",
+    "continuerAvec": "Continuer avec {moyen}",
+    "passkeyEchec": "Connexion par passkey impossible.",
+    "biometrie": {
+      "faceId": "Face ID",
+      "touchId": "Touch ID",
+      "windowsHello": "Windows Hello",
+      "android": "votre empreinte",
+      "passkey": "une passkey"
+    }
   },
   "vins": {
     "title": "Mes vins",
@@ -1058,6 +1067,53 @@
       "deverrouiller": "Déverrouiller",
       "echec": "Déverrouillage impossible.",
       "aucuneDonnee": "Aucune donnée affichée avant déverrouillage"
+    },
+    "passkeys": {
+      "titre": "Passkeys",
+      "explication": "Se connecter sans mot de passe, avec votre visage ou votre empreinte. La clé reste sur votre appareil.",
+      "aucune": "Aucune passkey enregistrée.",
+      "chargement": "Chargement…",
+      "sansNom": "Appareil",
+      "ajouteeLe": "Ajoutée le {date}",
+      "revoquer": "Révoquer",
+      "echecAjout": "Impossible d'ajouter cette passkey.",
+      "echecRevocation": "Impossible de révoquer cette passkey."
+    },
+    "totp": {
+      "titre": "Double authentification",
+      "explication": "Un code à six chiffres depuis votre application d'authentification, en plus de votre connexion.",
+      "activer": "Activer",
+      "desactiver": "Désactiver",
+      "active": "Activée",
+      "scanner": "Scannez ce QR code avec votre application d'authentification, puis saisissez le code affiché.",
+      "secret": "Ou saisissez cette clé :",
+      "code": "Code à 6 chiffres",
+      "confirmer": "Confirmer",
+      "codeRefuse": "Code refusé. Vérifiez l'heure de votre appareil et réessayez.",
+      "echecActivation": "Impossible d'activer la double authentification.",
+      "echecDesactivation": "Impossible de désactiver la double authentification."
+    },
+    "sessions": {
+      "titre": "Appareils et sessions",
+      "explication": "Là où votre compte est connecté.",
+      "aucune": "Aucune session active.",
+      "cetAppareil": "Cet appareil",
+      "revoquer": "Révoquer",
+      "deconnecterAutres": "{n, plural, one {Déconnecter l'autre appareil} other {Déconnecter les # autres appareils}}",
+      "connexionsRecentes": "Connexions récentes",
+      "approximatif": "Horodatage indicatif, sans géolocalisation précise.",
+      "type": {
+        "mobile": "Mobile",
+        "tablette": "Tablette",
+        "ordinateur": "Ordinateur"
+      },
+      "actions": {
+        "login": "Connexion",
+        "logout": "Déconnexion",
+        "token_refreshed": "Session prolongée",
+        "user_signedup": "Création du compte",
+        "autre": "Activité"
+      }
     }
   },
   "invitations": {

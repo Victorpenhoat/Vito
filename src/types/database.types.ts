@@ -1679,12 +1679,33 @@ export type Database = {
       is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
       lier_client: { Args: { p_email: string }; Returns: string }
+      mes_connexions_recentes: {
+        Args: { p_limite?: number }
+        Returns: {
+          action: string
+          cree_le: string
+          ip: string
+        }[]
+      }
+      mes_sessions: {
+        Args: never
+        Returns: {
+          courante: boolean
+          created_at: string
+          id: string
+          ip: string
+          refreshed_at: string
+          user_agent: string
+        }[]
+      }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       quitter_famille: { Args: never; Returns: undefined }
       retirer_membre_famille: {
         Args: { p_famille_id: string; p_profile_id: string }
         Returns: undefined
       }
+      revoquer_autres_sessions: { Args: never; Returns: number }
+      revoquer_session: { Args: { p_session_id: string }; Returns: boolean }
       share_groupe: {
         Args: { p_email: string; p_groupe_id: string }
         Returns: string

@@ -31,7 +31,16 @@
     "renvoyer": "Reinvia il link",
     "corrigerAdresse": "Correggi l'indirizzo",
     "lienExpire": "Questo link non è più valido. Richiedine uno nuovo.",
-    "sansMotDePasse": "Ti inviamo un link per continuare. Nessuna password da ricordare."
+    "sansMotDePasse": "Ti inviamo un link per continuare. Nessuna password da ricordare.",
+    "continuerAvec": "Continua con {moyen}",
+    "passkeyEchec": "Accesso con passkey non riuscito.",
+    "biometrie": {
+      "faceId": "Face ID",
+      "touchId": "Touch ID",
+      "windowsHello": "Windows Hello",
+      "android": "la tua impronta",
+      "passkey": "una passkey"
+    }
   },
   "vins": {
     "title": "I miei vini",
@@ -1058,6 +1067,53 @@
       "deverrouiller": "Sblocca",
       "echec": "Sblocco non riuscito.",
       "aucuneDonnee": "Nessun dato visibile prima dello sblocco"
+    },
+    "passkeys": {
+      "titre": "Passkey",
+      "explication": "Accedi senza password, con il volto o l'impronta. La chiave resta sul tuo dispositivo.",
+      "aucune": "Nessuna passkey salvata.",
+      "chargement": "Caricamento…",
+      "sansNom": "Dispositivo",
+      "ajouteeLe": "Aggiunta il {date}",
+      "revoquer": "Revoca",
+      "echecAjout": "Impossibile aggiungere questa passkey.",
+      "echecRevocation": "Impossibile revocare questa passkey."
+    },
+    "totp": {
+      "titre": "Autenticazione a due fattori",
+      "explication": "Un codice a sei cifre dalla tua app di autenticazione, in aggiunta all'accesso.",
+      "activer": "Attiva",
+      "desactiver": "Disattiva",
+      "active": "Attiva",
+      "scanner": "Inquadra questo QR code con la tua app di autenticazione, poi inserisci il codice mostrato.",
+      "secret": "Oppure inserisci questa chiave:",
+      "code": "Codice a 6 cifre",
+      "confirmer": "Conferma",
+      "codeRefuse": "Codice rifiutato. Controlla l'ora del dispositivo e riprova.",
+      "echecActivation": "Impossibile attivare l'autenticazione a due fattori.",
+      "echecDesactivation": "Impossibile disattivare l'autenticazione a due fattori."
+    },
+    "sessions": {
+      "titre": "Dispositivi e sessioni",
+      "explication": "Dove è connesso il tuo account.",
+      "aucune": "Nessuna sessione attiva.",
+      "cetAppareil": "Questo dispositivo",
+      "revoquer": "Revoca",
+      "deconnecterAutres": "{n, plural, one {Disconnetti l'altro dispositivo} other {Disconnetti gli altri # dispositivi}}",
+      "connexionsRecentes": "Accessi recenti",
+      "approximatif": "Orari indicativi, senza posizione precisa.",
+      "type": {
+        "mobile": "Mobile",
+        "tablette": "Tablet",
+        "ordinateur": "Computer"
+      },
+      "actions": {
+        "login": "Accesso",
+        "logout": "Disconnessione",
+        "token_refreshed": "Sessione prolungata",
+        "user_signedup": "Account creato",
+        "autre": "Attività"
+      }
     }
   },
   "invitations": {
