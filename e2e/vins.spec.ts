@@ -170,3 +170,43 @@ test("le formulaire de visite porte sa section Vins", async ({ page }) => {
   await expect(section).toBeVisible();
   await expect(section.getByTestId("ajouter-vin")).toBeVisible();
 });
+
+test("la carte de la Cave épingle les lieux où j'ai bu", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos?onglet=cave");
+  await page.getByTestId("cave-onglet-carte").click();
+
+  // La carte est chargée en lazy (Leaflet ne passe pas le SSR) : on attend le
+  // marqueur, pas seulement le conteneur.
+  await expect(page.getByTestId("cave-map")).toBeVisible({ timeout: 15_000 });
+  const marqueur = page.locator(".leaflet-marker-icon").first();
+  await expect(marqueur).toBeVisible({ timeout: 15_000 });
+  await marqueur.click();
+
+  // le marqueur porte le lieu, ce qu'on y a bu, et le chemin vers la fiche
+  const fiche = page.getByTestId("cave-marqueur-fiche");
+  await expect(fiche).toContainText("Le Bistrot Démo");
+  await expect(fiche).toContainText("dégustation");
+  await fiche.getByRole("link").click();
+  await expect(page).toHaveURL(/\/fr\/restos\//);
+});
+
+test("« Ma cave en chiffres » compte les vins, les régions et la dépense", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos?onglet=cave");
+  await page.getByTestId("cave-onglet-carte").click();
+  await page.getByTestId("cave-lien-stats").click();
+  await expect(page).toHaveURL(/\/fr\/vins\/stats/);
+
+  await expect(page.getByTestId("cave-stats-tuiles")).toContainText("vins");
+  // le vin du seed est un Bordeaux rouge : sa couleur et sa région sont comptées
+  await expect(page.getByTestId("stats-couleurs")).toContainText("Rouge");
+  await expect(page.getByTestId("stats-regions")).toContainText("Bordeaux");
+
+  // la dépense suit six mois, toujours — un mois sans achat vaut une barre à zéro
+  await expect(page.getByTestId("stats-depense")).toBeVisible();
+  await expect(page.getByTestId("stats-depense").locator("ul.sr-only li")).toHaveCount(6);
+
+  await page.getByTestId("stats-retour").click();
+  await expect(page.getByTestId("cave-panel")).toBeVisible();
+});

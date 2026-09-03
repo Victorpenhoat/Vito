@@ -1,6 +1,8 @@
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { cleDedup } from "../domain/etiquette";
 import type { VinCave } from "../domain/caveFilters";
+import type { DegustationLieu } from "../domain/caveCarte";
+import type { DegustationStat, VinStat } from "../domain/caveStats";
 import { moyenneVerres } from "../domain/verres";
 import { lireAnalyse } from "../domain/analyse";
 
@@ -199,4 +201,72 @@ export async function getVinsBusIci(etablissementId: string): Promise<VinBuIci[]
       sansVisite: d.visite_id == null,
     }];
   });
+}
+
+// ── Carte et statistiques de la Cave (Lot V-E) ──────────────────────────────
+
+/**
+ * Les lieux où j'ai bu (design écran 6). Un établissement porte ses
+ * coordonnées ; un lieu libre n'a qu'un nom et finit dans « Ailleurs » — le
+ * tri des deux est fait par `regrouperLieux`.
+ */
+export async function getCaveCarte(): Promise<DegustationLieu[]> {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("degustations")
+    .select("id, note, lieu_type, lieu_nom, etablissement:etablissements(id, nom, lat, lng)");
+  if (error) throw error;
+
+  return (data ?? []).map((d) => {
+    const etab = Array.isArray(d.etablissement) ? d.etablissement[0] : d.etablissement;
+    return {
+      id: d.id,
+      note: d.note == null ? null : Number(d.note),
+      etablissement: etab ? { id: etab.id, nom: etab.nom, lat: etab.lat, lng: etab.lng } : null,
+      lieu_type: d.lieu_type,
+      lieu_nom: d.lieu_nom,
+    };
+  });
+}
+
+/**
+ * La matière des statistiques (design écran 7) : la cave et les dégustations,
+ * agrégées en mémoire par `calculerCaveStats` — une cave se compte en dizaines
+ * de bouteilles, et les mêmes lignes servent à plusieurs blocs de l'écran.
+ *
+ * Le prix caviste vient de l'analyse d'étiquette, relue par `lireAnalyse` :
+ * c'est du jsonb écrit par un modèle, jamais une donnée de forme garantie.
+ */
+export async function getCaveStats(): Promise<{ vins: VinStat[]; degustations: DegustationStat[] }> {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return { vins: [], degustations: [] };
+  const [vinsRes, degRes] = await Promise.all([
+    supabase.from("vins").select("id, couleur, region, cepages, analyse_contenu"),
+    supabase.from("degustations").select("vin_id, note, prix_paye, prix_unite, deguste_le"),
+  ]);
+  if (vinsRes.error) throw vinsRes.error;
+  if (degRes.error) throw degRes.error;
+
+  return {
+    vins: (vinsRes.data ?? []).map((v) => ({
+      id: v.id,
+      couleur: v.couleur,
+      region: v.region,
+      cepages: v.cepages ?? [],
+      prix_estime: lireAnalyse(v.analyse_contenu)?.prixEstime ?? null,
+    })),
+    degustations: (degRes.data ?? []).map((d) => ({
+      vin_id: d.vin_id,
+      note: d.note == null ? null : Number(d.note),
+      prix_paye: d.prix_paye == null ? null : Number(d.prix_paye),
+      // `prix_unite` est un text côté base : on ne laisse passer que les deux
+      // unités connues, une valeur inattendue vaut « unité inconnue ».
+      prix_unite: d.prix_unite === "bouteille" || d.prix_unite === "verre" ? d.prix_unite : null,
+      deguste_le: d.deguste_le,
+    })),
+  };
 }

@@ -162,7 +162,8 @@
       "onglets": {
         "tous": "Tutti",
         "coups_de_coeur": "Preferiti",
-        "a_retrouver": "Da ritrovare"
+        "a_retrouver": "Da ritrovare",
+        "carte": "Mappa"
       },
       "noteMin": "{n} calici e più",
       "prixMax": "Fino a {p} €",
@@ -226,6 +227,31 @@
       "sectionVisite": "Vini",
       "ajoutes": "{n, plural, one {# aggiunto} other {# aggiunti}}",
       "vinSansNom": "Vino senza nome"
+    },
+    "carte": {
+      "autourDeMoi": "Vicino a me",
+      "ficheResto": "Scheda del ristorante",
+      "fermer": "Chiudi",
+      "ailleurs": "Altrove",
+      "sansCoordonnees": "{n, plural, one {# degustazione senza indirizzo noto} other {# degustazioni senza indirizzo noto}}",
+      "videTitre": "Nessun luogo da mostrare",
+      "videTexte": "Le tue degustazioni appariranno qui appena ne registrerai una."
+    },
+    "stats": {
+      "lien": "La mia cantina in numeri",
+      "titre": "La mia cantina in numeri",
+      "retour": "Torna alla cantina",
+      "vins": "vini",
+      "degustations": "degustazioni",
+      "noteMoyenne": "voto medio",
+      "parCouleur": "Per colore",
+      "regions": "Regioni più bevute",
+      "cepages": "Vitigni preferiti",
+      "depense": "Spesa al ristorante vs prezzo stimato in enoteca",
+      "totalPaye": "{montant} spesi in totale",
+      "comparaison": "{paye} pagati · stima {estime} · su {n, plural, one {# bottiglia} other {# bottiglie}}",
+      "comparaisonIndispo": "Fotografa un'etichetta per stimare il suo prezzo in enoteca.",
+      "videTitre": "Non c'è ancora nulla da contare"
     }
   },
   "gouts": {
