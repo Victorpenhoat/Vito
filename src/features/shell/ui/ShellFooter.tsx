@@ -12,7 +12,8 @@ export function ShellFooter({ userName, role }: { userName: string; role: string
   const ts = useTranslations("shell");
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3 text-sm">
-      <Link href="/gouts" className="flex items-center gap-2 text-muted hover:text-ink">
+      {/* Réglages : l'entrée pointait sur /gouts faute de page dédiée (Onboarding lot O-A) */}
+      <Link href="/reglages" data-testid="lien-reglages" className="flex items-center gap-2 text-muted hover:text-ink">
         <Settings size={18} /> {ts("settings")}
       </Link>
       <div className="flex items-center gap-2">

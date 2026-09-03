@@ -14,8 +14,24 @@
     "errors": {
       "invalidCredentials": "Invalid credentials",
       "signInFailed": "Sign-in failed",
-      "signUpFailed": "Sign-up failed"
-    }
+      "signUpFailed": "Sign-up failed",
+      "emailInvalide": "Invalid email address",
+      "saisieInvalide": "Invalid entry",
+      "invitationInvalide": "This invitation is no longer valid.",
+      "creationImpossible": "Cannot create an account with these details."
+    },
+    "marqueSous": "the journal",
+    "recevoirLien": "Get a link by email",
+    "utiliserMotDePasse": "Use a password",
+    "ouvrezLeLien": "Open the link we sent",
+    "lienEnvoye": "We wrote to {email}.",
+    "lienValidite": "The link is valid for 15 minutes.",
+    "enAttenteOuverture": "Waiting for you to open it…",
+    "renvoyerDans": "Resend in {temps}",
+    "renvoyer": "Resend the link",
+    "corrigerAdresse": "Change the address",
+    "lienExpire": "This link is no longer valid. Please request a new one.",
+    "sansMotDePasse": "We send you a link to continue. No password to remember."
   },
   "vins": {
     "title": "My wines",
@@ -995,6 +1011,94 @@
     "discoveries": {
       "vide": "No suggestions yet",
       "suggested": "Suggested"
+    }
+  },
+  "compte": {
+    "eyebrow": "My account",
+    "titre": "Settings",
+    "toutesSections": "All sections",
+    "bientot": "Soon",
+    "profil": {
+      "prenom": "First name",
+      "nom": "Last name",
+      "enregistrer": "Save",
+      "enregistre": "Profile saved",
+      "fiche": "This profile becomes your card in the Circle."
+    },
+    "sections": {
+      "profil": "Profile",
+      "profilSous": "Name shown in Vito and in your Circle",
+      "securite": "Security",
+      "securiteSous": "Sign-in, lock, trusted devices",
+      "appareils": "Devices and sessions",
+      "appareilsSous": "Where your account is signed in",
+      "partages": "Sharing and invitations",
+      "partagesSous": "Shared trips and guests",
+      "donnees": "Data",
+      "donneesSous": "Export or delete your account",
+      "tags": "Tags",
+      "tagsSous": "Your place and wine tags",
+      "gouts": "Tastes",
+      "goutsSous": "What guides your recommendations",
+      "abonnement": "Subscription",
+      "abonnementSous": "Plan and billing",
+      "comptes": "Accounts",
+      "comptesSous": "Manage access — never content"
+    }
+  },
+  "invitations": {
+    "marqueSous": "the journal",
+    "vousInvite": "invites you",
+    "continuer": "Continue",
+    "retour": "Back",
+    "commencer": "Get started",
+    "etape": "Step {n} of {total}",
+    "accesLimite": "An account is required to join a shared trip. You will only have access to that trip.",
+    "identite": {
+      "titre": "Your email address",
+      "indice": "The invitation was sent to {indice}",
+      "emailImpose": "This invitation only works for the address shown.",
+      "motDePasseAide": "8 characters minimum. It is the fallback if biometrics fail."
+    },
+    "profil": {
+      "titre": "Your profile",
+      "prenom": "First name",
+      "nom": "Last name",
+      "fiche": "This profile becomes your card in the Circle."
+    },
+    "confidentialite": {
+      "titre": "Your data stays yours",
+      "fait": "What Vito keeps",
+      "conserve": "Your places, stays, Circle cards and the documents you add.",
+      "heberge": "Hosted in the European Union, encrypted in transit and at rest.",
+      "documents": "Identity documents are encrypted separately and never indexed.",
+      "pasFait": "What Vito never does",
+      "pasPublicite": "No advertising, no ad trackers.",
+      "pasRevente": "No selling or sharing of your data.",
+      "pasPartage": "No sharing without an explicit action from you.",
+      "accepte": "I accept the terms of use and the privacy policy."
+    },
+    "invalide": {
+      "titre": "Invitation not valid",
+      "texte": "This link has expired, has already been used, or does not exist. Ask for a new invitation.",
+      "seConnecter": "I already have an account"
+    },
+    "surInvitation": {
+      "titre": "Invitation only",
+      "code": "Invitation code",
+      "texte": "Vito is invitation-only. Enter the code you received, or open the link that was sent to you.",
+      "dejaCompte": "I already have an account"
+    },
+    "bienvenue": {
+      "titre": "Welcome, {prenom}.",
+      "texte": "Your journal is empty — here are three ways to start.",
+      "ignorer": "Skip",
+      "cercle": "Add someone to your Circle",
+      "cercleSous": "Birthdays, papers, sizes",
+      "resto": "Save a favourite restaurant",
+      "restoSous": "The one you always go back to",
+      "voyage": "Create a trip idea",
+      "voyageSous": "Even without exact dates"
     }
   }
 }

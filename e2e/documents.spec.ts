@@ -1,17 +1,9 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload, expectCountWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectCountWithReload, expectVisibleWithReload, login } from "./helpers";
 
 const ROME = "11111111-2222-4333-8444-555555555555";
 // PDF minimal valide
 const PDF = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF");
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("déposer, lister, télécharger puis supprimer un document chiffré", async ({ page }) => {
   await login(page, "client@vito.test");

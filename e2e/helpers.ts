@@ -53,3 +53,22 @@ export async function expectCountWithReload(
     await expect(locator).toHaveCount(count, { timeout });
   }
 }
+
+// Connexion des comptes de seed (mot de passe partagé). Centralisé ici : le
+// parcours de connexion évolue (lien magique, passkey) et 24 specs le
+// dupliquaient à l'identique. Le bouton est ciblé par son type, pas par son
+// libellé, pour survivre aux changements de texte.
+export async function login(
+  page: Page,
+  email = "client@vito.test",
+  password = "password123",
+): Promise<void> {
+  await page.goto("/fr/login");
+  await page.getByTestId("champ-email").fill(email);
+  // le mot de passe est un repli : il faut l'ouvrir (le lien magique est la voie
+  // principale depuis le lot O-B)
+  await page.getByTestId("utiliser-mot-de-passe").click();
+  await page.getByTestId("champ-mot-de-passe").fill(password);
+  await page.getByRole("button", { name: "Connexion", exact: true }).click();
+  await expect(page).toHaveURL(/\/fr\/accueil/);
+}

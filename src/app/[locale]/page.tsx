@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "@/lib/i18n/routing";
-import { signIn, signUp } from "@/features/auth/data/actions";
+import { signIn, envoyerLienMagique } from "@/features/auth/data/actions";
 import { AuthPanel } from "@/features/auth/ui/AuthPanel";
 
 export default async function Home() {
@@ -23,7 +23,7 @@ export default async function Home() {
           <span className="text-accent">.</span>
         </div>
         <p className="mb-6 mt-1.5 text-sm text-muted">{t("tagline")}</p>
-        <AuthPanel signIn={signIn} signUp={signUp} />
+        <AuthPanel signIn={signIn} envoyerLienMagique={envoyerLienMagique} />
       </div>
     </main>
   );

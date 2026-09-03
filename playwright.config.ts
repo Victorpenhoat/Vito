@@ -1,4 +1,9 @@
 import { defineConfig } from "@playwright/test";
+import { loadEnvConfig } from "@next/env";
+
+// Charge .env.local comme le fait Next : certains tests interrogent Supabase
+// directement (verrou d'inscription) et ont besoin de la clé anon.
+loadEnvConfig(process.cwd());
 
 const PORT = process.env.E2E_PORT ?? "3001";
 

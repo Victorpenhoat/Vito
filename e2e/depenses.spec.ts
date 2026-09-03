@@ -1,5 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload, expectTextWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectTextWithReload, expectVisibleWithReload, login } from "./helpers";
 
 const SUPABASE_URL = "http://127.0.0.1:54321";
 const SERVICE_ROLE_KEY =
@@ -12,14 +12,6 @@ async function resetSeedGroupe(request: import("@playwright/test").APIRequestCon
     `${SUPABASE_URL}/rest/v1/remboursements?groupe_id=eq.${SEED_GROUPE_ID}`,
     { headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` } },
   );
-}
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
 test("créer un compte partagé, partager, ajouter une dépense égale, vérifier les soldes", async ({ page }) => {

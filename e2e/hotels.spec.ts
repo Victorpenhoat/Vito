@@ -1,17 +1,9 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectCountWithReload, expectVisibleWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectCountWithReload, expectVisibleWithReload, login } from "./helpers";
 
 // Hôtels v2 : l'onglet est rendu par la brique générique CategoryTabs
 // (sous-onglets ?onglet= URL-driven — navigation par URL, jamais par clic
 // d'onglet : le clic peut asserter contre le panneau périmé, cf. Resto v2).
-
-async function login(page: Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.locator('form button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("l'onglet Hôtels v2 montre l'hôtel à tester seedé", async ({ page }) => {
   await login(page);

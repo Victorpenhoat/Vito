@@ -414,3 +414,15 @@ update public.voyages set cover_url = 'https://images.unsplash.com/photo-1585208
  where id = 'de110001-0000-4000-8000-000000000002';
 insert into public.voyages (id, owner_id, titre, destination, statut, periode_texte) values
  ('de110009-0000-4000-8000-000000000001', 'de110000-0000-4000-8000-000000000000', 'Japon', 'Japon', 'idee', 'printemps 2028');
+
+-- ── Invitations (Onboarding lot O-C) ───────────────────────────────────────
+-- Jetons FIXES pour les e2e (l'inscription est sur invitation : sans jeton,
+-- aucun compte ne peut être créé). Longueur ≥ 24 imposée par la contrainte.
+insert into public.invitations (id, token, email, role_vise, voyage_id, cree_par, expire_le) values
+  ('1a000001-0000-4000-8000-000000000001', 'e2e-invitation-valide-000000000001', null, 'membre', null,
+   '11111111-1111-1111-1111-111111111111', now() + interval '14 days'),
+  ('1a000001-0000-4000-8000-000000000002', 'e2e-invitation-expiree-00000000001', null, 'membre', null,
+   '11111111-1111-1111-1111-111111111111', now() - interval '1 day'),
+  -- invitation à un voyage : l'invité ne verra que celui-là
+  ('1a000001-0000-4000-8000-000000000003', 'e2e-invitation-voyage-000000000001', null, 'invite',
+   '11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', now() + interval '14 days');

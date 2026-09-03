@@ -1,18 +1,10 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectVisibleWithReload, login } from "./helpers";
 
 // display_name du seed client7b@vito.test — avant la policy profiles_select_co_membre
 // (00021), l'agence ne pouvait pas lire le profil et la ligne affichait l'UUID ;
 // ce test assertait ce comportement bugué.
 const CLIENT7B = "Client 7b";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("l'agence relie un client, lui crée un voyage, le client le voit", async ({ browser }) => {
   const ctxA = await browser.newContext();

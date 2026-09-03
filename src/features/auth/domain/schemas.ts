@@ -6,3 +6,6 @@ export const credentialsSchema = z.object({
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;
+
+// Lien magique (Onboarding lot O-B) : l'email seul suffit, aucun mot de passe.
+export const emailSchema = z.object({ email: z.string().email() });

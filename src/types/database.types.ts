@@ -830,6 +830,67 @@ export type Database = {
           },
         ]
       }
+      invitations: {
+        Row: {
+          consomme_le: string | null
+          consomme_par: string | null
+          created_at: string
+          cree_par: string
+          email: string | null
+          expire_le: string
+          id: string
+          role_vise: string
+          token: string
+          voyage_id: string | null
+        }
+        Insert: {
+          consomme_le?: string | null
+          consomme_par?: string | null
+          created_at?: string
+          cree_par: string
+          email?: string | null
+          expire_le?: string
+          id?: string
+          role_vise?: string
+          token: string
+          voyage_id?: string | null
+        }
+        Update: {
+          consomme_le?: string | null
+          consomme_par?: string | null
+          created_at?: string
+          cree_par?: string
+          email?: string | null
+          expire_le?: string
+          id?: string
+          role_vise?: string
+          token?: string
+          voyage_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_consomme_par_fkey"
+            columns: ["consomme_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_cree_par_fkey"
+            columns: ["cree_par"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       liste_item_tags: {
         Row: {
           liste_item_id: string
@@ -982,23 +1043,32 @@ export type Database = {
       }
       profiles: {
         Row: {
+          conditions_acceptees_le: string | null
           created_at: string
           display_name: string | null
+          first_name: string | null
           id: string
+          last_name: string | null
           locale: string
           role: Database["public"]["Enums"]["app_role"]
         }
         Insert: {
+          conditions_acceptees_le?: string | null
           created_at?: string
           display_name?: string | null
+          first_name?: string | null
           id: string
+          last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
         }
         Update: {
+          conditions_acceptees_le?: string | null
           created_at?: string
           display_name?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
         }
@@ -1514,6 +1584,7 @@ export type Database = {
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
+      consommer_invitation: { Args: { p_token: string }; Returns: Json }
       creer_voyage_pour_client: {
         Args: {
           p_client_id: string
@@ -1532,6 +1603,7 @@ export type Database = {
         Args: { p_cible: string; p_source: string }
         Returns: undefined
       }
+      invitation_infos: { Args: { p_token: string }; Returns: Json }
       inviter_famille: {
         Args: { p_email: string; p_famille_id: string }
         Returns: string
