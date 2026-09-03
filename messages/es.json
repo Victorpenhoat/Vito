@@ -402,6 +402,29 @@
       "participants": "Participantes",
       "prochaineEtape": "Próxima etapa",
       "organisateur": "Organizador"
+    },
+    "horsLigne": {
+      "section": "Modo viaje",
+      "titre": "Modo viaje",
+      "actifPendant": "Activo durante la estancia en {destination}",
+      "emporterExplication": "Lleva este viaje en este dispositivo",
+      "promesseVouchers": "Vouchers, billetes y reservas consultables sin conexión, sin verificación.",
+      "identiteProtegee": "Los documentos de identidad siguen protegidos, incluso sin conexión.",
+      "telecharger": "Descargar en este dispositivo",
+      "enCours": "Descargando…",
+      "retirer": "Quitar de este dispositivo",
+      "ouvrirCarnet": "Abrir el cuaderno",
+      "disponible": "{documents, plural, =0 {Ningún adjunto} one {# adjunto} other {# adjuntos}} · {taille}",
+      "telechargeLe": "descargado el {date}",
+      "autreVoyageEmporte": "Ya hay otro viaje guardado en este dispositivo. Al descargar, lo reemplazarás.",
+      "echec": "No se pudo descargar. Inténtalo de nuevo con conexión.",
+      "consultableSansReseau": "Esta página sigue siendo legible sin red.",
+      "aucuneReservation": "Sin reservas.",
+      "aucunDocument": "Sin documentos.",
+      "sansDate": "Sin fecha",
+      "ouvrirDocument": "Abrir",
+      "surCetAppareil": "Guardado solo en este dispositivo, y eliminado al cerrar sesión.",
+      "retourApplication": "Volver a la aplicación"
     }
   },
   "depenses": {

@@ -5,6 +5,7 @@ import { Link } from "@/lib/i18n/routing";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { ThemeToggle } from "@/features/shared/ui/ThemeToggle";
 import { signOut } from "@/features/auth/data/actions";
+import { retirerCarnet } from "@/features/voyages/data/horsLigneClient";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 export function ShellFooter({ userName, role }: { userName: string; role: string }) {
@@ -27,7 +28,10 @@ export function ShellFooter({ userName, role }: { userName: string; role: string
         <LocaleSwitcher />
         <ThemeToggle />
       </div>
-      <form action={signOut}>
+      {/* Se déconnecter retire aussi le carnet emporté : sur un appareil partagé,
+          un voyage resterait autrement consultable après le départ de son
+          propriétaire, mode voyage oblige — sans aucune vérification. */}
+      <form action={async () => { await retirerCarnet(); await signOut(); }}>
         <button type="submit" className="text-left text-muted hover:text-ink">{t("deconnexion")}</button>
       </form>
     </div>
