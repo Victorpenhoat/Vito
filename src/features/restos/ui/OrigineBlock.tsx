@@ -3,18 +3,21 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/features/shared/ui/Modal";
 import { OrigineForm, type ProcheSuggestion } from "./OrigineForm";
+import { CATEGORY_UI, type CategorieUi } from "@/features/places/domain/categoryUiConfig";
 
 // Bloc « Pourquoi c'est là » (design écran 6) : origine affichée + Modifier → écran 9.
 export function OrigineBlock({
   listeItemId,
   origine,
   proches,
+  categorie = "resto",
 }: {
   listeItemId: string;
   origine: { type: "reco" | "trouve" | null; qui: string | null; source: string | null };
   proches: ProcheSuggestion[];
+  categorie?: CategorieUi;
 }) {
-  const t = useTranslations("restos");
+  const t = useTranslations(CATEGORY_UI[categorie].ns);
   const [open, setOpen] = useState(false);
   const texte =
     origine.type === "reco" ? t("origines.recoPar", { qui: origine.qui ?? "?" })

@@ -842,7 +842,16 @@
       "enregistrer": "Save stay",
       "visiteLe": "stayed {date}",
       "mesVisites": "My stays",
-      "count": "{n, plural, =0 {none yet} one {# stay} other {# stays}}"
+      "count": "{n, plural, =0 {none yet} one {# stay} other {# stays}}",
+      "nuits": "{n, plural, one {# night} other {# nights}}",
+      "voyageDetecte": "Linked to trip",
+      "delier": "Unlink",
+      "relier": "Link the trip",
+      "occupation": "Occupancy",
+      "adultes": "Adults",
+      "enfants": "Children",
+      "chambres": "Rooms",
+      "voyageLien": "Trip {titre}"
     },
     "vide": {
       "aucunResultat": "No results",
@@ -887,6 +896,34 @@
       "ouvrirFiche": "Open page",
       "itineraire": "Directions",
       "fermer": "Close"
+    },
+    "equipements": {
+      "titre": "Amenities",
+      "fournisseur": "Provider data",
+      "breakfast": "Breakfast",
+      "parking": "Parking",
+      "accessibility": "Accessibility",
+      "goodForChildren": "Good for children",
+      "allowsDogs": "Dogs allowed"
+    },
+    "infos": {
+      "titre": "My details",
+      "saisies": "Entered by me",
+      "etoiles": "Stars",
+      "prixNuit": "Price / night",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "enregistrer": "Save",
+      "parNuit": "/ night"
+    },
+    "pratique": {
+      "maps": "Maps",
+      "appeler": "Call",
+      "reserver": "Book",
+      "donnees": "Google Places data",
+      "siteOfficiel": "Official site",
+      "booking": "Booking",
+      "horaires": "Check-in {checkin} · check-out {checkout}"
     }
   },
   "accueil": {

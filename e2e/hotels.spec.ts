@@ -80,6 +80,49 @@ test("liste hôtel : filtre par tag (Spa)", async ({ page }) => {
   await expect(page.getByTestId("place-card")).toHaveCount(total);
 });
 
+// Fiches seedées (ids stables du seed) — la navigation directe évite de dépendre
+// de l'ordre des listes.
+const HOTEL_DEMO = "11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa";      // à tester, tag spa, équipements
+const HOTEL_DEMO_2 = "22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa";    // séjour seedé lié au voyage Rome
+
+test("fiche hôtel v2 : statut, équipements fournisseur, infos perso, réservation", async ({ page }) => {
+  await login(page);
+  await page.goto(`/fr/hotels/${HOTEL_DEMO}`);
+  await expect(page.getByTestId("statut-chip")).toBeVisible();
+  // équipements = données fournisseur (✓ petit-déjeuner / ✗ parking dans le seed)
+  await expect(page.getByTestId("equipements-block")).toBeVisible();
+  // infos saisies par moi (étoiles / prix / check-in / check-out)
+  await expect(page.getByTestId("infos-hotel-form")).toBeVisible();
+  await expect(page.getByTestId("lien-booking")).toBeVisible();
+  // l'origine est proposée sur les hôtels comme sur les restos
+  await expect(page.getByTestId("origine-block")).toBeVisible();
+});
+
+test("séjour : dates arrivée→départ, voyage détecté, enregistrement", async ({ page }) => {
+  await login(page);
+  await page.goto(`/fr/hotels/${HOTEL_DEMO_2}`);
+  const lignes = page.getByTestId("sejour-row");
+  const avant = await lignes.count();
+
+  await page.getByTestId("visite-cta").click();
+  const form = page.getByTestId("sejour-form");
+  await expect(form).toBeVisible();
+  // le voyage « Week-end à Rome » du seed couvre 2026-09-12 → 2026-09-15
+  await form.locator('input[name="visiteLe"]').fill("2026-09-12");
+  await form.locator('input[name="dateFin"]').fill("2026-09-15");
+  await expect(page.getByTestId("sejour-nuits")).toHaveText(/3/);
+  await expect(page.getByTestId("voyage-lie")).toContainText("Rome");
+
+  // signal serveur déterministe (recette repo) plutôt qu'un toBeEnabled post-action
+  const reponse = page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400);
+  await form.getByRole("button", { name: "Enregistrer le séjour" }).click();
+  await reponse;
+
+  // compte RELATIF (la base est partagée entre retries) : un séjour de plus
+  await expect(lignes).toHaveCount(avant + 1, { timeout: 15_000 });
+  await expect(page.getByTestId("sejour-voyage").first()).toBeVisible();
+});
+
 test("carte hôtels : légende par statut et compteur", async ({ page }) => {
   await login(page);
   await page.goto("/fr/hotels?onglet=carte");

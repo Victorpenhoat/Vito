@@ -842,7 +842,16 @@
       "enregistrer": "Salva il soggiorno",
       "visiteLe": "soggiorno il {date}",
       "mesVisites": "I miei soggiorni",
-      "count": "{n, plural, =0 {nessuno finora} one {# soggiorno} other {# soggiorni}}"
+      "count": "{n, plural, =0 {nessuno finora} one {# soggiorno} other {# soggiorni}}",
+      "nuits": "{n, plural, one {# notte} other {# notti}}",
+      "voyageDetecte": "Collegato al viaggio",
+      "delier": "Scollega",
+      "relier": "Collega il viaggio",
+      "occupation": "Occupazione",
+      "adultes": "Adulti",
+      "enfants": "Bambini",
+      "chambres": "Camere",
+      "voyageLien": "Viaggio {titre}"
     },
     "vide": {
       "aucunResultat": "Nessun risultato",
@@ -887,6 +896,34 @@
       "ouvrirFiche": "Apri scheda",
       "itineraire": "Indicazioni",
       "fermer": "Chiudi"
+    },
+    "equipements": {
+      "titre": "Servizi",
+      "fournisseur": "Dati del fornitore",
+      "breakfast": "Colazione",
+      "parking": "Parcheggio",
+      "accessibility": "Accessibilità",
+      "goodForChildren": "Adatto ai bambini",
+      "allowsDogs": "Animali ammessi"
+    },
+    "infos": {
+      "titre": "Le mie informazioni",
+      "saisies": "Inserite da me",
+      "etoiles": "Stelle",
+      "prixNuit": "Prezzo / notte",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "enregistrer": "Salva",
+      "parNuit": "/ notte"
+    },
+    "pratique": {
+      "maps": "Maps",
+      "appeler": "Chiama",
+      "reserver": "Prenota",
+      "donnees": "Dati Google Places",
+      "siteOfficiel": "Sito ufficiale",
+      "booking": "Booking",
+      "horaires": "Check-in {checkin} · check-out {checkout}"
     }
   },
   "accueil": {

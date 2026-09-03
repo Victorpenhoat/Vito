@@ -41,6 +41,30 @@ export const marquerVisiteSchema = z.object({
   tagIds: z.array(z.string().uuid()).optional(),
 });
 
+// ── Hôtels v2 (Lot H3) ──────────────────────────────────────────────────────
+
+/** Séjour = visite avec plage de dates, voyage lié et occupation (tout optionnel
+ *  sauf l'item et l'arrivée). visiteLe porte l'arrivée, dateFin le départ. */
+export const marquerSejourSchema = marquerVisiteSchema.extend({
+  dateFin: z.string().date().optional().or(z.literal("")),
+  voyageId: z.string().uuid().optional().or(z.literal("")),
+  adultes: z.coerce.number().int().min(1).max(20).optional(),
+  enfants: z.coerce.number().int().min(0).max(20).optional(),
+  chambres: z.coerce.number().int().min(1).max(10).optional(),
+}).refine((d) => !d.dateFin || !d.visiteLe || d.dateFin >= d.visiteLe, {
+  message: "Le départ doit suivre l'arrivée",
+  path: ["dateFin"],
+});
+
+/** Infos hôtel saisies par l'utilisateur (le fournisseur ne les donne pas). */
+export const setInfosHotelSchema = z.object({
+  listeItemId: z.string().uuid(),
+  etoiles: z.coerce.number().int().min(1).max(5).optional(),
+  prixNuit: z.coerce.number().min(0).max(99999).optional(),
+  checkinHeure: z.string().regex(/^\d{2}:\d{2}$/).optional().or(z.literal("")),
+  checkoutHeure: z.string().regex(/^\d{2}:\d{2}$/).optional().or(z.literal("")),
+});
+
 export const changerStatutSchema = z.object({
   listeItemId: z.string().uuid(),
   statut: z.enum(["favori", "a_tester", "teste"]),

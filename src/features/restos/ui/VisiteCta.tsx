@@ -3,12 +3,17 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/features/shared/ui/Modal";
 import { ExperienceForm } from "@/features/places/ui/ExperienceForm";
+import { CATEGORY_UI, type CategorieUi } from "@/features/places/domain/categoryUiConfig";
+import type { VoyageLite } from "@/features/places/domain/voyageCouvrant";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
-// CTA « J'y suis allé » de la fiche (design écran 6) → formulaire de visite en modale.
-export function VisiteCta({ listeItemId, nom, tags }: { listeItemId: string; nom: string; tags: TagLite[] }) {
-  const t = useTranslations("restos");
+// CTA « J'y suis allé » / « J'y ai séjourné » de la fiche (design Resto v2
+// écran 6, Hôtels v2 écran 6) → formulaire en modale.
+export function VisiteCta({ listeItemId, nom, tags, categorie = "resto", voyages = [] }: {
+  listeItemId: string; nom: string; tags: TagLite[]; categorie?: CategorieUi; voyages?: VoyageLite[];
+}) {
+  const t = useTranslations(CATEGORY_UI[categorie].ns);
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -17,7 +22,8 @@ export function VisiteCta({ listeItemId, nom, tags }: { listeItemId: string; nom
         ✓ {t("visite.cta")}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t("visite.titre", { nom })}>
-        <ExperienceForm listeItemId={listeItemId} tags={tags} categorie="resto" onDone={() => setOpen(false)} />
+        <ExperienceForm listeItemId={listeItemId} tags={tags} categorie={categorie} voyages={voyages}
+          onDone={() => setOpen(false)} />
       </Modal>
     </>
   );
