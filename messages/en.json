@@ -1,6 +1,22 @@
 {
-  "app": { "name": "Vito", "tagline": "Your personal journal of outings and travels", "subtitle": "the journal" },
-  "auth": { "login": "Sign in", "signup": "Create account", "signupTab": "Sign up", "email": "Email", "password": "Password", "submit": "Submit", "errors": { "invalidCredentials": "Invalid credentials", "signInFailed": "Sign-in failed", "signUpFailed": "Sign-up failed" } },
+  "app": {
+    "name": "Vito",
+    "tagline": "Your personal journal of outings and travels",
+    "subtitle": "the journal"
+  },
+  "auth": {
+    "login": "Sign in",
+    "signup": "Create account",
+    "signupTab": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Submit",
+    "errors": {
+      "invalidCredentials": "Invalid credentials",
+      "signInFailed": "Sign-in failed",
+      "signUpFailed": "Sign-up failed"
+    }
+  },
   "vins": {
     "title": "My wines",
     "degustesIci": "Wines tasted here",
@@ -16,13 +32,30 @@
     "prix": "Price paid (€)",
     "commentaire": "Comment",
     "date": "Tasting date",
-    "couleurs": { "rouge": "Red", "blanc": "White", "rose": "Rosé", "petillant": "Sparkling", "autre": "Other" },
-    "filtres": { "titre": "Filters", "tous": "All", "noteMin": "Min. rating", "resto": "Restaurant", "du": "From", "au": "To", "reset": "Reset" },
+    "couleurs": {
+      "rouge": "Red",
+      "blanc": "White",
+      "rose": "Rosé",
+      "petillant": "Sparkling",
+      "autre": "Other"
+    },
+    "filtres": {
+      "titre": "Filters",
+      "tous": "All",
+      "noteMin": "Min. rating",
+      "resto": "Restaurant",
+      "du": "From",
+      "au": "To",
+      "reset": "Reset"
+    },
     "vide": "No wines yet.",
     "fois": "{count} tasting(s)",
     "acheter": "Buy",
     "quantite": "Quantity",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
     "eyebrow": "The cellar",
     "compte": "{n} wines",
     "fiche": "Details",
@@ -34,15 +67,28 @@
     "ambiances": "Favourite vibes",
     "budget": "Budget per person (€)",
     "types": "Favourite types",
-    "typesList": { "etoile": "Starred", "bistrot": "Bistro", "brasserie": "Brasserie", "cafe": "Café", "restaurant": "Restaurant" },
+    "typesList": {
+      "etoile": "Starred",
+      "bistrot": "Bistro",
+      "brasserie": "Brasserie",
+      "cafe": "Café",
+      "restaurant": "Restaurant"
+    },
     "zones": "Favourite areas (comma-separated)",
     "save": "Save my tastes",
     "saved": "Tastes saved",
     "banner": "Complete your tastes for tailored recommendations.",
     "bannerCta": "Set my tastes",
     "bannerSearch": "Search",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
-    "errors": { "invalid": "Invalid tastes", "notAuth": "Not authenticated", "saveFailed": "Failed to save tastes" }
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
+    "errors": {
+      "invalid": "Invalid tastes",
+      "notAuth": "Not authenticated",
+      "saveFailed": "Failed to save tastes"
+    }
   },
   "recherche": {
     "eyebrow": "Explore",
@@ -55,7 +101,10 @@
     "maListe": "Your list first",
     "recos": "Recommendations",
     "vide": "No results.",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    }
   },
   "restos": {
     "title": "Restaurants",
@@ -312,7 +361,10 @@
     "payePar": "Paid by",
     "date": "Date",
     "mode": "Split",
-    "modes": { "egal": "Equal", "exact": "Exact amounts" },
+    "modes": {
+      "egal": "Equal",
+      "exact": "Exact amounts"
+    },
     "participants": "Participants",
     "soldes": "Balances",
     "solde": "Balance",
@@ -328,7 +380,10 @@
     "retirer": "Remove",
     "supprimer": "Delete",
     "save": "Save",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
     "eyebrow": "Shared accounts",
     "total": "Trip total",
     "parPersonne": "{montant} per person",
@@ -345,7 +400,10 @@
     "yearly": "Yearly",
     "cancel": "Cancel subscription",
     "manage": "Manage subscription",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
     "eyebrow": "Your plan",
     "gratuit": "Free",
     "gratuitPrix": "0 €",
@@ -364,10 +422,26 @@
     "demander": "Request a booking",
     "premiumRequis": "This service is for Premium subscribers only.",
     "passerPremium": "Go Premium",
-    "types": { "resto": "Restaurant", "hotel": "Hotel" },
-    "statuts": { "nouvelle": "New", "en_cours": "In progress", "confirmee": "Confirmed", "refusee": "Declined" },
-    "occasions": { "amis": "Friends", "famille": "Family", "anniversaire": "Birthday", "autre": "Other" },
-    "sejours": { "loisirs": "Leisure", "pro": "Business" },
+    "types": {
+      "resto": "Restaurant",
+      "hotel": "Hotel"
+    },
+    "statuts": {
+      "nouvelle": "New",
+      "en_cours": "In progress",
+      "confirmee": "Confirmed",
+      "refusee": "Declined"
+    },
+    "occasions": {
+      "amis": "Friends",
+      "famille": "Family",
+      "anniversaire": "Birthday",
+      "autre": "Other"
+    },
+    "sejours": {
+      "loisirs": "Leisure",
+      "pro": "Business"
+    },
     "date": "Date",
     "heure": "Time",
     "convives": "Number of guests",
@@ -391,7 +465,10 @@
     "statut": "Status",
     "supprimer": "Delete",
     "vide": "No requests yet.",
-    "error": { "title": "Something went wrong", "retry": "Try again" },
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
     "eyebrow": "Premium service",
     "premiumActif": "Premium active"
   },
@@ -602,7 +679,10 @@
     "dateFin": "End date",
     "statut": "Status",
     "envoyer": "Create trip",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    }
   },
   "admin": {
     "title": "Back-office",
@@ -619,10 +699,39 @@
     "colType": "Type",
     "colPeriode": "Period",
     "colClient": "Client",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    }
   },
-  "shell": { "theme": "Toggle theme (light / dark)", "close": "Close", "language": "Language", "settings": "Settings", "menu": "Menu" },
-  "nav": { "restos": "Restaurants", "voyages": "Trips", "depenses": "Shared accounts", "famille": "Circle", "conciergerie": "Concierge", "vins": "Wines", "abonnement": "Subscription", "agence": "Agency", "admin": "Back-office", "deconnexion": "Sign out", "accueil": "Home", "recherche": "Search", "plus": "More", "hotels": "Hotels", "group": { "carnet": "Journal", "voyages": "Trips", "cercle": "Circle" } },
+  "shell": {
+    "theme": "Toggle theme (light / dark)",
+    "close": "Close",
+    "language": "Language",
+    "settings": "Settings",
+    "menu": "Menu"
+  },
+  "nav": {
+    "restos": "Restaurants",
+    "voyages": "Trips",
+    "depenses": "Shared accounts",
+    "famille": "Circle",
+    "conciergerie": "Concierge",
+    "vins": "Wines",
+    "abonnement": "Subscription",
+    "agence": "Agency",
+    "admin": "Back-office",
+    "deconnexion": "Sign out",
+    "accueil": "Home",
+    "recherche": "Search",
+    "plus": "More",
+    "hotels": "Hotels",
+    "group": {
+      "carnet": "Journal",
+      "voyages": "Trips",
+      "cercle": "Circle"
+    }
+  },
   "places": {
     "favoris": "Favourites",
     "recommandes": "Recommended",
@@ -665,19 +774,156 @@
   "hotels": {
     "title": "Hotels",
     "eyebrow": "My journal",
-    "error": { "title": "Something went wrong", "retry": "Try again" }
+    "error": {
+      "title": "Something went wrong",
+      "retry": "Try again"
+    },
+    "notFound": "Not found",
+    "photoAlt": "Photo of {nom}",
+    "addError": "Could not add the place to stay",
+    "archiver": "Archive",
+    "desarchiver": "Unarchive",
+    "favorite": "Favourite",
+    "statut": {
+      "a_faire": "To try",
+      "visite": "Stayed",
+      "favori": "Favorite",
+      "a_tester": "To try",
+      "teste": "Stayed"
+    },
+    "onglets": {
+      "favoris": "Favorites",
+      "a_tester": "To try",
+      "sejours": "Stays",
+      "tous": "All",
+      "carte": "Map"
+    },
+    "rechercherPlaceholder": "Name, city, region, tag…",
+    "trouver": "Find",
+    "trouverTitre": "Find a place to stay",
+    "passerFavori": "Make favorite",
+    "types": {
+      "hotel": "Hotel",
+      "maison": "House",
+      "appartement": "Apartment",
+      "chambre_hotes": "B&B",
+      "autre": "Other"
+    },
+    "origines": {
+      "filtre_toutes": "All",
+      "filtre_reco": "Recommendations",
+      "filtre_trouve": "Found by me",
+      "recoPar": "Rec by {qui}",
+      "trouvePar": "Found by me · {source}",
+      "reco": "Recommendation",
+      "recoSous": "Someone recommended it",
+      "trouve": "Found by me",
+      "trouveSous": "Instagram, press, by chance…",
+      "par": "Recommended by",
+      "cercleSuffixe": "(Circle)",
+      "source": "Source",
+      "sourcePlaceholder": "Instagram, press, by chance…",
+      "enregistrer": "Save origin",
+      "titre": "Why it's here",
+      "modifier": "Edit",
+      "aucune": "No origin recorded",
+      "sheetTitre": "Where does this place come from?"
+    },
+    "visite": {
+      "titre": "I stayed here — {nom}",
+      "cta": "I stayed here",
+      "date": "Check-in",
+      "dateFin": "Check-out",
+      "note": "My rating",
+      "avecNote": "Rate",
+      "verdict": "Verdict tags",
+      "commentaire": "Comment (optional)",
+      "passerFavoriQ": "Make it a favorite?",
+      "enregistrer": "Save stay",
+      "visiteLe": "stayed {date}",
+      "mesVisites": "My stays",
+      "count": "{n, plural, =0 {none yet} one {# stay} other {# stays}}"
+    },
+    "vide": {
+      "aucunResultat": "No results",
+      "aucunResultatTexte": "No “{q}” place matches these filters in your journal.",
+      "chercherExterne": "Search “{q}” on Google",
+      "favorisTitre": "No favorites yet",
+      "favorisTexte": "Add your favorite places to stay to find them at a glance.",
+      "a_testerTitre": "Nothing to try yet",
+      "a_testerTexte": "Save the places people recommend or you spot, so you never forget them.",
+      "sejoursTitre": "No stays recorded",
+      "sejoursTexte": "Mark “I stayed here” on a place to try to keep track of your trips.",
+      "tousTitre": "Your journal is empty",
+      "tousTexte": "Find a place to stay to start your address book."
+    },
+    "tags": {
+      "gerer": "Manage tags",
+      "ajouterVolee": "+ New tag",
+      "label": "Name",
+      "creer": "Create"
+    },
+    "recherche": {
+      "dejaDansVito": "Already in Vito",
+      "resultatsExternes": "External results",
+      "ouvert": "open",
+      "ouvertMnt": "Open now",
+      "prix": "Price",
+      "tousPrix": "All prices",
+      "type": "Type",
+      "tousTypes": "All types",
+      "types": {
+        "hotel": "Hotel",
+        "bed_and_breakfast": "B&B",
+        "guest_house": "Guest house",
+        "resort_hotel": "Resort"
+      },
+      "rayon": "< 2 km",
+      "choisirStatut": "Choose status",
+      "statutSuit": "The suggested status follows the current sub-tab"
+    },
+    "carte": {
+      "autourDeMoi": "Around me",
+      "ouvrirFiche": "Open page",
+      "itineraire": "Directions",
+      "fermer": "Close"
+    }
   },
   "accueil": {
-    "title": "Home", "welcome": "Welcome to Vito 👋", "cta": "See my restaurants",
-    "greeting": { "bonjour": "Good morning", "bonsoir": "Good evening" },
+    "title": "Home",
+    "welcome": "Welcome to Vito 👋",
+    "cta": "See my restaurants",
+    "greeting": {
+      "bonjour": "Good morning",
+      "bonsoir": "Good evening"
+    },
     "quote": "Every outing is a story to tell.",
     "sortiesMois": "{n} outings this month",
     "addResto": "+ Add a restaurant",
     "fab": "Concierge request",
-    "sections": { "todo": "To do", "month": "This month", "discoveries": "Discoveries", "activity": "Recent activity" },
-    "todo": { "restosATester": "Restaurants to try", "voyagesAVenir": "Upcoming trips", "conciergerieEnAttente": "Pending requests" },
-    "kpi": { "sorties": "Outings", "nouveauxRestos": "New restaurants", "vinsGoutes": "Wines tasted", "depensesVoyage": "Trip spending" },
-    "activity": { "vide": "Nothing yet" },
-    "discoveries": { "vide": "No suggestions yet", "suggested": "Suggested" }
+    "sections": {
+      "todo": "To do",
+      "month": "This month",
+      "discoveries": "Discoveries",
+      "activity": "Recent activity"
+    },
+    "todo": {
+      "restosATester": "Restaurants to try",
+      "voyagesAVenir": "Upcoming trips",
+      "conciergerieEnAttente": "Pending requests"
+    },
+    "kpi": {
+      "sorties": "Outings",
+      "nouveauxRestos": "New restaurants",
+      "vinsGoutes": "Wines tasted",
+      "depensesVoyage": "Trip spending"
+    },
+    "activity": {
+      "vide": "Nothing yet"
+    },
+    "discoveries": {
+      "vide": "No suggestions yet",
+      "suggested": "Suggested"
+    }
   }
 }

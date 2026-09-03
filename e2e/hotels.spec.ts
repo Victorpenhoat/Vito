@@ -1,6 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import { expectVisibleWithReload } from "./helpers";
 
+// Hôtels v2 : l'onglet est rendu par la brique générique CategoryTabs
+// (sous-onglets ?onglet= URL-driven — navigation par URL, jamais par clic
+// d'onglet : le clic peut asserter contre le panneau périmé, cf. Resto v2).
+
 async function login(page: Page) {
   await page.goto("/fr/login");
   await page.getByLabel("E-mail").fill("client@vito.test");
@@ -9,67 +13,76 @@ async function login(page: Page) {
   await expect(page).toHaveURL(/\/fr\/accueil/);
 }
 
-test("l'onglet Hôtels montre l'hôtel seedé", async ({ page }) => {
+test("l'onglet Hôtels v2 montre l'hôtel à tester seedé", async ({ page }) => {
   await login(page);
-  await page.goto("/fr/hotels");
-  await expect(page.getByTestId("places-tabs")).toBeVisible();
-  // Hôtel Démo est is_favorite=false + statut='a_faire' → visible dans Recommandés
-  await page.getByTestId("tab-recommandes").click();
+  await page.goto("/fr/hotels?onglet=a_tester");
+  await expect(page.getByTestId("hotels-tabs")).toBeVisible();
   await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel Démo" }).first()).toBeVisible();
 });
 
 test("l'hôtel n'apparaît PAS dans Restos (getPlaces resto exclut les hôtels)", async ({ page }) => {
   await login(page);
-  await page.goto("/fr/restos");
-  // Restos v2 : la page monte RestosTabs (restos-tabs) — l'onglet Hôtels garde places-tabs
+  await page.goto("/fr/restos?onglet=tous");
   await expect(page.getByTestId("restos-tabs")).toBeVisible();
-  await page.getByTestId("tab-tous").click();
+  await expect(page.getByTestId("places-panel")).toBeVisible();
   await expect(page.getByTestId("place-card").filter({ hasText: "Hôtel Démo" })).toHaveCount(0);
 });
 
-test("ajouter un hôtel via la recherche externe", async ({ page }) => {
+test("Séjours : le séjour seedé (Hôtel Démo 2) est listé avec sa note", async ({ page }) => {
   await login(page);
-  await page.goto("/fr/hotels");
-  // La barre de recherche externe n'existe que dans l'onglet Recherche
-  await page.getByTestId("tab-recherche").click();
-  // Idempotent (même recette que restos, cf. #72) : si une tentative ou un run précédent a
-  // déjà ajouté l'hôtel, la recherche le dédoublonne (badge « Ajouté » sans bouton d'ajout,
-  // markOwned) — .first().getByRole("button") ferait échouer les retries en dur.
+  await page.goto("/fr/hotels?onglet=sejours");
+  const row = page.getByTestId("place-card").filter({ hasText: "Hôtel Démo 2" }).first();
+  await expectVisibleWithReload(page, row);
+  // RowExtras : dernier séjour (date + note /10) + « Passer en favori »
+  await expect(page.getByText("séjour le 2026-09-12")).toBeVisible();
+  await expect(page.getByTestId("passer-favori").first()).toBeVisible();
+});
+
+test("ajouter un hôtel via la recherche externe (statut du sous-onglet)", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels?onglet=a_tester");
+  await page.getByTestId("trouver-hotel").click();
+  // Idempotent (recette #72/Resto v2) : si un run précédent l'a déjà ajouté, il
+  // remonte en « Déjà dans Vito » avec un chip statut (result-added) sans bouton.
   await page.getByTestId("add-hotel-search").fill("hôtel");
   await page.getByTestId("search-submit").click();
   const voyageurs = page.getByTestId("search-result").filter({ hasText: "Hôtel des Voyageurs" }).first();
   await expect(voyageurs).toBeVisible();
   if ((await voyageurs.getByTestId("result-added").count()) === 0) {
-    await voyageurs.getByRole("button").click();
+    // 2 boutons par ligne externe (+ statut / ▾) → .first() = ajout au statut du sous-onglet
+    await voyageurs.getByRole("button").first().click();
   }
-  // Le badge « Ajouté » n'apparaît qu'après résolution de l'action serveur (commit garanti)
   await expect(voyageurs.getByTestId("result-added")).toBeVisible({ timeout: 15_000 });
-  // L'hôtel ajouté est non-favori + statut='a_faire' → il apparaît dans Recommandés
-  await page.getByTestId("tab-recommandes").click();
+  // Ajouté depuis « À tester » → il apparaît dans ce sous-onglet
+  await page.goto("/fr/hotels?onglet=a_tester");
   await expectVisibleWithReload(page, page.getByTestId("place-card").filter({ hasText: "Hôtel des Voyageurs" }).first());
 });
 
-test("onglet Recherche hôtel : chips « Explorer par envie »", async ({ page }) => {
+test("recherche externe hôtel : chips « Explorer par envie »", async ({ page }) => {
   await login(page);
   await page.goto("/fr/hotels");
-  await page.getByTestId("tab-recherche").click();
+  await page.getByTestId("trouver-hotel").click();
   await expect(page.getByTestId("envies")).toBeVisible();
   await expect(page.getByTestId("envie-envieSpa")).toBeVisible();
 });
 
-test("liste hôtel : filtre par ambiance (Spa)", async ({ page }) => {
+test("liste hôtel : filtre par tag (Spa)", async ({ page }) => {
   await login(page);
-  await page.goto("/fr/hotels");
-  await page.getByTestId("tab-recommandes").click();
+  await page.goto("/fr/hotels?onglet=a_tester");
   await expect(page.getByTestId("list-tag-filter")).toBeVisible();
-  // ≥ 2 hôtels recommandés (Hôtel Démo [spa] + Hôtel Démo 2 [sans tag] ; d'autres
-  // tests du fichier peuvent en ajouter en base partagée → on capture le total).
+  // ≥ 1 hôtel à tester (Hôtel Démo [spa] ; le test d'ajout peut en ajouter en
+  // base partagée → on capture le total plutôt qu'un compte absolu).
   const total = await page.getByTestId("place-card").count();
-  expect(total).toBeGreaterThanOrEqual(2);
-  // filtrer par Spa → seul l'Hôtel Démo est taggé spa
+  expect(total).toBeGreaterThanOrEqual(1);
   await page.getByTestId("list-tag-spa").click();
   await expect(page.getByTestId("place-card")).toHaveCount(1);
-  // retour Tous → on retrouve le total initial
   await page.getByTestId("list-tag-tous").click();
   await expect(page.getByTestId("place-card")).toHaveCount(total);
+});
+
+test("carte hôtels : légende par statut et compteur", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels?onglet=carte");
+  await expect(page.getByTestId("map-legend")).toBeVisible();
+  await expect(page.getByTestId("map-count")).toBeVisible();
 });
