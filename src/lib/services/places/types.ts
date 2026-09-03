@@ -24,6 +24,21 @@ export type SearchOpts = {
   includedType?: string;
 };
 
+// Hôtels v2 : booléens d'équipements réellement fournis par Places API New.
+// null/absent = information non fournie (≠ false = explicitement non).
+export type Equipements = {
+  breakfast?: boolean | null;
+  parking?: boolean | null;
+  accessibility?: boolean | null;
+  goodForChildren?: boolean | null;
+  allowsDogs?: boolean | null;
+};
+
+export type DetailsOpts = {
+  /** Hôtels v2 : demande les champs d'équipements (élargit le FieldMask details). */
+  hotel?: boolean;
+};
+
 export type PlaceResult = {
   placeId: string;
   nom: string;
@@ -39,10 +54,12 @@ export type PlaceResult = {
   ratingCount: number | null;
   types: string[];
   photoRefs: string[];
+  /** Servi seulement si details(…, { hotel: true }). */
+  equipements?: Equipements | null;
 };
 
 export interface PlacesProvider {
   search(query: string, opts?: SearchOpts): Promise<PlaceSummary[]>;
-  details(placeId: string): Promise<PlaceResult | null>;
+  details(placeId: string, opts?: DetailsOpts): Promise<PlaceResult | null>;
   photoUrl(photoRef: string, maxWidth: number): string | null;
 }

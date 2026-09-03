@@ -76,19 +76,20 @@ insert into public.liste_items (user_id, etablissement_id, statut, is_favorite, 
 values ('11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'a_faire', false, true);
 
 -- Hôtel démo (catégorie hotel) + dans la liste du client (à tester)
-insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at)
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at, type_hebergement, equipements)
 values ('11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_1', 'hotel', 'hotel',
-  'Hôtel Démo', 'Paris', '75001', '1er', 'seed', 'mock_photo_1', now());
+  'Hôtel Démo', 'Paris', '75001', '1er', 'seed', 'mock_photo_1', now(),
+  'hotel', '{"breakfast": true, "parking": false}'::jsonb);
 insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite)
 values ('11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', '11111111-1111-1111-1111-111111111111', '11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
 -- Tag ambiance « Spa » (tag hôtel existant, 00017) lié à l'Hôtel Démo
 insert into public.liste_item_tags (liste_item_id, tag_id)
 select '11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', id from public.tags where slug = 'spa';
 -- 2e hôtel sans tag (pour que le filtre ambiance fasse varier le nombre)
-insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source)
-values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed');
-insert into public.liste_items (user_id, etablissement_id, statut, is_favorite)
-values ('11111111-1111-1111-1111-111111111111', '22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, type_hebergement)
+values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed', 'hotel');
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, etoiles, prix_nuit)
+values ('22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', '11111111-1111-1111-1111-111111111111', '22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false, 4, 180.00);
 
 -- Vin + dégustation de démo pour le compte client (UUID v4 valides)
 insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, cepages)
@@ -123,6 +124,16 @@ on conflict (voyage_id, profile_id) do nothing;
 insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien)
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'hotel',
   'Hotel Roma', 'CONF-123', '2026-09-12', '2026-09-15', '+39 06 0000 0000', 'concierge@hotelroma.test', 'https://airbnb.example/rome');
+
+-- Hôtels v2 : un SÉJOUR passé sur l'Hôtel Démo 2, lié au voyage Rome du client
+-- (placé APRÈS la création du voyage — FK). L'historique de séjours est
+-- indépendant du statut — la bascule du statut en 'visite' arrive au lot H2
+-- avec la réécriture de hotels.spec. Sert aux asserts pgTAP 10/16/17 et à la
+-- fiche « Mes séjours ».
+insert into public.visites (id, user_id, liste_item_id, note, commentaire, visite_le, date_fin, voyage_id, adultes, enfants)
+values ('cccccccc-cccc-4ccc-8ccc-cccccccc0002', '11111111-1111-1111-1111-111111111111',
+        '22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', 8.5, 'rooftop superbe', '2026-09-12', '2026-09-15',
+        '11111111-2222-4333-8444-555555555555', 2, 2);
 
 -- Comptes partagés : groupe lié au voyage Rome, partagé client <-> agence (UUID v4 valides)
 insert into public.depense_groupes (id, owner_id, voyage_id, titre, devise)
@@ -285,15 +296,15 @@ insert into public.liste_item_tags (liste_item_id, tag_id)
  union all select 'b1000001-0000-4000-8000-000000000005'::uuid, id from public.tags where slug='cuisine_marche';
 
 -- Hôtels (liste du compte démo)
-insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, rating, price_level, lat, lng, photo_ref, photo_fetched_at) values
- ('a1000001-0000-4000-8000-000000000101','demo_h1','hotel','hotel','Hôtel des Grands Boulevards','17 bd Poissonnière','Paris','75002','2e','seed',4.3,3,48.8710,2.3450,'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=70',now()),
- ('a1000001-0000-4000-8000-000000000102','demo_h2','hotel','hotel','Le Roch Hôtel & Spa','28 rue Saint-Roch','Paris','75001','1er','seed',4.7,4,48.8660,2.3320,'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=70',now()),
- ('a1000001-0000-4000-8000-000000000103','demo_h3','hotel','hotel','Hôtel Lutetia','45 bd Raspail','Paris','75006','6e','seed',4.9,4,48.8510,2.3260,'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=70',now());
+insert into public.etablissements (id, place_id, categorie, type, nom, adresse, ville, code_postal, arrondissement, source, rating, price_level, lat, lng, photo_ref, photo_fetched_at, type_hebergement, equipements) values
+ ('a1000001-0000-4000-8000-000000000101','demo_h1','hotel','hotel','Hôtel des Grands Boulevards','17 bd Poissonnière','Paris','75002','2e','seed',4.3,3,48.8710,2.3450,'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=70',now(),'hotel','{"breakfast": true, "parking": false, "goodForChildren": true}'::jsonb),
+ ('a1000001-0000-4000-8000-000000000102','demo_h2','hotel','hotel','Le Roch Hôtel & Spa','28 rue Saint-Roch','Paris','75001','1er','seed',4.7,4,48.8660,2.3320,'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=70',now(),'hotel','{"breakfast": true, "parking": true, "accessibility": true}'::jsonb),
+ ('a1000001-0000-4000-8000-000000000103','demo_h3','hotel','hotel','Hôtel Lutetia','45 bd Raspail','Paris','75006','6e','seed',4.9,4,48.8510,2.3260,'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=70',now(),'hotel',null);
 
-insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite) values
- ('b1000001-0000-4000-8000-000000000101','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000101','a_faire',false),
- ('b1000001-0000-4000-8000-000000000102','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000102','visite',true),
- ('b1000001-0000-4000-8000-000000000103','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000103','a_faire',false);
+insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, etoiles, prix_nuit) values
+ ('b1000001-0000-4000-8000-000000000101','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000101','a_faire',false,null,null),
+ ('b1000001-0000-4000-8000-000000000102','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000102','visite',true,5,320.00),
+ ('b1000001-0000-4000-8000-000000000103','de110000-0000-4000-8000-000000000000','a1000001-0000-4000-8000-000000000103','a_faire',false,null,null);
 
 insert into public.liste_item_tags (liste_item_id, tag_id)
  select 'b1000001-0000-4000-8000-000000000101'::uuid, id from public.tags where slug='spa'

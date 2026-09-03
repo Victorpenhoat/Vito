@@ -27,7 +27,8 @@ async function addPlace(category: "resto" | "hotel", formData: FormData) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
-  const place = await getPlacesProvider().details(parsed.data.placeId);
+  // Hôtels v2 : le mask équipements n'est demandé que pour les hôtels (coût SKU).
+  const place = await getPlacesProvider().details(parsed.data.placeId, { hotel: category === "hotel" });
   if (!place) return { error: "Établissement introuvable" };
   const input = mapPlaceToEtablissement(place, category);
   const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", {

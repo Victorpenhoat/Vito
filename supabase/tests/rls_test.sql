@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(14);
+select plan(17);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -80,9 +80,10 @@ select throws_ok(
 -- 9) anon ne voit AUCUNE visite
 select is(tests.count_as_anon('select count(*) from public.visites'), 0::bigint, 'anon ne voit aucune visite');
 
--- 10) le client voit sa visite seedée ; 11) l'agence n'en voit aucune (isolation owner)
+-- 10) le client voit ses visites seedées (1 visite resto + 1 séjour hôtel) ;
+--     11) l'agence n'en voit aucune (isolation owner)
 select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.visites'),
-          1::bigint, 'client voit sa visite (RLS owner)');
+          2::bigint, 'client voit ses 2 visites/séjours (RLS owner)');
 select is(tests.count_as('22222222-2222-2222-2222-222222222222', 'select count(*) from public.visites'),
           0::bigint, 'agence ne voit pas les visites du client');
 
@@ -102,6 +103,24 @@ select throws_ok(
        'with u as (select public.fusionner_tags((select id from public.tags where slug = ''terrasse'' and user_id is null), (select id from public.tags where slug = ''en_famille'' and user_id is null))) select 1 from u') $$,
   'tag source introuvable ou non modifiable',
   'fusion depuis un tag système rejetée');
+
+-- ── Hôtels v2 (00032) ──────────────────────────────────────────────────────
+
+-- 15) un séjour avec départ avant l'arrivée est rejeté (check date_fin >= visite_le)
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (insert into public.visites (user_id, liste_item_id, visite_le, date_fin) values (''11111111-1111-1111-1111-111111111111'', ''22222222-aaaa-4aaa-8aaa-bbbbbbbb0002'', ''2026-09-15'', ''2026-09-12'') returning 1) select count(*) from u') $$,
+  '23514', null,
+  'séjour avec date_fin < arrivée rejeté (check)');
+
+-- 16) le client voit son séjour lié à un voyage ; 17) l'agence ne voit pas les
+--     infos perso hôtel du client (prix_nuit — isolation liste_items)
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.visites where voyage_id is not null'),
+          1::bigint, 'client voit son séjour lié au voyage Rome');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.liste_items where prix_nuit is not null'),
+          0::bigint, 'agence ne voit pas le prix/nuit saisi par le client');
 
 select finish();
 rollback;

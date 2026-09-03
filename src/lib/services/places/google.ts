@@ -1,4 +1,4 @@
-import type { PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
+import type { DetailsOpts, Equipements, PlacesProvider, PlaceResult, PlaceSummary, SearchOpts } from "./types";
 
 // Places API (New). Conforme ToS : on ne stocke jamais les bytes des photos.
 export class GooglePlacesProvider implements PlacesProvider {
@@ -61,12 +61,18 @@ export class GooglePlacesProvider implements PlacesProvider {
     }));
   }
 
-  async details(placeId: string): Promise<PlaceResult | null> {
+  async details(placeId: string, opts?: DetailsOpts): Promise<PlaceResult | null> {
+    // Hôtels v2 : les champs d'équipements ne sont demandés QUE pour les hôtels
+    // (SKU Enterprise/Atmosphere — ne pas élargir le mask des restos).
+    const base =
+      "id,displayName,formattedAddress,location,internationalPhoneNumber,websiteUri,priceLevel,rating,userRatingCount,types,photos,addressComponents";
+    const fieldMask = opts?.hotel
+      ? `${base},servesBreakfast,parkingOptions,accessibilityOptions,goodForChildren,allowsDogs`
+      : base;
     const res = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
       headers: {
         "X-Goog-Api-Key": this.apiKey,
-        "X-Goog-FieldMask":
-          "id,displayName,formattedAddress,location,internationalPhoneNumber,websiteUri,priceLevel,rating,userRatingCount,types,photos,addressComponents",
+        "X-Goog-FieldMask": fieldMask,
       },
     });
     if (res.status === 404) return null;
@@ -93,6 +99,7 @@ export class GooglePlacesProvider implements PlacesProvider {
       ratingCount: (p.userRatingCount as number | undefined) ?? null,
       types: (p.types as string[]) ?? [],
       photoRefs: photos.map((ph) => ph.name),
+      ...(opts?.hotel ? { equipements: mapEquipements(p) } : {}),
     };
   }
 
@@ -100,6 +107,26 @@ export class GooglePlacesProvider implements PlacesProvider {
     if (!photoRef) return null;
     return `https://places.googleapis.com/v1/${photoRef}/media?maxWidthPx=${maxWidth}&key=${this.apiKey}`;
   }
+}
+
+// Équipements hôtel (Places API New) : agrégation des booléens fournis.
+// parkingOptions/accessibilityOptions sont des objets de booléens → vrai si
+// au moins une option est vraie ; absent → null (information non fournie).
+function mapEquipements(p: Record<string, unknown>): Equipements {
+  const anyTrue = (o: unknown): boolean | null => {
+    if (o == null || typeof o !== "object") return null;
+    const vals = Object.values(o as Record<string, unknown>).filter((v) => typeof v === "boolean");
+    if (vals.length === 0) return null;
+    return vals.some(Boolean);
+  };
+  const bool = (v: unknown): boolean | null => (typeof v === "boolean" ? v : null);
+  return {
+    breakfast: bool(p.servesBreakfast),
+    parking: anyTrue(p.parkingOptions),
+    accessibility: anyTrue(p.accessibilityOptions),
+    goodForChildren: bool(p.goodForChildren),
+    allowsDogs: bool(p.allowsDogs),
+  };
 }
 
 function priceLevelToInt(level: string | undefined): number | null {
