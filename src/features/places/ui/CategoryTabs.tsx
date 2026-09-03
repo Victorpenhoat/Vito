@@ -24,11 +24,17 @@ import { Modal } from "@/features/shared/ui/Modal";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
-export function CategoryTabs({ places, archived, tags, categorie = "resto" }: {
+export function CategoryTabs({ places, archived, tags, categorie = "resto", ongletSupplementaire }: {
   places: Place[]; archived: Place[]; tags: TagLite[]; categorie?: CategorieUi;
+  /** Sous-onglet greffé en fin de barre, dont le contenu est rendu ailleurs
+   *  (la Cave, côté vins) : la brique générique ne connaît pas son domaine. */
+  ongletSupplementaire?: { slug: string; contenu: React.ReactNode };
 }) {
   const config = CATEGORY_UI[categorie];
-  const ONGLETS = ["favoris", "a_tester", config.slugTeste, "tous", "carte"] as const;
+  const ONGLETS = [
+    "favoris", "a_tester", config.slugTeste, "tous", "carte",
+    ...(ongletSupplementaire ? [ongletSupplementaire.slug] : []),
+  ] as const;
   type Onglet = (typeof ONGLETS)[number];
 
   const t = useTranslations("places");
@@ -184,7 +190,9 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto" }: {
       {/* panneau */}
       {!archives && (
       <div role="tabpanel" id={config.panelId} aria-labelledby={`tab-${onglet}`} data-testid="places-panel">
-        {onglet === "carte" ? (
+        {ongletSupplementaire && onglet === ongletSupplementaire.slug ? (
+          ongletSupplementaire.contenu
+        ) : onglet === "carte" ? (
           <CategoryMapCombined places={places} categorie={categorie} />
         ) : triees.length === 0 ? (
           <EtatVide onglet={onglet} filtre={q.trim() !== "" || tag !== null} q={q} t={tr} onTrouver={() => setRecherche(true)} />

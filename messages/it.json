@@ -116,8 +116,108 @@
         "probable": "Probabile",
         "a_verifier": "Da verificare"
       },
-      "genere": "Analisi generata automaticamente dall'etichetta. Verifica le informazioni importanti."
-    }
+      "genere": "Analisi generata automaticamente dall'etichetta. Verifica le informazioni importanti.",
+      "etape2": "La mia degustazione · Passo 2 / 2",
+      "echecEnregistrement": "Salvataggio non riuscito. Riprova."
+    },
+    "maNote": "Il mio voto",
+    "tagsVerdict": "Tag di verdetto",
+    "nouveau": "Nuovo",
+    "nouveauTag": "Nome del tag",
+    "ajouterTag": "Aggiungi",
+    "retirerTag": "Rimuovi il tag {tag}",
+    "prixPaye": "Prezzo pagato",
+    "lieu": "Luogo",
+    "lieuNom": "Nome del luogo",
+    "lieVisite": "Collegato alla tua visita a {lieu}",
+    "envieRetrouver": "Voglia di ritrovarlo",
+    "envieRetrouverAide": "Comparirà in «Da ritrovare»",
+    "enregistrerDegustation": "Salva la degustazione",
+    "nDegustations": "{n, plural, =0 {nessuna degustazione} one {# degustazione} other {# degustazioni}}",
+    "saisiesParMoi": "Inserite da me",
+    "aucuneDegustation": "Ancora nessuna degustazione.",
+    "prixInconnu": "Prezzo sconosciuto",
+    "degre": "Gradazione",
+    "appellation": "Denominazione",
+    "retirerCepage": "Rimuovi il vitigno {cepage}",
+    "ajouterCepage": "+ Vitigno",
+    "lieux": {
+      "restaurant": "Ristorante",
+      "maison": "Casa",
+      "amis": "Da amici",
+      "caviste": "Enoteca",
+      "autre": "Altro"
+    },
+    "unites": {
+      "bouteille": "Bottiglia",
+      "verre": "Calice"
+    },
+    "verres": {
+      "aide": "Un tocco per un calice, un secondo per mezzo",
+      "aria": "{n} calici"
+    },
+    "cave": {
+      "titre": "Cantina",
+      "recherche": "Azienda, denominazione, vitigno…",
+      "onglets": {
+        "tous": "Tutti",
+        "coups_de_coeur": "Preferiti",
+        "a_retrouver": "Da ritrovare"
+      },
+      "noteMin": "{n} calici e più",
+      "prixMax": "Fino a {p} €",
+      "buNFois": "bevuto {n, plural, one {# volta} other {# volte}}",
+      "jamaisBu": "mai bevuto",
+      "dernierLieu": "ultimo: {lieu}",
+      "videTotal": "La tua cantina è vuota. Fotografa un'etichetta per iniziare.",
+      "videFiltre": "Nessun vino corrisponde a questi filtri."
+    },
+    "analyse": {
+      "avertissement": "Analisi generata automaticamente dall'etichetta. Verifica le informazioni importanti.",
+      "absente": "Nessuna analisi per questo vino. Aggiungi una foto dell'etichetta per generarla.",
+      "profil": "Profilo",
+      "aromes": "Aromi",
+      "accords": "Abbinamenti",
+      "service": "Servizio",
+      "domaineEtAppellation": "L'azienda e la denominazione",
+      "prixEstime": "Prezzo stimato in enoteca",
+      "corriger": "Correggi",
+      "corrigerTitre": "Correggi l'analisi",
+      "enregistrerCorrection": "Salva le correzioni",
+      "relancer": "Rilancia l'analisi con queste correzioni",
+      "relanceEnCours": "Analisi in corso…",
+      "relancerAide": "Riparte dalla foto dell'etichetta, se c'è, e dalle tue correzioni.",
+      "fermer": "Chiudi",
+      "axes": {
+        "corps": "Corpo",
+        "tanins": "Tannini",
+        "acidite": "Acidità",
+        "sucre": "Zucchero"
+      },
+      "niveaux": {
+        "corps": {
+          "bas": "Leggero",
+          "moyen": "Medio",
+          "haut": "Strutturato"
+        },
+        "tanins": {
+          "bas": "Morbidi",
+          "moyen": "Presenti",
+          "haut": "Potenti"
+        },
+        "acidite": {
+          "bas": "Dolce",
+          "moyen": "Equilibrata",
+          "haut": "Viva"
+        },
+        "sucre": {
+          "bas": "Secco",
+          "moyen": "Abboccato",
+          "haut": "Dolce"
+        }
+      }
+    },
+    "echecDegustation": "Salvataggio non riuscito. Riprova."
   },
   "gouts": {
     "title": "I miei gusti",
@@ -196,7 +296,8 @@
       "a_tester": "Da provare",
       "testes": "Provati",
       "tous": "Tutti",
-      "carte": "Mappa"
+      "carte": "Mappa",
+      "cave": "Cantina"
     },
     "rechercherPlaceholder": "Nome, città, tag…",
     "trouver": "Trova",
