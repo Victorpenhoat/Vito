@@ -1,17 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
-
-async function login(page: import("@playwright/test").Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-  await page.goto("/fr/restos");
-}
+import { expectVisibleWithReload, login } from "./helpers";
 
 test("capturer un vin depuis une fiche resto, le retrouver dans Mes vins et filtrer", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
 
   // Ouvre la fiche du resto démo (déjà dans la liste du client — is_favorite=true → onglet Favoris par défaut)
   await page.getByTestId("place-card").first().getByRole("link").click();

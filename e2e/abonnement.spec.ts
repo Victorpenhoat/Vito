@@ -1,13 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload, expectTextWithReload } from "./helpers";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
+import { expectTextWithReload, expectVisibleWithReload, login } from "./helpers";
 
 async function creerVoyage(page: Page, titre: string) {
   await page.getByTestId("voyage-form").locator('input[name="titre"]').fill(titre);

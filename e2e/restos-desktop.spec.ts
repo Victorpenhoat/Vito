@@ -1,12 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-
-async function login(page: Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
+import { test, expect } from "@playwright/test";
+import { login } from "./helpers";
 
 test.describe("desktop", () => {
   test.use({ viewport: { width: 1280, height: 800 } });

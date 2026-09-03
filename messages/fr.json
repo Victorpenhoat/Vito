@@ -14,8 +14,24 @@
     "errors": {
       "invalidCredentials": "Identifiants invalides",
       "signInFailed": "Connexion échouée",
-      "signUpFailed": "Inscription échouée"
-    }
+      "signUpFailed": "Inscription échouée",
+      "emailInvalide": "Adresse email invalide",
+      "saisieInvalide": "Saisie invalide",
+      "invitationInvalide": "Cette invitation n'est plus valable.",
+      "creationImpossible": "Création impossible avec ces informations."
+    },
+    "marqueSous": "le carnet",
+    "recevoirLien": "Recevoir un lien par email",
+    "utiliserMotDePasse": "Utiliser un mot de passe",
+    "ouvrezLeLien": "Ouvrez le lien reçu",
+    "lienEnvoye": "Nous avons écrit à {email}.",
+    "lienValidite": "Le lien est valable 15 minutes.",
+    "enAttenteOuverture": "En attente d'ouverture…",
+    "renvoyerDans": "Renvoyer dans {temps}",
+    "renvoyer": "Renvoyer le lien",
+    "corrigerAdresse": "Corriger l'adresse",
+    "lienExpire": "Ce lien n'est plus valable. Demandez-en un nouveau.",
+    "sansMotDePasse": "Nous vous envoyons un lien pour continuer. Aucun mot de passe à retenir."
   },
   "vins": {
     "title": "Mes vins",
@@ -995,6 +1011,94 @@
     "discoveries": {
       "vide": "Aucune suggestion pour l'instant",
       "suggested": "Suggéré"
+    }
+  },
+  "compte": {
+    "eyebrow": "Mon compte",
+    "titre": "Réglages",
+    "toutesSections": "Toutes les sections",
+    "bientot": "Bientôt",
+    "profil": {
+      "prenom": "Prénom",
+      "nom": "Nom",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Profil enregistré",
+      "fiche": "Ce profil devient votre fiche dans le Cercle."
+    },
+    "sections": {
+      "profil": "Profil",
+      "profilSous": "Nom affiché dans Vito et dans votre Cercle",
+      "securite": "Sécurité",
+      "securiteSous": "Connexion, verrouillage, appareils de confiance",
+      "appareils": "Appareils et sessions",
+      "appareilsSous": "Où votre compte est connecté",
+      "partages": "Partages et invitations",
+      "partagesSous": "Voyages partagés et invités",
+      "donnees": "Données",
+      "donneesSous": "Exporter ou supprimer votre compte",
+      "tags": "Tags",
+      "tagsSous": "Vos tags d'adresses et de vins",
+      "gouts": "Goûts",
+      "goutsSous": "Ce qui guide vos recommandations",
+      "abonnement": "Abonnement",
+      "abonnementSous": "Formule et facturation",
+      "comptes": "Comptes",
+      "comptesSous": "Gérer les accès — jamais les contenus"
+    }
+  },
+  "invitations": {
+    "marqueSous": "le carnet",
+    "vousInvite": "vous invite",
+    "continuer": "Continuer",
+    "retour": "Retour",
+    "commencer": "Commencer",
+    "etape": "Étape {n} sur {total}",
+    "accesLimite": "Un compte est nécessaire pour rejoindre un voyage partagé. Vous n'aurez accès qu'à ce voyage.",
+    "identite": {
+      "titre": "Votre adresse email",
+      "indice": "L'invitation a été envoyée à {indice}",
+      "emailImpose": "Cette invitation ne vaut que pour l'adresse indiquée.",
+      "motDePasseAide": "8 caractères minimum. Il servira de repli si la biométrie échoue."
+    },
+    "profil": {
+      "titre": "Votre profil",
+      "prenom": "Prénom",
+      "nom": "Nom",
+      "fiche": "Ce profil devient votre fiche dans le Cercle."
+    },
+    "confidentialite": {
+      "titre": "Vos données restent les vôtres",
+      "fait": "Ce que Vito conserve",
+      "conserve": "Vos adresses, séjours, fiches du Cercle et documents que vous ajoutez.",
+      "heberge": "Hébergement en Union européenne, chiffrement en transit et au repos.",
+      "documents": "Les documents d'identité sont chiffrés séparément et jamais indexés.",
+      "pasFait": "Ce que Vito ne fait pas",
+      "pasPublicite": "Aucune publicité, aucun traceur publicitaire.",
+      "pasRevente": "Aucune revente ni cession de vos données.",
+      "pasPartage": "Aucun partage sans une action explicite de votre part.",
+      "accepte": "J'accepte les conditions d'utilisation et la politique de confidentialité."
+    },
+    "invalide": {
+      "titre": "Invitation non valable",
+      "texte": "Ce lien a expiré, a déjà servi, ou n'existe pas. Demandez une nouvelle invitation.",
+      "seConnecter": "J'ai déjà un compte"
+    },
+    "surInvitation": {
+      "titre": "Inscription sur invitation",
+      "code": "Code d'invitation",
+      "texte": "Vito se rejoint sur invitation. Saisissez le code reçu, ou ouvrez directement le lien qui vous a été envoyé.",
+      "dejaCompte": "J'ai déjà un compte"
+    },
+    "bienvenue": {
+      "titre": "Bienvenue, {prenom}.",
+      "texte": "Votre carnet est vide — voici trois façons de commencer.",
+      "ignorer": "Ignorer",
+      "cercle": "Ajoutez une personne à votre Cercle",
+      "cercleSous": "Anniversaires, papiers, tailles",
+      "resto": "Enregistrez un restaurant favori",
+      "restoSous": "Celui où vous retournez toujours",
+      "voyage": "Créez une idée de voyage",
+      "voyageSous": "Même sans dates précises"
     }
   }
 }

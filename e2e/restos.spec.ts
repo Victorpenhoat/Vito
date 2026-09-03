@@ -1,17 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
-
-async function login(page: import("@playwright/test").Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-  await page.goto("/fr/restos");
-}
+import { expectVisibleWithReload, login } from "./helpers";
 
 test("ajouter un resto via « Trouver », puis marquer une visite depuis sa fiche", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
 
   // Depuis « À tester » (URL — déterministe) : le statut proposé par la recherche
   // externe suit le sous-onglet d'origine → l'ajout crée bien un « À tester ».
@@ -54,6 +46,7 @@ test("ajouter un resto via « Trouver », puis marquer une visite depuis sa fich
 
 test("changer le statut depuis la fiche (chip v2) et le restaurer", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   // Le Bistrot Démo est l'unique favori du seed → première card de l'onglet Favoris
   await page.getByTestId("place-card").filter({ hasText: "Le Bistrot Démo" }).first().getByRole("link").click();
   const chip = page.getByTestId("statut-chip");
@@ -77,6 +70,7 @@ test("changer le statut depuis la fiche (chip v2) et le restaurer", async ({ pag
 
 test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
 
   // "Le Bistrot du Coin" a été ajouté (à tester) PUIS visité par le 1er test (état DB
   // partagé, workers:1) → statut v2 « Testé ». Navigation par URL : le clic d'onglet
@@ -120,6 +114,7 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
 
 test("photo proxy sur la fiche d'un resto ajouté via mock (Le Bistrot du Coin)", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
 
   // visité par le 1er test → « Testés » (URL : évite le faux positif du panneau périmé)
   await page.goto("/fr/restos?onglet=testes");

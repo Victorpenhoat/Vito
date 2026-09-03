@@ -14,8 +14,24 @@
     "errors": {
       "invalidCredentials": "Credenziali non valide",
       "signInFailed": "Accesso non riuscito",
-      "signUpFailed": "Registrazione non riuscita"
-    }
+      "signUpFailed": "Registrazione non riuscita",
+      "emailInvalide": "Indirizzo email non valido",
+      "saisieInvalide": "Dati non validi",
+      "invitationInvalide": "Questo invito non è più valido.",
+      "creationImpossible": "Impossibile creare un account con questi dati."
+    },
+    "marqueSous": "il taccuino",
+    "recevoirLien": "Ricevi un link via email",
+    "utiliserMotDePasse": "Usa una password",
+    "ouvrezLeLien": "Apri il link ricevuto",
+    "lienEnvoye": "Abbiamo scritto a {email}.",
+    "lienValidite": "Il link è valido 15 minuti.",
+    "enAttenteOuverture": "In attesa dell'apertura…",
+    "renvoyerDans": "Reinvia tra {temps}",
+    "renvoyer": "Reinvia il link",
+    "corrigerAdresse": "Correggi l'indirizzo",
+    "lienExpire": "Questo link non è più valido. Richiedine uno nuovo.",
+    "sansMotDePasse": "Ti inviamo un link per continuare. Nessuna password da ricordare."
   },
   "vins": {
     "title": "I miei vini",
@@ -995,6 +1011,94 @@
     "discoveries": {
       "vide": "Nessun suggerimento per ora",
       "suggested": "Suggerito"
+    }
+  },
+  "compte": {
+    "eyebrow": "Il mio account",
+    "titre": "Impostazioni",
+    "toutesSections": "Tutte le sezioni",
+    "bientot": "Presto",
+    "profil": {
+      "prenom": "Nome",
+      "nom": "Cognome",
+      "enregistrer": "Salva",
+      "enregistre": "Profilo salvato",
+      "fiche": "Questo profilo diventa la tua scheda nella Cerchia."
+    },
+    "sections": {
+      "profil": "Profilo",
+      "profilSous": "Nome mostrato in Vito e nella tua Cerchia",
+      "securite": "Sicurezza",
+      "securiteSous": "Accesso, blocco, dispositivi fidati",
+      "appareils": "Dispositivi e sessioni",
+      "appareilsSous": "Dove è connesso il tuo account",
+      "partages": "Condivisioni e inviti",
+      "partagesSous": "Viaggi condivisi e ospiti",
+      "donnees": "Dati",
+      "donneesSous": "Esporta o elimina il tuo account",
+      "tags": "Tag",
+      "tagsSous": "I tuoi tag di indirizzi e vini",
+      "gouts": "Gusti",
+      "goutsSous": "Ciò che guida i tuoi consigli",
+      "abonnement": "Abbonamento",
+      "abonnementSous": "Piano e fatturazione",
+      "comptes": "Account",
+      "comptesSous": "Gestire gli accessi — mai i contenuti"
+    }
+  },
+  "invitations": {
+    "marqueSous": "il taccuino",
+    "vousInvite": "ti invita",
+    "continuer": "Continua",
+    "retour": "Indietro",
+    "commencer": "Iniziamo",
+    "etape": "Passo {n} di {total}",
+    "accesLimite": "Serve un account per unirsi a un viaggio condiviso. Avrai accesso solo a quel viaggio.",
+    "identite": {
+      "titre": "Il tuo indirizzo email",
+      "indice": "L'invito è stato inviato a {indice}",
+      "emailImpose": "Questo invito vale solo per l'indirizzo indicato.",
+      "motDePasseAide": "Minimo 8 caratteri. Servirà come ripiego se la biometria non funziona."
+    },
+    "profil": {
+      "titre": "Il tuo profilo",
+      "prenom": "Nome",
+      "nom": "Cognome",
+      "fiche": "Questo profilo diventa la tua scheda nella Cerchia."
+    },
+    "confidentialite": {
+      "titre": "I tuoi dati restano tuoi",
+      "fait": "Cosa conserva Vito",
+      "conserve": "I tuoi indirizzi, soggiorni, schede della Cerchia e i documenti che aggiungi.",
+      "heberge": "Hosting nell'Unione europea, cifratura in transito e a riposo.",
+      "documents": "I documenti d'identità sono cifrati separatamente e mai indicizzati.",
+      "pasFait": "Cosa Vito non fa mai",
+      "pasPublicite": "Nessuna pubblicità, nessun tracciatore pubblicitario.",
+      "pasRevente": "Nessuna vendita né cessione dei tuoi dati.",
+      "pasPartage": "Nessuna condivisione senza una tua azione esplicita.",
+      "accepte": "Accetto le condizioni d'uso e l'informativa sulla privacy."
+    },
+    "invalide": {
+      "titre": "Invito non valido",
+      "texte": "Questo link è scaduto, è già stato usato o non esiste. Chiedi un nuovo invito.",
+      "seConnecter": "Ho già un account"
+    },
+    "surInvitation": {
+      "titre": "Solo su invito",
+      "code": "Codice d'invito",
+      "texte": "A Vito si accede su invito. Inserisci il codice ricevuto o apri il link che ti è stato inviato.",
+      "dejaCompte": "Ho già un account"
+    },
+    "bienvenue": {
+      "titre": "Benvenuto, {prenom}.",
+      "texte": "Il tuo taccuino è vuoto — tre modi per iniziare.",
+      "ignorer": "Salta",
+      "cercle": "Aggiungi una persona alla Cerchia",
+      "cercleSous": "Compleanni, documenti, taglie",
+      "resto": "Salva un ristorante preferito",
+      "restoSous": "Quello dove torni sempre",
+      "voyage": "Crea un'idea di viaggio",
+      "voyageSous": "Anche senza date precise"
     }
   }
 }

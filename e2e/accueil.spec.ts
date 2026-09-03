@@ -1,12 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.locator('form button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
+import { test, expect } from "@playwright/test";
+import { login } from "./helpers";
 
 test("après login on atterrit sur le dashboard", async ({ page }) => {
   await login(page, "client@vito.test");

@@ -1,13 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { expectVisibleWithReload, expectCountWithReload } from "./helpers";
-
-async function login(page: import("@playwright/test").Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
+import { expectCountWithReload, expectVisibleWithReload, login } from "./helpers";
 
 async function creerTag(page: import("@playwright/test").Page, label: string) {
   await page.getByTestId("tag-nouveau").click();

@@ -1,14 +1,7 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+import { login } from "./helpers";
 
 const DOC_ID = "d1111111-1111-4111-8111-111111111111";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("l'owner télécharge le document déchiffré (200, pdf)", async ({ page }) => {
   await login(page, "client@vito.test");

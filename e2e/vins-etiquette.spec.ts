@@ -1,5 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectVisibleWithReload, login } from "./helpers";
 
 // Capture d'étiquette (design Vins & Cave écrans 2 et 11). Le provider mock
 // (aucune clé Anthropic en test) renvoie une fixture déterministe : « Domaine
@@ -10,14 +10,6 @@ const PNG_1PX = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
   "base64",
 );
-
-async function login(page: Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.locator('form button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("la route de lecture refuse l'anonyme puis l'entrée invalide", async ({ page, request }) => {
   // sans session : 401

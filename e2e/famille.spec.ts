@@ -1,15 +1,7 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload, expectCountWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectCountWithReload, expectVisibleWithReload, login } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus déjà-famille", async ({ browser }) => {
   // Contexte A : famille1 crée le foyer — ou le retrouve : une tentative échouée après la

@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(21);
+select plan(25);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -136,6 +136,24 @@ select is(tests.count_as('22222222-2222-2222-2222-222222222222', 'select count(*
 --     verdict, l'agence non — la policy passe par degustations.user_id)
 select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.degustation_tags'),
           1::bigint, 'client voit le tag de verdict de sa dégustation');
+
+-- ── Invitations (00035) ────────────────────────────────────────────────────
+
+-- 22) anon ne voit AUCUNE invitation en lecture directe (l'accès passe par la RPC)
+select is(tests.count_as_anon('select count(*) from public.invitations'), 0::bigint,
+          'anon ne lit aucune invitation en direct');
+
+-- 23) l'émetteur voit les siennes ; 24) un autre compte n'en voit aucune
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.invitations'),
+          3::bigint, 'le client voit les 3 invitations qu''il a émises');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222', 'select count(*) from public.invitations'),
+          0::bigint, 'l''agence ne voit pas les invitations du client');
+
+-- 25) la RPC publique ne distingue pas expiré / inexistant (anti-énumération)
+select is(
+  (select (public.invitation_infos('e2e-invitation-expiree-00000000001') ->> 'valide')),
+  (select (public.invitation_infos('jeton-totalement-inexistant-00000') ->> 'valide')),
+  'invitation expirée et jeton inconnu donnent la même réponse');
 
 select finish();
 rollback;

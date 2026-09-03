@@ -1,13 +1,5 @@
 import { test, expect } from "@playwright/test";
-
-async function login(page: import("@playwright/test").Page) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill("client@vito.test");
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.locator('form button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-  await page.goto("/fr/restos");
-}
+import { login } from "./helpers";
 
 // Seed : client@vito.test a « Le Bistrot Démo » (is_favorite=true, statut='a_faire',
 // origine reco 'Camille' — backfill 00030, rating=4.6) → statut v2 « Favori », et
@@ -15,6 +7,7 @@ async function login(page: import("@playwright/test").Page) {
 
 test("les 5 sous-onglets sont visibles, Favoris actif par défaut", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await expect(page.getByTestId("restos-tabs")).toBeVisible();
   for (const id of ["tab-favoris", "tab-a-tester", "tab-testes", "tab-tous", "tab-carte"]) {
     await expect(page.getByTestId(id)).toBeVisible();
@@ -25,6 +18,7 @@ test("les 5 sous-onglets sont visibles, Favoris actif par défaut", async ({ pag
 
 test("Favoris : note + « Conseillé par » + toggle 3 vues (Vignettes puis Carte)", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await expect(page.getByTestId("place-note").first()).toContainText("4,6");
   await expect(page.getByTestId("place-reco")).toContainText("Camille");
   await expect(page.getByTestId("view-liste")).toBeVisible();
@@ -36,6 +30,7 @@ test("Favoris : note + « Conseillé par » + toggle 3 vues (Vignettes puis Cart
 
 test("À tester : le Comptoir y est, avec le filtre d'origine", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await page.getByTestId("tab-a-tester").click();
   await expect(page.getByTestId("place-card").filter({ hasText: "Le Comptoir Démo" })).toBeVisible();
   // le Bistrot (favori) ne doit PAS apparaître : partition exclusive v2
@@ -50,6 +45,7 @@ test("À tester : le Comptoir y est, avec le filtre d'origine", async ({ page })
 
 test("Tous : filtres de statut cumulables + compteur", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await page.getByTestId("tab-tous").click();
   await expect(page.getByTestId("place-card")).toHaveCount(2);
   await expect(page.getByTestId("tous-count")).toContainText("2");
@@ -62,6 +58,7 @@ test("Tous : filtres de statut cumulables + compteur", async ({ page }) => {
 
 test("filtre local d'un sous-onglet filtre les place-cards", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await page.getByTestId("places-search").fill("bistrot");
   await expect(page.getByTestId("place-card")).toHaveCount(1);
   await page.getByTestId("places-search").fill("xyzabsent999");
@@ -72,6 +69,7 @@ test("filtre local d'un sous-onglet filtre les place-cards", async ({ page }) =>
 
 test("onglet Carte : carte combinée — légende, filtre tag, comptage", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await page.getByTestId("tab-carte").click();
   await expect(page.getByTestId("places-map")).toBeVisible();
   await expect(page.getByTestId("map-legend")).toBeVisible();
@@ -88,6 +86,7 @@ test("onglet Carte : carte combinée — légende, filtre tag, comptage", async 
 
 test("« Trouver un restaurant » : découverte (envies, submit, récentes) accessible partout", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   await page.getByTestId("trouver-restaurant").click();
   // état initial : chips d'envie rendues
   await expect(page.getByTestId("envies")).toBeVisible();
@@ -106,6 +105,7 @@ test("« Trouver un restaurant » : découverte (envies, submit, récentes) acce
 
 test("a11y : le panneau expose role=tabpanel lié au sous-onglet actif", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   const panel = page.getByTestId("places-panel");
   await expect(panel).toHaveAttribute("role", "tabpanel");
   await expect(panel).toHaveAttribute("aria-labelledby", "tab-favoris");
@@ -113,6 +113,7 @@ test("a11y : le panneau expose role=tabpanel lié au sous-onglet actif", async (
 
 test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la fiche", async ({ page }) => {
   await login(page);
+  await page.goto("/fr/restos");
   const ARCHIVED_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
   // Idempotence : ce test désarchive l'unique item archivé du seed puis le ré-archive.
   // Si une tentative précédente a échoué entre les deux, l'item reste désarchivé — et

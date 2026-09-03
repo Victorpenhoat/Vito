@@ -1,15 +1,7 @@
-import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload, expectTextWithReload } from "./helpers";
+import { test, expect } from "@playwright/test";
+import { expectTextWithReload, expectVisibleWithReload, login } from "./helpers";
 
 const BISTROT = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
-
-async function login(page: Page, email: string) {
-  await page.goto("/fr/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Mot de passe").fill("password123");
-  await page.getByRole("button", { name: "Connexion" }).click();
-  await expect(page).toHaveURL(/\/fr\/accueil/);
-}
 
 test("premium crée une demande resto depuis une fiche et la retrouve", async ({ page }) => {
   await login(page, "premium@vito.test");
