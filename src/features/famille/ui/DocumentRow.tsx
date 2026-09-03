@@ -28,9 +28,11 @@ export async function DocumentRow({ doc, memberId }: { doc: DocMeta; memberId: s
             />
           )}
         </Link>
-        {doc.doc_number && <div className="mt-1"><MaskedNumber number={doc.doc_number} /></div>}
+        {doc.doc_number_masque && (
+          <div className="mt-1"><MaskedNumber docId={doc.id} masque={doc.doc_number_masque} /></div>
+        )}
       </div>
-      {!doc.doc_number && (
+      {!doc.doc_number_masque && (
         <Link
           href={`/famille/proches/${memberId}/documents/${doc.id}`}
           aria-label={label}

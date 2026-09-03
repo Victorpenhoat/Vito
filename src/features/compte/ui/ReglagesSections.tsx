@@ -9,7 +9,7 @@ type Section = { cle: string; href?: string; bientot?: boolean; adminSeul?: bool
 
 const SECTIONS: Section[] = [
   { cle: "profil", href: "/reglages" },
-  { cle: "securite", bientot: true },
+  { cle: "securite", href: "/reglages" },
   { cle: "appareils", bientot: true },
   { cle: "partages", bientot: true },
   { cle: "donnees", bientot: true },

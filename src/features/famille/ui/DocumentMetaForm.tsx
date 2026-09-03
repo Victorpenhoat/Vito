@@ -23,7 +23,12 @@ export function DocumentMetaForm({ doc }: { doc: DocMeta }) {
       {docType === "autre" && (
         <Input label={t("tunnel.autreTypeNom")} name="doc_label" defaultValue={doc.doc_label ?? ""} required />
       )}
-      <Input label={t("doc.numero")} name="doc_number" defaultValue={doc.doc_number ?? ""} />
+      {/* Le numéro ne revient jamais en clair dans la page (lot O-D) : le champ
+          part vide, le masque sert d'indication, et un champ laissé vide
+          conserve la valeur existante. */}
+      <Input label={t("doc.numero")} name="doc_number" defaultValue=""
+        placeholder={doc.doc_number_masque ?? ""} />
+      {doc.doc_number_masque && <p className="-mt-1.5 text-[11px] text-faint">{t("doc.numeroRemplacer")}</p>}
       <Input label={t("tunnel.dTitulaire")} name="holder_name" defaultValue={doc.holder_name ?? ""} />
       <div className="grid grid-cols-2 gap-2.5">
         <Input label={t("doc.emission")} name="issue_date" type="date" defaultValue={doc.issue_date ?? ""} />

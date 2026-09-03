@@ -712,7 +712,8 @@
       "rappelTexte": "Notification 6 months before expiry",
       "partager": "Share scan",
       "supprimerConfirm": "Delete this document?",
-      "modifierTitre": "Edit document"
+      "modifierTitre": "Edit document",
+      "numeroRemplacer": "Leave empty to keep the current number."
     }
   },
   "agence": {
@@ -1044,6 +1045,19 @@
       "abonnementSous": "Plan and billing",
       "comptes": "Accounts",
       "comptesSous": "Manage access — never content"
+    },
+    "verrou": {
+      "titre": "Lock Vito",
+      "marqueSous": "the journal",
+      "explication": "Your identity documents only appear once unlocked.",
+      "immediat": "Immediately",
+      "minutes": "{n} min",
+      "enregistre": "Delay saved",
+      "depuis": "Vito has been locked for {minutes} min.",
+      "motDePasse": "Your password",
+      "deverrouiller": "Unlock",
+      "echec": "Could not unlock.",
+      "aucuneDonnee": "No data shown before unlocking"
     }
   },
   "invitations": {
@@ -1100,5 +1114,17 @@
       "voyage": "Create a trip idea",
       "voyageSous": "Even without exact dates"
     }
+  },
+  "protege": {
+    "bandeau": "Protected data — a check is required for each reveal.",
+    "chaqueRevelation": "A check is required for each reveal",
+    "confirmer": {
+      "titre": "Confirm your identity",
+      "pourquoi": "To display this protected value.",
+      "motDePasse": "Your password",
+      "verifier": "Verify",
+      "echec": "Verification failed."
+    },
+    "afficherDocument": "Show the document"
   }
 }

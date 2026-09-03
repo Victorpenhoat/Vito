@@ -689,6 +689,7 @@ export type Database = {
           created_at: string
           doc_label: string | null
           doc_number: string | null
+          doc_number_chiffre: string | null
           doc_type: string
           expiry_date: string | null
           holder_name: string | null
@@ -699,6 +700,7 @@ export type Database = {
           mime_type: string
           mime_type_verso: string | null
           ocr_raw: Json | null
+          ocr_raw_chiffre: string | null
           reminder: boolean
           taille: number
           taille_verso: number | null
@@ -712,6 +714,7 @@ export type Database = {
           created_at?: string
           doc_label?: string | null
           doc_number?: string | null
+          doc_number_chiffre?: string | null
           doc_type: string
           expiry_date?: string | null
           holder_name?: string | null
@@ -722,6 +725,7 @@ export type Database = {
           mime_type: string
           mime_type_verso?: string | null
           ocr_raw?: Json | null
+          ocr_raw_chiffre?: string | null
           reminder?: boolean
           taille: number
           taille_verso?: number | null
@@ -735,6 +739,7 @@ export type Database = {
           created_at?: string
           doc_label?: string | null
           doc_number?: string | null
+          doc_number_chiffre?: string | null
           doc_type?: string
           expiry_date?: string | null
           holder_name?: string | null
@@ -745,6 +750,7 @@ export type Database = {
           mime_type?: string
           mime_type_verso?: string | null
           ocr_raw?: Json | null
+          ocr_raw_chiffre?: string | null
           reminder?: boolean
           taille?: number
           taille_verso?: number | null
@@ -1043,6 +1049,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          biometrie_activee: boolean
           conditions_acceptees_le: string | null
           created_at: string
           display_name: string | null
@@ -1051,8 +1058,10 @@ export type Database = {
           last_name: string | null
           locale: string
           role: Database["public"]["Enums"]["app_role"]
+          verrou_delai_minutes: number
         }
         Insert: {
+          biometrie_activee?: boolean
           conditions_acceptees_le?: string | null
           created_at?: string
           display_name?: string | null
@@ -1061,8 +1070,10 @@ export type Database = {
           last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
+          verrou_delai_minutes?: number
         }
         Update: {
+          biometrie_activee?: boolean
           conditions_acceptees_le?: string | null
           created_at?: string
           display_name?: string | null
@@ -1071,8 +1082,47 @@ export type Database = {
           last_name?: string | null
           locale?: string
           role?: Database["public"]["Enums"]["app_role"]
+          verrou_delai_minutes?: number
         }
         Relationships: []
+      }
+      reauth_tickets: {
+        Row: {
+          cible: string
+          consomme_le: string | null
+          created_at: string
+          expire_le: string
+          id: string
+          ticket_hash: string
+          user_id: string
+        }
+        Insert: {
+          cible: string
+          consomme_le?: string | null
+          created_at?: string
+          expire_le?: string
+          id?: string
+          ticket_hash: string
+          user_id: string
+        }
+        Update: {
+          cible?: string
+          consomme_le?: string | null
+          created_at?: string
+          expire_le?: string
+          id?: string
+          ticket_hash?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reauth_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       remboursements: {
         Row: {
@@ -1585,6 +1635,10 @@ export type Database = {
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
       consommer_invitation: { Args: { p_token: string }; Returns: Json }
+      consommer_reauth_ticket: {
+        Args: { p_cible: string; p_hash: string }
+        Returns: boolean
+      }
       creer_voyage_pour_client: {
         Args: {
           p_client_id: string
@@ -1598,6 +1652,10 @@ export type Database = {
       }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
       delier_client: { Args: { p_client_id: string }; Returns: undefined }
+      emettre_reauth_ticket: {
+        Args: { p_cible: string; p_hash: string }
+        Returns: undefined
+      }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
       fusionner_tags: {
         Args: { p_cible: string; p_source: string }
