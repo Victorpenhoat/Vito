@@ -21,7 +21,7 @@ export function MaDegustationForm({ vinId, resume, tags, etablissementId, etabli
   etablissementId?: string;
   etablissementNom?: string;
   visiteId?: string;
-  onEnregistre?: () => void;
+  onEnregistre?: (vin: { intitule: string; note: number | null }) => void;
 }) {
   const t = useTranslations("vins");
   const router = useRouter();
@@ -39,13 +39,20 @@ export function MaDegustationForm({ vinId, resume, tags, etablissementId, etabli
 
   async function envoyer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // ⚠ Tout ce qui vient du formulaire se lit MAINTENANT : après le premier
+    // `await`, `e.currentTarget` est nul et un second `new FormData(...)`
+    // lèverait — la modale resterait alors ouverte, sans message.
+    const donnees = new FormData(e.currentTarget);
+    const brut = donnees.get("note");
+    const note = typeof brut === "string" && brut ? Number(brut) : null;
+
     setPending(true);
-    const reponse = await enregistrerDegustation(undefined, new FormData(e.currentTarget))
+    const reponse = await enregistrerDegustation(undefined, donnees)
       .catch(() => ({ error: t("echecDegustation") }));
     setPending(false);
     setState(reponse);
     if (reponse && "ok" in reponse && reponse.ok) {
-      onEnregistre?.();
+      onEnregistre?.({ intitule: resume ?? "", note });
       router.refresh();
     }
   }

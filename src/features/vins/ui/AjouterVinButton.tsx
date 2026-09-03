@@ -11,12 +11,14 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 // Point d'entrée de la capture (design Vins & Cave écrans 2 et 3) : le tunnel
 // est en DEUX étapes, l'étiquette puis ma dégustation. La modale ne se ferme pas
 // entre les deux — c'est un seul geste, « Étape 1/2 » puis « Étape 2/2 ».
-export function AjouterVinButton({ vinsConnus, tags = [], etablissementId, etablissementNom, visiteId }: {
+export function AjouterVinButton({ vinsConnus, tags = [], etablissementId, etablissementNom, visiteId, onAjoute }: {
   vinsConnus: { id: string; cle: string; nb: number; dernier: string | null }[];
   tags?: TagLite[];
   etablissementId?: string;
   etablissementNom?: string;
   visiteId?: string;
+  /** Prévient le parent de l'ajout, pour qu'il l'affiche sans recharger. */
+  onAjoute?: (vin: { intitule: string; note: number | null }) => void;
 }) {
   const t = useTranslations("vins");
   const [open, setOpen] = useState(false);
@@ -39,7 +41,7 @@ export function AjouterVinButton({ vinsConnus, tags = [], etablissementId, etabl
         {cree ? (
           <MaDegustationForm vinId={cree.vinId} resume={cree.resume} tags={tags}
             etablissementId={etablissementId} etablissementNom={etablissementNom}
-            visiteId={visiteId} onEnregistre={fermer} />
+            visiteId={visiteId} onEnregistre={(vin) => { onAjoute?.(vin); fermer(); }} />
         ) : (
           <EtiquetteTunnel vinsConnus={vinsConnus} onCree={passerEtape2} />
         )}

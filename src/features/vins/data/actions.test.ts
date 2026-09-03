@@ -6,28 +6,52 @@ vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePa
 let mock: ReturnType<typeof createMockSupabase>;
 vi.mock("@/lib/supabase/server", () => ({ createServerSupabase: async () => mock.client }));
 
-import { addDegustation } from "./actions";
+import { enregistrerDegustation } from "./actions";
 
+const VIN = "11111111-1111-4111-8111-111111111111";
+const ETAB = "22222222-2222-4222-8222-222222222222";
 const fd = (e: Array<[string, string]>) => { const f = new FormData(); e.forEach(([k, v]) => f.append(k, v)); return f; };
 const setup = (o: Parameters<typeof createMockSupabase>[0]) => { mock = createMockSupabase(o); };
 beforeEach(() => revalidatePath.mockClear());
 
-describe("addDegustation — find_or_create_vin puis insert degustation", () => {
-  it("happy path : RPC vin + insert degustation reliée à l'utilisateur, revalide /vins", async () => {
-    setup({ on: (t): OpResult => (t === "degustations" ? { error: null } : { data: null }), rpc: () => ({ data: "vin-1" }) });
-    const res = await addDegustation(undefined, fd([["nom", "Chablis"], ["couleur", "blanc"], ["note", "4"]]));
-    expect(res).toEqual({ ok: true });
-    expect(mock.calls.find((c) => c.kind === "rpc")).toMatchObject({ name: "find_or_create_vin" });
-    expect(tableInsert(mock.calls, "degustations")?.payload).toMatchObject({ user_id: "u1", vin_id: "vin-1", note: 4 });
-    expect(revalidatePath).toHaveBeenCalledWith("/vins");
+describe("enregistrerDegustation", () => {
+  it("enregistre ce que j'ai vécu : note en verres, prix avec son unité, envie de le retrouver", async () => {
+    setup({ on: (t): OpResult => (t === "degustations" ? { data: { id: "deg-1" } } : { data: null }) });
+    const res = await enregistrerDegustation(undefined, fd([
+      ["vinId", VIN], ["note", "4.3"], ["prixPaye", "46"], ["prixUnite", "bouteille"],
+      ["lieuType", "maison"], ["aRacheter", "on"],
+    ]));
+    expect(res).toMatchObject({ ok: true });
+    expect(tableInsert(mock.calls, "degustations")?.payload).toMatchObject({
+      user_id: "u1", vin_id: VIN, note: 4.5, prix_paye: 46, prix_unite: "bouteille",
+      lieu_type: "maison", a_racheter: true,
+    });
   });
-  it("échec find_or_create_vin → message dédié, pas d'insert", async () => {
-    setup({ rpc: () => ({ error: { message: "boom" } }) });
-    expect(await addDegustation(undefined, fd([["nom", "X"], ["couleur", "rouge"]]))).toEqual({ error: "Enregistrement du vin échoué" });
+
+  it("un restaurant identifie le lieu : le lieu libre n'est pas enregistré par-dessus", async () => {
+    setup({ on: (t): OpResult => (t === "degustations" ? { data: { id: "deg-1" } } : { data: null }) });
+    await enregistrerDegustation(undefined, fd([
+      ["vinId", VIN], ["etablissementId", ETAB], ["lieuType", "maison"], ["lieuNom", "Chez moi"],
+    ]));
+    expect(tableInsert(mock.calls, "degustations")?.payload).toMatchObject({
+      etablissement_id: ETAB, lieu_type: "restaurant", lieu_nom: null,
+    });
+  });
+
+  it("une dégustation sans visite reste possible : rien n'exige un visite_id", async () => {
+    setup({ on: (t): OpResult => (t === "degustations" ? { data: { id: "deg-1" } } : { data: null }) });
+    await enregistrerDegustation(undefined, fd([["vinId", VIN], ["etablissementId", ETAB]]));
+    expect(tableInsert(mock.calls, "degustations")?.payload).toMatchObject({ visite_id: null });
+  });
+
+  it("saisie invalide → refus net, aucun insert", async () => {
+    setup({});
+    expect(await enregistrerDegustation(undefined, fd([["vinId", "pas-un-uuid"]]))).toEqual({ error: "Saisie invalide" });
     expect(tableInsert(mock.calls, "degustations")).toBeUndefined();
   });
+
   it("refuse sans authentification", async () => {
     setup({ user: null });
-    expect(await addDegustation(undefined, fd([["nom", "X"], ["couleur", "rouge"]]))).toEqual({ error: "Non authentifié" });
+    expect(await enregistrerDegustation(undefined, fd([["vinId", VIN]]))).toEqual({ error: "Non authentifié" });
   });
 });

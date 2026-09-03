@@ -164,14 +164,30 @@ export async function marquerVisite(_prev: unknown, formData: FormData) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
   const d = parsed.data;
-  const { error: vErr } = await supabase.from("visites").insert({
+  const { data: visite, error: vErr } = await supabase.from("visites").insert({
     user_id: auth.user.id,
     liste_item_id: d.listeItemId,
     note: d.note ?? null,
     commentaire: d.commentaire ?? null,
     ...(d.visiteLe ? { visite_le: d.visiteLe } : {}),
-  });
-  if (vErr) { logActionError("restos.marquerVisite", vErr); return { error: "Visite non enregistrée" }; }
+  }).select("id, visite_le").single();
+  if (vErr || !visite) { logActionError("restos.marquerVisite", vErr); return { error: "Visite non enregistrée" }; }
+
+  // Vins & Cave (V-D) : les vins notés CE JOUR-LÀ dans cet établissement et pas
+  // encore rattachés rejoignent la visite. Une dégustation peut exister sans
+  // visite (un verre au comptoir) — on ne touche donc que celles du même jour,
+  // et jamais celles déjà rattachées à une autre visite.
+  const { data: item } = await supabase
+    .from("liste_items").select("etablissement_id").eq("id", d.listeItemId).maybeSingle();
+  if (item?.etablissement_id) {
+    const { error: dErr } = await supabase
+      .from("degustations")
+      .update({ visite_id: visite.id })
+      .eq("etablissement_id", item.etablissement_id)
+      .eq("deguste_le", visite.visite_le)
+      .is("visite_id", null);
+    if (dErr) logActionError("restos.marquerVisite", dErr); // sans bloquer la visite
+  }
   // L'item passe « testé » (statut='visite') ; « Passer en favori ? » du formulaire
   // pose is_favorite=true PAR-DESSUS (le statut stocké reste 'visite' — dérivation v2).
   const { error: sErr } = await supabase

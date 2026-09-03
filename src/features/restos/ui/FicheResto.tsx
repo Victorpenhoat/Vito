@@ -13,7 +13,8 @@ import { getMesVoyages } from "@/features/voyages/data/queries";
 import { getPlacesProvider } from "@/lib/services/places";
 import { getProches } from "@/features/famille/data/queries";
 import { formatDay } from "@/lib/format/date";
-import { DegustationForm } from "@/features/vins/ui/DegustationForm";
+import { VinsBusIci } from "@/features/vins/ui/VinsBusIci";
+import { VinsDeLaVisiteSlot } from "@/features/vins/ui/VinsDeLaVisiteSlot";
 import { getIsPremium } from "@/features/abonnement/data/queries";
 import { DemandeRestoForm } from "@/features/conciergerie/ui/DemandeRestoForm";
 import { Link } from "@/lib/i18n/routing";
@@ -34,7 +35,6 @@ function nuitsEntre(debut: string | null, fin: string | null): number | null {
 export async function FicheResto({ etablissementId, category = "restaurant" }: { etablissementId: string; category?: "restaurant" | "hotel" }) {
   const t = await getTranslations("restos");
   const th = await getTranslations("hotels");
-  const tv = await getTranslations("vins");
   const locale = await getLocale();
   const [{ etab, item, avis, appliedTagIds, visites }, tags] = await Promise.all([
     getFiche(etablissementId),
@@ -247,14 +247,14 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
             </ul>
           )}
           <VisiteCta listeItemId={item.id} nom={etab.nom} tags={tags}
-            categorie={isResto ? "resto" : "hotel"} voyages={voyages} />
+            categorie={isResto ? "resto" : "hotel"} voyages={voyages}
+            encart={isResto ? <VinsDeLaVisiteSlot etablissementId={etab.id} etablissementNom={etab.nom} /> : undefined} />
         </section>
       )}
 
-      <section>
-        <h2 className="font-semibold">{tv("degustesIci")}</h2>
-        <DegustationForm etablissementId={etab.id} />
-      </section>
+      {/* Vins bus ici (Lot V-D) : remplace le formulaire rapide de dégustation —
+          la capture d'étiquette et la note en verres passent par le tunnel. */}
+      {isResto && <VinsBusIci etablissementId={etab.id} etablissementNom={etab.nom} />}
       <section>
         <h2 className="font-semibold">{tc("demander")}</h2>
         {isPremium ? (

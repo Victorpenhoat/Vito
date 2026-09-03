@@ -169,8 +169,9 @@
       "buNFois": "drunk {n, plural, one {# time} other {# times}}",
       "jamaisBu": "never drunk",
       "dernierLieu": "last: {lieu}",
-      "videTotal": "Your cellar is empty. Photograph a label to get started.",
-      "videFiltre": "No wine matches these filters."
+      "videTotal": "Photograph the label of the next wine you drink — Vito takes care of the rest.",
+      "videFiltre": "No wine matches these filters.",
+      "videTitre": "Your cellar is empty"
     },
     "analyse": {
       "avertissement": "Analysis generated automatically from the label. Check the important details.",
@@ -217,7 +218,15 @@
         }
       }
     },
-    "echecDegustation": "Could not save. Please try again."
+    "echecDegustation": "Could not save. Please try again.",
+    "busIci": {
+      "titre": "Wines drunk here",
+      "vide": "No wine recorded here yet.",
+      "sansVisite": "tasting without a visit",
+      "sectionVisite": "Wines",
+      "ajoutes": "{n, plural, one {# added} other {# added}}",
+      "vinSansNom": "Unnamed wine"
+    }
   },
   "gouts": {
     "title": "My tastes",

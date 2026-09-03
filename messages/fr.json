@@ -169,8 +169,9 @@
       "buNFois": "bu {n, plural, one {# fois} other {# fois}}",
       "jamaisBu": "jamais bu",
       "dernierLieu": "dernier : {lieu}",
-      "videTotal": "Votre cave est vide. Photographiez une étiquette pour commencer.",
-      "videFiltre": "Aucun vin ne correspond à ces filtres."
+      "videTotal": "Photographiez l'étiquette du prochain vin que vous buvez — Vito s'occupe du reste.",
+      "videFiltre": "Aucun vin ne correspond à ces filtres.",
+      "videTitre": "Votre cave est vide"
     },
     "analyse": {
       "avertissement": "Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes.",
@@ -217,7 +218,15 @@
         }
       }
     },
-    "echecDegustation": "Enregistrement impossible. Réessayez."
+    "echecDegustation": "Enregistrement impossible. Réessayez.",
+    "busIci": {
+      "titre": "Vins bus ici",
+      "vide": "Aucun vin noté ici pour l'instant.",
+      "sansVisite": "dégustation sans visite",
+      "sectionVisite": "Vins",
+      "ajoutes": "{n, plural, one {# ajouté} other {# ajoutés}}",
+      "vinSansNom": "Vin sans nom"
+    }
   },
   "gouts": {
     "title": "Mes goûts",

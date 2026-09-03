@@ -169,8 +169,9 @@
       "buNFois": "bevuto {n, plural, one {# volta} other {# volte}}",
       "jamaisBu": "mai bevuto",
       "dernierLieu": "ultimo: {lieu}",
-      "videTotal": "La tua cantina è vuota. Fotografa un'etichetta per iniziare.",
-      "videFiltre": "Nessun vino corrisponde a questi filtri."
+      "videTotal": "Fotografa l'etichetta del prossimo vino che bevi — a tutto il resto pensa Vito.",
+      "videFiltre": "Nessun vino corrisponde a questi filtri.",
+      "videTitre": "La tua cantina è vuota"
     },
     "analyse": {
       "avertissement": "Analisi generata automaticamente dall'etichetta. Verifica le informazioni importanti.",
@@ -217,7 +218,15 @@
         }
       }
     },
-    "echecDegustation": "Salvataggio non riuscito. Riprova."
+    "echecDegustation": "Salvataggio non riuscito. Riprova.",
+    "busIci": {
+      "titre": "Vini bevuti qui",
+      "vide": "Nessun vino annotato qui per ora.",
+      "sansVisite": "degustazione senza visita",
+      "sectionVisite": "Vini",
+      "ajoutes": "{n, plural, one {# aggiunto} other {# aggiunti}}",
+      "vinSansNom": "Vino senza nome"
+    }
   },
   "gouts": {
     "title": "I miei gusti",

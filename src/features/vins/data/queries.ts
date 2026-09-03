@@ -151,3 +151,52 @@ export async function getVinFiche(id: string) {
     noteMoyenne: moyenneVerres(degustations.map((d) => d.note)),
   };
 }
+
+// ── Vins bus ici (Lot V-D) ──────────────────────────────────────────────────
+
+export type VinBuIci = {
+  id: string;
+  vinId: string;
+  intitule: string;
+  detail: string | null;
+  note: number | null;
+  prix: number | null;
+  unite: string | null;
+  degusteLe: string;
+  /** Une dégustation peut exister SANS visite : on l'affiche, en le disant. */
+  sansVisite: boolean;
+};
+
+/**
+ * Les vins bus dans un établissement (design écran 8). Rien n'oblige une
+ * dégustation à être rattachée à une visite : boire un verre au comptoir n'est
+ * pas y avoir dîné.
+ */
+export async function getVinsBusIci(etablissementId: string): Promise<VinBuIci[]> {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63) : lecture parallèle au layout dans la fiche.
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("degustations")
+    .select("id, deguste_le, note, prix_paye, prix_unite, visite_id, vin:vins(id, nom, domaine, cuvee, appellation, region, millesime, couleur)")
+    .eq("etablissement_id", etablissementId)
+    .order("deguste_le", { ascending: false });
+  if (error) throw error;
+
+  return (data ?? []).flatMap((d) => {
+    const vin = Array.isArray(d.vin) ? d.vin[0] : d.vin;
+    if (!vin) return [];
+    return [{
+      id: d.id,
+      vinId: vin.id,
+      intitule: [vin.domaine ?? vin.nom, vin.cuvee].filter(Boolean).join(" · "),
+      detail: [vin.appellation ?? vin.region, vin.millesime].filter(Boolean).join(" ") || null,
+      note: d.note == null ? null : Number(d.note),
+      prix: d.prix_paye == null ? null : Number(d.prix_paye),
+      unite: d.prix_unite,
+      degusteLe: d.deguste_le,
+      sansVisite: d.visite_id == null,
+    }];
+  });
+}

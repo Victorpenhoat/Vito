@@ -15,8 +15,11 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 // écran 9) : date (ou plage arrivée→départ), note /10 au dixième (slider), tags
 // de verdict (création à la volée), commentaire, « Passer en favori ? ».
 // Le mode séjour ajoute le départ, l'occupation et le voyage lié détecté.
-export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto", voyages = [] }: {
+export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto", voyages = [], encart }: {
   listeItemId: string; tags: TagLite[]; onDone?: () => void; categorie?: CategorieUi; voyages?: VoyageLite[];
+  /** Encart rendu avant le bouton d'enregistrement (les vins de la visite,
+   *  côté restos) : la brique générique n'a pas à connaître son contenu. */
+  encart?: React.ReactNode;
 }) {
   const config = CATEGORY_UI[categorie];
   const sejour = config.experience === "sejour";
@@ -189,6 +192,8 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
             <span className={`absolute top-[3px] h-[22px] w-[22px] rounded-full bg-white shadow transition-[left] ${favori ? "left-[21px]" : "left-[3px]"}`} />
           </button>
         </label>
+
+        {encart}
 
         {state && "error" in state && state.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
         <Button type="submit" pending={pending}>{t("visite.enregistrer")}</Button>
