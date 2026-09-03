@@ -11,10 +11,10 @@ import { Modal } from "@/features/shared/ui/Modal";
 
 export type TagAdmin = {
   id: string; slug: string; label: string; color: string | null;
-  scope: "common" | "restaurant" | "hotel"; is_system: boolean; user_id: string | null; usages: number;
+  scope: "common" | "restaurant" | "hotel" | "vin"; is_system: boolean; user_id: string | null; usages: number;
 };
 
-type ScopeFiltre = "tous" | "common" | "restaurant" | "hotel";
+type ScopeFiltre = "tous" | "common" | "restaurant" | "hotel" | "vin";
 
 // Administration des tags (design Onglet_Resto_v2, écran 10) : créer, renommer,
 // couleur, portée, fusionner, supprimer. Les tags système sont en lecture seule.
@@ -29,7 +29,7 @@ export function TagsAdmin({ tags }: { tags: TagAdmin[] }) {
   return (
     <div data-testid="tags-admin" className="flex flex-col gap-3.5">
       <div className="flex gap-1.5">
-        {(["tous", "common", "restaurant", "hotel"] as const).map((s) => (
+        {(["tous", "common", "restaurant", "hotel", "vin"] as const).map((s) => (
           <button key={s} type="button" aria-pressed={scope === s} onClick={() => setScope(s)}
             className={`rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
               scope === s ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"

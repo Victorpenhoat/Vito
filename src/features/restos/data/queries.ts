@@ -74,14 +74,14 @@ export async function getTagsAvecUsage() {
     slug: t.slug,
     label: t.label,
     color: t.color,
-    scope: t.scope as "common" | "restaurant" | "hotel",
+    scope: t.scope as "common" | "restaurant" | "hotel" | "vin",
     is_system: t.is_system,
     user_id: t.user_id,
     usages: (t.usages?.[0] as { count?: number } | undefined)?.count ?? 0,
   }));
 }
 
-export async function getTagsForCategory(category: "restaurant" | "hotel") {
+export async function getTagsForCategory(category: "restaurant" | "hotel" | "vin") {
   const supabase = await createServerSupabase();
   // Fail-safe anon : `tags` est authenticated-only. Cette lecture est dans le même
   // Promise.all que getFiche (gardé #61) dans FicheResto — non gardée, elle faisait

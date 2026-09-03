@@ -31,7 +31,9 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        className="w-full max-w-md rounded-card border border-line bg-surface p-5"
+        // max-h + défilement : les formulaires longs (séjour, capture d'étiquette)
+        // dépassaient la hauteur d'écran et leur bouton final devenait inatteignable.
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-card border border-line bg-surface p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">

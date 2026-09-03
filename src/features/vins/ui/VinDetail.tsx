@@ -44,7 +44,12 @@ export async function VinDetail({ id }: { id: string }) {
               {degustations.map((d) => (
                 <li key={d.id} data-testid="degustation-row" className="border-b border-line-soft py-2 text-sm">
                   <span className="text-muted">{formatDay(d.deguste_le, locale)}</span>
-                  {d.note ? <span className="text-accent"> · {d.note}/5</span> : ""}
+                  {d.note ? (
+                    <span className="text-accent">
+                      {" · "}
+                      {new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(Number(d.note))}/5
+                    </span>
+                  ) : ""}
                   {d.prix_paye ? <span className="text-ink"> · {d.prix_paye}€</span> : ""}
                   {d.commentaire ? <span className="text-muted"> {d.commentaire}</span> : ""}
                 </li>

@@ -2,10 +2,13 @@ import { getMesVins } from "../data/queries";
 import { vinFiltersSchema } from "../domain/schemas";
 import { couleurTint } from "../domain/couleurTint";
 import { Link } from "@/lib/i18n/routing";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 
 export async function VinsList({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
   const t = await getTranslations("vins");
+  const locale = await getLocale();
+  // Note en verres : demi-crans depuis Vins & Cave → séparateur décimal localisé
+  const fmtNote = (n: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
   const filters = vinFiltersSchema.parse({
     couleur: searchParams.couleur, region: searchParams.region, noteMin: searchParams.noteMin,
     etablissementId: searchParams.etablissementId, dateFrom: searchParams.dateFrom, dateTo: searchParams.dateTo,
@@ -27,7 +30,7 @@ export async function VinsList({ searchParams }: { searchParams: Record<string, 
                 </span>
                 <div className="mt-1 flex items-center justify-between text-sm text-muted">
                   <span>{t("fois", { count: v.nb_degustations })}</span>
-                  {v.derniere_note != null && <span className="text-ink">{v.derniere_note}/5</span>}
+                  {v.derniere_note != null && <span className="text-ink">{fmtNote(Number(v.derniere_note))}/5</span>}
                 </div>
               </div>
             </Link>

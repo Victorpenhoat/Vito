@@ -59,7 +59,40 @@
     "eyebrow": "La bodega",
     "compte": "{n} vinos",
     "fiche": "Ficha",
-    "mesDegustations": "Mis catas"
+    "mesDegustations": "Mis catas",
+    "etiquette": {
+      "titre": "Añadir un vino",
+      "ajouter": "Fotografiar una etiqueta",
+      "cadrer": "Encuadra la etiqueta — Vito lee la bodega, la denominación y la añada.",
+      "photographier": "Hacer una foto",
+      "phototheque": "Elegir de la galería",
+      "sansPhotoPlaceholder": "O describe el vino — «Chablis Dauvissat 2020»",
+      "chercher": "Buscar",
+      "lectureEnCours": "Leyendo la etiqueta…",
+      "verifiez": "Comprueba los campos: todo es editable.",
+      "illisibleTitre": "Foto poco legible",
+      "illisibleTexte": "No se ha podido leer la etiqueta — inténtalo de nuevo o rellena los campos a mano.",
+      "reessayer": "Reintentar",
+      "ouSaisir": "o rellena los campos abajo",
+      "erreurLecture": "Lectura no disponible por ahora.",
+      "fichierInvalide": "Imagen no válida (JPEG, PNG o WebP, 10 MB máximo).",
+      "dejaBu": "{n, plural, one {Ya has bebido este vino una vez} other {Ya has bebido este vino # veces}}",
+      "dernierLieu": "la última vez: {lieu}",
+      "domaine": "Bodega",
+      "cuvee": "Cuvée",
+      "appellation": "Denominación",
+      "millesime": "Añada",
+      "degre": "Graduación",
+      "couleur": "Color",
+      "cepages": "Uvas",
+      "continuer": "Guardar el vino",
+      "confiance": {
+        "sur": "Seguro",
+        "probable": "Probable",
+        "a_verifier": "Por comprobar"
+      },
+      "genere": "Análisis generado automáticamente a partir de la etiqueta. Comprueba la información importante."
+    }
   },
   "gouts": {
     "title": "Mis gustos",
@@ -205,7 +238,8 @@
         "tous": "Todas",
         "common": "Común",
         "restaurant": "Restaurante",
-        "hotel": "Hotel"
+        "hotel": "Hotel",
+        "vin": "Vino"
       },
       "usages": "{n, plural, =0 {ninguna dirección} one {# dirección} other {# direcciones}}",
       "systeme": "sistema",
