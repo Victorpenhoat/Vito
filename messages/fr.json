@@ -59,7 +59,40 @@
     "eyebrow": "La cave",
     "compte": "{n} vins",
     "fiche": "Fiche",
-    "mesDegustations": "Mes dégustations"
+    "mesDegustations": "Mes dégustations",
+    "etiquette": {
+      "titre": "Ajouter un vin",
+      "ajouter": "Photographier une étiquette",
+      "cadrer": "Cadrez l'étiquette — Vito lit le domaine, l'appellation et le millésime.",
+      "photographier": "Photographier",
+      "phototheque": "Choisir dans la photothèque",
+      "sansPhotoPlaceholder": "Ou décrivez le vin — « Chablis Dauvissat 2020 »",
+      "chercher": "Chercher",
+      "lectureEnCours": "Lecture de l'étiquette…",
+      "verifiez": "Vérifiez les champs : tout est éditable.",
+      "illisibleTitre": "Photo peu lisible",
+      "illisibleTexte": "L'étiquette n'a pas pu être lue — réessayez ou saisissez les champs à la main.",
+      "reessayer": "Réessayer",
+      "ouSaisir": "ou saisissez les champs ci-dessous",
+      "erreurLecture": "Lecture indisponible pour le moment.",
+      "fichierInvalide": "Image invalide (JPEG, PNG ou WebP, 10 Mo maximum).",
+      "dejaBu": "{n, plural, one {Vous avez déjà bu ce vin une fois} other {Vous avez déjà bu ce vin # fois}}",
+      "dernierLieu": "la dernière fois : {lieu}",
+      "domaine": "Domaine",
+      "cuvee": "Cuvée",
+      "appellation": "Appellation",
+      "millesime": "Millésime",
+      "degre": "Degré",
+      "couleur": "Couleur",
+      "cepages": "Cépages",
+      "continuer": "Enregistrer le vin",
+      "confiance": {
+        "sur": "Sûr",
+        "probable": "Probable",
+        "a_verifier": "À vérifier"
+      },
+      "genere": "Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes."
+    }
   },
   "gouts": {
     "title": "Mes goûts",
@@ -205,7 +238,8 @@
         "tous": "Tous",
         "common": "Commun",
         "restaurant": "Restaurant",
-        "hotel": "Hôtel"
+        "hotel": "Hôtel",
+        "vin": "Vin"
       },
       "usages": "{n, plural, =0 {aucune adresse} one {# adresse} other {# adresses}}",
       "systeme": "système",

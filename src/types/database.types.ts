@@ -206,42 +206,87 @@ export type Database = {
           },
         ]
       }
+      degustation_tags: {
+        Row: {
+          degustation_id: string
+          tag_id: string
+        }
+        Insert: {
+          degustation_id: string
+          tag_id: string
+        }
+        Update: {
+          degustation_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "degustation_tags_degustation_id_fkey"
+            columns: ["degustation_id"]
+            isOneToOne: false
+            referencedRelation: "degustations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "degustation_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       degustations: {
         Row: {
+          a_racheter: boolean
           avis_id: string | null
           commentaire: string | null
           created_at: string
           deguste_le: string
           etablissement_id: string | null
           id: string
+          lieu_nom: string | null
+          lieu_type: string | null
           note: number | null
           prix_paye: number | null
+          prix_unite: string | null
           user_id: string
           vin_id: string
+          visite_id: string | null
         }
         Insert: {
+          a_racheter?: boolean
           avis_id?: string | null
           commentaire?: string | null
           created_at?: string
           deguste_le?: string
           etablissement_id?: string | null
           id?: string
+          lieu_nom?: string | null
+          lieu_type?: string | null
           note?: number | null
           prix_paye?: number | null
+          prix_unite?: string | null
           user_id: string
           vin_id: string
+          visite_id?: string | null
         }
         Update: {
+          a_racheter?: boolean
           avis_id?: string | null
           commentaire?: string | null
           created_at?: string
           deguste_le?: string
           etablissement_id?: string | null
           id?: string
+          lieu_nom?: string | null
+          lieu_type?: string | null
           note?: number | null
           prix_paye?: number | null
+          prix_unite?: string | null
           user_id?: string
           vin_id?: string
+          visite_id?: string | null
         }
         Relationships: [
           {
@@ -270,6 +315,13 @@ export type Database = {
             columns: ["vin_id"]
             isOneToOne: false
             referencedRelation: "vins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "degustations_visite_id_fkey"
+            columns: ["visite_id"]
+            isOneToOne: false
+            referencedRelation: "visites"
             referencedColumns: ["id"]
           },
         ]
@@ -1171,10 +1223,19 @@ export type Database = {
       vins: {
         Row: {
           achat_url: string | null
+          analyse_at: string | null
+          analyse_confiance: Json | null
+          analyse_contenu: Json | null
+          analyse_modele: string | null
+          appellation: string | null
           cepages: string[]
           couleur: Database["public"]["Enums"]["vin_couleur"] | null
           created_at: string
+          degre: number | null
           domaine: string | null
+          etiquette_chiffree: string | null
+          etiquette_mime: string | null
+          etiquette_taille: number | null
           id: string
           millesime: number | null
           nom: string
@@ -1183,10 +1244,19 @@ export type Database = {
         }
         Insert: {
           achat_url?: string | null
+          analyse_at?: string | null
+          analyse_confiance?: Json | null
+          analyse_contenu?: Json | null
+          analyse_modele?: string | null
+          appellation?: string | null
           cepages?: string[]
           couleur?: Database["public"]["Enums"]["vin_couleur"] | null
           created_at?: string
+          degre?: number | null
           domaine?: string | null
+          etiquette_chiffree?: string | null
+          etiquette_mime?: string | null
+          etiquette_taille?: number | null
           id?: string
           millesime?: number | null
           nom: string
@@ -1195,10 +1265,19 @@ export type Database = {
         }
         Update: {
           achat_url?: string | null
+          analyse_at?: string | null
+          analyse_confiance?: Json | null
+          analyse_contenu?: Json | null
+          analyse_modele?: string | null
+          appellation?: string | null
           cepages?: string[]
           couleur?: Database["public"]["Enums"]["vin_couleur"] | null
           created_at?: string
+          degre?: number | null
           domaine?: string | null
+          etiquette_chiffree?: string | null
+          etiquette_mime?: string | null
+          etiquette_taille?: number | null
           id?: string
           millesime?: number | null
           nom?: string

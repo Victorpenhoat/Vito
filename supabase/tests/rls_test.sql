@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(17);
+select plan(21);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -121,6 +121,21 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('22222222-2222-2222-2222-222222222222',
           'select count(*) from public.liste_items where prix_nuit is not null'),
           0::bigint, 'agence ne voit pas le prix/nuit saisi par le client');
+
+-- ── Vins & Cave (00033) ────────────────────────────────────────────────────
+
+-- 18) anon ne voit aucun vin ni aucune dégustation
+select is(tests.count_as_anon('select count(*) from public.vins'), 0::bigint, 'anon ne voit aucun vin');
+select is(tests.count_as_anon('select count(*) from public.degustations'), 0::bigint, 'anon ne voit aucune dégustation');
+
+-- 20) isolation owner : l'agence ne voit pas les dégustations du client
+select is(tests.count_as('22222222-2222-2222-2222-222222222222', 'select count(*) from public.degustations'),
+          0::bigint, 'agence ne voit pas les dégustations du client');
+
+-- 21) degustation_tags : visibilité dérivée du parent (le client voit son tag de
+--     verdict, l'agence non — la policy passe par degustations.user_id)
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.degustation_tags'),
+          1::bigint, 'client voit le tag de verdict de sa dégustation');
 
 select finish();
 rollback;

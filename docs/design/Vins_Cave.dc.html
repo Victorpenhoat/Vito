@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;}
+  .serif{font-family:'Newsreader',Georgia,serif;}
+  a{color:#2563EB;text-decoration:none;}
+  a:hover{color:#1D4ED8;}
+</style>
+</helmet>
+
+<div style="position:absolute;left:80px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Vins &amp; Cave · Mobile</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">1 · Visite + vins (révision écran 8 Resto v2)</div></div>
+  <div data-screen-label="M · Visite + vins" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="flex:1;position:relative;background:#E8E4DA;"><div style="position:absolute;inset:0;background:rgba(33,30,26,.35);"></div></div>
+    <div style="background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.2);padding:14px 18px 28px;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 14px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:19px;color:#211E1A;">J'y suis allé — Kuzina</span><span style="font-size:12px;color:#2563EB;font-weight:600;">Aujourd'hui ▾</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:12px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Note</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;position:relative;"><span style="position:absolute;left:0;top:0;bottom:0;width:82%;border-radius:999px;background:#2563EB;"></span><span style="position:absolute;left:82%;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #2563EB;"></span></div><span class="serif" style="font-size:22px;color:#211E1A;">8,2</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;"><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:6px 12px;">On y retourne</span><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 12px;">Date night</span><span style="font-size:11.5px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:6px 12px;">+ Tag</span></div>
+      <div style="margin-top:11px;padding:10px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">Feta rôtie incroyable, réserver en terrasse.</div>
+      <div style="margin-top:13px;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:#FBF9F3;">
+          <div style="display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7E3B4B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="font-size:13px;font-weight:600;color:#211E1A;">Vins</span><span style="font-size:11px;color:#9A9081;">2 ajoutés</span></div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid #F0EBE0;">
+          <span style="width:34px;height:44px;border-radius:3px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Domaine Tempier · Bandol 2021</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;"></span><span style="font-size:11px;color:#9A9081;">Rouge · 46 € la bouteille</span></div></div>
+          <span style="font-size:13px;letter-spacing:1px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid #F0EBE0;">
+          <span style="width:34px;height:44px;border-radius:3px;flex-shrink:0;background:#d8d2b8 url('https://images.unsplash.com/photo-1566754436893-98224ee05be2?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Dauvissat · Chablis 2020</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;"></span><span style="font-size:11px;color:#9A9081;">Blanc · 12 € le verre</span></div></div>
+          <span style="font-size:13px;letter-spacing:1px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span>
+        </div>
+        <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 0;background:#fff;border:none;border-top:1px dashed #E4DDD0;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un vin</button>
+      </div>
+      <button style="width:100%;margin-top:13px;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la visite</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2 · Capture d'étiquette (lecture + confiance)</div></div>
+  <div data-screen-label="M · Capture étiquette" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#211E1A;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#fff;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#fff" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#fff"/></svg></div></div>
+    <div style="position:relative;height:330px;background:#3a3330 url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=800&q=60&auto=format&fit=crop') center/cover;">
+      <div style="position:absolute;inset:0;background:rgba(33,30,26,.25);"></div>
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:190px;height:250px;border:2px solid rgba(255,255,255,.85);border-radius:10px;box-shadow:0 0 0 2000px rgba(33,30,26,.35);"></div>
+      <div style="position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:#fff;">Cadrez l'étiquette</div>
+      <button style="position:absolute;top:14px;left:16px;display:grid;place-items:center;width:36px;height:36px;background:rgba(255,255,255,.18);border:none;border-radius:999px;cursor:pointer;color:#fff;font-size:15px;">✕</button>
+    </div>
+    <div style="flex:1;background:#FBF9F3;border-radius:18px 18px 0 0;margin-top:-14px;position:relative;padding:16px 18px 24px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:9px;"><span style="display:inline-block;width:14px;height:14px;border:2px solid #2563EB;border-top-color:transparent;border-radius:50%;"></span><span style="font-size:13px;font-weight:600;color:#211E1A;">Étiquette lue</span><span style="font-size:11px;color:#9A9081;">— vérifiez les champs, tout est éditable</span></div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:10px 13px;"><div style="flex:1;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Domaine</div><div style="font-size:13.5px;color:#211E1A;font-weight:500;">Domaine Tempier</div></div><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Sûr</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
+        <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:10px 13px;"><div style="flex:1;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Appellation</div><div style="font-size:13.5px;color:#211E1A;font-weight:500;">Bandol</div></div><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Sûr</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
+        <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #C28A1B;border-radius:5px;padding:10px 13px;"><div style="flex:1;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Millésime</div><div style="font-size:13.5px;color:#211E1A;font-weight:500;">2021 <span style="font-size:11px;color:#C28A1B;">ou 2024 ?</span></div></div><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">À vérifier</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></div>
+        <div style="display:flex;gap:7px;">
+          <div style="flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:10px 13px;"><div style="flex:1;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Couleur</div><div style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:#211E1A;font-weight:500;"><span style="width:9px;height:9px;border-radius:50%;background:#7E3B4B;"></span>Rouge</div></div><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Sûr</span></div>
+          <div style="flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:10px 13px;"><div style="flex:1;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Cépages</div><div style="font-size:12.5px;color:#211E1A;font-weight:500;">Mourvèdre, Grenache</div></div><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">Probable</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:10px;padding:10px 13px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span style="flex:1;font-size:12px;color:#211E1A;">Déjà bu <b>2 fois</b> — La dernière chez Osteria Da Nino (mai). C'est le même vin ?</span>
+        <button style="padding:6px 11px;background:#2563EB;color:#fff;border:none;border-radius:999px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Oui, lier</button>
+      </div>
+      <button style="width:100%;margin-top:12px;padding:13px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Continuer → ma dégustation</button>
+      <div style="display:flex;justify-content:center;gap:16px;margin-top:9px;"><a style="font-size:11.5px;font-weight:600;">Photothèque</a><a style="font-size:11.5px;font-weight:600;">Saisie manuelle</a></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">3 · Ma dégustation (verres + prix + lieu)</div></div>
+  <div data-screen-label="M · Ma dégustation" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 18px 4px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Étiquette</button>
+      <span style="margin-left:auto;font-size:11px;color:#9A9081;">Étape 2 / 2</span>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:8px 18px 0;">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span style="width:46px;height:60px;border-radius:4px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div><div class="serif" style="font-size:19px;color:#211E1A;">Domaine Tempier</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#9A9081;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;"></span>Bandol 2021 · Rouge</div></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:16px 0 8px;">Ma note</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;gap:4px;font-size:30px;letter-spacing:2px;color:#7E3B4B;"><span>🍷</span><span>🍷</span><span>🍷</span><span>🍷</span><span style="position:relative;"><span style="opacity:.22;">🍷</span><span style="position:absolute;left:0;top:0;width:50%;overflow:hidden;">🍷</span></span></div>
+        <span class="serif" style="font-size:21px;color:#211E1A;margin-left:4px;">4,5</span>
+      </div>
+      <div style="font-size:10.5px;color:#9A9081;margin-top:3px;">Tap pour un verre, tap long pour un demi</div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:15px 0 7px;">Tags de verdict <span style="font-weight:400;text-transform:none;letter-spacing:0;">(portée Vin)</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:6px 12px;">À racheter</span><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:6px 12px;">Puissant</span><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 12px;">Léger</span><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 12px;">Pour l'été</span><span style="font-size:11.5px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:6px 12px;">+ Nouveau</span></div>
+      <div style="margin-top:13px;padding:11px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">Sur le gigot, exceptionnel. Le garder en tête pour les parents.</div>
+      <div style="display:flex;gap:9px;margin-top:13px;">
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Prix payé</div><div style="display:flex;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><span style="flex:1;padding:11px 13px;font-size:13.5px;color:#211E1A;">46 €</span><div style="display:flex;gap:2px;padding:3px;background:#EFEADF;border-radius:4px;margin-right:5px;"><span style="font-size:10px;font-weight:600;padding:4px 8px;border-radius:3px;background:#fff;color:#211E1A;">Bouteille</span><span style="font-size:10px;font-weight:600;padding:4px 8px;color:#7A736A;">Verre</span></div></div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 5px;">Lieu</div>
+      <div style="display:flex;align-items:center;gap:9px;padding:10px 13px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg><span style="flex:1;font-size:12.5px;color:#211E1A;">Lié à la visite <b>Kuzina · aujourd'hui</b></span><span style="font-size:11px;font-weight:600;color:#2563EB;">Modifier</span></div>
+      <div style="display:flex;gap:6px;margin-top:8px;"><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Maison</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Chez des amis</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Caviste</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Autre</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;"><div><span style="font-size:13px;color:#211E1A;">Envie de le retrouver</span><div style="font-size:10.5px;color:#9A9081;">Apparaîtra dans « À retrouver »</div></div><div style="position:relative;width:46px;height:28px;border-radius:999px;background:#2563EB;"><span style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(33,30,26,.25);"></span></div></div>
+    </div>
+    <div style="padding:12px 18px 26px;"><button style="width:100%;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la dégustation</button></div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">4 · Fiche vin — Analyse</div></div>
+  <div data-screen-label="M · Fiche vin" style="position:relative;width:390px;min-height:1120px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="position:relative;padding:16px 18px 14px;background:#fff;border-bottom:1px solid #E4DDD0;">
+      <div style="display:flex;gap:13px;">
+        <span style="width:62px;height:82px;border-radius:4px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=300&q=80&auto=format&fit=crop') center/cover;box-shadow:0 3px 10px rgba(33,30,26,.2);"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;"><h1 class="serif" style="margin:0;font-size:22px;font-weight:500;color:#211E1A;">Domaine Tempier</h1><button style="display:grid;place-items:center;width:34px;height:34px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg></button></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#9A9081;margin-top:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#7E3B4B;"></span>Bandol 2021 · Rouge · Mourvèdre, Grenache</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:7px;"><span style="font-size:13px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span><span style="font-size:12px;font-weight:600;color:#211E1A;">4,3</span><span style="font-size:11px;color:#9A9081;">· 3 dégustations</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:14px 18px;">
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 12px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span style="font-size:10.5px;color:#7A736A;">Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes.</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Profil</span><a style="font-size:11px;font-weight:600;">Corriger</a></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;align-items:center;gap:10px;"><span style="width:52px;font-size:11.5px;color:#7A736A;">Corps</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:85%;height:6px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10.5px;color:#9A9081;width:48px;text-align:right;">Charpenté</span></div>
+        <div style="display:flex;align-items:center;gap:10px;"><span style="width:52px;font-size:11.5px;color:#7A736A;">Tanins</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:75%;height:6px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10.5px;color:#9A9081;width:48px;text-align:right;">Présents</span></div>
+        <div style="display:flex;align-items:center;gap:10px;"><span style="width:52px;font-size:11.5px;color:#7A736A;">Acidité</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:55%;height:6px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10.5px;color:#9A9081;width:48px;text-align:right;">Équilibrée</span></div>
+        <div style="display:flex;align-items:center;gap:10px;"><span style="width:52px;font-size:11.5px;color:#7A736A;">Sucre</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:12%;height:6px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10.5px;color:#9A9081;width:48px;text-align:right;">Sec</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:8px;border-top:1px solid #F0EBE0;"><span style="font-size:10.5px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:3px 9px;">Fruits noirs</span><span style="font-size:10.5px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:3px 9px;">Garrigue</span><span style="font-size:10.5px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:3px 9px;">Poivre</span><span style="font-size:10.5px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:3px 9px;">Cuir</span></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Accords</span><a style="font-size:11px;font-weight:600;">Corriger</a></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 15px;">
+        <div style="display:flex;flex-wrap:wrap;gap:5px;"><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Gigot d'agneau</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Daube provençale</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Fromages affinés</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #F0EBE0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="flex:1;font-size:11.5px;color:#211E1A;">Bu chez <a style="font-weight:600;">Kuzina</a> et <a style="font-weight:600;">Chez Marius</a> — cuisine provençale accordée</span></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:14px;">
+        <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Service</div><div style="font-size:12.5px;color:#211E1A;margin-top:5px;">16–18 °C · carafer 1 h</div><div style="font-size:11px;color:#7A736A;margin-top:2px;">Garde : 10 ans et plus</div></div>
+        <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;"><div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Prix</div><div style="font-size:12.5px;color:#211E1A;margin-top:5px;">Payé <b>46 €</b> au restaurant</div><div style="font-size:11px;color:#7A736A;margin-top:2px;">Caviste estimé : <b style="color:#5B7F5B;">28 €</b></div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Le domaine &amp; l'appellation</span><a style="font-size:11px;font-weight:600;">Corriger</a></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 15px;font-size:12.5px;line-height:1.65;color:#211E1A;">Référence historique de Bandol, le Domaine Tempier cultive le mourvèdre en restanques au-dessus de la baie. L'appellation produit des rouges de garde puissants et épicés, parmi les plus réputés de Provence.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Mes dégustations · 3</span><span style="font-size:10px;color:#b3a896;">Saisies par moi</span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Aujourd'hui · <a style="font-weight:600;">Kuzina</a></div><div style="font-size:11px;color:#9A9081;margin-top:1px;">« sur le gigot, exceptionnel » · 46 €</div></div><span style="font-size:11.5px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">12 mai · <a style="font-weight:600;">Osteria Da Nino</a></div><div style="font-size:11px;color:#9A9081;margin-top:1px;">48 €</div></div><span style="font-size:11.5px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;"><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">24 déc. 2025 · Maison</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">« Noël » · 32 € caviste</div></div><span style="font-size:11.5px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">5 · Cave — Tous (6ᵉ sous-onglet Restos)</div></div>
+  <div data-screen-label="M · Cave liste" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;margin-left:-148px;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span><span style="font-size:12px;font-weight:600;color:#fff;background:#7E3B4B;border-radius:999px;padding:7px 13px;white-space:nowrap;">Cave</span></div>
+    <div style="display:flex;gap:9px;padding:0 18px 10px;">
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Domaine, appellation, cépage…</span></div>
+      <button style="display:flex;align-items:center;gap:6px;padding:10px 13px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:3px;color:#7E3B4B;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7E3B4B" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Vin</button>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 10px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous · 24</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Coups de cœur</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">À retrouver · 3</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Carte</span></div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;overflow:hidden;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:5px 11px;white-space:nowrap;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span>Rouge ✓</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Région ▾</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Cépage ▾</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Note ▾</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Prix ▾</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:40px;height:54px;border-radius:3px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span class="serif" style="font-size:16px;color:#211E1A;">Domaine Tempier</span><span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9A9081;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;flex-shrink:0;"></span>Bandol 2021 · bu 3 fois · dernier : Kuzina</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:40px;height:54px;border-radius:3px;flex-shrink:0;background:#d8d2b8 url('https://images.unsplash.com/photo-1566754436893-98224ee05be2?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span class="serif" style="font-size:16px;color:#211E1A;">Dauvissat · Chablis</span><span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9A9081;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;flex-shrink:0;"></span>2020 · bu 1 fois · Kuzina <span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 6px;">À retrouver</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:40px;height:54px;border-radius:3px;flex-shrink:0;background:#e8c9c4 url('https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span class="serif" style="font-size:16px;color:#211E1A;">Clos Cibonne · Tibouren</span><span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷<span style="opacity:.25;">🍷🍷</span></span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9A9081;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#F2B8A0;flex-shrink:0;"></span>Côtes de Provence 2023 · bu 2 fois · Maison</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px 0;">
+        <span style="width:40px;height:54px;border-radius:3px;flex-shrink:0;background:#3a3a2f url('https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><span class="serif" style="font-size:16px;color:#211E1A;">Selosse · Initial</span><span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9A9081;margin-top:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#EFE3B0;border:1px solid #D7C97A;flex-shrink:0;"></span>Champagne · bu 1 fois · Le Quatrième Mur</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+
+<div style="position:absolute;left:80px;top:1220px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">6 · Cave — Carte des lieux</div></div>
+  <div data-screen-label="M · Cave carte" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;"><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Tous · 24</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Coups de cœur</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">À retrouver</span><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Carte</span></div>
+    <div style="flex:1;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:#E8E4DA;">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 39%,transparent 39%),linear-gradient(0deg,transparent 0 62%,#DAD4C6 62% 63%,transparent 63%);"></div>
+        <div style="position:absolute;left:-10%;top:44%;width:130%;height:34px;background:#BFD6E8;transform:rotate(-6deg);opacity:.65;"></div>
+      </div>
+      <div style="position:absolute;left:14px;top:12px;display:flex;gap:6px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7E3B4B;background:#fff;border:1px solid #EBD8D5;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;"></span>Rouge ✓</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;">Couleur ▾</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;">Note ▾</span></div>
+      <div style="position:absolute;left:32%;top:34%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#7E3B4B;border:3px solid #fff;box-shadow:0 4px 12px rgba(33,30,26,.28);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:18px;height:18px;border-radius:999px;background:#211E1A;color:#fff;font-size:9.5px;font-weight:700;border:2px solid #fff;">5</span></span><div style="text-align:center;font-size:9.5px;font-weight:600;color:#211E1A;margin-top:3px;">Kuzina</div></div>
+      <div style="position:absolute;left:62%;top:26%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#7E3B4B;border:3px solid #fff;box-shadow:0 3px 9px rgba(33,30,26,.25);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:#211E1A;color:#fff;font-size:9px;font-weight:700;border:2px solid #fff;">2</span></span><div style="text-align:center;font-size:9.5px;font-weight:600;color:#211E1A;margin-top:3px;">Da Nino</div></div>
+      <div style="position:absolute;left:48%;top:58%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#9A9081;border:3px solid #fff;box-shadow:0 3px 9px rgba(33,30,26,.25);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:#211E1A;color:#fff;font-size:9px;font-weight:700;border:2px solid #fff;">4</span></span><div style="text-align:center;font-size:9.5px;font-weight:600;color:#211E1A;margin-top:3px;">Maison</div></div>
+      <div style="position:absolute;left:14px;right:14px;bottom:14px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 30px rgba(33,30,26,.22);overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div class="serif" style="font-size:16px;color:#211E1A;">Kuzina</div><div style="font-size:11px;color:#9A9081;">5 dégustations · note moyenne 4,4</div></div><a style="font-size:11.5px;font-weight:600;">Fiche resto →</a></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid #F7F3EA;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span><span style="flex:1;font-size:12px;color:#211E1A;">Domaine Tempier · Bandol 2021</span><span style="font-size:10.5px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:8px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;"></span><span style="flex:1;font-size:12px;color:#211E1A;">Dauvissat · Chablis 2020</span><span style="font-size:10.5px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:1220px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">7 · Cave — Statistiques</div></div>
+  <div data-screen-label="M · Cave stats" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:6px 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Cave</button>
+      <span style="font-size:15px;font-weight:600;color:#211E1A;">Ma cave en chiffres</span>
+      <span style="width:52px;"></span>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:8px 18px;">
+      <div style="display:flex;gap:9px;">
+        <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 14px;"><div class="serif" style="font-size:26px;color:#211E1A;">24</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">vins</div></div>
+        <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 14px;"><div class="serif" style="font-size:26px;color:#211E1A;">41</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">dégustations</div></div>
+        <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 14px;"><div class="serif" style="font-size:26px;color:#211E1A;">3,8</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">note moyenne</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;margin-top:10px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Par couleur</div>
+        <div style="display:flex;height:12px;border-radius:999px;overflow:hidden;margin-top:10px;"><span style="width:52%;background:#7E3B4B;"></span><span style="width:26%;background:#E9DFA8;"></span><span style="width:13%;background:#F2B8A0;"></span><span style="width:9%;background:#C9C39A;"></span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;"></span>Rouge 52 %</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;"><span style="width:8px;height:8px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;"></span>Blanc 26 %</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;"><span style="width:8px;height:8px;border-radius:50%;background:#F2B8A0;"></span>Rosé 13 %</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;"><span style="width:8px;height:8px;border-radius:50%;background:#C9C39A;"></span>Bulles 9 %</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;margin-top:10px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Régions les plus bues</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+          <div style="display:flex;align-items:center;gap:10px;"><span style="width:76px;font-size:11.5px;color:#211E1A;">Provence</span><div style="flex:1;height:8px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:72%;height:8px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:11px;color:#9A9081;width:52px;text-align:right;">11 · <b style="color:#211E1A;">4,1</b></span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="width:76px;font-size:11.5px;color:#211E1A;">Bourgogne</span><div style="flex:1;height:8px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:48%;height:8px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:11px;color:#9A9081;width:52px;text-align:right;">7 · <b style="color:#211E1A;">4,4</b></span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="width:76px;font-size:11.5px;color:#211E1A;">Loire</span><div style="flex:1;height:8px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:30%;height:8px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:11px;color:#9A9081;width:52px;text-align:right;">4 · <b style="color:#211E1A;">3,6</b></span></div>
+          <div style="display:flex;align-items:center;gap:10px;"><span style="width:76px;font-size:11.5px;color:#211E1A;">Rhône</span><div style="flex:1;height:8px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:20%;height:8px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:11px;color:#9A9081;width:52px;text-align:right;">3 · <b style="color:#211E1A;">3,9</b></span></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;margin-top:10px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Cépages préférés</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;"><span style="font-size:11px;font-weight:600;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:5px 11px;">Mourvèdre · 4,3</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Chardonnay · 4,1</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Pinot noir · 4,0</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Chenin · 3,7</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;margin-top:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Dépense au restaurant</span><span style="font-size:10px;color:#b3a896;">vs prix caviste estimé</span></div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px;"><span class="serif" style="font-size:24px;color:#211E1A;">1 240 €</span><span style="font-size:12px;color:#9A9081;">payés · estimé caviste <b style="color:#5B7F5B;">690 €</b></span></div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:56px;margin-top:10px;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:18px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:12px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">avr</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:30px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:22px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">mai</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:22px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:15px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">juin</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:40px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:30px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">juil</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:34px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:26px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">août</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><span style="width:100%;height:14px;background:#EFEADF;border-radius:2px 2px 0 0;"><span style="display:block;width:100%;height:9px;background:#7E3B4B;border-radius:2px 2px 0 0;"></span></span><span style="font-size:8.5px;color:#9A9081;">sept</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:1220px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">8 · Fiche resto — bloc « Vins bus ici » (révision écran 6)</div></div>
+  <div data-screen-label="M · Vins bus ici" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="position:relative;height:180px;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=800&q=80&auto=format&fit=crop') center/cover;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,26,.4),rgba(33,30,26,0) 45%);"></div>
+      <button style="position:absolute;top:14px;left:16px;display:grid;place-items:center;width:38px;height:38px;background:rgba(255,255,255,.92);border:none;border-radius:999px;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:16px 18px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+        <div><h1 class="serif" style="margin:0;font-size:26px;font-weight:500;color:#211E1A;">Kuzina</h1><div style="font-size:12.5px;color:#9A9081;margin-top:3px;">Grec moderne · €€ · Bastide, Bordeaux</div></div>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;padding:6px 12px;">♥ Favori ▾</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Mes visites · 2</span><button style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">✓ J'y suis allé</button></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;"><div><span style="font-size:12.5px;color:#211E1A;font-weight:500;">Aujourd'hui</span><span style="font-size:11px;color:#9A9081;"> · « feta rôtie incroyable »</span></div><span style="font-size:12.5px;font-weight:600;color:#211E1A;">8,2</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px;">
+        <div style="display:flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7E3B4B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Vins bus ici · 5</span></div>
+        <button style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:3px;color:#7E3B4B;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Ajouter un vin</button>
+      </div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F0EBE0;">
+          <span style="width:32px;height:42px;border-radius:3px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Domaine Tempier · Bandol 2021</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">Aujourd'hui · 46 € bouteille</div></div>
+          <span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F0EBE0;">
+          <span style="width:32px;height:42px;border-radius:3px;flex-shrink:0;background:#d8d2b8 url('https://images.unsplash.com/photo-1566754436893-98224ee05be2?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Dauvissat · Chablis 2020</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">Aujourd'hui · 12 € verre</div></div>
+          <span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;">
+          <span style="width:32px;height:42px;border-radius:3px;flex-shrink:0;background:#e8c9c4 url('https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Clos Cibonne · Tibouren 2023</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">14 juin · 9 € verre · <span style="font-style:italic;">dégustation sans visite</span></div></div>
+          <span style="font-size:11px;color:#7E3B4B;">🍷🍷🍷<span style="opacity:.25;">🍷🍷</span></span>
+        </div>
+      </div>
+      <div style="font-size:10.5px;color:#b3a896;margin-top:7px;">« Ajouter un vin » crée une dégustation liée au restaurant, sans obligation de visite.</div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:1220px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">9 · Correction d'analyse + 10 · Recherche</div></div>
+  <div data-screen-label="M · Correction + recherche" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:6px 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Fiche vin</button>
+      <span style="font-size:15px;font-weight:600;color:#211E1A;">Corriger l'analyse</span>
+      <span style="width:64px;"></span>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:8px 18px;">
+      <div style="display:flex;gap:12px;">
+        <span style="width:76px;height:102px;border-radius:5px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=300&q=80&auto=format&fit=crop') center/cover;box-shadow:0 3px 10px rgba(33,30,26,.2);"></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:8px 12px;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Domaine</div><div style="font-size:13px;color:#211E1A;font-weight:500;">Domaine Tempier</div></div>
+          <div style="background:#fff;border:1.5px solid #2563EB;border-radius:5px;padding:8px 12px;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#2563EB;">Millésime — en édition</div><div style="font-size:13px;color:#211E1A;font-weight:500;">2021<span style="display:inline-block;width:1.5px;height:14px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px;">
+        <div style="display:flex;gap:7px;">
+          <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:8px 12px;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Appellation</div><div style="font-size:13px;color:#211E1A;font-weight:500;">Bandol</div></div>
+          <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:8px 12px;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Degré</div><div style="font-size:13px;color:#211E1A;font-weight:500;">14,5 %</div></div>
+        </div>
+        <div style="background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:8px 12px;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Cépages</div><div style="display:flex;gap:5px;margin-top:4px;"><span style="font-size:10.5px;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Mourvèdre ✕</span><span style="font-size:10.5px;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Grenache ✕</span><span style="font-size:10.5px;color:#2563EB;border:1px dashed #A9C2F2;border-radius:999px;padding:3px 9px;">+ Cépage</span></div></div>
+      </div>
+      <button style="width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 0;background:#fff;border:1px solid #2563EB;border-radius:3px;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>Relancer l'analyse avec ces corrections</button>
+      <div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px;"><div style="flex:1;height:1px;background:#E4DDD0;"></div><span style="font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Recherche sans photo</span><div style="flex:1;height:1px;background:#E4DDD0;"></div></div>
+      <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13.5px;color:#211E1A;">Chablis Dauvissat 2020<span style="display:inline-block;width:1.5px;height:15px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-top:none;border-radius:0 0 6px 6px;box-shadow:0 10px 26px rgba(33,30,26,.12);">
+        <div style="padding:8px 13px 3px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#7E3B4B;">Déjà dans ma cave</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 13px;border-bottom:1px solid #F0EBE0;"><span style="width:28px;height:38px;border-radius:3px;background:#d8d2b8 url('https://images.unsplash.com/photo-1566754436893-98224ee05be2?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Dauvissat · Chablis 2020</div><div style="font-size:10.5px;color:#9A9081;">bu 1 fois · Kuzina</div></div><a style="font-size:11px;font-weight:600;">Ouvrir</a></div>
+        <div style="padding:8px 13px 3px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Proposition</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 13px 12px;"><span style="display:grid;place-items:center;width:28px;height:38px;border-radius:3px;background:#F4F1E9;border:1px dashed #C2B7A4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Dauvissat · Chablis 1ᵉʳ cru 2020 ?</div><div style="font-size:10.5px;color:#9A9081;">Fiche générée à confirmer — sans photo</div></div><button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Créer</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:1220px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">11 · États vides + photo illisible</div></div>
+  <div data-screen-label="M · États vides" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px;">
+      <div style="width:92px;height:92px;border-radius:50%;background:#F7ECEA;border:1px solid #EBD8D5;display:grid;place-items:center;margin-bottom:22px;"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#B08087" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg></div>
+      <h2 class="serif" style="margin:0;font-size:22px;font-weight:500;color:#211E1A;">Votre cave est vide</h2>
+      <p style="margin:10px 0 24px;font-size:13.5px;line-height:1.6;color:#7A736A;">Photographiez l'étiquette du prochain vin que vous buvez — Vito s'occupe du reste.</p>
+      <button style="display:flex;align-items:center;gap:8px;background:#7E3B4B;color:#fff;border:none;border-radius:3px;padding:13px 22px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(126,59,75,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="14" r="3.5"/></svg>Photographier une étiquette</button>
+    </div>
+    <div style="margin:0 18px 24px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 26px rgba(33,30,26,.14);padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:9px;"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#FBF3E1;border:1px solid #F0E2C0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Photo peu lisible</div><div style="font-size:11px;color:#9A9081;">Lumière faible — l'étiquette n'a pas pu être lue.</div></div></div>
+      <div style="display:flex;gap:8px;margin-top:11px;"><button style="flex:1;padding:10px 0;background:#7E3B4B;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Réessayer</button><button style="flex:1;padding:10px 0;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;color:#211E1A;font-weight:600;font-family:inherit;cursor:pointer;">Saisir manuellement</button></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:2280px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Vins &amp; Cave · Desktop</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">5+4 · Cave — liste + fiche vin</div></div>
+  <div data-screen-label="D · Cave liste+fiche" style="display:flex;min-height:820px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;display:flex;flex-direction:column;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:9px;padding-top:16px;border-top:1px solid #E4DDD0;"><span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#211E1A;color:#fff;font-size:11px;font-weight:600;">VP</span><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Victor</div></div>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Favoris</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">À tester</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Testés</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Carte</span><span style="font-size:13px;padding:15px 0 13px;color:#7E3B4B;font-weight:600;border-bottom:2px solid #7E3B4B;">Cave</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:390px;flex-shrink:0;border-right:1px solid #E4DDD0;display:flex;flex-direction:column;">
+          <div style="display:flex;gap:6px;padding:14px 18px 8px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous · 24</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Coups de cœur</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">À retrouver · 3</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Carte</span></div>
+          <div style="display:flex;gap:6px;padding:0 18px 10px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:4px 10px;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span>Rouge ✓</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Région ▾</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Cépage ▾</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Note ▾</span></div>
+          <div style="flex:1;overflow:hidden;padding:0 18px;">
+            <div style="display:flex;gap:11px;padding:10px 12px;margin:0 -12px;background:#fff;border-left:2px solid #7E3B4B;border-bottom:1px solid #EDE7DB;">
+              <span style="width:34px;height:46px;border-radius:3px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Domaine Tempier</div><div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#9A9081;margin-top:2px;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span>Bandol 2021 · bu 3 fois</div></div>
+              <span style="font-size:10.5px;color:#7E3B4B;align-self:center;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span>
+            </div>
+            <div style="display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="width:34px;height:46px;border-radius:3px;flex-shrink:0;background:#d8d2b8 url('https://images.unsplash.com/photo-1566754436893-98224ee05be2?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Dauvissat · Chablis</div><div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#9A9081;margin-top:2px;"><span style="width:7px;height:7px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;"></span>2020 · bu 1 fois · à retrouver</div></div>
+              <span style="font-size:10.5px;color:#7E3B4B;align-self:center;">🍷🍷🍷🍷🍷</span>
+            </div>
+            <div style="display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="width:34px;height:46px;border-radius:3px;flex-shrink:0;background:#e8c9c4 url('https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Clos Cibonne · Tibouren</div><div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#9A9081;margin-top:2px;"><span style="width:7px;height:7px;border-radius:50%;background:#F2B8A0;"></span>Provence 2023 · bu 2 fois</div></div>
+              <span style="font-size:10.5px;color:#7E3B4B;align-self:center;">🍷🍷🍷<span style="opacity:.25;">🍷🍷</span></span>
+            </div>
+            <div style="display:flex;gap:11px;padding:10px 0;">
+              <span style="width:34px;height:46px;border-radius:3px;flex-shrink:0;background:#3a3a2f url('https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=200&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Selosse · Initial</div><div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#9A9081;margin-top:2px;"><span style="width:7px;height:7px;border-radius:50%;background:#EFE3B0;border:1px solid #D7C97A;"></span>Champagne · bu 1 fois</div></div>
+              <span style="font-size:10.5px;color:#7E3B4B;align-self:center;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid #E4DDD0;"><span style="font-size:11.5px;color:#9A9081;">24 vins · tri dernière dégustation</span><button style="display:flex;align-items:center;gap:5px;padding:7px 13px;background:#7E3B4B;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Ajouter un vin</button></div>
+        </div>
+        <div style="flex:1;overflow:hidden;background:#fff;padding:20px 26px;">
+          <div style="display:flex;gap:16px;">
+            <span style="width:86px;height:114px;border-radius:5px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=300&q=80&auto=format&fit=crop') center/cover;box-shadow:0 4px 14px rgba(33,30,26,.22);"></span>
+            <div style="flex:1;min-width:0;">
+              <h2 class="serif" style="margin:0;font-size:25px;font-weight:500;color:#211E1A;">Domaine Tempier</h2>
+              <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#9A9081;margin-top:3px;"><span style="width:9px;height:9px;border-radius:50%;background:#7E3B4B;"></span>Bandol 2021 · Rouge · Mourvèdre, Grenache · 14,5 %</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px;"><span style="font-size:14px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span><span style="font-size:13px;font-weight:600;color:#211E1A;">4,3</span><span style="font-size:11.5px;color:#9A9081;">· 3 dégustations</span><span style="font-size:10px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">À retrouver</span></div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:9px;padding:6px 10px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:4px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span style="font-size:10px;color:#7A736A;">Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes.</span></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;">
+            <div style="border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Profil</span><a style="font-size:10.5px;font-weight:600;">Corriger</a></div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:9px;">
+                <div style="display:flex;align-items:center;gap:9px;"><span style="width:44px;font-size:11px;color:#7A736A;">Corps</span><div style="flex:1;height:5px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:85%;height:5px;border-radius:999px;background:#7E3B4B;"></span></div></div>
+                <div style="display:flex;align-items:center;gap:9px;"><span style="width:44px;font-size:11px;color:#7A736A;">Tanins</span><div style="flex:1;height:5px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:75%;height:5px;border-radius:999px;background:#7E3B4B;"></span></div></div>
+                <div style="display:flex;align-items:center;gap:9px;"><span style="width:44px;font-size:11px;color:#7A736A;">Acidité</span><div style="flex:1;height:5px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:55%;height:5px;border-radius:999px;background:#7E3B4B;"></span></div></div>
+                <div style="display:flex;align-items:center;gap:9px;"><span style="width:44px;font-size:11px;color:#7A736A;">Sucre</span><div style="flex:1;height:5px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:12%;height:5px;border-radius:999px;background:#7E3B4B;"></span></div></div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:9px;padding-top:9px;border-top:1px solid #F0EBE0;"><span style="font-size:10px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">Fruits noirs</span><span style="font-size:10px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">Garrigue</span><span style="font-size:10px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">Poivre</span><span style="font-size:10px;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">Cuir</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Service &amp; garde</span><a style="font-size:10.5px;font-weight:600;">Corriger</a></div>
+                <div style="font-size:12px;color:#211E1A;margin-top:7px;">16–18 °C · carafer 1 h · garde 10 ans et plus</div>
+              </div>
+              <div style="border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;">
+                <span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Prix</span>
+                <div style="font-size:12px;color:#211E1A;margin-top:7px;">Payé <b>46 €</b> au restaurant · caviste estimé <b style="color:#5B7F5B;">28 €</b></div>
+              </div>
+              <div style="border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Accords</span><a style="font-size:10.5px;font-weight:600;">Corriger</a></div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;"><span style="font-size:10px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Gigot d'agneau</span><span style="font-size:10px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Daube</span><span style="font-size:10px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Fromages affinés</span></div>
+                <div style="font-size:10.5px;color:#211E1A;margin-top:8px;">Bu chez <a style="font-weight:600;">Kuzina</a> · <a style="font-weight:600;">Chez Marius</a></div>
+              </div>
+            </div>
+          </div>
+          <div style="border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;margin-top:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Le domaine &amp; l'appellation</span><a style="font-size:10.5px;font-weight:600;">Corriger</a></div>
+            <div style="font-size:12px;line-height:1.6;color:#211E1A;margin-top:7px;">Référence historique de Bandol, le Domaine Tempier cultive le mourvèdre en restanques au-dessus de la baie. L'appellation produit des rouges de garde puissants et épicés, parmi les plus réputés de Provence.</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Mes dégustations · 3</span><span style="font-size:9.5px;color:#b3a896;">Saisies par moi</span></div>
+          <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><span style="font-size:12px;font-weight:600;color:#211E1A;">Aujourd'hui · <a style="font-weight:600;">Kuzina</a></span><span style="font-size:10.5px;color:#9A9081;"> · « sur le gigot, exceptionnel » · 46 €</span></div><span style="font-size:10.5px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><span style="font-size:12px;font-weight:600;color:#211E1A;">12 mai · <a style="font-weight:600;">Osteria Da Nino</a></span><span style="font-size:10.5px;color:#9A9081;"> · 48 €</span></div><span style="font-size:10.5px;color:#7E3B4B;">🍷🍷🍷🍷🍷</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;"><div style="flex:1;"><span style="font-size:12px;font-weight:600;color:#211E1A;">24 déc. 2025 · Maison</span><span style="font-size:10.5px;color:#9A9081;"> · « Noël » · 32 € caviste</span></div><span style="font-size:10.5px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:2280px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2+3 · Capture (drag &amp; drop) + dégustation</div></div>
+  <div data-screen-label="D · Capture + dégustation" style="display:flex;min-height:820px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;padding:24px 30px;min-width:0;">
+      <h2 class="serif" style="margin:0;font-size:23px;font-weight:500;color:#211E1A;">Ajouter un vin</h2>
+      <div style="font-size:12px;color:#9A9081;margin-top:3px;">Lié à la visite <b style="color:#211E1A;">Kuzina · aujourd'hui</b> · <a style="font-weight:600;">changer</a></div>
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:22px;margin-top:18px;">
+        <div>
+          <div style="position:relative;height:300px;border:2px dashed #C2B7A4;border-radius:8px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;">
+            <span style="width:120px;height:160px;border-radius:5px;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=300&q=80&auto=format&fit=crop') center/cover;box-shadow:0 6px 18px rgba(33,30,26,.25);"></span>
+            <span style="font-size:11.5px;color:#9A9081;">Étiquette importée — <a style="font-weight:600;">remplacer</a></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span style="flex:1;font-size:11px;color:#211E1A;">Déjà bu <b>2 fois</b> — c'est le même vin ?</span><button style="padding:5px 10px;background:#2563EB;color:#fff;border:none;border-radius:999px;font-size:10px;font-weight:600;font-family:inherit;cursor:pointer;">Oui, lier</button></div>
+        </div>
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:9px 12px;"><div style="flex:1;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Domaine</div><div style="font-size:13px;color:#211E1A;font-weight:500;">Domaine Tempier</div></div><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Sûr</span></div>
+            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:9px 12px;"><div style="flex:1;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Appellation</div><div style="font-size:13px;color:#211E1A;font-weight:500;">Bandol</div></div><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Sûr</span></div>
+            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #C28A1B;border-radius:5px;padding:9px 12px;"><div style="flex:1;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Millésime</div><div style="font-size:13px;color:#211E1A;font-weight:500;">2021 <span style="font-size:10.5px;color:#C28A1B;">ou 2024 ?</span></div></div><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 7px;">À vérifier</span></div>
+            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E4DDD0;border-radius:5px;padding:9px 12px;"><div style="flex:1;"><div style="font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Cépages</div><div style="font-size:12.5px;color:#211E1A;font-weight:500;">Mourvèdre, Grenache</div></div><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 7px;">Probable</span></div>
+          </div>
+          <div style="border-top:1px solid #E4DDD0;margin-top:16px;padding-top:14px;">
+            <div style="display:flex;align-items:center;gap:14px;"><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Ma note</span><span style="font-size:24px;letter-spacing:2px;color:#7E3B4B;">🍷🍷🍷🍷<span style="position:relative;display:inline-block;"><span style="opacity:.22;">🍷</span><span style="position:absolute;left:0;top:0;width:50%;overflow:hidden;">🍷</span></span></span><span class="serif" style="font-size:19px;color:#211E1A;">4,5</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">À racheter</span><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Puissant</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Léger</span><span style="font-size:11px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:5px 11px;">+ Nouveau (portée Vin)</span></div>
+            <div style="margin-top:10px;padding:10px 12px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:12.5px;color:#211E1A;">Sur le gigot, exceptionnel. Le garder en tête pour les parents.</div>
+            <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+              <div style="display:flex;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><span style="padding:9px 12px;font-size:12.5px;color:#211E1A;">46 €</span><div style="display:flex;gap:2px;padding:3px;background:#EFEADF;border-radius:4px;margin-right:4px;"><span style="font-size:9.5px;font-weight:600;padding:4px 8px;border-radius:3px;background:#fff;color:#211E1A;">Bouteille</span><span style="font-size:9.5px;font-weight:600;padding:4px 8px;color:#7A736A;">Verre</span></div></div>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#211E1A;"><span style="position:relative;display:inline-block;width:38px;height:22px;border-radius:999px;background:#2563EB;"><span style="position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;"></span></span>Envie de le retrouver</label>
+              <button style="margin-left:auto;padding:11px 22px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la dégustation</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:3220px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">6+7 · Cave — carte des lieux + statistiques</div></div>
+  <div data-screen-label="D · Carte + stats" style="display:flex;min-height:760px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;align-items:center;"><span style="font-size:13px;padding:15px 0 13px;color:#7E3B4B;font-weight:600;border-bottom:2px solid #7E3B4B;">Cave · Carte</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Coups de cœur</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">À retrouver</span><a style="margin-left:auto;font-size:12px;font-weight:600;">Ma cave en chiffres →</a></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="flex:1.2;position:relative;background:#E8E4DA;overflow:hidden;border-right:1px solid #E4DDD0;">
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 38.6%,transparent 38.6%),linear-gradient(0deg,transparent 0 58%,#DAD4C6 58% 58.6%,transparent 58.6%);"></div>
+          <div style="position:absolute;left:-10%;top:48%;width:130%;height:40px;background:#BFD6E8;transform:rotate(-5deg);opacity:.6;"></div>
+          <div style="position:absolute;left:16px;top:14px;display:flex;gap:6px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7E3B4B;background:#fff;border:1px solid #EBD8D5;border-radius:999px;padding:6px 12px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#7E3B4B;"></span>Rouge ✓</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;">Couleur ▾</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;">Note ▾</span></div>
+          <div style="position:absolute;left:30%;top:36%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#7E3B4B;border:3px solid #fff;box-shadow:0 0 0 4px rgba(126,59,75,.22),0 4px 12px rgba(33,30,26,.28);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:19px;height:19px;border-radius:999px;background:#211E1A;color:#fff;font-size:10px;font-weight:700;border:2px solid #fff;">5</span></span><div style="text-align:center;font-size:10px;font-weight:600;color:#211E1A;margin-top:4px;">Kuzina</div></div>
+          <div style="position:absolute;left:58%;top:26%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#7E3B4B;border:3px solid #fff;box-shadow:0 3px 9px rgba(33,30,26,.25);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:#211E1A;color:#fff;font-size:9px;font-weight:700;border:2px solid #fff;">2</span></span></div>
+          <div style="position:absolute;left:44%;top:62%;transform:translate(-50%,-50%);"><span style="position:relative;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#9A9081;border:3px solid #fff;box-shadow:0 3px 9px rgba(33,30,26,.25);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:17px;height:17px;border-radius:999px;background:#211E1A;color:#fff;font-size:9px;font-weight:700;border:2px solid #fff;">4</span></span><div style="text-align:center;font-size:10px;font-weight:600;color:#211E1A;margin-top:4px;">Maison</div></div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 30px rgba(33,30,26,.22);overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><span class="serif" style="font-size:15px;color:#211E1A;">Kuzina</span><span style="font-size:10.5px;color:#9A9081;"> · 5 dégustations · moyenne 4,4</span></div><a style="font-size:11px;font-weight:600;">Fiche resto →</a></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:7px 14px;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span><span style="flex:1;font-size:11.5px;color:#211E1A;">Domaine Tempier · Bandol 2021</span><span style="font-size:10px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+          </div>
+        </div>
+        <div style="width:420px;flex-shrink:0;padding:16px 20px;overflow:hidden;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Ma cave en chiffres</div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:10px 12px;"><div class="serif" style="font-size:21px;color:#211E1A;">24</div><div style="font-size:10px;color:#9A9081;">vins</div></div>
+            <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:10px 12px;"><div class="serif" style="font-size:21px;color:#211E1A;">41</div><div style="font-size:10px;color:#9A9081;">dégustations</div></div>
+            <div style="flex:1;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:10px 12px;"><div class="serif" style="font-size:21px;color:#211E1A;">3,8</div><div style="font-size:10px;color:#9A9081;">note moy.</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:9px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Par couleur</div>
+            <div style="display:flex;height:10px;border-radius:999px;overflow:hidden;margin-top:8px;"><span style="width:52%;background:#7E3B4B;"></span><span style="width:26%;background:#E9DFA8;"></span><span style="width:13%;background:#F2B8A0;"></span><span style="width:9%;background:#C9C39A;"></span></div>
+            <div style="display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#7A736A;"><span style="width:7px;height:7px;border-radius:50%;background:#7E3B4B;"></span>Rouge 52 %</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#7A736A;"><span style="width:7px;height:7px;border-radius:50%;background:#E9DFA8;border:1px solid #D7C97A;"></span>Blanc 26 %</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#7A736A;"><span style="width:7px;height:7px;border-radius:50%;background:#F2B8A0;"></span>Rosé 13 %</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#7A736A;"><span style="width:7px;height:7px;border-radius:50%;background:#C9C39A;"></span>Bulles 9 %</span></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:9px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Régions · note moyenne</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="width:70px;font-size:11px;color:#211E1A;">Provence</span><div style="flex:1;height:7px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:72%;height:7px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10px;color:#9A9081;width:46px;text-align:right;">11 · <b style="color:#211E1A;">4,1</b></span></div>
+              <div style="display:flex;align-items:center;gap:9px;"><span style="width:70px;font-size:11px;color:#211E1A;">Bourgogne</span><div style="flex:1;height:7px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:48%;height:7px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10px;color:#9A9081;width:46px;text-align:right;">7 · <b style="color:#211E1A;">4,4</b></span></div>
+              <div style="display:flex;align-items:center;gap:9px;"><span style="width:70px;font-size:11px;color:#211E1A;">Loire</span><div style="flex:1;height:7px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:30%;height:7px;border-radius:999px;background:#7E3B4B;"></span></div><span style="font-size:10px;color:#9A9081;width:46px;text-align:right;">4 · <b style="color:#211E1A;">3,6</b></span></div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:9px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Dépense resto</span><span style="font-size:9px;color:#b3a896;">vs caviste estimé</span></div>
+            <div style="display:flex;align-items:baseline;gap:7px;margin-top:6px;"><span class="serif" style="font-size:19px;color:#211E1A;">1 240 €</span><span style="font-size:11px;color:#9A9081;">payés · estimé <b style="color:#5B7F5B;">690 €</b></span></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:9px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Cépages préférés</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="font-size:10px;font-weight:600;color:#7E3B4B;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:4px 9px;">Mourvèdre · 4,3</span><span style="font-size:10px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 9px;">Chardonnay · 4,1</span><span style="font-size:10px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 9px;">Pinot noir · 4,0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:3220px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">1+8+9+11 · Visite + vins · fiche resto · correction · vide</div></div>
+  <div data-screen-label="D · Variantes + états" style="display:flex;min-height:760px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;min-width:0;">
+      <div style="flex:1;padding:20px 24px;border-right:1px solid #E4DDD0;min-width:0;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Modale visite — section Vins (révision écran 8)</div>
+        <div style="margin-top:10px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 14px 34px rgba(33,30,26,.12);padding:16px 18px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:17px;color:#211E1A;">J'y suis allé — Kuzina</span><span style="font-size:11px;color:#2563EB;font-weight:600;">Aujourd'hui ▾</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;"><span style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Note</span><div style="flex:1;height:5px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:82%;height:5px;border-radius:999px;background:#2563EB;"></span></div><span class="serif" style="font-size:17px;color:#211E1A;">8,2</span></div>
+          <div style="margin-top:11px;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#FBF9F3;"><div style="display:flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7E3B4B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="font-size:12px;font-weight:600;color:#211E1A;">Vins</span><span style="font-size:10px;color:#9A9081;">2 ajoutés</span></div></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 12px;border-top:1px solid #F0EBE0;"><span style="width:26px;height:34px;border-radius:3px;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span><span style="flex:1;font-size:11.5px;font-weight:600;color:#211E1A;">Domaine Tempier · Bandol 2021</span><span style="font-size:10px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+            <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 0;background:#fff;border:none;border-top:1px dashed #E4DDD0;color:#2563EB;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">+ Ajouter un vin</button>
+          </div>
+          <button style="width:100%;margin-top:11px;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la visite</button>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:18px 0 8px;">Fiche resto — bloc « Vins bus ici » (révision écran 6)</div>
+        <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #F0EBE0;"><div style="display:flex;align-items:center;gap:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7E3B4B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Vins bus ici · 5</span></div><button style="padding:6px 11px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:3px;color:#7E3B4B;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Ajouter un vin</button></div>
+          <div style="display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid #F7F3EA;"><span style="width:26px;height:34px;border-radius:3px;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><span style="font-size:11.5px;font-weight:600;color:#211E1A;">Domaine Tempier · Bandol 2021</span><span style="font-size:10px;color:#9A9081;"> · aujourd'hui · 46 €</span></div><span style="font-size:10px;color:#7E3B4B;">🍷🍷🍷🍷<span style="opacity:.25;">🍷</span></span></div>
+          <div style="display:flex;align-items:center;gap:9px;padding:8px 14px;"><span style="width:26px;height:34px;border-radius:3px;background:#e8c9c4 url('https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><span style="font-size:11.5px;font-weight:600;color:#211E1A;">Clos Cibonne · Tibouren 2023</span><span style="font-size:10px;color:#9A9081;"> · 14 juin · <i>sans visite</i></span></div><span style="font-size:10px;color:#7E3B4B;">🍷🍷🍷<span style="opacity:.25;">🍷🍷</span></span></div>
+        </div>
+      </div>
+      <div style="width:430px;flex-shrink:0;padding:20px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Correction d'analyse (écran 9)</div>
+        <div style="margin-top:10px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;padding:14px 16px;display:flex;gap:12px;">
+          <span style="width:64px;height:86px;border-radius:4px;flex-shrink:0;background:#5c3a3f url('https://images.unsplash.com/photo-1586370434639-0fe43b2d32e6?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;padding:6px 10px;"><div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Domaine</div><div style="font-size:12px;color:#211E1A;">Domaine Tempier</div></div>
+            <div style="background:#FBF9F3;border:1.5px solid #2563EB;border-radius:4px;padding:6px 10px;"><div style="font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#2563EB;">Millésime — édition</div><div style="font-size:12px;color:#211E1A;">2021</div></div>
+            <button style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0;background:#fff;border:1px solid #2563EB;border-radius:3px;color:#2563EB;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">↻ Relancer l'analyse</button>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:16px 0 8px;">États vides (écran 11)</div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 24px;border:1px dashed #D8CFBE;border-radius:8px;">
+          <span style="display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#F7ECEA;border:1px solid #EBD8D5;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B08087" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 8a3.5 3.5 0 0 1-3 3.4V20h3v2H9v-2h3v-6.6A3.5 3.5 0 0 1 9 10L8 2Z"/></svg></span>
+          <div class="serif" style="font-size:17px;color:#211E1A;margin-top:10px;">Votre cave est vide</div>
+          <div style="font-size:11px;color:#7A736A;margin-top:4px;">Photographiez l'étiquette du prochain vin que vous buvez.</div>
+          <button style="margin-top:11px;padding:10px 18px;background:#7E3B4B;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">Photographier une étiquette</button>
+        </div>
+        <div style="margin-top:12px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#FBF3E1;border:1px solid #F0E2C0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Photo peu lisible</div><div style="font-size:10.5px;color:#9A9081;">Lumière faible — réessayer ou saisir manuellement.</div></div><button style="padding:6px 12px;background:#7E3B4B;color:#fff;border:none;border-radius:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Réessayer</button></div>
+        </div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:16px 0 8px;">Admin tags — 4ᵉ portée</div>
+        <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;padding:10px 14px;">
+          <div style="display:flex;gap:6px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Communs</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Restaurant</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Hôtel</span><span style="font-size:10.5px;font-weight:600;color:#fff;background:#7E3B4B;border-radius:999px;padding:4px 10px;">Vin</span></div>
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 0 3px;"><span style="width:12px;height:12px;border-radius:4px;background:#7E3B4B;"></span><span style="flex:1;font-size:12px;font-weight:500;color:#211E1A;">À racheter</span><span style="font-size:10px;color:#9A9081;">Vin · 3 vins</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

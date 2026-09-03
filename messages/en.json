@@ -59,7 +59,40 @@
     "eyebrow": "The cellar",
     "compte": "{n} wines",
     "fiche": "Details",
-    "mesDegustations": "My tastings"
+    "mesDegustations": "My tastings",
+    "etiquette": {
+      "titre": "Add a wine",
+      "ajouter": "Photograph a label",
+      "cadrer": "Frame the label — Vito reads the estate, appellation and vintage.",
+      "photographier": "Take a photo",
+      "phototheque": "Choose from library",
+      "sansPhotoPlaceholder": "Or describe the wine — “Chablis Dauvissat 2020”",
+      "chercher": "Search",
+      "lectureEnCours": "Reading the label…",
+      "verifiez": "Check the fields: everything is editable.",
+      "illisibleTitre": "Label hard to read",
+      "illisibleTexte": "The label could not be read — try again or fill the fields in by hand.",
+      "reessayer": "Try again",
+      "ouSaisir": "or fill the fields below",
+      "erreurLecture": "Reading unavailable right now.",
+      "fichierInvalide": "Invalid image (JPEG, PNG or WebP, 10 MB max).",
+      "dejaBu": "{n, plural, one {You have had this wine once} other {You have had this wine # times}}",
+      "dernierLieu": "last time: {lieu}",
+      "domaine": "Estate",
+      "cuvee": "Cuvée",
+      "appellation": "Appellation",
+      "millesime": "Vintage",
+      "degre": "ABV",
+      "couleur": "Colour",
+      "cepages": "Grapes",
+      "continuer": "Save wine",
+      "confiance": {
+        "sur": "Certain",
+        "probable": "Likely",
+        "a_verifier": "To check"
+      },
+      "genere": "Analysis generated automatically from the label. Please check important details."
+    }
   },
   "gouts": {
     "title": "My tastes",
@@ -205,7 +238,8 @@
         "tous": "All",
         "common": "Shared",
         "restaurant": "Restaurant",
-        "hotel": "Hotel"
+        "hotel": "Hotel",
+        "vin": "Wine"
       },
       "usages": "{n, plural, =0 {no places} one {# place} other {# places}}",
       "systeme": "system",

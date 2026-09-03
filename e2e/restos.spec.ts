@@ -92,23 +92,24 @@ test("appliquer un tag d'ambiance sur un resto et vérifier la persistance", asy
   const firstTagLabel = tagPicker.locator("label").first();
   const firstCheckbox = firstTagLabel.locator("input[type='checkbox']");
 
+  // Signal serveur déterministe plutôt que le message « Tags enregistrés » (state
+  // React éphémère) : setTags revalide /restos ET /hotels, et en dev la
+  // revalidation d'une route pas encore compilée peut dépasser 15 s — l'attente
+  // du POST ne dépend pas de ce délai d'affichage.
+  const tagsDone = () =>
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400, { timeout: 60_000 });
+
   // Décocher si déjà coché (idempotence : on part d'un état décoché, puis on coche)
   const isChecked = await firstCheckbox.isChecked();
   if (isChecked) {
     await firstCheckbox.uncheck();
-    await tagPicker.getByRole("button").click();
-    // timeout élargi : sous la charge de la suite complète, l'action setTags peut
-  // dépasser les 5 s par défaut (flake observé run e2e-rc2) — même recette que result-added.
-  await expect(page.getByTestId("tags-saved")).toBeVisible({ timeout: 15_000 });
+    await Promise.all([tagsDone(), tagPicker.getByRole("button").click()]);
     await page.reload();
     await expect(page.getByTestId("tag-picker")).toBeVisible();
   }
 
   await page.getByTestId("tag-picker").locator("label").first().locator("input[type='checkbox']").check();
-  await page.getByTestId("tag-picker").getByRole("button").click();
-  // timeout élargi : sous la charge de la suite complète, l'action setTags peut
-  // dépasser les 5 s par défaut (flake observé run e2e-rc2) — même recette que result-added.
-  await expect(page.getByTestId("tags-saved")).toBeVisible({ timeout: 15_000 });
+  await Promise.all([tagsDone(), page.getByTestId("tag-picker").getByRole("button").click()]);
 
   await page.reload();
   const tagPickerReloaded = page.getByTestId("tag-picker");

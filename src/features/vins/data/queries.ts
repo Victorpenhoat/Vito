@@ -1,4 +1,5 @@
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
+import { cleDedup } from "../domain/etiquette";
 import { filtersToQuery } from "../domain/filtersToQuery";
 import type { VinFilters } from "../domain/schemas";
 import type { Enums } from "@/types/database.types";
@@ -90,4 +91,32 @@ export async function getVinDetail(id: string) {
   if (vinRes.error) throw vinRes.error;
   if (degRes.error) throw degRes.error;
   return { vin: vinRes.data, degustations: degRes.data ?? [] };
+}
+
+/**
+ * Vins déjà en cave, avec leur clé de dédoublonnage, leur nombre de dégustations
+ * et le dernier lieu — alimente « Vous avez déjà bu ce vin N fois » à la capture.
+ */
+export async function getVinsConnus(): Promise<
+  { id: string; cle: string; nb: number; dernier: string | null }[]
+> {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("vins")
+    .select("id, nom, domaine, millesime, degustations(deguste_le, lieu_nom, etablissement:etablissements(nom))");
+  if (error) throw error;
+  return (data ?? []).map((v) => {
+    const degs = Array.isArray(v.degustations) ? v.degustations : [];
+    const trie = [...degs].sort((a, b) => (b.deguste_le ?? "").localeCompare(a.deguste_le ?? ""));
+    const last = trie[0];
+    const etab = last ? (Array.isArray(last.etablissement) ? last.etablissement[0] : last.etablissement) : null;
+    return {
+      id: v.id,
+      cle: cleDedup(v.nom, v.domaine, v.millesime),
+      nb: degs.length,
+      dernier: etab?.nom ?? last?.lieu_nom ?? null,
+    };
+  });
 }

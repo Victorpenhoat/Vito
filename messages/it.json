@@ -59,7 +59,40 @@
     "eyebrow": "La cantina",
     "compte": "{n} vini",
     "fiche": "Scheda",
-    "mesDegustations": "Le mie degustazioni"
+    "mesDegustations": "Le mie degustazioni",
+    "etiquette": {
+      "titre": "Aggiungi un vino",
+      "ajouter": "Fotografa un'etichetta",
+      "cadrer": "Inquadra l'etichetta — Vito legge la cantina, la denominazione e l'annata.",
+      "photographier": "Scatta una foto",
+      "phototheque": "Scegli dalla galleria",
+      "sansPhotoPlaceholder": "Oppure descrivi il vino — «Chablis Dauvissat 2020»",
+      "chercher": "Cerca",
+      "lectureEnCours": "Lettura dell'etichetta…",
+      "verifiez": "Controlla i campi: tutto è modificabile.",
+      "illisibleTitre": "Foto poco leggibile",
+      "illisibleTexte": "Non è stato possibile leggere l'etichetta — riprova o inserisci i campi a mano.",
+      "reessayer": "Riprova",
+      "ouSaisir": "oppure compila i campi qui sotto",
+      "erreurLecture": "Lettura non disponibile al momento.",
+      "fichierInvalide": "Immagine non valida (JPEG, PNG o WebP, massimo 10 MB).",
+      "dejaBu": "{n, plural, one {Hai già bevuto questo vino una volta} other {Hai già bevuto questo vino # volte}}",
+      "dernierLieu": "l'ultima volta: {lieu}",
+      "domaine": "Cantina",
+      "cuvee": "Cuvée",
+      "appellation": "Denominazione",
+      "millesime": "Annata",
+      "degre": "Gradazione",
+      "couleur": "Colore",
+      "cepages": "Vitigni",
+      "continuer": "Salva il vino",
+      "confiance": {
+        "sur": "Sicuro",
+        "probable": "Probabile",
+        "a_verifier": "Da verificare"
+      },
+      "genere": "Analisi generata automaticamente dall'etichetta. Verifica le informazioni importanti."
+    }
   },
   "gouts": {
     "title": "I miei gusti",
@@ -205,7 +238,8 @@
         "tous": "Tutti",
         "common": "Comune",
         "restaurant": "Ristorante",
-        "hotel": "Hotel"
+        "hotel": "Hotel",
+        "vin": "Vino"
       },
       "usages": "{n, plural, =0 {nessun indirizzo} one {# indirizzo} other {# indirizzi}}",
       "systeme": "sistema",

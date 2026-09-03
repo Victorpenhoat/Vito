@@ -98,9 +98,13 @@ insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, 
 values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111',
   'Château Démo', 'Domaine de Démo', 2019, 'Bordeaux', 'rouge', '{"merlot","cabernet sauvignon"}');
 
-insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, commentaire)
-values ('11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
-  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', current_date, 4, 45.00, 'Très bon, à recommander');
+-- Vins & Cave : note en verres (demi-crans), lieu, unité de prix, « à retrouver ».
+insert into public.degustations (id, user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, prix_unite, lieu_type, commentaire, a_racheter)
+values ('cafe0001-0000-4000-8000-000000000001', '11111111-1111-1111-1111-111111111111', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', current_date, 4.5, 45.00, 'bouteille', 'restaurant', 'Très bon, à recommander', true);
+-- Tag de verdict portée vin sur cette dégustation (Puissant, tag système 00033)
+insert into public.degustation_tags (degustation_id, tag_id)
+select 'cafe0001-0000-4000-8000-000000000001', id from public.tags where slug = 'puissant' and user_id is null;
 
 -- Pool de démo pour la recherche/reco (UUID v4 valides ; PAS dans la liste du client)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, price_level, source) values
@@ -352,12 +356,14 @@ insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, 
  ('c1000001-0000-4000-8000-000000000004','de110000-0000-4000-8000-000000000000','Champagne Démo Brut','Maison Démo',null,'Champagne','petillant','{"chardonnay","pinot noir"}'),
  ('c1000001-0000-4000-8000-000000000005','de110000-0000-4000-8000-000000000000','Barolo Riserva Démo','Cantina Démo',2017,'Piémont','rouge','{"nebbiolo"}');
 
-insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, commentaire) values
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000001','a1000001-0000-4000-8000-000000000003',current_date,5,120.00,'Exceptionnel, à ouvrir pour les grandes occasions'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000002','a1000001-0000-4000-8000-000000000001',current_date - 9,4,45.00,'Minéral, parfait sur les fruits de mer'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000003',null,current_date - 20,3,22.00,'Léger et frais, idéal en terrasse'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000004','a1000001-0000-4000-8000-000000000004',current_date - 45,4,60.00,'Bulles fines, belle longueur'),
- ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000005',null,current_date - 80,5,80.00,'Tannique et puissant, superbe potentiel de garde');
+-- Dégustations du compte démo : notes en demi-verres, lieux variés (restaurant,
+-- maison, caviste) et « à retrouver » pour alimenter les sous-onglets de la Cave.
+insert into public.degustations (user_id, vin_id, etablissement_id, deguste_le, note, prix_paye, prix_unite, lieu_type, lieu_nom, commentaire, a_racheter) values
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000001','a1000001-0000-4000-8000-000000000003',current_date,5,120.00,'bouteille','restaurant',null,'Exceptionnel, à ouvrir pour les grandes occasions',true),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000002','a1000001-0000-4000-8000-000000000001',current_date - 9,4.5,12.00,'verre','restaurant',null,'Minéral, parfait sur les fruits de mer',false),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000003',null,current_date - 20,3,22.00,'bouteille','maison',null,'Léger et frais, idéal en terrasse',false),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000004','a1000001-0000-4000-8000-000000000004',current_date - 45,4,60.00,'bouteille','restaurant',null,'Bulles fines, belle longueur',false),
+ ('de110000-0000-4000-8000-000000000000','c1000001-0000-4000-8000-000000000005',null,current_date - 80,5,80.00,'bouteille','caviste','Caviste du coin','Tannique et puissant, superbe potentiel de garde',true);
 
 -- Compte de dépenses partagé du compte démo (lié au voyage Rome, partagé avec l'agence)
 insert into public.depense_groupes (id, owner_id, voyage_id, titre, devise) values

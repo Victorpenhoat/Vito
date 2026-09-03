@@ -80,7 +80,7 @@ export const setOrigineSchema = z.object({
 
 // ── Tags v2 (Lot R-B) ───────────────────────────────────────────────────────
 
-export const TAG_SCOPES = ["common", "restaurant", "hotel"] as const;
+export const TAG_SCOPES = ["common", "restaurant", "hotel", "vin"] as const;
 
 export const creerTagSchema = z.object({
   label: z.string().min(1).max(60),

@@ -7,6 +7,7 @@ describe("creerTagSchema", () => {
     expect(creerTagSchema.safeParse({ label: "Sans couleur", scope: "common", color: "" }).success).toBe(true);
     expect(creerTagSchema.safeParse({ label: "", scope: "restaurant" }).success).toBe(false);
     expect(creerTagSchema.safeParse({ label: "x".repeat(61), scope: "restaurant" }).success).toBe(false);
+    expect(creerTagSchema.safeParse({ label: "ok", scope: "vin" }).success).toBe(true);
     expect(creerTagSchema.safeParse({ label: "ok", scope: "voyage" }).success).toBe(false);
     expect(creerTagSchema.safeParse({ label: "ok", scope: "hotel", color: "rouge" }).success).toBe(false);
   });

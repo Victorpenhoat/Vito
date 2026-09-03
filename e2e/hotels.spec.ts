@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { expectVisibleWithReload } from "./helpers";
+import { expectCountWithReload, expectVisibleWithReload } from "./helpers";
 
 // Hôtels v2 : l'onglet est rendu par la brique générique CategoryTabs
 // (sous-onglets ?onglet= URL-driven — navigation par URL, jamais par clic
@@ -118,8 +118,10 @@ test("séjour : dates arrivée→départ, voyage détecté, enregistrement", asy
   await form.getByRole("button", { name: "Enregistrer le séjour" }).click();
   await reponse;
 
-  // compte RELATIF (la base est partagée entre retries) : un séjour de plus
-  await expect(lignes).toHaveCount(avant + 1, { timeout: 15_000 });
+  // compte RELATIF (la base est partagée entre retries) : un séjour de plus.
+  // reload-guard : le refresh RSC post-action peut ne jamais se commettre sous
+  // charge (race #71/#77) — rendu frais depuis la base au besoin.
+  await expectCountWithReload(page, lignes, avant + 1, { timeout: 15_000 });
   await expect(page.getByTestId("sejour-voyage").first()).toBeVisible();
 });
 
