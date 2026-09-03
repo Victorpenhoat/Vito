@@ -6,6 +6,7 @@ import { Link } from "@/lib/i18n/routing";
 import { formatRange, formatDay } from "@/lib/format/date";
 import { getVoyageDetail, getVoyageDocuments } from "../data/queries";
 import { voyageChip, joursAvant, nuits } from "../domain/affichageVoyage";
+import { sejourEnCours } from "../domain/horsLigne";
 import { VoyageCover } from "./VoyageCover";
 import { ShareVoyageButton } from "./ShareVoyageButton";
 import { ReservationForm } from "./ReservationForm";
@@ -13,6 +14,7 @@ import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
 import { DocumentUploadForm } from "./DocumentUploadForm";
 import { DocumentsList } from "./DocumentsList";
+import { ModeVoyageBlock } from "./ModeVoyageBlock";
 import { openVoyageGroupe } from "@/features/depenses/data/actions";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { Card } from "@/features/shared/ui/Card";
@@ -171,6 +173,16 @@ export async function VoyageDetail({ id }: { id: string }) {
             <SectionLabel>{t("membres")}</SectionLabel>
             <MembersList voyageId={voyage.id} membres={membres} isOwner={isOwner} />
             {isOwner && <ShareForm voyageId={voyage.id} />}
+          </Card>
+          <Card>
+            <SectionLabel>{t("horsLigne.section")}</SectionLabel>
+            <ModeVoyageBlock
+              voyageId={voyage.id}
+              locale={locale}
+              documentIds={documents.map((d) => d.id)}
+              enCours={sejourEnCours(voyage.date_debut, voyage.date_fin, today)}
+              destination={voyage.destination}
+            />
           </Card>
           <Card>
             <SectionLabel>{t("depenses")}</SectionLabel>

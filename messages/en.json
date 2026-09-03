@@ -402,6 +402,29 @@
       "participants": "Travellers",
       "prochaineEtape": "Next step",
       "organisateur": "Organizer"
+    },
+    "horsLigne": {
+      "section": "Travel mode",
+      "titre": "Travel mode",
+      "actifPendant": "Active during your stay in {destination}",
+      "emporterExplication": "Take this trip with you on this device",
+      "promesseVouchers": "Vouchers, tickets and bookings available offline, without verification.",
+      "identiteProtegee": "Identity documents stay protected, even offline.",
+      "telecharger": "Download to this device",
+      "enCours": "Downloading…",
+      "retirer": "Remove from this device",
+      "ouvrirCarnet": "Open the trip book",
+      "disponible": "{documents, plural, =0 {No attachment} one {# attachment} other {# attachments}} · {taille}",
+      "telechargeLe": "downloaded on {date}",
+      "autreVoyageEmporte": "Another trip is already stored on this device. Downloading will replace it.",
+      "echec": "Download failed. Try again once you are online.",
+      "consultableSansReseau": "This page stays readable without a network.",
+      "aucuneReservation": "No bookings.",
+      "aucunDocument": "No documents.",
+      "sansDate": "No date",
+      "ouvrirDocument": "Open",
+      "surCetAppareil": "Stored on this device only, and removed when you sign out.",
+      "retourApplication": "Back to the app"
     }
   },
   "depenses": {

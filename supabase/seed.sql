@@ -131,6 +131,13 @@ insert into public.reservations (voyage_id, created_by, type, fournisseur, refer
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'hotel',
   'Hotel Roma', 'CONF-123', '2026-09-12', '2026-09-15', '+39 06 0000 0000', 'concierge@hotelroma.test', 'https://airbnb.example/rome');
 
+-- Mode voyage hors ligne : une pièce jointe sur le voyage du client, pour que le
+-- carnet emporté ait quelque chose à montrer (image → affichée dans la page).
+insert into public.voyage_documents (id, voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by) values
+  ('d0000002-0000-4000-8000-000000000001', '11111111-2222-4333-8444-555555555555',
+   'Voucher Hotel Roma.png', 'image/png', 77, 'yKbZCvMSmYTOYgPoHNdVxS/niR64cm2nH2ZlNOzzNdG1qeYRisCXir537VwyxekArOSWXaZKhvGr1ZHfuAKJbHAfAqpnOoB2tDsC9u7cc5RAO5/3kjCiblShAYi+PUDrPMR/G6tawnCt',
+   '11111111-1111-1111-1111-111111111111');
+
 -- Hôtels v2 : un SÉJOUR passé sur l'Hôtel Démo 2, lié au voyage Rome du client
 -- (placé APRÈS la création du voyage — FK). L'historique de séjours est
 -- indépendant du statut — la bascule du statut en 'visite' arrive au lot H2

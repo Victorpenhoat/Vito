@@ -402,6 +402,29 @@
       "participants": "Participants",
       "prochaineEtape": "Prochaine étape",
       "organisateur": "Organisateur"
+    },
+    "horsLigne": {
+      "section": "Mode voyage",
+      "titre": "Mode voyage",
+      "actifPendant": "Actif pendant le séjour à {destination}",
+      "emporterExplication": "Emportez ce voyage sur cet appareil",
+      "promesseVouchers": "Vouchers, billets et réservations consultables hors ligne, sans vérification.",
+      "identiteProtegee": "Les documents d'identité restent protégés, même hors ligne.",
+      "telecharger": "Télécharger sur cet appareil",
+      "enCours": "Téléchargement…",
+      "retirer": "Retirer de cet appareil",
+      "ouvrirCarnet": "Ouvrir le carnet",
+      "disponible": "{documents, plural, =0 {Aucune pièce jointe} one {# pièce jointe} other {# pièces jointes}} · {taille}",
+      "telechargeLe": "téléchargé le {date}",
+      "autreVoyageEmporte": "Un autre voyage est déjà emporté sur cet appareil. Le télécharger le remplacera.",
+      "echec": "Téléchargement impossible. Réessayez une fois connecté.",
+      "consultableSansReseau": "Cette page reste consultable sans réseau.",
+      "aucuneReservation": "Aucune réservation.",
+      "aucunDocument": "Aucun document.",
+      "sansDate": "Sans date",
+      "ouvrirDocument": "Ouvrir",
+      "surCetAppareil": "Enregistré sur cet appareil uniquement, et retiré à la déconnexion.",
+      "retourApplication": "Retour à l'application"
     }
   },
   "depenses": {
