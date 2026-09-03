@@ -1,26 +1,34 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { marquerVisite } from "@/features/restos/data/actions";
+import { marquerVisite, marquerSejour } from "@/features/restos/data/actions";
 import { creerTag } from "@/features/restos/data/tagActions";
 import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
+import { voyagesCouvrant, type VoyageLite } from "../domain/voyageCouvrant";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
 import { fieldClass } from "@/features/shared/ui/Input";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
-// « J'y suis allé » (design Onglet_Resto_v2, écran 8) : date, note /10 au dixième
-// (slider), tags de verdict (ajoutés à l'item, création à la volée), commentaire,
-// « Passer en favori ? ». Brique générique : le namespace i18n et la portée des
-// tags viennent de la catégorie (le mode « séjour » hôtel arrive au lot H3).
-export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto" }: {
-  listeItemId: string; tags: TagLite[]; onDone?: () => void; categorie?: CategorieUi;
+// « J'y suis allé » / « J'y ai séjourné » (design Resto v2 écran 8, Hôtels v2
+// écran 9) : date (ou plage arrivée→départ), note /10 au dixième (slider), tags
+// de verdict (création à la volée), commentaire, « Passer en favori ? ».
+// Le mode séjour ajoute le départ, l'occupation et le voyage lié détecté.
+export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto", voyages = [] }: {
+  listeItemId: string; tags: TagLite[]; onDone?: () => void; categorie?: CategorieUi; voyages?: VoyageLite[];
 }) {
   const config = CATEGORY_UI[categorie];
+  const sejour = config.experience === "sejour";
   const t = useTranslations(config.ns);
   const format = useFormatter();
-  const [state, action, pending] = useActionState(marquerVisite, undefined);
+  // Les deux actions ont la même signature applicative ; le cast évite un state
+  // `unknown` sur l'union (piège useActionState déjà rencontré côté voyages).
+  const [state, action, pending] = useActionState(
+    sejour ? (marquerSejour as typeof marquerVisite) : marquerVisite,
+    undefined,
+  );
+  const aujourdhui = new Date().toISOString().slice(0, 10);
   const [note, setNote] = useState(8);
   const [avecNote, setAvecNote] = useState(true);
   const [favori, setFavori] = useState(false);
@@ -30,10 +38,21 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto" 
   const [labelNouveau, setLabelNouveau] = useState("");
   const [tagPending, setTagPending] = useState(false);
   const [tagError, setTagError] = useState<string | null>(null);
+  // mode séjour
+  const [arrivee, setArrivee] = useState(aujourdhui);
+  const [depart, setDepart] = useState("");
+  const [delie, setDelie] = useState(false);
 
   useEffect(() => {
     if (state && "ok" in state && state.ok) onDone?.();
   }, [state, onDone]);
+
+  // Voyage couvrant la plage saisie : proposé automatiquement, déliable.
+  const candidats = sejour ? voyagesCouvrant(voyages, arrivee, depart || null) : [];
+  const voyageLie = delie ? null : (candidats[0] ?? null);
+  const nuits = arrivee && depart && depart > arrivee
+    ? Math.round((Date.parse(depart) - Date.parse(arrivee)) / 86_400_000)
+    : null;
 
   // Tag créé à la volée depuis le handler du formulaire (pas d'effet) :
   // il rejoint la liste, sélectionné d'office.
@@ -65,12 +84,46 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto" 
 
   return (
     <div className="flex flex-col gap-4">
-      <form action={action} data-testid="visite-form" className="flex flex-col gap-4">
+      <form action={action} data-testid={sejour ? "sejour-form" : "visite-form"} className="flex flex-col gap-4">
         <input type="hidden" name="listeItemId" value={listeItemId} />
         {[...selection].map((id) => <input key={id} type="hidden" name="tagIds" value={id} />)}
         <input type="hidden" name="passerEnFavori" value={String(favori)} />
+        {sejour && <input type="hidden" name="voyageId" value={voyageLie?.id ?? ""} />}
 
-        <DateField name="visiteLe" label={t("visite.date")} defaultValue={new Date().toISOString().slice(0, 10)} />
+        {sejour ? (
+          <>
+            <div className="flex gap-2.5">
+              <div className="flex-1">
+                <DateField name="visiteLe" label={t("visite.date")} value={arrivee} onChange={(e) => setArrivee(e.target.value)} />
+              </div>
+              <div className="flex-1">
+                <DateField name="dateFin" label={t("visite.dateFin")} value={depart} min={arrivee} onChange={(e) => setDepart(e.target.value)} />
+              </div>
+            </div>
+            {nuits != null && (
+              <span data-testid="sejour-nuits" className="-mt-2 text-[11px] text-faint">{t("visite.nuits", { n: nuits })}</span>
+            )}
+            {voyageLie && (
+              <div data-testid="voyage-lie" className="flex items-center gap-2.5 rounded-[5px] border border-accent/25 bg-accent-50 px-3.5 py-2.5">
+                <span className="min-w-0 flex-1 text-[12px] text-ink">
+                  {t("visite.voyageDetecte")} <b>{voyageLie.titre}</b>
+                </span>
+                <button type="button" data-testid="voyage-delier" onClick={() => setDelie(true)}
+                  className="shrink-0 text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+                  {t("visite.delier")}
+                </button>
+              </div>
+            )}
+            {delie && candidats.length > 0 && (
+              <button type="button" data-testid="voyage-relier" onClick={() => setDelie(false)}
+                className="self-start text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+                {t("visite.relier")}
+              </button>
+            )}
+          </>
+        ) : (
+          <DateField name="visiteLe" label={t("visite.date")} defaultValue={aujourdhui} />
+        )}
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
@@ -111,6 +164,22 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto" 
         </div>
 
         <textarea name="commentaire" placeholder={t("visite.commentaire")} rows={2} className={fieldClass} />
+
+        {sejour && (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-muted">{t("visite.occupation")}</span>
+            <div className="flex gap-2.5">
+              {([["adultes", 2], ["enfants", 0], ["chambres", 1]] as const).map(([champ, def]) => (
+                <label key={champ} className="flex flex-1 flex-col gap-1 text-[11px] text-muted">
+                  {t(`visite.${champ}`)}
+                  <input type="number" name={champ} min={champ === "enfants" ? 0 : 1} max={20} defaultValue={def}
+                    data-testid={`occupation-${champ}`} aria-label={t(`visite.${champ}`)}
+                    className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         <label className="flex items-center justify-between gap-3">
           <span className="text-sm text-ink">{t("visite.passerFavoriQ")}</span>

@@ -842,7 +842,16 @@
       "enregistrer": "Enregistrer le séjour",
       "visiteLe": "séjour le {date}",
       "mesVisites": "Mes séjours",
-      "count": "{n, plural, =0 {0 pour l'instant} one {# séjour} other {# séjours}}"
+      "count": "{n, plural, =0 {0 pour l'instant} one {# séjour} other {# séjours}}",
+      "nuits": "{n, plural, one {# nuit} other {# nuits}}",
+      "voyageDetecte": "Lié au voyage",
+      "delier": "Délier",
+      "relier": "Relier le voyage",
+      "occupation": "Occupation",
+      "adultes": "Adultes",
+      "enfants": "Enfants",
+      "chambres": "Chambres",
+      "voyageLien": "Voyage {titre}"
     },
     "vide": {
       "aucunResultat": "Aucun résultat",
@@ -887,6 +896,34 @@
       "ouvrirFiche": "Ouvrir la fiche",
       "itineraire": "Itinéraire",
       "fermer": "Fermer"
+    },
+    "equipements": {
+      "titre": "Équipements",
+      "fournisseur": "Données fournisseur",
+      "breakfast": "Petit-déjeuner",
+      "parking": "Parking",
+      "accessibility": "Accessibilité",
+      "goodForChildren": "Adapté aux enfants",
+      "allowsDogs": "Animaux acceptés"
+    },
+    "infos": {
+      "titre": "Mes informations",
+      "saisies": "Saisies par moi",
+      "etoiles": "Étoiles",
+      "prixNuit": "Prix / nuit",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "enregistrer": "Enregistrer",
+      "parNuit": "/ nuit"
+    },
+    "pratique": {
+      "maps": "Maps",
+      "appeler": "Appeler",
+      "reserver": "Réserver",
+      "donnees": "Données Google Places",
+      "siteOfficiel": "Site officiel",
+      "booking": "Booking",
+      "horaires": "Check-in {checkin} · check-out {checkout}"
     }
   },
   "accueil": {

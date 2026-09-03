@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import { changerStatut } from "../data/actions";
 import { RESTO_STATUTS, type RestoStatut } from "../domain/statut";
+import { CATEGORY_UI, type CategorieUi } from "@/features/places/domain/categoryUiConfig";
 
 const TONE: Record<RestoStatut, string> = {
   favori: "border-accent/25 bg-accent-50 text-accent",
@@ -12,8 +13,10 @@ const TONE: Record<RestoStatut, string> = {
 };
 
 // Chip de statut modifiable en un tap (design : « À tester ▾ » / « ♥ Favori ▾ »).
-export function StatutChip({ listeItemId, statut }: { listeItemId: string; statut: RestoStatut }) {
-  const t = useTranslations("restos");
+export function StatutChip({ listeItemId, statut, categorie = "resto" }: {
+  listeItemId: string; statut: RestoStatut; categorie?: CategorieUi;
+}) {
+  const t = useTranslations(CATEGORY_UI[categorie].ns);
   const [open, setOpen] = useState(false);
   const [, action, pending] = useActionState(changerStatut, undefined);
   const ref = useRef<HTMLDivElement>(null);

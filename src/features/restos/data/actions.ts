@@ -8,6 +8,7 @@ import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
 import {
   addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema, toggleArchiveSchema,
   marquerVisiteSchema, changerStatutSchema, setOrigineSchema,
+  marquerSejourSchema, setInfosHotelSchema,
 } from "../domain/schemas";
 
 export async function searchPlaces(query: string, opts?: SearchOpts) {
@@ -188,6 +189,100 @@ export async function marquerVisite(_prev: unknown, formData: FormData) {
   }
   // Brique générique H0 : ces actions servent aussi les hôtels — les deux layouts.
   revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
+  return { ok: true as const };
+}
+
+// ── Hôtels v2 (Lot H3) ──────────────────────────────────────────────────────
+
+/** Séjour hôtel : visite avec plage de dates, voyage lié et occupation. */
+export async function marquerSejour(_prev: unknown, formData: FormData) {
+  const parsed = marquerSejourSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    note: formData.get("note") || undefined,
+    commentaire: formData.get("commentaire") || undefined,
+    visiteLe: formData.get("visiteLe") || undefined,
+    dateFin: formData.get("dateFin") ?? "",
+    voyageId: formData.get("voyageId") ?? "",
+    adultes: formData.get("adultes") || undefined,
+    enfants: formData.get("enfants") || undefined,
+    chambres: formData.get("chambres") || undefined,
+    passerEnFavori: formData.get("passerEnFavori") || undefined,
+    tagIds: formData.getAll("tagIds"),
+  });
+  if (!parsed.success) return { error: "Séjour invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const d = parsed.data;
+
+  // La FK voyages ne garantit PAS l'accès (les FK ignorent la RLS) : SELECT sous
+  // RLS (can_access_voyage) — un voyage étranger est simplement introuvable.
+  let voyageId: string | null = null;
+  if (d.voyageId) {
+    const { data: voyage, error: vErr } = await supabase
+      .from("voyages").select("id").eq("id", d.voyageId).maybeSingle();
+    if (vErr) { logActionError("hotels.marquerSejour", vErr); return { error: "Séjour non enregistré" }; }
+    if (!voyage) return { error: "Voyage introuvable" };
+    voyageId = voyage.id;
+  }
+
+  const { error: sejErr } = await supabase.from("visites").insert({
+    user_id: auth.user.id,
+    liste_item_id: d.listeItemId,
+    note: d.note ?? null,
+    commentaire: d.commentaire ?? null,
+    ...(d.visiteLe ? { visite_le: d.visiteLe } : {}),
+    date_fin: d.dateFin || null,
+    voyage_id: voyageId,
+    adultes: d.adultes ?? null,
+    enfants: d.enfants ?? null,
+    chambres: d.chambres ?? null,
+  });
+  if (sejErr) { logActionError("hotels.marquerSejour", sejErr); return { error: "Séjour non enregistré" }; }
+
+  const { error: stErr } = await supabase
+    .from("liste_items")
+    .update({ statut: "visite", ...(d.passerEnFavori ? { is_favorite: true } : {}) })
+    .eq("id", d.listeItemId);
+  if (stErr) { logActionError("hotels.marquerSejour", stErr); return { error: "Statut non mis à jour" }; }
+
+  if (d.tagIds && d.tagIds.length > 0) {
+    const rows = d.tagIds.map((tag_id) => ({ liste_item_id: d.listeItemId, tag_id }));
+    const { error: tErr } = await supabase
+      .from("liste_item_tags")
+      .upsert(rows, { onConflict: "liste_item_id,tag_id", ignoreDuplicates: true });
+    if (tErr) { logActionError("hotels.marquerSejour", tErr); return { error: "Tags non enregistrés" }; }
+  }
+  revalidatePath("/restos", "layout");
+  revalidatePath("/hotels", "layout");
+  return { ok: true as const };
+}
+
+/** Infos hôtel perso (étoiles, prix/nuit, check-in/out) — sur liste_items. */
+export async function setInfosHotel(_prev: unknown, formData: FormData) {
+  const parsed = setInfosHotelSchema.safeParse({
+    listeItemId: formData.get("listeItemId"),
+    etoiles: formData.get("etoiles") || undefined,
+    prixNuit: formData.get("prixNuit") || undefined,
+    checkinHeure: formData.get("checkinHeure") ?? "",
+    checkoutHeure: formData.get("checkoutHeure") ?? "",
+  });
+  if (!parsed.success) return { error: "Informations invalides" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const d = parsed.data;
+  const { error } = await supabase
+    .from("liste_items")
+    .update({
+      etoiles: d.etoiles ?? null,
+      prix_nuit: d.prixNuit ?? null,
+      checkin_heure: d.checkinHeure || null,
+      checkout_heure: d.checkoutHeure || null,
+    })
+    .eq("id", d.listeItemId);
+  if (error) { logActionError("hotels.setInfosHotel", error); return { error: "Enregistrement échoué" }; }
   revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
