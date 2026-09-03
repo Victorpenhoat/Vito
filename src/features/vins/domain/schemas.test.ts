@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { degustationInputSchema, vinFiltersSchema } from "./schemas";
+import { degustationInputSchema } from "./schemas";
 
 const UUID = "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11";
 
@@ -28,12 +28,3 @@ describe("degustationInputSchema", () => {
   });
 });
 
-describe("vinFiltersSchema", () => {
-  it("tout optionnel -> ok (vide)", () => {
-    expect(vinFiltersSchema.safeParse({}).success).toBe(true);
-  });
-  it("noteMin coercé depuis une string", () => {
-    const r = vinFiltersSchema.parse({ noteMin: "3" });
-    expect(r.noteMin).toBe(3);
-  });
-});

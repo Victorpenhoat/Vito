@@ -116,8 +116,108 @@
         "probable": "Likely",
         "a_verifier": "To check"
       },
-      "genere": "Analysis generated automatically from the label. Please check important details."
-    }
+      "genere": "Analysis generated automatically from the label. Please check important details.",
+      "etape2": "My tasting · Step 2 / 2",
+      "echecEnregistrement": "Could not save. Please try again."
+    },
+    "maNote": "My rating",
+    "tagsVerdict": "Verdict tags",
+    "nouveau": "New",
+    "nouveauTag": "Tag name",
+    "ajouterTag": "Add",
+    "retirerTag": "Remove tag {tag}",
+    "prixPaye": "Price paid",
+    "lieu": "Place",
+    "lieuNom": "Place name",
+    "lieVisite": "Linked to your visit to {lieu}",
+    "envieRetrouver": "Want to find it again",
+    "envieRetrouverAide": "Will appear under “To find again”",
+    "enregistrerDegustation": "Save tasting",
+    "nDegustations": "{n, plural, =0 {no tastings} one {# tasting} other {# tastings}}",
+    "saisiesParMoi": "Entered by me",
+    "aucuneDegustation": "No tastings yet.",
+    "prixInconnu": "Price unknown",
+    "degre": "ABV",
+    "appellation": "Appellation",
+    "retirerCepage": "Remove grape {cepage}",
+    "ajouterCepage": "+ Grape",
+    "lieux": {
+      "restaurant": "Restaurant",
+      "maison": "Home",
+      "amis": "At friends’",
+      "caviste": "Wine shop",
+      "autre": "Other"
+    },
+    "unites": {
+      "bouteille": "Bottle",
+      "verre": "Glass"
+    },
+    "verres": {
+      "aide": "One tap for a glass, a second for a half",
+      "aria": "{n} glasses"
+    },
+    "cave": {
+      "titre": "Cellar",
+      "recherche": "Estate, appellation, grape…",
+      "onglets": {
+        "tous": "All",
+        "coups_de_coeur": "Favourites",
+        "a_retrouver": "To find again"
+      },
+      "noteMin": "{n} glasses and up",
+      "prixMax": "Up to €{p}",
+      "buNFois": "drunk {n, plural, one {# time} other {# times}}",
+      "jamaisBu": "never drunk",
+      "dernierLieu": "last: {lieu}",
+      "videTotal": "Your cellar is empty. Photograph a label to get started.",
+      "videFiltre": "No wine matches these filters."
+    },
+    "analyse": {
+      "avertissement": "Analysis generated automatically from the label. Check the important details.",
+      "absente": "No analysis for this wine. Add a label photo to generate one.",
+      "profil": "Profile",
+      "aromes": "Aromas",
+      "accords": "Pairings",
+      "service": "Serving",
+      "domaineEtAppellation": "The estate & appellation",
+      "prixEstime": "Estimated shop price",
+      "corriger": "Correct",
+      "corrigerTitre": "Correct the analysis",
+      "enregistrerCorrection": "Save corrections",
+      "relancer": "Run the analysis again with these corrections",
+      "relanceEnCours": "Analysing…",
+      "relancerAide": "Starts from the label photo if there is one, and from your corrections.",
+      "fermer": "Close",
+      "axes": {
+        "corps": "Body",
+        "tanins": "Tannins",
+        "acidite": "Acidity",
+        "sucre": "Sugar"
+      },
+      "niveaux": {
+        "corps": {
+          "bas": "Light",
+          "moyen": "Medium",
+          "haut": "Full"
+        },
+        "tanins": {
+          "bas": "Supple",
+          "moyen": "Present",
+          "haut": "Powerful"
+        },
+        "acidite": {
+          "bas": "Soft",
+          "moyen": "Balanced",
+          "haut": "Bright"
+        },
+        "sucre": {
+          "bas": "Dry",
+          "moyen": "Off-dry",
+          "haut": "Sweet"
+        }
+      }
+    },
+    "echecDegustation": "Could not save. Please try again."
   },
   "gouts": {
     "title": "My tastes",
@@ -196,7 +296,8 @@
       "a_tester": "To try",
       "testes": "Tried",
       "tous": "All",
-      "carte": "Map"
+      "carte": "Map",
+      "cave": "Cellar"
     },
     "rechercherPlaceholder": "Name, city, tag…",
     "trouver": "Find",

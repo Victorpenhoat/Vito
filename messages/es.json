@@ -116,8 +116,108 @@
         "probable": "Probable",
         "a_verifier": "Por comprobar"
       },
-      "genere": "Análisis generado automáticamente a partir de la etiqueta. Comprueba la información importante."
-    }
+      "genere": "Análisis generado automáticamente a partir de la etiqueta. Comprueba la información importante.",
+      "etape2": "Mi cata · Paso 2 / 2",
+      "echecEnregistrement": "No se pudo guardar. Inténtalo de nuevo."
+    },
+    "maNote": "Mi nota",
+    "tagsVerdict": "Etiquetas de veredicto",
+    "nouveau": "Nueva",
+    "nouveauTag": "Nombre de la etiqueta",
+    "ajouterTag": "Añadir",
+    "retirerTag": "Quitar la etiqueta {tag}",
+    "prixPaye": "Precio pagado",
+    "lieu": "Lugar",
+    "lieuNom": "Nombre del lugar",
+    "lieVisite": "Vinculado a tu visita a {lieu}",
+    "envieRetrouver": "Ganas de repetirlo",
+    "envieRetrouverAide": "Aparecerá en «Por reencontrar»",
+    "enregistrerDegustation": "Guardar la cata",
+    "nDegustations": "{n, plural, =0 {ninguna cata} one {# cata} other {# catas}}",
+    "saisiesParMoi": "Escritas por mí",
+    "aucuneDegustation": "Todavía ninguna cata.",
+    "prixInconnu": "Precio desconocido",
+    "degre": "Graduación",
+    "appellation": "Denominación",
+    "retirerCepage": "Quitar la variedad {cepage}",
+    "ajouterCepage": "+ Variedad",
+    "lieux": {
+      "restaurant": "Restaurante",
+      "maison": "Casa",
+      "amis": "En casa de amigos",
+      "caviste": "Bodega",
+      "autre": "Otro"
+    },
+    "unites": {
+      "bouteille": "Botella",
+      "verre": "Copa"
+    },
+    "verres": {
+      "aide": "Un toque para una copa, otro para media",
+      "aria": "{n} copas"
+    },
+    "cave": {
+      "titre": "Bodega",
+      "recherche": "Bodega, denominación, variedad…",
+      "onglets": {
+        "tous": "Todos",
+        "coups_de_coeur": "Favoritos",
+        "a_retrouver": "Por reencontrar"
+      },
+      "noteMin": "{n} copas o más",
+      "prixMax": "Hasta {p} €",
+      "buNFois": "bebido {n, plural, one {# vez} other {# veces}}",
+      "jamaisBu": "nunca bebido",
+      "dernierLieu": "último: {lieu}",
+      "videTotal": "Tu bodega está vacía. Fotografía una etiqueta para empezar.",
+      "videFiltre": "Ningún vino coincide con estos filtros."
+    },
+    "analyse": {
+      "avertissement": "Análisis generado automáticamente a partir de la etiqueta. Verifica la información importante.",
+      "absente": "Sin análisis para este vino. Añade una foto de la etiqueta para generarlo.",
+      "profil": "Perfil",
+      "aromes": "Aromas",
+      "accords": "Maridajes",
+      "service": "Servicio",
+      "domaineEtAppellation": "La bodega y la denominación",
+      "prixEstime": "Precio estimado en tienda",
+      "corriger": "Corregir",
+      "corrigerTitre": "Corregir el análisis",
+      "enregistrerCorrection": "Guardar las correcciones",
+      "relancer": "Repetir el análisis con estas correcciones",
+      "relanceEnCours": "Analizando…",
+      "relancerAide": "Parte de la foto de la etiqueta si existe, y de tus correcciones.",
+      "fermer": "Cerrar",
+      "axes": {
+        "corps": "Cuerpo",
+        "tanins": "Taninos",
+        "acidite": "Acidez",
+        "sucre": "Azúcar"
+      },
+      "niveaux": {
+        "corps": {
+          "bas": "Ligero",
+          "moyen": "Medio",
+          "haut": "Con cuerpo"
+        },
+        "tanins": {
+          "bas": "Suaves",
+          "moyen": "Presentes",
+          "haut": "Potentes"
+        },
+        "acidite": {
+          "bas": "Suave",
+          "moyen": "Equilibrada",
+          "haut": "Viva"
+        },
+        "sucre": {
+          "bas": "Seco",
+          "moyen": "Semiseco",
+          "haut": "Dulce"
+        }
+      }
+    },
+    "echecDegustation": "No se pudo guardar. Inténtalo de nuevo."
   },
   "gouts": {
     "title": "Mis gustos",
@@ -196,7 +296,8 @@
       "a_tester": "Por probar",
       "testes": "Probados",
       "tous": "Todos",
-      "carte": "Mapa"
+      "carte": "Mapa",
+      "cave": "Bodega"
     },
     "rechercherPlaceholder": "Nombre, ciudad, etiqueta…",
     "trouver": "Buscar",

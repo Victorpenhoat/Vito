@@ -116,8 +116,108 @@
         "probable": "Probable",
         "a_verifier": "À vérifier"
       },
-      "genere": "Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes."
-    }
+      "genere": "Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes.",
+      "etape2": "Ma dégustation · Étape 2 / 2",
+      "echecEnregistrement": "Enregistrement impossible. Réessayez."
+    },
+    "maNote": "Ma note",
+    "tagsVerdict": "Tags de verdict",
+    "nouveau": "Nouveau",
+    "nouveauTag": "Nom du tag",
+    "ajouterTag": "Ajouter",
+    "retirerTag": "Retirer le tag {tag}",
+    "prixPaye": "Prix payé",
+    "lieu": "Lieu",
+    "lieuNom": "Nom du lieu",
+    "lieVisite": "Lié à la visite {lieu}",
+    "envieRetrouver": "Envie de le retrouver",
+    "envieRetrouverAide": "Apparaîtra dans « À retrouver »",
+    "enregistrerDegustation": "Enregistrer la dégustation",
+    "nDegustations": "{n, plural, =0 {aucune dégustation} one {# dégustation} other {# dégustations}}",
+    "saisiesParMoi": "Saisies par moi",
+    "aucuneDegustation": "Aucune dégustation pour l'instant.",
+    "prixInconnu": "Prix inconnu",
+    "degre": "Degré",
+    "appellation": "Appellation",
+    "retirerCepage": "Retirer le cépage {cepage}",
+    "ajouterCepage": "+ Cépage",
+    "lieux": {
+      "restaurant": "Restaurant",
+      "maison": "Maison",
+      "amis": "Chez des amis",
+      "caviste": "Caviste",
+      "autre": "Autre"
+    },
+    "unites": {
+      "bouteille": "Bouteille",
+      "verre": "Verre"
+    },
+    "verres": {
+      "aide": "Un appui pour un verre, un second pour un demi",
+      "aria": "{n} verres"
+    },
+    "cave": {
+      "titre": "Cave",
+      "recherche": "Domaine, appellation, cépage…",
+      "onglets": {
+        "tous": "Tous",
+        "coups_de_coeur": "Coups de cœur",
+        "a_retrouver": "À retrouver"
+      },
+      "noteMin": "{n} verres et plus",
+      "prixMax": "Jusqu'à {p} €",
+      "buNFois": "bu {n, plural, one {# fois} other {# fois}}",
+      "jamaisBu": "jamais bu",
+      "dernierLieu": "dernier : {lieu}",
+      "videTotal": "Votre cave est vide. Photographiez une étiquette pour commencer.",
+      "videFiltre": "Aucun vin ne correspond à ces filtres."
+    },
+    "analyse": {
+      "avertissement": "Analyse générée automatiquement à partir de l'étiquette. Vérifiez les informations importantes.",
+      "absente": "Aucune analyse pour ce vin. Ajoutez une photo d'étiquette pour en générer une.",
+      "profil": "Profil",
+      "aromes": "Arômes",
+      "accords": "Accords",
+      "service": "Service",
+      "domaineEtAppellation": "Le domaine & l'appellation",
+      "prixEstime": "Caviste estimé",
+      "corriger": "Corriger",
+      "corrigerTitre": "Corriger l'analyse",
+      "enregistrerCorrection": "Enregistrer les corrections",
+      "relancer": "Relancer l'analyse avec ces corrections",
+      "relanceEnCours": "Analyse en cours…",
+      "relancerAide": "Repart de la photo d'étiquette si elle existe, et de vos corrections.",
+      "fermer": "Fermer",
+      "axes": {
+        "corps": "Corps",
+        "tanins": "Tanins",
+        "acidite": "Acidité",
+        "sucre": "Sucre"
+      },
+      "niveaux": {
+        "corps": {
+          "bas": "Léger",
+          "moyen": "Moyen",
+          "haut": "Charpenté"
+        },
+        "tanins": {
+          "bas": "Souples",
+          "moyen": "Présents",
+          "haut": "Puissants"
+        },
+        "acidite": {
+          "bas": "Douce",
+          "moyen": "Équilibrée",
+          "haut": "Vive"
+        },
+        "sucre": {
+          "bas": "Sec",
+          "moyen": "Tendre",
+          "haut": "Moelleux"
+        }
+      }
+    },
+    "echecDegustation": "Enregistrement impossible. Réessayez."
   },
   "gouts": {
     "title": "Mes goûts",
@@ -196,7 +296,8 @@
       "a_tester": "À tester",
       "testes": "Testés",
       "tous": "Tous",
-      "carte": "Carte"
+      "carte": "Carte",
+      "cave": "Cave"
     },
     "rechercherPlaceholder": "Nom, ville, tag…",
     "trouver": "Trouver",

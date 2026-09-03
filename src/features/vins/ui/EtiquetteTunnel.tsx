@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useEffect, useRef, useState, startTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Camera, FileUp, Pencil } from "lucide-react";
 import { useRouter } from "@/lib/i18n/routing";
@@ -23,7 +23,7 @@ type VinConnu = { id: string; nb: number; dernier: string | null };
 // « Réessayer » ou « Saisir manuellement » (même UX que le tunnel documents).
 export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
   vinsConnus?: { id: string; cle: string; nb: number; dernier: string | null }[];
-  onCree?: (vinId: string) => void;
+  onCree?: (vinId: string, resume: string) => void;
 }) {
   const t = useTranslations("vins");
   const router = useRouter();
@@ -39,7 +39,14 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
   const [essai, setEssai] = useState(0);
   const [hint, setHint] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [state, dispatch, pending] = useActionState(creerVinDepuisEtiquette, undefined);
+  const dejaAnnonce = useRef<string | null>(null);
+  // ⚠ Appel DIRECT de l'action, hors transition React (et donc sans
+  // useActionState). Une transition n'est commitée qu'avec le reste de l'arbre :
+  // sous charge, la course routeur Next connue (PR #71) la laissait en suspens,
+  // le vin était bien créé en base mais l'écran restait figé sur l'étape 1.
+  // Ici, la réponse de l'action pilote directement l'état local.
+  const [state, setState] = useState<{ error?: string; ok?: true; vinId?: string } | undefined>();
+  const [pending, setPending] = useState(false);
 
   // Lecture de l'étiquette : la route n'enregistre rien, elle analyse seulement.
   useEffect(() => {
@@ -72,11 +79,23 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
   }, [etape, photo, hint, essai, t]);
 
   useEffect(() => {
-    if (state?.ok && state.vinId) {
-      if (onCree) onCree(state.vinId);
+    // Une création ne s'annonce qu'une fois : sans ce garde-fou, tout nouveau
+    // rendu rejouerait l'annonce (et donc la navigation ou le passage à
+    // l'étape 2) tant que l'état de l'action reste « ok ».
+    if (state?.ok && state.vinId && dejaAnnonce.current !== state.vinId) {
+      dejaAnnonce.current = state.vinId;
+      if (onCree) {
+        // Résumé repris à l'étape 2 : l'utilisateur doit voir CE qu'il note.
+        const resume = [
+          [fields.domaine, fields.cuvee].filter(Boolean).join(" "),
+          [fields.appellation, fields.millesime].filter(Boolean).join(" "),
+          fields.couleur ? t(`couleurs.${fields.couleur}`) : null,
+        ].filter(Boolean).join(" · ");
+        onCree(state.vinId, resume);
+      }
       else router.push(`/vins/${state.vinId}`);
     }
-  }, [state, onCree, router]);
+  }, [state, onCree, router, fields, t]);
 
   function choisir(f: File) {
     if (!ALLOWED.includes(f.type) || f.size <= 0 || f.size > MAX) { setErreur(t("etiquette.fichierInvalide")); return; }
@@ -106,7 +125,11 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
     if (analyse) fd.set("analyse", JSON.stringify(analyse));
     if (Object.keys(confiance).length > 0) fd.set("confiance", JSON.stringify(confiance));
     if (modele) fd.set("modele", modele);
-    startTransition(() => dispatch(fd));
+    setPending(true);
+    void creerVinDepuisEtiquette(undefined, fd)
+      .then((r) => setState(r))
+      .catch(() => setState({ error: t("etiquette.echecEnregistrement") }))
+      .finally(() => setPending(false));
   }
 
   const badge = (champ: keyof LabelFields) => {

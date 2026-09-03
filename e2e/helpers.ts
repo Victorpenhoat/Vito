@@ -85,3 +85,20 @@ export async function deverrouillerSiBesoin(page: Page, password = "password123"
   await page.getByTestId("verrou-deverrouiller").click();
   await expect(verrou).toHaveCount(0, { timeout: 15_000 });
 }
+
+/**
+ * Ouvre une modale en RÉESSAYANT le clic tant qu'elle n'apparaît pas.
+ *
+ * Playwright clique dès que l'élément est visible et actif — ce qui peut
+ * précéder l'hydratation de React. Le clic atteint alors le DOM (le bouton
+ * prend le focus) mais aucun gestionnaire n'y est encore attaché, et rien ne
+ * s'ouvre. Le symptôme est déroutant : un bouton « actif » dans la capture,
+ * sans modale. Le cas s'est manifesté quand la Cave a alourdi la page
+ * Restaurants — plus il y a à hydrater, plus la fenêtre est large.
+ */
+export async function ouvrirModale(page: Page, bouton: string, modale: string): Promise<void> {
+  await expect(async () => {
+    await page.getByTestId(bouton).click();
+    await expect(page.getByTestId(modale)).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+}

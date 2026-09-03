@@ -1,72 +1,8 @@
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { cleDedup } from "../domain/etiquette";
-import { filtersToQuery } from "../domain/filtersToQuery";
-import type { VinFilters } from "../domain/schemas";
-import type { Enums } from "@/types/database.types";
-
-export type VinConsolide = {
-  id: string;
-  nom: string;
-  domaine: string | null;
-  millesime: number | null;
-  region: string | null;
-  couleur: string | null;
-  achat_url: string | null;
-  nb_degustations: number;
-  derniere_date: string | null;
-  derniere_note: number | null;
-  dernier_etablissement_id: string | null;
-};
-
-export async function getMesVins(filters: VinFilters): Promise<VinConsolide[]> {
-  const q = filtersToQuery(filters);
-  const supabase = await createServerSupabase();
-  // Fail-safe anon : layout et page rendent en parallèle (App Router) — le
-  // requireRole du layout ne garde pas cette lecture. Sans session, vins renvoie
-  // 42501 (anon) et crashe le RSC ; on court-circuite (cf. #61/#63).
-  const auth = await getCachedUser();
-  if (!auth.user) return [];
-
-  // Récupère les vins (filtres intrinsèques) + leurs dégustations (filtres contextuels).
-  let vinsQuery = supabase
-    .from("vins")
-    .select("id, nom, domaine, millesime, region, couleur, achat_url, degustations(deguste_le, note, etablissement_id)")
-    .order("created_at", { ascending: false });
-  if (q.vin.couleur) vinsQuery = vinsQuery.eq("couleur", q.vin.couleur as Enums<"vin_couleur">);
-  if (q.vin.region) vinsQuery = vinsQuery.ilike("region", `%${q.vin.region}%`);
-
-  const { data, error } = await vinsQuery;
-  if (error) throw error;
-
-  const rows = (data ?? []).map((v) => {
-    const degs = (Array.isArray(v.degustations) ? v.degustations : []).filter((d) => {
-      if (q.degustation.noteMin != null && (d.note ?? 0) < q.degustation.noteMin) return false;
-      if (q.degustation.etablissementId && d.etablissement_id !== q.degustation.etablissementId) return false;
-      if (q.degustation.dateFrom && (d.deguste_le ?? "") < q.degustation.dateFrom) return false;
-      if (q.degustation.dateTo && (d.deguste_le ?? "") > q.degustation.dateTo) return false;
-      return true;
-    });
-    const sorted = [...degs].sort((a, b) => (b.deguste_le ?? "").localeCompare(a.deguste_le ?? ""));
-    const last = sorted[0];
-    return {
-      id: v.id, nom: v.nom, domaine: v.domaine, millesime: v.millesime, region: v.region,
-      couleur: v.couleur, achat_url: v.achat_url,
-      nb_degustations: degs.length,
-      derniere_date: last?.deguste_le ?? null,
-      derniere_note: last?.note ?? null,
-      dernier_etablissement_id: last?.etablissement_id ?? null,
-      _hasMatch: degs.length > 0,
-    };
-  });
-
-  // Si des filtres de dégustation sont posés, ne garder que les vins ayant au moins une dégustation correspondante.
-  const hasDegFilter = Boolean(
-    q.degustation.noteMin != null || q.degustation.etablissementId || q.degustation.dateFrom || q.degustation.dateTo,
-  );
-  return rows
-    .filter((r) => (hasDegFilter ? r._hasMatch : true))
-    .map(({ _hasMatch, ...r }) => r);
-}
+import type { VinCave } from "../domain/caveFilters";
+import { moyenneVerres } from "../domain/verres";
+import { lireAnalyse } from "../domain/analyse";
 
 export async function getVinsCount(): Promise<number> {
   const supabase = await createServerSupabase();
@@ -119,4 +55,99 @@ export async function getVinsConnus(): Promise<
       dernier: etab?.nom ?? last?.lieu_nom ?? null,
     };
   });
+}
+
+// ── Cave (Lot V-C) ──────────────────────────────────────────────────────────
+
+/**
+ * La cave : un vin par ligne, avec ce qu'on en sait D'EXPÉRIENCE (nombre de
+ * dégustations, note moyenne, dernier lieu, envie de le retrouver).
+ *
+ * Le filtrage se fait ensuite en mémoire (`filtrerCave`) : la cave d'une
+ * personne se compte en dizaines de bouteilles, et les facettes ont besoin de
+ * l'ensemble pour être proposées — filtrer en SQL les ferait disparaître au fur
+ * et à mesure des clics.
+ */
+export async function getCave(): Promise<VinCave[]> {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("vins")
+    .select("id, nom, domaine, appellation, region, couleur, millesime, cepages, etiquette_chiffree, degustations(deguste_le, note, prix_paye, a_racheter, lieu_nom, etablissement:etablissements(nom))");
+  if (error) throw error;
+
+  return (data ?? []).map((v) => {
+    const degs = Array.isArray(v.degustations) ? v.degustations : [];
+    const trie = [...degs].sort((a, b) => (b.deguste_le ?? "").localeCompare(a.deguste_le ?? ""));
+    const dernier = trie[0];
+    const etab = dernier ? (Array.isArray(dernier.etablissement) ? dernier.etablissement[0] : dernier.etablissement) : null;
+    const notes = degs.map((d) => (d.note == null ? null : Number(d.note)));
+    const prix = degs.map((d) => (d.prix_paye == null ? null : Number(d.prix_paye))).filter((p): p is number => p != null);
+    return {
+      id: v.id,
+      nom: v.nom,
+      domaine: v.domaine,
+      appellation: v.appellation,
+      region: v.region,
+      couleur: v.couleur,
+      millesime: v.millesime,
+      cepages: v.cepages ?? [],
+      note_moyenne: moyenneVerres(notes),
+      nb_degustations: degs.length,
+      dernier_lieu: etab?.nom ?? dernier?.lieu_nom ?? null,
+      derniere_date: dernier?.deguste_le ?? null,
+      // « À retrouver » suit la DERNIÈRE dégustation : un vin racheté puis
+      // décevant ne doit pas rester dans la liste à cause d'un avis d'il y a un an.
+      a_retrouver: dernier?.a_racheter ?? false,
+      a_etiquette: v.etiquette_chiffree != null,
+      prix_max: prix.length ? Math.max(...prix) : null,
+    };
+  });
+}
+
+/** Fiche vin (design écran 4) : le vin, son analyse générée, et mes dégustations. */
+export async function getVinFiche(id: string) {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+  const [vinRes, degRes] = await Promise.all([
+    supabase.from("vins").select("*").eq("id", id).maybeSingle(),
+    supabase
+      .from("degustations")
+      .select("id, deguste_le, note, prix_paye, prix_unite, commentaire, lieu_type, lieu_nom, a_racheter, etablissement:etablissements(id, nom), tags:degustation_tags(tag:tags(id, slug, label, color))")
+      .eq("vin_id", id)
+      .order("deguste_le", { ascending: false }),
+  ]);
+  if (vinRes.error) throw vinRes.error;
+  if (degRes.error) throw degRes.error;
+  if (!vinRes.data) return null;
+
+  const degustations = (degRes.data ?? []).map((d) => {
+    const etab = Array.isArray(d.etablissement) ? d.etablissement[0] : d.etablissement;
+    const tags = (Array.isArray(d.tags) ? d.tags : [])
+      .map((l) => (Array.isArray(l.tag) ? l.tag[0] : l.tag))
+      .filter((tag): tag is { id: string; slug: string; label: string; color: string | null } => tag != null);
+    return {
+      id: d.id,
+      deguste_le: d.deguste_le,
+      note: d.note == null ? null : Number(d.note),
+      prix_paye: d.prix_paye == null ? null : Number(d.prix_paye),
+      prix_unite: d.prix_unite,
+      commentaire: d.commentaire,
+      lieu_type: d.lieu_type,
+      lieu_nom: etab?.nom ?? d.lieu_nom ?? null,
+      etablissement_id: etab?.id ?? null,
+      a_racheter: d.a_racheter,
+      tags,
+    };
+  });
+
+  return {
+    vin: vinRes.data,
+    analyse: lireAnalyse(vinRes.data.analyse_contenu),
+    degustations,
+    noteMoyenne: moyenneVerres(degustations.map((d) => d.note)),
+  };
 }

@@ -1,22 +1,9 @@
-import { getTranslations } from "next-intl/server";
-import { VinsFilters } from "@/features/vins/ui/VinsFilters";
-import { VinsCouleurTabs } from "@/features/vins/ui/VinsCouleurTabs";
-import { VinsList } from "@/features/vins/ui/VinsList";
-import { AjouterVinButton } from "@/features/vins/ui/AjouterVinButton";
-import { getVinsCount, getVinsConnus } from "@/features/vins/data/queries";
-import { PageHeader } from "@/features/shared/ui/PageHeader";
+import { redirect } from "@/lib/i18n/routing";
+import { getLocale } from "next-intl/server";
 
-export default async function VinsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const t = await getTranslations("vins");
-  const sp = await searchParams;
-  const [count, vinsConnus] = await Promise.all([getVinsCount(), getVinsConnus()]);
-  return (
-    <main className="flex flex-col gap-6 p-4 md:p-8">
-      <PageHeader eyebrow={t("eyebrow")} title={t("title")} subtitle={t("compte", { n: count })} />
-      <AjouterVinButton vinsConnus={vinsConnus} />
-      <VinsCouleurTabs />
-      <VinsFilters />
-      <VinsList searchParams={sp} />
-    </main>
-  );
+// « Mes vins » n'est plus une page à part : la Cave est le 6ᵉ sous-onglet de
+// Restaurants (design Vins & Cave écran 5). On redirige plutôt que de laisser
+// deux listes de vins vivre en parallèle — et les liens déjà partagés marchent.
+export default async function VinsPage() {
+  redirect({ href: "/restos?onglet=cave", locale: await getLocale() });
 }

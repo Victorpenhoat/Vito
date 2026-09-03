@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { expectVisibleWithReload, login } from "./helpers";
+import { login, ouvrirModale } from "./helpers";
 
 // Capture d'étiquette (design Vins & Cave écrans 2 et 11). Le provider mock
 // (aucune clé Anthropic en test) renvoie une fixture déterministe : « Domaine
@@ -30,8 +30,7 @@ test("la route de lecture refuse l'anonyme puis l'entrée invalide", async ({ pa
 test("capturer une étiquette : champs reconnus, confiance, création du vin", async ({ page }) => {
   await login(page);
   await page.goto("/fr/vins");
-  await page.getByTestId("ajouter-vin").click();
-  await expect(page.getByTestId("etiquette-tunnel")).toBeVisible();
+  await ouvrirModale(page, "ajouter-vin", "etiquette-tunnel");
 
   // photo « lisible » (> 1 octet) → la fixture remplit les champs
   await page.getByTestId("etiquette-input").setInputFiles({
@@ -47,20 +46,24 @@ test("capturer une étiquette : champs reconnus, confiance, création du vin", a
   // le nom est dérivé de la cuvée : millésime unique par run pour rester idempotent
   const millesime = String(1980 + (Date.now() % 40));
   await page.getByTestId("champ-millesime").fill(millesime);
-  await page.getByTestId("etiquette-enregistrer").click();
+  // Signal serveur déterministe : on attend la RÉPONSE de l'action, pas la
+  // transition d'interface. Sans cela, un échec d'enregistrement et une simple
+  // course de rendu donnent la même erreur illisible (« ma-degustation
+  // introuvable ») — c'est ce qui a rendu ce test difficile à diagnostiquer.
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    page.getByTestId("etiquette-enregistrer").click(),
+  ]);
 
-  // création → la fiche du vin s'ouvre (la modale se ferme, la liste se rafraîchit)
-  await expectVisibleWithReload(
-    page,
-    page.getByTestId("vin-row").filter({ hasText: "Bandol" }).first(),
-    { timeout: 15_000 },
-  );
+  // création → étape 2 / 2 : la modale reste ouverte sur « Ma dégustation »
+  // (design écran 3), le vin n'est pas encore noté.
+  await expect(page.getByTestId("ma-degustation")).toBeVisible({ timeout: 15_000 });
 });
 
 test("photo illisible : message dédié, réessayer ou saisir à la main", async ({ page }) => {
   await login(page);
   await page.goto("/fr/vins");
-  await page.getByTestId("ajouter-vin").click();
+  await ouvrirModale(page, "ajouter-vin", "etiquette-tunnel");
   // 1 octet → le mock répond « illisible »
   await page.getByTestId("etiquette-input").setInputFiles({
     name: "sombre.png", mimeType: "image/png", buffer: Buffer.from([0]),

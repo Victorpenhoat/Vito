@@ -1357,6 +1357,7 @@ export type Database = {
           cepages: string[]
           couleur: Database["public"]["Enums"]["vin_couleur"] | null
           created_at: string
+          cuvee: string | null
           degre: number | null
           domaine: string | null
           etiquette_chiffree: string | null
@@ -1378,6 +1379,7 @@ export type Database = {
           cepages?: string[]
           couleur?: Database["public"]["Enums"]["vin_couleur"] | null
           created_at?: string
+          cuvee?: string | null
           degre?: number | null
           domaine?: string | null
           etiquette_chiffree?: string | null
@@ -1399,6 +1401,7 @@ export type Database = {
           cepages?: string[]
           couleur?: Database["public"]["Enums"]["vin_couleur"] | null
           created_at?: string
+          cuvee?: string | null
           degre?: number | null
           domaine?: string | null
           etiquette_chiffree?: string | null
