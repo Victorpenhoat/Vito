@@ -1,6 +1,22 @@
 {
-  "app": { "name": "Vito", "tagline": "Il tuo diario personale di uscite e viaggi", "subtitle": "il taccuino" },
-  "auth": { "login": "Accedi", "signup": "Crea un account", "signupTab": "Registrati", "email": "E-mail", "password": "Password", "submit": "Conferma", "errors": { "invalidCredentials": "Credenziali non valide", "signInFailed": "Accesso non riuscito", "signUpFailed": "Registrazione non riuscita" } },
+  "app": {
+    "name": "Vito",
+    "tagline": "Il tuo diario personale di uscite e viaggi",
+    "subtitle": "il taccuino"
+  },
+  "auth": {
+    "login": "Accedi",
+    "signup": "Crea un account",
+    "signupTab": "Registrati",
+    "email": "E-mail",
+    "password": "Password",
+    "submit": "Conferma",
+    "errors": {
+      "invalidCredentials": "Credenziali non valide",
+      "signInFailed": "Accesso non riuscito",
+      "signUpFailed": "Registrazione non riuscita"
+    }
+  },
   "vins": {
     "title": "I miei vini",
     "degustesIci": "Vini degustati qui",
@@ -16,13 +32,30 @@
     "prix": "Prezzo pagato (€)",
     "commentaire": "Commento",
     "date": "Data di degustazione",
-    "couleurs": { "rouge": "Rosso", "blanc": "Bianco", "rose": "Rosato", "petillant": "Frizzante", "autre": "Altro" },
-    "filtres": { "titre": "Filtri", "tous": "Tutti", "noteMin": "Voto min.", "resto": "Ristorante", "du": "Dal", "au": "Al", "reset": "Reimposta" },
+    "couleurs": {
+      "rouge": "Rosso",
+      "blanc": "Bianco",
+      "rose": "Rosato",
+      "petillant": "Frizzante",
+      "autre": "Altro"
+    },
+    "filtres": {
+      "titre": "Filtri",
+      "tous": "Tutti",
+      "noteMin": "Voto min.",
+      "resto": "Ristorante",
+      "du": "Dal",
+      "au": "Al",
+      "reset": "Reimposta"
+    },
     "vide": "Nessun vino per ora.",
     "fois": "{count} degustazione/i",
     "acheter": "Acquista",
     "quantite": "Quantità",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
     "eyebrow": "La cantina",
     "compte": "{n} vini",
     "fiche": "Scheda",
@@ -34,15 +67,28 @@
     "ambiances": "Atmosfere preferite",
     "budget": "Budget a persona (€)",
     "types": "Tipi preferiti",
-    "typesList": { "etoile": "Stellato", "bistrot": "Bistrot", "brasserie": "Brasserie", "cafe": "Caffè", "restaurant": "Ristorante" },
+    "typesList": {
+      "etoile": "Stellato",
+      "bistrot": "Bistrot",
+      "brasserie": "Brasserie",
+      "cafe": "Caffè",
+      "restaurant": "Ristorante"
+    },
     "zones": "Zone preferite (separate da virgole)",
     "save": "Salva i miei gusti",
     "saved": "Gusti salvati",
     "banner": "Completa i tuoi gusti per suggerimenti su misura.",
     "bannerCta": "Inserisci i miei gusti",
     "bannerSearch": "Cerca",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
-    "errors": { "invalid": "Gusti non validi", "notAuth": "Non autenticato", "saveFailed": "Salvataggio dei gusti non riuscito" }
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
+    "errors": {
+      "invalid": "Gusti non validi",
+      "notAuth": "Non autenticato",
+      "saveFailed": "Salvataggio dei gusti non riuscito"
+    }
   },
   "recherche": {
     "eyebrow": "Esplora",
@@ -55,7 +101,10 @@
     "maListe": "La mia lista prima",
     "recos": "Suggerimenti",
     "vide": "Nessun risultato.",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    }
   },
   "restos": {
     "title": "Ristoranti",
@@ -312,7 +361,10 @@
     "payePar": "Pagato da",
     "date": "Data",
     "mode": "Suddivisione",
-    "modes": { "egal": "Uguale", "exact": "Importi esatti" },
+    "modes": {
+      "egal": "Uguale",
+      "exact": "Importi esatti"
+    },
     "participants": "Partecipanti",
     "soldes": "Saldi",
     "solde": "Saldo",
@@ -328,7 +380,10 @@
     "retirer": "Rimuovi",
     "supprimer": "Elimina",
     "save": "Salva",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
     "eyebrow": "Conti condivisi",
     "total": "Totale soggiorno",
     "parPersonne": "{montant} a persona",
@@ -345,7 +400,10 @@
     "yearly": "Annuale",
     "cancel": "Annulla l'abbonamento",
     "manage": "Gestisci abbonamento",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
     "eyebrow": "Il tuo piano",
     "gratuit": "Gratuito",
     "gratuitPrix": "0 €",
@@ -364,10 +422,26 @@
     "demander": "Richiedi una prenotazione",
     "premiumRequis": "Servizio riservato agli abbonati Premium.",
     "passerPremium": "Passa a Premium",
-    "types": { "resto": "Ristorante", "hotel": "Hotel" },
-    "statuts": { "nouvelle": "Nuova", "en_cours": "In corso", "confirmee": "Confermata", "refusee": "Rifiutata" },
-    "occasions": { "amis": "Amici", "famille": "Famiglia", "anniversaire": "Anniversario", "autre": "Altro" },
-    "sejours": { "loisirs": "Svago", "pro": "Professionale" },
+    "types": {
+      "resto": "Ristorante",
+      "hotel": "Hotel"
+    },
+    "statuts": {
+      "nouvelle": "Nuova",
+      "en_cours": "In corso",
+      "confirmee": "Confermata",
+      "refusee": "Rifiutata"
+    },
+    "occasions": {
+      "amis": "Amici",
+      "famille": "Famiglia",
+      "anniversaire": "Anniversario",
+      "autre": "Altro"
+    },
+    "sejours": {
+      "loisirs": "Svago",
+      "pro": "Professionale"
+    },
     "date": "Data",
     "heure": "Ora",
     "convives": "Numero di ospiti",
@@ -391,7 +465,10 @@
     "statut": "Stato",
     "supprimer": "Elimina",
     "vide": "Nessuna richiesta per ora.",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" },
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
     "eyebrow": "Servizio premium",
     "premiumActif": "Premium attivo"
   },
@@ -602,7 +679,10 @@
     "dateFin": "Data di fine",
     "statut": "Stato",
     "envoyer": "Crea il viaggio",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    }
   },
   "admin": {
     "title": "Back-office",
@@ -619,10 +699,39 @@
     "colType": "Tipo",
     "colPeriode": "Periodo",
     "colClient": "Cliente",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    }
   },
-  "shell": { "theme": "Cambia tema (chiaro / scuro)", "close": "Chiudi", "language": "Lingua", "settings": "Impostazioni", "menu": "Menu" },
-  "nav": { "restos": "Ristoranti", "voyages": "Viaggi", "depenses": "Conti condivisi", "famille": "Cerchia", "conciergerie": "Concierge", "vins": "Vini", "abonnement": "Abbonamento", "agence": "Agenzia", "admin": "Back-office", "deconnexion": "Esci", "accueil": "Home", "recherche": "Cerca", "plus": "Altro", "hotels": "Hotel", "group": { "carnet": "Taccuino", "voyages": "Viaggi", "cercle": "Cerchia" } },
+  "shell": {
+    "theme": "Cambia tema (chiaro / scuro)",
+    "close": "Chiudi",
+    "language": "Lingua",
+    "settings": "Impostazioni",
+    "menu": "Menu"
+  },
+  "nav": {
+    "restos": "Ristoranti",
+    "voyages": "Viaggi",
+    "depenses": "Conti condivisi",
+    "famille": "Cerchia",
+    "conciergerie": "Concierge",
+    "vins": "Vini",
+    "abonnement": "Abbonamento",
+    "agence": "Agenzia",
+    "admin": "Back-office",
+    "deconnexion": "Esci",
+    "accueil": "Home",
+    "recherche": "Cerca",
+    "plus": "Altro",
+    "hotels": "Hotel",
+    "group": {
+      "carnet": "Taccuino",
+      "voyages": "Viaggi",
+      "cercle": "Cerchia"
+    }
+  },
   "places": {
     "favoris": "Preferiti",
     "recommandes": "Consigliati",
@@ -665,19 +774,156 @@
   "hotels": {
     "title": "Hotel",
     "eyebrow": "Il mio taccuino",
-    "error": { "title": "Si è verificato un errore", "retry": "Riprova" }
+    "error": {
+      "title": "Si è verificato un errore",
+      "retry": "Riprova"
+    },
+    "notFound": "Non trovato",
+    "photoAlt": "Foto di {nom}",
+    "addError": "Impossibile aggiungere l'alloggio",
+    "archiver": "Archivia",
+    "desarchiver": "Rimuovi dall'archivio",
+    "favorite": "Preferito",
+    "statut": {
+      "a_faire": "Da fare",
+      "visite": "Soggiornato",
+      "favori": "Preferito",
+      "a_tester": "Da provare",
+      "teste": "Soggiornato"
+    },
+    "onglets": {
+      "favoris": "Preferiti",
+      "a_tester": "Da provare",
+      "sejours": "Soggiorni",
+      "tous": "Tutti",
+      "carte": "Mappa"
+    },
+    "rechercherPlaceholder": "Nome, città, regione, tag…",
+    "trouver": "Trova",
+    "trouverTitre": "Trova un alloggio",
+    "passerFavori": "Rendi preferito",
+    "types": {
+      "hotel": "Hotel",
+      "maison": "Casa",
+      "appartement": "Appartamento",
+      "chambre_hotes": "B&B",
+      "autre": "Altro"
+    },
+    "origines": {
+      "filtre_toutes": "Tutte",
+      "filtre_reco": "Consigli",
+      "filtre_trouve": "Trovati da me",
+      "recoPar": "Consigliato da {qui}",
+      "trouvePar": "Trovato da me · {source}",
+      "reco": "Consiglio",
+      "recoSous": "Qualcuno me l'ha consigliato",
+      "trouve": "Trovato da me",
+      "trouveSous": "Instagram, stampa, caso…",
+      "par": "Consigliato da",
+      "cercleSuffixe": "(Cerchia)",
+      "source": "Fonte",
+      "sourcePlaceholder": "Instagram, stampa, caso…",
+      "enregistrer": "Salva origine",
+      "titre": "Perché è qui",
+      "modifier": "Modifica",
+      "aucune": "Origine non registrata",
+      "sheetTitre": "Da dove viene questo indirizzo?"
+    },
+    "visite": {
+      "titre": "Ho soggiornato — {nom}",
+      "cta": "Ho soggiornato",
+      "date": "Arrivo",
+      "dateFin": "Partenza",
+      "note": "Il mio voto",
+      "avecNote": "Votare",
+      "verdict": "Tag di verdetto",
+      "commentaire": "Commento (facoltativo)",
+      "passerFavoriQ": "Rendere preferito?",
+      "enregistrer": "Salva il soggiorno",
+      "visiteLe": "soggiorno il {date}",
+      "mesVisites": "I miei soggiorni",
+      "count": "{n, plural, =0 {nessuno finora} one {# soggiorno} other {# soggiorni}}"
+    },
+    "vide": {
+      "aucunResultat": "Nessun risultato",
+      "aucunResultatTexte": "Nessun alloggio «{q}» con questi filtri nel tuo taccuino.",
+      "chercherExterne": "Cerca «{q}» su Google",
+      "favorisTitre": "Ancora nessun preferito",
+      "favorisTexte": "Aggiungi i tuoi alloggi del cuore per ritrovarli a colpo d'occhio.",
+      "a_testerTitre": "Niente da provare",
+      "a_testerTexte": "Salva gli indirizzi consigliati o scovati, per non dimenticarli mai.",
+      "sejoursTitre": "Nessun soggiorno registrato",
+      "sejoursTexte": "Segna «Ho soggiornato» su un indirizzo da provare per tenere traccia dei tuoi viaggi.",
+      "tousTitre": "Il tuo taccuino è vuoto",
+      "tousTexte": "Trova un alloggio per iniziare la tua rubrica."
+    },
+    "tags": {
+      "gerer": "Gestisci i tag",
+      "ajouterVolee": "+ Nuovo tag",
+      "label": "Nome",
+      "creer": "Crea"
+    },
+    "recherche": {
+      "dejaDansVito": "Già in Vito",
+      "resultatsExternes": "Risultati esterni",
+      "ouvert": "aperto",
+      "ouvertMnt": "Aperto ora",
+      "prix": "Prezzo",
+      "tousPrix": "Tutti i prezzi",
+      "type": "Tipo",
+      "tousTypes": "Tutti i tipi",
+      "types": {
+        "hotel": "Hotel",
+        "bed_and_breakfast": "B&B",
+        "guest_house": "Guest house",
+        "resort_hotel": "Resort"
+      },
+      "rayon": "< 2 km",
+      "choisirStatut": "Scegli lo stato",
+      "statutSuit": "Lo stato proposto segue la sotto-scheda corrente"
+    },
+    "carte": {
+      "autourDeMoi": "Vicino a me",
+      "ouvrirFiche": "Apri scheda",
+      "itineraire": "Indicazioni",
+      "fermer": "Chiudi"
+    }
   },
   "accueil": {
-    "title": "Home", "welcome": "Benvenuto su Vito 👋", "cta": "Vedi i miei ristoranti",
-    "greeting": { "bonjour": "Buongiorno", "bonsoir": "Buonasera" },
+    "title": "Home",
+    "welcome": "Benvenuto su Vito 👋",
+    "cta": "Vedi i miei ristoranti",
+    "greeting": {
+      "bonjour": "Buongiorno",
+      "bonsoir": "Buonasera"
+    },
     "quote": "Ogni uscita è una storia da raccontare.",
     "sortiesMois": "{n} uscite questo mese",
     "addResto": "+ Aggiungi un ristorante",
     "fab": "Richiesta concierge",
-    "sections": { "todo": "Da fare", "month": "Questo mese", "discoveries": "Scoperte", "activity": "Attività recente" },
-    "todo": { "restosATester": "Ristoranti da provare", "voyagesAVenir": "Viaggi in arrivo", "conciergerieEnAttente": "Richieste in sospeso" },
-    "kpi": { "sorties": "Uscite", "nouveauxRestos": "Nuovi ristoranti", "vinsGoutes": "Vini degustati", "depensesVoyage": "Spese di viaggio" },
-    "activity": { "vide": "Niente per ora" },
-    "discoveries": { "vide": "Nessun suggerimento per ora", "suggested": "Suggerito" }
+    "sections": {
+      "todo": "Da fare",
+      "month": "Questo mese",
+      "discoveries": "Scoperte",
+      "activity": "Attività recente"
+    },
+    "todo": {
+      "restosATester": "Ristoranti da provare",
+      "voyagesAVenir": "Viaggi in arrivo",
+      "conciergerieEnAttente": "Richieste in sospeso"
+    },
+    "kpi": {
+      "sorties": "Uscite",
+      "nouveauxRestos": "Nuovi ristoranti",
+      "vinsGoutes": "Vini degustati",
+      "depensesVoyage": "Spese di viaggio"
+    },
+    "activity": {
+      "vide": "Niente per ora"
+    },
+    "discoveries": {
+      "vide": "Nessun suggerimento per ora",
+      "suggested": "Suggerito"
+    }
   }
 }

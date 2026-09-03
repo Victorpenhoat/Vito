@@ -88,8 +88,10 @@ select '11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', id from public.tags where slug = 
 -- 2e hôtel sans tag (pour que le filtre ambiance fasse varier le nombre)
 insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, type_hebergement)
 values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed', 'hotel');
+-- Hôtels v2 (Lot H2) : statut 'visite' → l'Hôtel Démo 2 vit dans le sous-onglet
+-- « Séjours » (cohérent avec son séjour seedé plus bas, lié au voyage Rome).
 insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, etoiles, prix_nuit)
-values ('22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', '11111111-1111-1111-1111-111111111111', '22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false, 4, 180.00);
+values ('22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', '11111111-1111-1111-1111-111111111111', '22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'visite', false, 4, 180.00);
 
 -- Vin + dégustation de démo pour le compte client (UUID v4 valides)
 insert into public.vins (id, user_id, nom, domaine, millesime, region, couleur, cepages)
