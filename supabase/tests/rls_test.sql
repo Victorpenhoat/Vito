@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(40);
+select plan(45);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -266,6 +266,38 @@ select is(tests.count_as_admin('33333333-3333-3333-3333-333333333333',
 
 select is((select count(*) from auth.sessions where user_id = '11111111-1111-1111-1111-111111111111'),
           0::bigint, 'la suspension révoque les sessions du compte');
+
+-- ── Voyages, Lot B (00042) : participants et programme ─────────────────────
+-- Les deux tables sont COLLABORATIVES (can_access_voyage) : qui accède au
+-- voyage gère ses voyageurs et son programme. On verrouille les deux bords —
+-- le co-membre voit, l'étranger et anon ne voient rien.
+insert into public.voyage_participants (voyage_id, family_member_id, display_name, created_by)
+  select '11111111-2222-4333-8444-555555555555', id, 'Camille Durand', '11111111-1111-1111-1111-111111111111'
+    from public.family_members where user_id = '11111111-1111-1111-1111-111111111111' limit 1;
+insert into public.voyage_etapes (voyage_id, jour, titre, created_by)
+  values ('11111111-2222-4333-8444-555555555555', '2026-09-13', 'Colisée', '11111111-1111-1111-1111-111111111111');
+
+-- 41) le propriétaire du voyage voit ses voyageurs et son programme
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_participants'),
+          1::bigint, 'client voit le voyageur de son voyage');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_etapes'),
+          1::bigint, 'client voit l''étape de son programme');
+
+-- 42) l'agence, co-membre du voyage partagé, voit les deux (collaboratif)
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.voyage_participants'),
+          1::bigint, 'un co-membre du voyage voit ses voyageurs');
+
+-- 43) un compte étranger au voyage ne voit rien
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_participants'),
+          0::bigint, 'un non-membre ne voit aucun voyageur');
+
+-- 44) anon ne voit rien non plus
+select is(tests.count_as_anon('select count(*) from public.voyage_etapes'),
+          0::bigint, 'anon ne voit aucune étape de programme');
 
 select finish();
 rollback;

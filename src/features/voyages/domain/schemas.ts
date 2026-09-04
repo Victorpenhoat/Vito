@@ -49,3 +49,34 @@ export const shareInputSchema = z.object({
   email: z.string().email(),
 });
 export type ShareInput = z.infer<typeof shareInputSchema>;
+
+// ── Lot B : participants et programme ───────────────────────────────────────
+
+/** Un participant vient d'un compte, d'un proche du Cercle, ou de nulle part
+ *  (saisie libre) — jamais de deux sources à la fois. */
+export const participantInputSchema = z
+  .object({
+    voyageId: z.string().uuid(),
+    profileId: z.string().uuid().optional(),
+    familyMemberId: z.string().uuid().optional(),
+    displayName: z.string().trim().min(1).max(120),
+    email: z.string().email().max(200).optional(),
+    role: z.enum(["organisateur", "voyageur"]).optional(),
+  })
+  .refine((d) => !(d.profileId && d.familyMemberId), {
+    message: "Un participant a au plus une source",
+    path: ["familyMemberId"],
+  });
+export type ParticipantInput = z.infer<typeof participantInputSchema>;
+
+/** Une étape peut n'avoir ni jour ni heure : une envie se note avant de se caler. */
+export const etapeInputSchema = z.object({
+  voyageId: z.string().uuid(),
+  jour: z.string().date().optional(),
+  heure: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Heure invalide").optional(),
+  titre: z.string().trim().min(1).max(200),
+  lieu: z.string().max(200).optional(),
+  etablissementId: z.string().uuid().optional(),
+  notes: z.string().max(2000).optional(),
+});
+export type EtapeInput = z.infer<typeof etapeInputSchema>;

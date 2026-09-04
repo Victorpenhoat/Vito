@@ -570,6 +570,38 @@
       "rejoindra": "entrerà nei tuoi hotel",
       "retirer": "Rimuovi l'alloggio",
       "voirFiche": "Apri la scheda"
+    },
+    "participants": {
+      "titre": "Viaggiatori",
+      "vide": "Non c'è ancora nessuno in questo viaggio.",
+      "ajouter": "Aggiungi un viaggiatore",
+      "depuisCercle": "Dalla mia Cerchia",
+      "depuisComptes": "Account condivisi",
+      "libre": "Qualcun altro",
+      "nomPlaceholder": "Nome e cognome",
+      "valider": "Aggiungi",
+      "retirer": "Togli {nom} dal viaggio",
+      "aide": "Partecipare al viaggio non dà alcun accesso: la condivisione resta separata.",
+      "sources": {
+        "compte": "account",
+        "cercle": "Cerchia",
+        "libre": "ospite"
+      },
+      "echec": "Aggiunta non possibile al momento."
+    },
+    "programme": {
+      "titre": "Programma",
+      "jourVide": "Niente in programma quel giorno.",
+      "aCaler": "Da fissare",
+      "aCalerVide": "Nessuna idea senza data.",
+      "ajouter": "Aggiungi una tappa",
+      "titrePlaceholder": "Visita al Colosseo, cena…",
+      "lieuPlaceholder": "Luogo (facoltativo)",
+      "heure": "Ora",
+      "valider": "Aggiungi",
+      "annuler": "Annulla",
+      "supprimer": "Elimina la tappa {titre}",
+      "echec": "Aggiunta della tappa non possibile al momento."
     }
   },
   "depenses": {

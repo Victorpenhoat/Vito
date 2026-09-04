@@ -570,6 +570,38 @@
       "rejoindra": "will join your hotels",
       "retirer": "Remove accommodation",
       "voirFiche": "Open the page"
+    },
+    "participants": {
+      "titre": "Travellers",
+      "vide": "Nobody is on this trip yet.",
+      "ajouter": "Add a traveller",
+      "depuisCercle": "From my Circle",
+      "depuisComptes": "Shared accounts",
+      "libre": "Someone else",
+      "nomPlaceholder": "First and last name",
+      "valider": "Add",
+      "retirer": "Remove {nom} from the trip",
+      "aide": "Being on the trip grants no access: sharing stays separate.",
+      "sources": {
+        "compte": "account",
+        "cercle": "Circle",
+        "libre": "guest"
+      },
+      "echec": "Cannot add right now."
+    },
+    "programme": {
+      "titre": "Itinerary",
+      "jourVide": "Nothing planned that day.",
+      "aCaler": "To be scheduled",
+      "aCalerVide": "No undated ideas.",
+      "ajouter": "Add a step",
+      "titrePlaceholder": "Colosseum visit, dinner…",
+      "lieuPlaceholder": "Place (optional)",
+      "heure": "Time",
+      "valider": "Add",
+      "annuler": "Cancel",
+      "supprimer": "Delete the step {titre}",
+      "echec": "Cannot add the step right now."
     }
   },
   "depenses": {

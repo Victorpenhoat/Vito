@@ -1548,6 +1548,70 @@ export type Database = {
           },
         ]
       }
+      voyage_etapes: {
+        Row: {
+          created_at: string
+          created_by: string
+          etablissement_id: string | null
+          heure: string | null
+          id: string
+          jour: string | null
+          lieu: string | null
+          notes: string | null
+          ordre: number
+          titre: string
+          voyage_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          etablissement_id?: string | null
+          heure?: string | null
+          id?: string
+          jour?: string | null
+          lieu?: string | null
+          notes?: string | null
+          ordre?: number
+          titre: string
+          voyage_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          etablissement_id?: string | null
+          heure?: string | null
+          id?: string
+          jour?: string | null
+          lieu?: string | null
+          notes?: string | null
+          ordre?: number
+          titre?: string
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_etapes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_etapes_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_etapes_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voyage_membres: {
         Row: {
           added_at: string
@@ -1577,6 +1641,71 @@ export type Database = {
           },
           {
             foreignKeyName: "voyage_membres_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voyage_participants: {
+        Row: {
+          created_at: string
+          created_by: string
+          display_name: string
+          email: string | null
+          family_member_id: string | null
+          id: string
+          profile_id: string | null
+          role: string
+          voyage_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          display_name: string
+          email?: string | null
+          family_member_id?: string | null
+          id?: string
+          profile_id?: string | null
+          role?: string
+          voyage_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          display_name?: string
+          email?: string | null
+          family_member_id?: string | null
+          id?: string
+          profile_id?: string | null
+          role?: string
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_participants_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_participants_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_participants_voyage_id_fkey"
             columns: ["voyage_id"]
             isOneToOne: false
             referencedRelation: "voyages"

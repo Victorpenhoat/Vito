@@ -47,3 +47,68 @@ test("l'agence voit le voyage partagé par le seed", async ({ page }) => {
   // Le seed partage « Week-end à Rome » (owner=client) avec l'agence
   await expect(page.getByTestId("voyage-card").filter({ hasText: "Rome" })).toBeVisible();
 });
+
+// Lot B : qui part (voyageurs) et quoi faire sur place (programme). Le voyage
+// « Week-end à Rome » du seed appartient au client et court du 12 au 15
+// septembre 2026 — quatre jours au programme.
+const VOYAGE_ROME = "11111111-2222-4333-8444-555555555555";
+
+test("les voyageurs : un proche du Cercle, un invité libre, et le retrait", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+
+  const invite = `Invité E2E ${Date.now()}`;
+  await page.getByTestId("participant-ajouter").click();
+  const form = page.getByTestId("participant-form");
+  await expect(form).toBeVisible();
+
+  // le Cercle du client (Camille Durand) est proposé — sauf s'il est déjà du voyage
+  const camille = form.getByTestId("participant-proche").filter({ hasText: "Camille" });
+  if ((await camille.count()) > 0) {
+    await camille.first().click();
+    await expectVisibleWithReload(page, page.getByTestId("participant-row").filter({ hasText: "Camille" }).first());
+    await page.getByTestId("participant-ajouter").click();
+  }
+
+  // quelqu'un qui n'a ni compte ni fiche : saisi librement
+  await page.getByTestId("participant-nom").fill(invite);
+  await page.getByTestId("participant-valider").click();
+  const ligne = page.getByTestId("participant-row").filter({ hasText: invite });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne).toContainText("invité");
+
+  // le retrait ne laisse rien derrière
+  await ligne.getByTestId("participant-retirer").click();
+  await expect(ligne).toHaveCount(0, { timeout: 15_000 });
+});
+
+test("le programme : les jours du voyage, une étape datée et une à caler", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+
+  // du 12 au 15 septembre : quatre journées, affichées même vides
+  await expect(page.getByTestId("programme-jour")).toHaveCount(4);
+
+  const etape = `Colisée ${Date.now()}`;
+  const premierJour = page.getByTestId("programme-jour").first();
+  await premierJour.getByTestId("etape-ajouter").click();
+  await premierJour.getByTestId("etape-heure").fill("09:30");
+  await premierJour.getByTestId("etape-titre").fill(etape);
+  await premierJour.getByTestId("etape-valider").click();
+
+  const ligne = page.getByTestId("programme-etape").filter({ hasText: etape });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne).toContainText("09:30");
+
+  // une envie sans date : elle attend dans « à caler », elle ne se perd pas
+  const envie = `Marché aux puces ${Date.now()}`;
+  const aCaler = page.getByTestId("programme-a-caler");
+  await aCaler.getByTestId("etape-ajouter").click();
+  await aCaler.getByTestId("etape-titre").fill(envie);
+  await aCaler.getByTestId("etape-valider").click();
+  await expectVisibleWithReload(page, aCaler.getByTestId("programme-etape").filter({ hasText: envie }), { timeout: 15_000 });
+
+  // suppression de l'étape datée
+  await page.getByTestId("programme-etape").filter({ hasText: etape }).getByTestId("etape-supprimer").click();
+  await expect(page.getByTestId("programme-etape").filter({ hasText: etape })).toHaveCount(0, { timeout: 15_000 });
+});

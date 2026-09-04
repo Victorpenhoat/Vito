@@ -2,7 +2,10 @@
 import { revalidatePath } from "next/cache";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { voyageInputSchema, reservationInputSchema, shareInputSchema } from "../domain/schemas";
+import {
+  voyageInputSchema, reservationInputSchema, shareInputSchema,
+  participantInputSchema, etapeInputSchema,
+} from "../domain/schemas";
 import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
 import { TYPES_HEBERGEMENT } from "../domain/reservationHebergement";
 import { getIsPremium } from "@/features/abonnement/data/queries";
@@ -188,6 +191,122 @@ export async function unshareVoyage(_prev: unknown, formData: FormData) {
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const { error } = await supabase.rpc("unshare_voyage", { p_voyage_id: voyageId, p_profile_id: profileId });
   if (error) { logActionError("voyages.unshareVoyage", error); return { error: "Retrait échoué" }; }
+  revalidatePath(`/voyages/${voyageId}`);
+  return { ok: true as const };
+}
+
+// ── Lot B : participants et programme ───────────────────────────────────────
+
+export async function addParticipant(_prev: unknown, formData: FormData) {
+  const parsed = participantInputSchema.safeParse({
+    voyageId: formData.get("voyageId"),
+    profileId: formData.get("profileId") || undefined,
+    familyMemberId: formData.get("familyMemberId") || undefined,
+    displayName: formData.get("displayName"),
+    email: formData.get("email") || undefined,
+    role: formData.get("role") || undefined,
+  });
+  if (!parsed.success) return { error: "Participant invalide" };
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+  const d = parsed.data;
+
+  // La FK family_members ne garantit AUCUN accès (les FK ignorent la RLS) : on
+  // vérifie l'appartenance par un SELECT sous RLS — pattern setOrigine.
+  if (d.familyMemberId) {
+    const { data: proche } = await supabase
+      .from("family_members").select("id").eq("id", d.familyMemberId).maybeSingle();
+    if (!proche) return { error: "Proche introuvable" };
+  }
+
+  // L'id revient à l'appelant : l'écran affiche la ligne sans attendre un
+  // rafraîchissement RSC qui, sous charge, peut ne jamais se commettre (#71/#77).
+  const { data: cree, error } = await supabase.from("voyage_participants").insert({
+    voyage_id: d.voyageId,
+    profile_id: d.profileId ?? null,
+    family_member_id: d.familyMemberId ?? null,
+    display_name: d.displayName,
+    email: d.email ?? null,
+    role: d.role ?? "voyageur",
+    created_by: uid,
+  }).select("id").single();
+  if (error) {
+    logActionError("voyages.addParticipant", error);
+    // 23505 = l'index unique partiel : ce proche (ou ce compte) est déjà du voyage.
+    return { error: error.code === "23505" ? "Déjà participant" : "Ajout du participant échoué" };
+  }
+  revalidatePath(`/voyages/${d.voyageId}`);
+  return { ok: true as const, id: cree?.id as string };
+}
+
+export async function removeParticipant(_prev: unknown, formData: FormData) {
+  const id = formData.get("participantId");
+  const voyageId = formData.get("voyageId");
+  if (typeof id !== "string" || typeof voyageId !== "string") return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  // RLS = can_access_voyage : .select() détecte 0 ligne (participant inaccessible)
+  const { data, error } = await supabase
+    .from("voyage_participants").delete().eq("id", id).select("id").maybeSingle();
+  if (error) { logActionError("voyages.removeParticipant", error); return { error: "Suppression échouée" }; }
+  if (!data) return { error: "Suppression non autorisée" };
+  revalidatePath(`/voyages/${voyageId}`);
+  return { ok: true as const };
+}
+
+export async function addEtape(_prev: unknown, formData: FormData) {
+  const parsed = etapeInputSchema.safeParse({
+    voyageId: formData.get("voyageId"),
+    jour: formData.get("jour") || undefined,
+    heure: formData.get("heure") || undefined,
+    titre: formData.get("titre"),
+    lieu: formData.get("lieu") || undefined,
+    etablissementId: formData.get("etablissementId") || undefined,
+    notes: formData.get("notes") || undefined,
+  });
+  if (!parsed.success) return { error: "Étape invalide" };
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+  const d = parsed.data;
+
+  // Rang dans la journée : à la suite de ce qui y est déjà. Deux étapes créées
+  // au même instant peuvent partager un rang — l'affichage reste stable, elles
+  // se départagent alors par leur heure ou par leur ordre d'insertion.
+  const dejaLa = supabase
+    .from("voyage_etapes")
+    .select("id", { count: "exact", head: true })
+    .eq("voyage_id", d.voyageId);
+  // `eq` ne compare pas NULL en SQL : les étapes « à caler » se comptent avec `is`.
+  const { count } = await (d.jour ? dejaLa.eq("jour", d.jour) : dejaLa.is("jour", null));
+
+  const { data: cree, error } = await supabase.from("voyage_etapes").insert({
+    voyage_id: d.voyageId,
+    jour: d.jour ?? null,
+    heure: d.heure ?? null,
+    titre: d.titre,
+    lieu: d.lieu ?? null,
+    etablissement_id: d.etablissementId ?? null,
+    notes: d.notes ?? null,
+    ordre: count ?? 0,
+    created_by: uid,
+  }).select("id").single();
+  if (error) { logActionError("voyages.addEtape", error); return { error: "Ajout de l'étape échoué" }; }
+  revalidatePath(`/voyages/${d.voyageId}`);
+  return { ok: true as const, id: cree?.id as string, ordre: count ?? 0 };
+}
+
+export async function removeEtape(_prev: unknown, formData: FormData) {
+  const id = formData.get("etapeId");
+  const voyageId = formData.get("voyageId");
+  if (typeof id !== "string" || typeof voyageId !== "string") return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { data, error } = await supabase
+    .from("voyage_etapes").delete().eq("id", id).select("id").maybeSingle();
+  if (error) { logActionError("voyages.removeEtape", error); return { error: "Suppression échouée" }; }
+  if (!data) return { error: "Suppression non autorisée" };
   revalidatePath(`/voyages/${voyageId}`);
   return { ok: true as const };
 }
