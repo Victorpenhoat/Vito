@@ -21,7 +21,11 @@ test("créer un foyer, inviter, partager un resto, vu par l'invité, et refus d�
     await familleForm.locator('input[name="nom"]').fill("Foyer Démo");
     await familleForm.getByRole("button").click();
   }
-  await expect(foyerHeading).toBeVisible();
+  // Assertion POST-ACTION : le rafraîchissement RSC peut ne jamais se commettre
+  // (#71/#77), et le foyer n'apparaîtrait alors qu'au rechargement. Sans cette
+  // garde, le test échoue par intermittence — vu en local, où les retries sont
+  // à zéro, alors que la CI les masquait.
+  await expectVisibleWithReload(pageA, foyerHeading, { timeout: 15_000 });
 
   // A ajoute un resto via une fiche (resto seed pré-sélectionné). Le bouton passe par
   // useActionState → `pending` (disabled) ne repasse false qu'au COMMIT de la transition React
