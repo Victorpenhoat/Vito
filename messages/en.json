@@ -629,6 +629,29 @@
       "chambre": "Room no.",
       "typeChambre": "Room type",
       "petitDejeuner": "Breakfast"
+    },
+    "depensesVoyage": {
+      "titre": "Expenses",
+      "total": "Trip total",
+      "ajouter": "Add an expense",
+      "libelle": "Label",
+      "montant": "Amount",
+      "mode": "Split",
+      "modeEgal": "Equal shares",
+      "modeExact": "Exact amounts",
+      "concernes": "Who shares",
+      "payePar": "paid by {nom}",
+      "partsCount": "{n, plural, one {# share} other {# shares}}",
+      "valider": "Save",
+      "annuler": "Cancel",
+      "supprimer": "Delete the expense {libelle}",
+      "soldes": "Balances",
+      "doit": "{de} owes {vers} {montant}",
+      "remboursementDe": "Who repays",
+      "remboursementVers": "Who is repaid",
+      "rembourser": "Repay",
+      "echec": "Cannot save right now.",
+      "sansVoyageur": "Add travellers first: an expense is shared between them."
     }
   },
   "depenses": {

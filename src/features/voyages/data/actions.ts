@@ -5,7 +5,10 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import {
   voyageInputSchema, reservationInputSchema, shareInputSchema,
   participantInputSchema, etapeInputSchema,
+  depenseVoyageInputSchema, remboursementVoyageInputSchema,
 } from "../domain/schemas";
+import { centsFromEuros } from "@/features/depenses/domain/money";
+import { partsEgales, partsExactes } from "../domain/depensesVoyage";
 import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
 import { champsDuType } from "../domain/reservationDetails";
 import { TYPES_HEBERGEMENT } from "../domain/reservationHebergement";
@@ -320,4 +323,101 @@ export async function removeEtape(_prev: unknown, formData: FormData) {
   if (!data) return { error: "Suppression non autorisée" };
   revalidatePath(`/voyages/${voyageId}`);
   return { ok: true as const };
+}
+
+// ── Lot D : dépenses du voyage ──────────────────────────────────────────────
+
+export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
+  const parsed = depenseVoyageInputSchema.safeParse({
+    voyageId: formData.get("voyageId"),
+    payePar: formData.get("payePar"),
+    libelle: formData.get("libelle"),
+    montantCents: formData.get("montant"),
+    date: formData.get("date") || undefined,
+    mode: formData.get("mode"),
+    participants: formData.getAll("participants"),
+  });
+  if (!parsed.success) return { error: "Dépense invalide" };
+  const d = parsed.data;
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+
+  let parts;
+  try {
+    if (d.mode === "exact") {
+      const exacts: Record<string, number> = {};
+      for (const pid of d.participants) {
+        const brut = formData.get(`exact:${pid}`);
+        const c = centsFromEuros.safeParse(typeof brut === "string" ? brut : "");
+        if (!c.success) return { error: "Montant exact invalide" };
+        exacts[pid] = c.data;
+      }
+      parts = partsExactes(d.montantCents, exacts);
+    } else {
+      parts = partsEgales(d.montantCents, d.participants);
+    }
+  } catch {
+    // computeParts lève quand la somme des exacts ne fait pas le total
+    return { error: "Répartition invalide" };
+  }
+
+  const { data: dep, error } = await supabase
+    .from("voyage_depenses")
+    .insert({
+      voyage_id: d.voyageId, paye_par: d.payePar, libelle: d.libelle,
+      montant_cents: d.montantCents, date: d.date ?? null, mode: d.mode, created_by: uid,
+    })
+    .select("id")
+    .single();
+  if (error || !dep) { logActionError("voyages.addDepense", error); return { error: "Ajout de dépense échoué" }; }
+
+  const { error: pErr } = await supabase.from("voyage_depense_parts").insert(
+    parts.map((p) => ({ depense_id: dep.id, participant_id: p.participantId, part_cents: p.partCents })),
+  );
+  if (pErr) {
+    logActionError("voyages.addDepense", pErr);
+    // Une dépense sans ses parts fausserait tous les soldes : on la retire.
+    await supabase.from("voyage_depenses").delete().eq("id", dep.id);
+    return { error: "Enregistrement des parts échoué" };
+  }
+  revalidatePath(`/voyages/${d.voyageId}`);
+  return { ok: true as const, id: dep.id };
+}
+
+export async function removeDepenseVoyage(_prev: unknown, formData: FormData) {
+  const id = formData.get("depenseId");
+  const voyageId = formData.get("voyageId");
+  if (typeof id !== "string" || typeof voyageId !== "string") return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { data, error } = await supabase
+    .from("voyage_depenses").delete().eq("id", id).select("id").maybeSingle();
+  if (error) { logActionError("voyages.removeDepense", error); return { error: "Suppression échouée" }; }
+  if (!data) return { error: "Suppression non autorisée" };
+  revalidatePath(`/voyages/${voyageId}`);
+  return { ok: true as const };
+}
+
+export async function addRemboursementVoyage(_prev: unknown, formData: FormData) {
+  const parsed = remboursementVoyageInputSchema.safeParse({
+    voyageId: formData.get("voyageId"),
+    deParticipantId: formData.get("deParticipantId"),
+    versParticipantId: formData.get("versParticipantId"),
+    montantCents: formData.get("montant"),
+    date: formData.get("date") || undefined,
+  });
+  if (!parsed.success) return { error: "Remboursement invalide" };
+  const r = parsed.data;
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+  const { data: cree, error } = await supabase.from("voyage_remboursements").insert({
+    voyage_id: r.voyageId, de_participant_id: r.deParticipantId,
+    vers_participant_id: r.versParticipantId, montant_cents: r.montantCents,
+    date: r.date ?? null, created_by: uid,
+  }).select("id").single();
+  if (error) { logActionError("voyages.addRemboursement", error); return { error: "Remboursement non enregistré" }; }
+  revalidatePath(`/voyages/${r.voyageId}`);
+  return { ok: true as const, id: cree?.id as string };
 }

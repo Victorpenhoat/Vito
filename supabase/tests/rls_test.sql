@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(45);
+select plan(50);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -271,16 +271,21 @@ select is((select count(*) from auth.sessions where user_id = '11111111-1111-111
 -- Les deux tables sont COLLABORATIVES (can_access_voyage) : qui accède au
 -- voyage gère ses voyageurs et son programme. On verrouille les deux bords —
 -- le co-membre voit, l'étranger et anon ne voient rien.
-insert into public.voyage_participants (voyage_id, family_member_id, display_name, created_by)
-  select '11111111-2222-4333-8444-555555555555', id, 'Camille Durand', '11111111-1111-1111-1111-111111111111'
+insert into public.voyage_participants (id, voyage_id, family_member_id, display_name, created_by)
+  select 'aaaa0001-0000-4000-8000-000000000001', '11111111-2222-4333-8444-555555555555', id,
+         'Camille Durand', '11111111-1111-1111-1111-111111111111'
     from public.family_members where user_id = '11111111-1111-1111-1111-111111111111' limit 1;
+-- Un second voyageur SANS COMPTE : c'est entre eux que la dépense se partage.
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+  values ('aaaa0001-0000-4000-8000-000000000002', '11111111-2222-4333-8444-555555555555',
+          'Invité sans compte', '11111111-1111-1111-1111-111111111111');
 insert into public.voyage_etapes (voyage_id, jour, titre, created_by)
   values ('11111111-2222-4333-8444-555555555555', '2026-09-13', 'Colisée', '11111111-1111-1111-1111-111111111111');
 
 -- 41) le propriétaire du voyage voit ses voyageurs et son programme
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'select count(*) from public.voyage_participants'),
-          1::bigint, 'client voit le voyageur de son voyage');
+          2::bigint, 'client voit ses deux voyageurs (un du Cercle, un sans compte)');
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'select count(*) from public.voyage_etapes'),
           1::bigint, 'client voit l''étape de son programme');
@@ -288,7 +293,7 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 -- 42) l'agence, co-membre du voyage partagé, voit les deux (collaboratif)
 select is(tests.count_as('22222222-2222-2222-2222-222222222222',
           'select count(*) from public.voyage_participants'),
-          1::bigint, 'un co-membre du voyage voit ses voyageurs');
+          2::bigint, 'un co-membre du voyage voit ses voyageurs');
 
 -- 43) un compte étranger au voyage ne voit rien
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
@@ -298,6 +303,40 @@ select is(tests.count_as('de110000-0000-4000-8000-000000000000',
 -- 44) anon ne voit rien non plus
 select is(tests.count_as_anon('select count(*) from public.voyage_etapes'),
           0::bigint, 'anon ne voit aucune étape de programme');
+
+-- ── Voyages, Lot D (00044) : dépenses entre voyageurs ──────────────────────
+insert into public.voyage_depenses (id, voyage_id, paye_par, libelle, montant_cents, created_by)
+  values ('bbbb0001-0000-4000-8000-000000000001', '11111111-2222-4333-8444-555555555555',
+          'aaaa0001-0000-4000-8000-000000000001', 'Taxi', 3000,
+          '11111111-1111-1111-1111-111111111111');
+insert into public.voyage_depense_parts (depense_id, participant_id, part_cents) values
+  ('bbbb0001-0000-4000-8000-000000000001', 'aaaa0001-0000-4000-8000-000000000001', 1500),
+  ('bbbb0001-0000-4000-8000-000000000001', 'aaaa0001-0000-4000-8000-000000000002', 1500);
+
+-- 45/46) le propriétaire voit sa dépense et ses parts
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_depenses'),
+          1::bigint, 'client voit la dépense de son voyage');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_depense_parts'),
+          2::bigint, 'client voit les deux parts de la dépense');
+
+-- 47) le co-membre du voyage partagé les voit aussi (collaboratif)
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.voyage_depenses'),
+          1::bigint, 'un co-membre du voyage voit ses dépenses');
+
+-- 48) un compte étranger au voyage ne voit rien
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_depense_parts'),
+          0::bigint, 'un non-membre ne voit aucune part de dépense');
+
+-- 49) INVARIANT du lot : on ne retire pas un voyageur qui a payé. La FK est en
+--     `restrict` — sans elle, le solde des autres se fausserait en silence.
+select throws_ok(
+  $$ delete from public.voyage_participants where id = 'aaaa0001-0000-4000-8000-000000000001' $$,
+  '23503', null,
+  'retirer un voyageur qui a payé est refusé (restrict)');
 
 select finish();
 rollback;

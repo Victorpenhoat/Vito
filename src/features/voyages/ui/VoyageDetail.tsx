@@ -13,6 +13,8 @@ import { ReservationForm } from "./ReservationForm";
 import { ParticipantsList } from "./ParticipantsList";
 import { ProgrammeBlock } from "./ProgrammeBlock";
 import { ReservationVouchers } from "./ReservationVouchers";
+import { DepensesVoyageBlock } from "./DepensesVoyageBlock";
+import { getDepensesVoyage } from "../data/queries";
 import { resumeDetails } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
@@ -45,6 +47,8 @@ export async function VoyageDetail({ id }: { id: string }) {
   // inconnus, et un proche déjà saisi n'a pas à l'être une seconde fois.
   const proches = (await getProches()).map((p) => ({ id: p.id, nom: `${p.first_name} ${p.last_name}` }));
   const documents = await getVoyageDocuments(voyage.id);
+  // Lot D : les comptes du voyage, entre voyageurs.
+  const { depenses, remboursements } = await getDepensesVoyage(voyage.id);
 
   const today = new Date().toISOString().slice(0, 10);
   const chip = voyageChip(voyage.statut, voyage.date_debut, voyage.date_fin, today);
@@ -60,6 +64,7 @@ export async function VoyageDetail({ id }: { id: string }) {
     { href: "#voyageurs", label: t("participants.titre") },
     { href: "#programme", label: t("programme.titre") },
     { href: "#reservations", label: t("reservations") },
+    { href: "#depenses", label: t("depensesVoyage.titre") },
     { href: "#documents", label: t("documents.titre") },
     { href: "#partage", label: t("fiche.partage") },
   ];
@@ -194,6 +199,12 @@ export async function VoyageDetail({ id }: { id: string }) {
               ))}
             </ul>
             <ReservationForm voyageId={voyage.id} />
+          </section>
+
+          <section id="depenses" data-testid="depenses-section" className="scroll-mt-4">
+            <SectionLabel>{t("depensesVoyage.titre")}</SectionLabel>
+            <DepensesVoyageBlock voyageId={voyage.id} participants={participants}
+              depenses={depenses} remboursements={remboursements} devise={voyage.devise} />
           </section>
 
           <section id="documents" data-testid="documents-section" className="scroll-mt-4">
