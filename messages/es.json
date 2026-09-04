@@ -505,7 +505,11 @@
       "supprimer": "Eliminar",
       "vide": "Ningún documento.",
       "typeNonSupporte": "Tipo no admitido (PDF, JPEG, PNG, WebP)",
-      "tropVolumineux": "Archivo demasiado grande (máx. 5 MB)"
+      "tropVolumineux": "Archivo demasiado grande (máx. 5 MB)",
+      "voucherAjouter": "Adjuntar un billete",
+      "annuler": "Cancelar",
+      "echec": "No se puede subir por ahora.",
+      "rattache": "billete · {libelle}"
     },
     "eyebrow": "Mi cuaderno",
     "heading": "Viajes",
@@ -602,6 +606,29 @@
       "annuler": "Cancelar",
       "supprimer": "Eliminar la etapa {titre}",
       "echec": "No se puede añadir la etapa por ahora."
+    },
+    "details": {
+      "compagnie": "Compañía",
+      "numero": "Número",
+      "depart": "Salida",
+      "arrivee": "Llegada",
+      "heureDepart": "Hora de salida",
+      "heureArrivee": "Hora de llegada",
+      "terminal": "Terminal",
+      "siege": "Asiento",
+      "gareDepart": "Estación de salida",
+      "gareArrivee": "Estación de llegada",
+      "voiture": "Vagón",
+      "place": "Plaza",
+      "agence": "Agencia",
+      "lieuPrise": "Lugar de recogida",
+      "lieuRestitution": "Lugar de devolución",
+      "heurePrise": "Hora de recogida",
+      "heureRestitution": "Hora de devolución",
+      "categorie": "Categoría",
+      "chambre": "N.º de habitación",
+      "typeChambre": "Tipo de habitación",
+      "petitDejeuner": "Desayuno"
     }
   },
   "depenses": {

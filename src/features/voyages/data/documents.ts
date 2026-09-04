@@ -10,6 +10,9 @@ const MAX_TAILLE = 5 * 1024 * 1024;
 export async function ajouterDocument(_prev: unknown, formData: FormData) {
   const voyageId = formData.get("voyageId");
   const file = formData.get("file");
+  // Voucher rattaché à une réservation (Lot C) — facultatif : un document du
+  // voyage n'a pas toujours de réservation derrière lui.
+  const reservationId = formData.get("reservationId");
   if (typeof voyageId !== "string" || !(file instanceof File)) return { error: "Entrée invalide" };
   if (!ALLOWED.includes(file.type)) return { error: "Type non supporté" };
   if (file.size <= 0 || file.size > MAX_TAILLE) return { error: "Fichier vide ou trop volumineux (max 5 Mo)" };
@@ -23,17 +26,20 @@ export async function ajouterDocument(_prev: unknown, formData: FormData) {
   } catch {
     return { error: "Chiffrement indisponible" };
   }
-  const { error } = await supabase.from("voyage_documents").insert({
+  // L'id revient à l'appelant : le voucher s'affiche sans attendre un
+  // rafraîchissement RSC qui peut ne jamais se commettre (#71/#77).
+  const { data: cree, error } = await supabase.from("voyage_documents").insert({
     voyage_id: voyageId,
     nom: file.name,
     mime_type: file.type,
     taille: file.size,
     contenu_chiffre: chiffre,
     uploaded_by: auth.user.id,
-  });
+    reservation_id: typeof reservationId === "string" && reservationId ? reservationId : null,
+  }).select("id").single();
   if (error) return { error: "Dépôt échoué" };
   revalidatePath(`/voyages/${voyageId}`);
-  return { ok: true as const };
+  return { ok: true as const, id: cree?.id as string };
 }
 
 export async function supprimerDocument(_prev: unknown, formData: FormData) {

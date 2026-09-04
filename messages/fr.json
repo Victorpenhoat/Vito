@@ -505,7 +505,11 @@
       "supprimer": "Supprimer",
       "vide": "Aucun document.",
       "typeNonSupporte": "Type non supporté (PDF, JPEG, PNG, WebP)",
-      "tropVolumineux": "Fichier trop volumineux (max 5 Mo)"
+      "tropVolumineux": "Fichier trop volumineux (max 5 Mo)",
+      "voucherAjouter": "Joindre un billet",
+      "annuler": "Annuler",
+      "echec": "Dépôt impossible pour l'instant.",
+      "rattache": "billet · {libelle}"
     },
     "eyebrow": "Mon carnet",
     "heading": "Voyages",
@@ -602,6 +606,29 @@
       "annuler": "Annuler",
       "supprimer": "Supprimer l'étape {titre}",
       "echec": "Ajout de l'étape impossible pour l'instant."
+    },
+    "details": {
+      "compagnie": "Compagnie",
+      "numero": "Numéro",
+      "depart": "Départ",
+      "arrivee": "Arrivée",
+      "heureDepart": "Heure de départ",
+      "heureArrivee": "Heure d'arrivée",
+      "terminal": "Terminal",
+      "siege": "Siège",
+      "gareDepart": "Gare de départ",
+      "gareArrivee": "Gare d'arrivée",
+      "voiture": "Voiture",
+      "place": "Place",
+      "agence": "Agence",
+      "lieuPrise": "Lieu de prise",
+      "lieuRestitution": "Lieu de restitution",
+      "heurePrise": "Heure de prise",
+      "heureRestitution": "Heure de restitution",
+      "categorie": "Catégorie",
+      "chambre": "N° de chambre",
+      "typeChambre": "Type de chambre",
+      "petitDejeuner": "Petit-déjeuner"
     }
   },
   "depenses": {

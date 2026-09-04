@@ -1200,6 +1200,7 @@ export type Database = {
           created_by: string
           date_debut: string | null
           date_fin: string | null
+          details: Json | null
           etablissement_id: string | null
           fournisseur: string | null
           id: string
@@ -1216,6 +1217,7 @@ export type Database = {
           created_by: string
           date_debut?: string | null
           date_fin?: string | null
+          details?: Json | null
           etablissement_id?: string | null
           fournisseur?: string | null
           id?: string
@@ -1232,6 +1234,7 @@ export type Database = {
           created_by?: string
           date_debut?: string | null
           date_fin?: string | null
+          details?: Json | null
           etablissement_id?: string | null
           fournisseur?: string | null
           id?: string
@@ -1507,6 +1510,7 @@ export type Database = {
           id: string
           mime_type: string
           nom: string
+          reservation_id: string | null
           taille: number
           uploaded_by: string | null
           voyage_id: string
@@ -1517,6 +1521,7 @@ export type Database = {
           id?: string
           mime_type: string
           nom: string
+          reservation_id?: string | null
           taille: number
           uploaded_by?: string | null
           voyage_id: string
@@ -1527,11 +1532,19 @@ export type Database = {
           id?: string
           mime_type?: string
           nom?: string
+          reservation_id?: string | null
           taille?: number
           uploaded_by?: string | null
           voyage_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "voyage_documents_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "voyage_documents_uploaded_by_fkey"
             columns: ["uploaded_by"]
