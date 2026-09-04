@@ -652,6 +652,14 @@
       "rembourser": "Repay",
       "echec": "Cannot save right now.",
       "sansVoyageur": "Add travellers first: an expense is shared between them."
+    },
+    "planning": {
+      "titre": "Planner",
+      "retour": "Back to trips",
+      "calendrierAbsent": "The school holiday calendar has not been filled in yet — the timeline shows your trips only.",
+      "pendantVacances": "during {libelle}",
+      "horsFenetre": "{titre} — outside the twelve months shown",
+      "aucunVoyageDate": "No dated trip to place on the timeline."
     }
   },
   "depenses": {

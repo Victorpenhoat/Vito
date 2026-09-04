@@ -652,6 +652,14 @@
       "rembourser": "Rimborsa",
       "echec": "Salvataggio non possibile al momento.",
       "sansVoyageur": "Aggiungi prima i viaggiatori: una spesa si divide tra loro."
+    },
+    "planning": {
+      "titre": "Pianificazione",
+      "retour": "Torna ai viaggi",
+      "calendrierAbsent": "Il calendario delle vacanze scolastiche non è ancora compilato: la linea del tempo mostra solo i tuoi viaggi.",
+      "pendantVacances": "durante {libelle}",
+      "horsFenetre": "{titre} — fuori dai dodici mesi mostrati",
+      "aucunVoyageDate": "Nessun viaggio con date da collocare sulla linea del tempo."
     }
   },
   "depenses": {

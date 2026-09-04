@@ -1,13 +1,14 @@
-import { Plus } from "lucide-react";
+import { CalendarRange, Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { VoyageForm } from "@/features/voyages/ui/VoyageForm";
 import { VoyagesList } from "@/features/voyages/ui/VoyagesList";
 import { getMesVoyages } from "@/features/voyages/data/queries";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
+import { Link } from "@/lib/i18n/routing";
 
 // Onglet Voyages (design Onglet_Voyages, écran 1) : sous-onglets par statut,
-// cards à couverture. Le bouton Planning (écran 2) arrive au lot E.
+// cards à couverture, et l'accès au planning (écran 2, lot E).
 export default async function VoyagesPage() {
   const t = await getTranslations("voyages");
   const voyages = await getMesVoyages();
@@ -27,6 +28,12 @@ export default async function VoyagesPage() {
           </a>
         }
       />
+      <Link href="/voyages/planning" data-testid="lien-planning"
+        className="inline-flex items-center gap-1.5 self-start rounded-full border border-line bg-surface px-3.5 py-2 text-[12px] font-semibold text-ink hover:border-accent/30 focus-visible:outline-2 focus-visible:outline-accent">
+        <CalendarRange size={13} className="text-accent" aria-hidden />
+        {t("planning.titre")}
+      </Link>
+
       {voyages.length === 0 ? (
         <p className="text-sm text-muted">{t("vide")}</p>
       ) : (
