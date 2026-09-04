@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { creerRegroupeur, villeDominante, dansLesLimites, type PointCarte, type Limites } from "./clusters";
+import {
+  creerRegroupeur, villeDominante, dansLesLimites, bornesDesPoints,
+  type PointCarte, type Limites,
+} from "./clusters";
 
 const pt = (id: string, lat: number, lng: number, ville: string | null = null): PointCarte =>
   ({ id, lat, lng, ville });
@@ -78,5 +81,23 @@ describe("dansLesLimites", () => {
 
   it("les bords comptent comme visibles", () => {
     expect(dansLesLimites([pt("bord", 48.8, 2.2)], PARIS)).toEqual(["bord"]);
+  });
+});
+
+describe("bornesDesPoints", () => {
+  it("englobe tous les points, du plus au sud-ouest au plus au nord-est", () => {
+    expect(bornesDesPoints([pt("paris", 48.86, 2.35), pt("lyon", 45.76, 4.83)])).toEqual({
+      sud: 45.76, ouest: 2.35, nord: 48.86, est: 4.83,
+    });
+  });
+
+  it("un point seul donne des bornes valides, pas un rectangle nul à cadrer", () => {
+    expect(bornesDesPoints([pt("a", 48.86, 2.35)])).toEqual({
+      sud: 48.86, ouest: 2.35, nord: 48.86, est: 2.35,
+    });
+  });
+
+  it("sans point, il n'y a rien à cadrer : la carte garde son centre par défaut", () => {
+    expect(bornesDesPoints([])).toBeNull();
   });
 });

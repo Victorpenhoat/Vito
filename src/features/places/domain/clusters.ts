@@ -101,3 +101,24 @@ export function creerRegroupeur(points: PointCarte[]): {
     },
   };
 }
+
+/**
+ * Bornes englobant tous les points — ce sur quoi la carte doit s'ouvrir.
+ *
+ * Se poser sur la MOYENNE des points (ce que fait `mapCenter`) place un carnet
+ * Paris + Lyon en pleine Bourgogne, sur un cadrage sans un seul marqueur. Ce
+ * défaut a été trouvé au lot H5 côté hôtels ; il valait tout autant pour les
+ * restos dès qu'un carnet s'étale sur deux villes.
+ */
+export function bornesDesPoints(points: PointCarte[]): Limites | null {
+  if (points.length === 0) return null;
+  return points.reduce<Limites>(
+    (b, p) => ({
+      sud: Math.min(b.sud, p.lat),
+      nord: Math.max(b.nord, p.lat),
+      ouest: Math.min(b.ouest, p.lng),
+      est: Math.max(b.est, p.lng),
+    }),
+    { sud: points[0]!.lat, nord: points[0]!.lat, ouest: points[0]!.lng, est: points[0]!.lng },
+  );
+}

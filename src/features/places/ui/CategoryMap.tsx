@@ -7,7 +7,10 @@ import { useTranslations } from "next-intl";
 import { LocateFixed } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { mapCenter } from "../domain/mapCenter";
-import { creerRegroupeur, dansLesLimites, type Groupe, type Limites, type PointCarte } from "../domain/clusters";
+import {
+  creerRegroupeur, dansLesLimites, bornesDesPoints,
+  type Groupe, type Limites, type PointCarte,
+} from "../domain/clusters";
 import type { Place } from "../domain/filterPlaces";
 import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
 import { restoStatut, type RestoStatut } from "@/features/restos/domain/statut";
@@ -118,16 +121,21 @@ function Marqueurs({ places, clusters, surbrillanceId, onSelect, onZone }: {
 
   // Cadrage d'ouverture : englober TOUS les points plutôt que se poser sur leur
   // moyenne. Un carnet Paris + Lyon a sa moyenne en pleine Bourgogne — la carte
-  // ouvrait alors sur un cadrage vide. Plafonné au zoom d'ouverture historique
-  // (12) : la carte ne s'approche jamais plus qu'avant.
+  // ouvrait alors sur un cadrage vide. Vrai des deux côtés : découvert sur les
+  // hôtels (lot H5), le défaut guettait les restos dès qu'un carnet s'étale sur
+  // deux villes. Plafonné au zoom d'ouverture historique (12) : la carte ne
+  // s'approche jamais plus qu'avant.
   const signature = points.map((p) => p.id).join("|");
   useEffect(() => {
-    if (!clusters || points.length === 0) return;
-    map.fitBounds(L.latLngBounds(points.map((p) => [p.lat, p.lng] as [number, number])),
-      { padding: [40, 40], maxZoom: 12 });
+    const bornes = bornesDesPoints(points);
+    if (!bornes) return;
+    map.fitBounds(
+      L.latLngBounds([bornes.sud, bornes.ouest], [bornes.nord, bornes.est]),
+      { padding: [40, 40], maxZoom: 12 },
+    );
     // points est reconstruit à chaque rendu : c'est sa SIGNATURE qui commande
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, clusters, map]);
+  }, [signature, map]);
 
   const parId = useMemo(() => new Map(places.map((p) => [p.id, p])), [places]);
 
