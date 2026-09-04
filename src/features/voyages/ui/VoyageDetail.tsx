@@ -10,6 +10,9 @@ import { sejourEnCours } from "../domain/horsLigne";
 import { VoyageCover } from "./VoyageCover";
 import { ShareVoyageButton } from "./ShareVoyageButton";
 import { ReservationForm } from "./ReservationForm";
+import { ParticipantsList } from "./ParticipantsList";
+import { ProgrammeBlock } from "./ProgrammeBlock";
+import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
 import { DocumentUploadForm } from "./DocumentUploadForm";
@@ -35,7 +38,10 @@ export async function VoyageDetail({ id }: { id: string }) {
   const locale = await getLocale();
   const detail = await getVoyageDetail(id);
   if (!detail) notFound();
-  const { voyage, reservations, membres, isOwner } = detail;
+  const { voyage, reservations, membres, participants, etapes, isOwner } = detail;
+  // Le Cercle alimente la liste des voyageurs : on part rarement avec des
+  // inconnus, et un proche déjà saisi n'a pas à l'être une seconde fois.
+  const proches = (await getProches()).map((p) => ({ id: p.id, nom: `${p.first_name} ${p.last_name}` }));
   const documents = await getVoyageDocuments(voyage.id);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -49,6 +55,8 @@ export async function VoyageDetail({ id }: { id: string }) {
     .sort((a, b) => (a.date_debut! < b.date_debut! ? -1 : 1))[0] ?? null;
 
   const ancres = [
+    { href: "#voyageurs", label: t("participants.titre") },
+    { href: "#programme", label: t("programme.titre") },
     { href: "#reservations", label: t("reservations") },
     { href: "#documents", label: t("documents.titre") },
     { href: "#partage", label: t("fiche.partage") },
@@ -142,6 +150,18 @@ export async function VoyageDetail({ id }: { id: string }) {
 
       <div className="mt-6 grid gap-6 md:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-6">
+          <section id="voyageurs" className="scroll-mt-4">
+            <SectionLabel>{t("participants.titre")}</SectionLabel>
+            <ParticipantsList voyageId={voyage.id} participants={participants} proches={proches}
+              comptes={membres.map((m) => ({ profileId: m.profile_id, nom: m.display_name ?? m.profile_id }))} />
+          </section>
+
+          <section id="programme" className="scroll-mt-4">
+            <SectionLabel>{t("programme.titre")}</SectionLabel>
+            <ProgrammeBlock voyageId={voyage.id} etapes={etapes}
+              dateDebut={voyage.date_debut} dateFin={voyage.date_fin} />
+          </section>
+
           <section id="reservations" className="scroll-mt-4">
             <SectionLabel>{t("reservations")}</SectionLabel>
             <ul className="flex flex-col">

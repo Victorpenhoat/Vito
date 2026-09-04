@@ -570,6 +570,38 @@
       "rejoindra": "se añadirá a tus hoteles",
       "retirer": "Quitar alojamiento",
       "voirFiche": "Ver la ficha"
+    },
+    "participants": {
+      "titre": "Viajeros",
+      "vide": "Todavía no hay nadie en este viaje.",
+      "ajouter": "Añadir un viajero",
+      "depuisCercle": "De mi Círculo",
+      "depuisComptes": "Cuentas compartidas",
+      "libre": "Otra persona",
+      "nomPlaceholder": "Nombre y apellidos",
+      "valider": "Añadir",
+      "retirer": "Quitar a {nom} del viaje",
+      "aide": "Ir de viaje no da ningún acceso: compartir es otra cosa.",
+      "sources": {
+        "compte": "cuenta",
+        "cercle": "Círculo",
+        "libre": "invitado"
+      },
+      "echec": "No se puede añadir por ahora."
+    },
+    "programme": {
+      "titre": "Programa",
+      "jourVide": "Nada previsto ese día.",
+      "aCaler": "Por concretar",
+      "aCalerVide": "Ninguna idea sin fecha.",
+      "ajouter": "Añadir una etapa",
+      "titrePlaceholder": "Visita al Coliseo, cena…",
+      "lieuPlaceholder": "Lugar (opcional)",
+      "heure": "Hora",
+      "valider": "Añadir",
+      "annuler": "Cancelar",
+      "supprimer": "Eliminar la etapa {titre}",
+      "echec": "No se puede añadir la etapa por ahora."
     }
   },
   "depenses": {

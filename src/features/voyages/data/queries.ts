@@ -23,14 +23,21 @@ export async function getVoyageDetail(id: string) {
   // crashent le RSC. On retourne null ; le consommateur (VoyageDetail) fait notFound().
   if (!uid) return null;
 
-  const [voyageRes, resRes, memRes] = await Promise.all([
+  const [voyageRes, resRes, memRes, partRes, etapesRes] = await Promise.all([
     supabase.from("voyages").select("id, titre, destination, date_debut, date_fin, statut, owner_id, periode_texte, cover_photo_ref, cover_url, devise").eq("id", id).single(),
     supabase.from("reservations").select("id, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien, notes, etablissement_id").eq("voyage_id", id).order("date_debut", { ascending: true, nullsFirst: false }),
     supabase.from("voyage_membres").select("profile_id, role, profile:profiles(display_name)").eq("voyage_id", id),
+    // Lot B : qui part (participants) et quoi faire sur place (programme).
+    supabase.from("voyage_participants")
+      .select("id, profile_id, family_member_id, display_name, email, role").eq("voyage_id", id),
+    supabase.from("voyage_etapes")
+      .select("id, jour, heure, titre, lieu, etablissement_id, notes, ordre").eq("voyage_id", id),
   ]);
   if (voyageRes.error) throw voyageRes.error;
   if (resRes.error) throw resRes.error;
   if (memRes.error) throw memRes.error;
+  if (partRes.error) throw partRes.error;
+  if (etapesRes.error) throw etapesRes.error;
 
   const membres = (memRes.data ?? []).map((m) => {
     const p = Array.isArray(m.profile) ? m.profile[0] : m.profile;
@@ -40,6 +47,25 @@ export async function getVoyageDetail(id: string) {
     voyage: voyageRes.data,
     reservations: resRes.data ?? [],
     membres,
+    participants: (partRes.data ?? []).map((p) => ({
+      id: p.id,
+      profileId: p.profile_id,
+      familyMemberId: p.family_member_id,
+      displayName: p.display_name,
+      email: p.email,
+      role: p.role === "organisateur" ? ("organisateur" as const) : ("voyageur" as const),
+    })),
+    etapes: (etapesRes.data ?? []).map((e) => ({
+      id: e.id,
+      jour: e.jour,
+      // time renvoyé « HH:MM:SS » par PostgREST : le programme n'affiche que l'heure et la minute.
+      heure: e.heure ? e.heure.slice(0, 5) : null,
+      titre: e.titre,
+      lieu: e.lieu,
+      etablissementId: e.etablissement_id,
+      notes: e.notes,
+      ordre: e.ordre,
+    })),
     isOwner: voyageRes.data.owner_id === uid,
   };
 }

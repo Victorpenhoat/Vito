@@ -570,6 +570,38 @@
       "rejoindra": "rejoindra vos hôtels",
       "retirer": "Retirer l'hébergement",
       "voirFiche": "Voir la fiche"
+    },
+    "participants": {
+      "titre": "Voyageurs",
+      "vide": "Personne n'est encore inscrit à ce voyage.",
+      "ajouter": "Ajouter un voyageur",
+      "depuisCercle": "Dans mon Cercle",
+      "depuisComptes": "Comptes partagés",
+      "libre": "Quelqu'un d'autre",
+      "nomPlaceholder": "Prénom et nom",
+      "valider": "Ajouter",
+      "retirer": "Retirer {nom} du voyage",
+      "aide": "Être du voyage ne donne aucun accès : le partage reste séparé.",
+      "sources": {
+        "compte": "compte",
+        "cercle": "Cercle",
+        "libre": "invité"
+      },
+      "echec": "Ajout impossible pour l'instant."
+    },
+    "programme": {
+      "titre": "Programme",
+      "jourVide": "Rien de prévu ce jour-là.",
+      "aCaler": "À caler",
+      "aCalerVide": "Aucune envie en attente de date.",
+      "ajouter": "Ajouter une étape",
+      "titrePlaceholder": "Visite du Colisée, dîner…",
+      "lieuPlaceholder": "Lieu (facultatif)",
+      "heure": "Heure",
+      "valider": "Ajouter",
+      "annuler": "Annuler",
+      "supprimer": "Supprimer l'étape {titre}",
+      "echec": "Ajout de l'étape impossible pour l'instant."
     }
   },
   "depenses": {
