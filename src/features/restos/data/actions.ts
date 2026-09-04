@@ -4,7 +4,7 @@ import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import type { SearchOpts } from "@/lib/services/places/types";
-import { mapPlaceToEtablissement } from "../domain/mapPlaceToEtablissement";
+import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
 import {
   addRestoSchema, addAvisSchema, setTagsSchema, toggleFavoriteSchema, toggleArchiveSchema,
   marquerVisiteSchema, changerStatutSchema, setOrigineSchema,
@@ -28,22 +28,11 @@ async function addPlace(category: "resto" | "hotel", formData: FormData) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Non authentifié" };
-  // Hôtels v2 : le mask équipements n'est demandé que pour les hôtels (coût SKU).
-  const place = await getPlacesProvider().details(parsed.data.placeId, { hotel: category === "hotel" });
-  if (!place) return { error: "Établissement introuvable" };
-  const input = mapPlaceToEtablissement(place, category);
-  const { data: etabId, error: rpcErr } = await supabase.rpc("upsert_etablissement", {
-    p: { ...input, enriched_at: new Date().toISOString() },
+  // Mécanique partagée avec les réservations de voyage (lot H6).
+  const res = await ajouterAuCarnet(supabase, auth.user.id, parsed.data.placeId, category, {
+    statutV2: typeof statutV2 === "string" ? statutV2 : null,
   });
-  if (rpcErr || !etabId) { logActionError("restos.searchPlaces", rpcErr); return { error: "Enregistrement échoué" }; }
-  const extra =
-    statutV2 === "favori" ? { is_favorite: true }
-    : statutV2 === "teste" ? { statut: "visite" as const }
-    : {};
-  const { error: itemErr } = await supabase
-    .from("liste_items")
-    .upsert({ user_id: auth.user.id, etablissement_id: etabId, ...extra }, { onConflict: "user_id,etablissement_id" });
-  if (itemErr) { logActionError("restos.searchPlaces", itemErr); return { error: "Ajout à la liste échoué" }; }
+  if ("error" in res) { logActionError("restos.searchPlaces", res.error); return { error: res.error }; }
   revalidatePath(category === "hotel" ? "/hotels" : "/restos");
   return {};
 }

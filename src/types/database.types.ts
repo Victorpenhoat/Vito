@@ -1200,6 +1200,7 @@ export type Database = {
           created_by: string
           date_debut: string | null
           date_fin: string | null
+          etablissement_id: string | null
           fournisseur: string | null
           id: string
           lien: string | null
@@ -1215,6 +1216,7 @@ export type Database = {
           created_by: string
           date_debut?: string | null
           date_fin?: string | null
+          etablissement_id?: string | null
           fournisseur?: string | null
           id?: string
           lien?: string | null
@@ -1230,6 +1232,7 @@ export type Database = {
           created_by?: string
           date_debut?: string | null
           date_fin?: string | null
+          etablissement_id?: string | null
           fournisseur?: string | null
           id?: string
           lien?: string | null
@@ -1244,6 +1247,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_etablissement_id_fkey"
+            columns: ["etablissement_id"]
+            isOneToOne: false
+            referencedRelation: "etablissements"
             referencedColumns: ["id"]
           },
           {

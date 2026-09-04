@@ -356,7 +356,8 @@
       "titre": "Por qué está aquí",
       "modifier": "Editar",
       "aucune": "Origen sin registrar",
-      "sheetTitre": "¿De dónde viene esta dirección?"
+      "sheetTitre": "¿De dónde viene esta dirección?",
+      "viaVoyage": "Añadido vía Viajes · {titre}"
     },
     "visite": {
       "titre": "Fui — {nom}",
@@ -561,6 +562,14 @@
       "ouvrirDocument": "Abrir",
       "surCetAppareil": "Guardado solo en este dispositivo, y eliminado al cerrar sesión.",
       "retourApplication": "Volver a la aplicación"
+    },
+    "hebergement": {
+      "chercher": "Nombre del hotel, ciudad…",
+      "bouton": "Buscar",
+      "aucun": "No se encontró alojamiento: usa el campo libre de abajo.",
+      "rejoindra": "se añadirá a tus hoteles",
+      "retirer": "Quitar alojamiento",
+      "voirFiche": "Ver la ficha"
     }
   },
   "depenses": {
@@ -1047,7 +1056,8 @@
       "titre": "Por qué está aquí",
       "modifier": "Editar",
       "aucune": "Origen sin registrar",
-      "sheetTitre": "¿De dónde viene esta dirección?"
+      "sheetTitre": "¿De dónde viene esta dirección?",
+      "viaVoyage": "Añadido vía Viajes · {titre}"
     },
     "visite": {
       "titre": "Me alojé — {nom}",
@@ -1166,6 +1176,17 @@
       "siteOfficiel": "Sitio oficial",
       "booking": "Booking",
       "horaires": "Entrada {checkin} · salida {checkout}"
+    },
+    "reservation": {
+      "sansDates": "Fechas no indicadas",
+      "bascule": "Registrar la estancia",
+      "basculeAide": "Se recuperan las fechas de tu reserva: corrígelas si la estancia cambió.",
+      "etats": {
+        "a_venir": "próxima",
+        "en_cours": "en curso",
+        "passee": "estancia pasada",
+        "sans_dates": "reservada"
+      }
     }
   },
   "accueil": {

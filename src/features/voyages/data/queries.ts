@@ -25,7 +25,7 @@ export async function getVoyageDetail(id: string) {
 
   const [voyageRes, resRes, memRes] = await Promise.all([
     supabase.from("voyages").select("id, titre, destination, date_debut, date_fin, statut, owner_id, periode_texte, cover_photo_ref, cover_url, devise").eq("id", id).single(),
-    supabase.from("reservations").select("id, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien, notes").eq("voyage_id", id).order("date_debut", { ascending: true, nullsFirst: false }),
+    supabase.from("reservations").select("id, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien, notes, etablissement_id").eq("voyage_id", id).order("date_debut", { ascending: true, nullsFirst: false }),
     supabase.from("voyage_membres").select("profile_id, role, profile:profiles(display_name)").eq("voyage_id", id),
   ]);
   if (voyageRes.error) throw voyageRes.error;

@@ -206,3 +206,79 @@ test("carte restos : pas de regroupement (config map.clusters = false)", async (
   // le compteur restos reste celui du filtre, pas celui du cadrage
   await expect(page.getByTestId("map-count")).not.toContainText("zone visible");
 });
+
+// Lot H6 : une réservation d'hébergement fait entrer l'hôtel au carnet, et son
+// séjour à venir se lit sur la fiche. Le voyage « Week-end à Rome » du seed
+// appartient au client et court du 12 au 15 septembre 2026.
+const VOYAGE_ROME = "11111111-2222-4333-8444-555555555555";
+
+/** Réserve « Grand Hôtel Riviera » (mock) sur ce voyage, et renvoie la ligne créée. */
+async function reserverRiviera(page: import("@playwright/test").Page, debut: string, fin: string) {
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+  const form = page.getByTestId("reservation-form");
+  await expect(form).toBeVisible();
+  await form.getByTestId("hebergement-recherche").fill("riviera");
+  await form.getByTestId("hebergement-chercher").click();
+  await form.getByTestId("hebergement-resultat").first().click();
+  await expect(form.getByTestId("hebergement-choisi")).toContainText("Riviera");
+  await form.locator('input[name="dateDebut"]').fill(debut);
+  await form.locator('input[name="dateFin"]').fill(fin);
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.locator('button[type="submit"]').click(),
+  ]);
+}
+
+test("réserver un hôtel dans un voyage le fait entrer au carnet, avec son séjour à venir", async ({ page }) => {
+  await login(page);
+  // dates du voyage : la réservation est donc à venir
+  await reserverRiviera(page, "2026-09-12", "2026-09-15");
+
+  const ligne = page.getByTestId("reservation-row").filter({ hasText: "Riviera" }).first();
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await ligne.getByTestId("reservation-hotel").click();
+  await expect(page).toHaveURL(/\/fr\/hotels\//);
+
+  // la fiche dit d'où vient cet hôtel, et montre le séjour réservé
+  await expect(page.getByTestId("origine-block")).toContainText("Voyages");
+  const reserve = page.getByTestId("sejour-reserve").first();
+  await expect(reserve).toBeVisible();
+  await expect(page.getByTestId("sejours-reserves")).toContainText("à venir");
+  await expect(reserve.getByTestId("sejour-reserve-voyage")).toContainText("Rome");
+});
+
+test("une réservation passée propose d'enregistrer le séjour, et ne le propose plus ensuite", async ({ page }) => {
+  await login(page);
+  // Dates PASSÉES et propres à ce run : une réservation identique laissée par un
+  // run précédent aurait déjà son séjour, et ne proposerait plus rien.
+  const decalage = 40 + Math.floor((Date.now() / 60_000) % 300);
+  const debut = jourDans(-decalage);
+  const fin = jourDans(-(decalage - 2));
+  await reserverRiviera(page, debut, fin);
+
+  await page.getByTestId("reservation-row").filter({ hasText: "Riviera" }).first()
+    .getByTestId("reservation-hotel").click();
+  await expect(page).toHaveURL(/\/fr\/hotels\//);
+
+  const propositions = page.getByTestId("bascule-sejour");
+  await expectVisibleWithReload(page, propositions.first(), { timeout: 15_000 });
+  const avant = await propositions.count();
+  const sejours = page.getByTestId("sejour-row");
+  const sejoursAvant = await sejours.count();
+
+  await propositions.first().click();
+  const form = page.getByTestId("sejour-form");
+  await expect(form).toBeVisible();
+  // les dates de la réservation sont reprises telles quelles
+  await expect(form.locator('input[name="visiteLe"]')).toHaveValue(debut);
+  await expect(form.locator('input[name="dateFin"]')).toHaveValue(fin);
+
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByRole("button", { name: "Enregistrer le séjour" }).click(),
+  ]);
+
+  // le séjour est enregistré, et la proposition disparaît : elle a été honorée
+  await expectCountWithReload(page, sejours, sejoursAvant + 1, { timeout: 15_000 });
+  await expect(propositions).toHaveCount(avant - 1);
+});

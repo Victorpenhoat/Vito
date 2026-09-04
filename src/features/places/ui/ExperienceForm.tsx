@@ -17,8 +17,11 @@ type TagLite = { id: string; slug: string; label: string; color: string | null }
 // écran 9) : date (ou plage arrivée→départ), note /10 au dixième (slider), tags
 // de verdict (création à la volée), commentaire, « Passer en favori ? ».
 // Le mode séjour ajoute le départ, l'occupation et le voyage lié détecté.
-export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto", voyages = [], encart }: {
+export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto", voyages = [], encart, sejourInitial }: {
   listeItemId: string; tags: TagLite[]; onDone?: () => void; categorie?: CategorieUi; voyages?: VoyageLite[];
+  /** Dates imposées à l'ouverture (bascule d'une réservation en séjour, lot H6) :
+   *  elles priment sur le contexte de recherche, qui parle d'une autre intention. */
+  sejourInitial?: { arrivee: string; depart: string | null };
   /** Encart rendu avant le bouton d'enregistrement (les vins de la visite,
    *  côté restos) : la brique générique n'a pas à connaître son contenu. */
   encart?: React.ReactNode;
@@ -44,8 +47,8 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
   const [tagPending, setTagPending] = useState(false);
   const [tagError, setTagError] = useState<string | null>(null);
   // mode séjour
-  const [arrivee, setArrivee] = useState(aujourdhui);
-  const [depart, setDepart] = useState("");
+  const [arrivee, setArrivee] = useState(sejourInitial?.arrivee ?? aujourdhui);
+  const [depart, setDepart] = useState(sejourInitial?.depart ?? "");
   const [delie, setDelie] = useState(false);
   const [occupation, setOccupation] = useState({
     adultes: CONTEXTE_DEFAUT.adultes, enfants: CONTEXTE_DEFAUT.enfants, chambres: CONTEXTE_DEFAUT.chambres,
@@ -53,7 +56,7 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
   // Dates et occupation choisies dans la recherche (lot H4) : elles arrivent
   // après l'hydratation, et ne servent qu'à éviter une deuxième saisie.
   const repris = useContexteRepris();
-  const aRepris = sejour && repris != null && (
+  const aRepris = sejour && !sejourInitial && repris != null && (
     repris.arrivee != null || repris.adultes !== CONTEXTE_DEFAUT.adultes
     || repris.enfants !== CONTEXTE_DEFAUT.enfants || repris.chambres !== CONTEXTE_DEFAUT.chambres
   );
@@ -63,11 +66,13 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
   }, [state, onDone]);
 
   useEffect(() => {
-    if (!sejour || !repris) return;
+    // Des dates imposées (réservation) ne se laissent pas écraser par le
+    // contexte de recherche : elles décrivent CE séjour-là.
+    if (!sejour || !repris || sejourInitial) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- report du contexte de recherche, disponible après hydratation
     if (repris.arrivee) { setArrivee(repris.arrivee); setDepart(repris.depart ?? ""); }
     setOccupation({ adultes: repris.adultes, enfants: repris.enfants, chambres: repris.chambres });
-  }, [repris, sejour]);
+  }, [repris, sejour, sejourInitial]);
 
   // Voyage couvrant la plage saisie : proposé automatiquement, déliable.
   const candidats = sejour ? voyagesCouvrant(voyages, arrivee, depart || null) : [];

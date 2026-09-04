@@ -154,6 +154,11 @@ export async function VoyageDetail({ id }: { id: string }) {
                     {r.conciergerie_tel && <a href={`tel:${r.conciergerie_tel}`} className="text-accent hover:underline">{r.conciergerie_tel}</a>}
                     {r.conciergerie_mail && <a href={`mailto:${r.conciergerie_mail}`} className="text-accent hover:underline">{r.conciergerie_mail}</a>}
                     {r.lien && <a href={r.lien} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">{t("voirLien")}</a>}
+                    {/* H6 : l'hébergement réservé est au carnet — on y mène. */}
+                    {r.etablissement_id && (
+                      <Link href={`/hotels/${r.etablissement_id}`} data-testid="reservation-hotel"
+                        className="font-semibold text-accent hover:underline">{t("hebergement.voirFiche")} →</Link>
+                    )}
                   </span>
                 </li>
               ))}

@@ -29,6 +29,10 @@ export const reservationInputSchema = z
     voyageId: z.string().uuid(),
     type: z.enum(RESERVATION_TYPES),
     fournisseur: z.string().max(200).optional(),
+    // Hôtels v2 (H6) : l'hébergement réservé, désigné chez le fournisseur.
+    // Il rejoint le carnet et la réservation le pointe. Rester en texte libre
+    // reste permis : toutes les réservations ne visent pas un lieu identifiable.
+    placeId: z.string().max(300).optional(),
     reference: z.string().max(200).optional(),
     dateDebut: z.string().date().optional(),
     dateFin: z.string().date().optional(),

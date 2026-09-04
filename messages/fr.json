@@ -356,7 +356,8 @@
       "titre": "Pourquoi c'est là",
       "modifier": "Modifier",
       "aucune": "Origine non renseignée",
-      "sheetTitre": "D'où vient cette adresse ?"
+      "sheetTitre": "D'où vient cette adresse ?",
+      "viaVoyage": "Ajouté via Voyages · {titre}"
     },
     "visite": {
       "titre": "J'y suis allé — {nom}",
@@ -561,6 +562,14 @@
       "ouvrirDocument": "Ouvrir",
       "surCetAppareil": "Enregistré sur cet appareil uniquement, et retiré à la déconnexion.",
       "retourApplication": "Retour à l'application"
+    },
+    "hebergement": {
+      "chercher": "Nom de l'hôtel, ville…",
+      "bouton": "Chercher",
+      "aucun": "Aucun hébergement trouvé — laissez le champ libre ci-dessous.",
+      "rejoindra": "rejoindra vos hôtels",
+      "retirer": "Retirer l'hébergement",
+      "voirFiche": "Voir la fiche"
     }
   },
   "depenses": {
@@ -1047,7 +1056,8 @@
       "titre": "Pourquoi c'est là",
       "modifier": "Modifier",
       "aucune": "Origine non renseignée",
-      "sheetTitre": "D'où vient cette adresse ?"
+      "sheetTitre": "D'où vient cette adresse ?",
+      "viaVoyage": "Ajouté via Voyages · {titre}"
     },
     "visite": {
       "titre": "J'y ai séjourné — {nom}",
@@ -1166,6 +1176,17 @@
       "siteOfficiel": "Site officiel",
       "booking": "Booking",
       "horaires": "Check-in {checkin} · check-out {checkout}"
+    },
+    "reservation": {
+      "sansDates": "Dates non précisées",
+      "bascule": "Enregistrer le séjour",
+      "basculeAide": "Les dates de votre réservation sont reprises — corrigez-les si le séjour a changé.",
+      "etats": {
+        "a_venir": "à venir",
+        "en_cours": "en cours",
+        "passee": "séjour passé",
+        "sans_dates": "réservé"
+      }
     }
   },
   "accueil": {

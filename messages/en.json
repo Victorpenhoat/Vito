@@ -356,7 +356,8 @@
       "titre": "Why it's here",
       "modifier": "Edit",
       "aucune": "No origin recorded",
-      "sheetTitre": "Where does this place come from?"
+      "sheetTitre": "Where does this place come from?",
+      "viaVoyage": "Added via Trips · {titre}"
     },
     "visite": {
       "titre": "I went — {nom}",
@@ -561,6 +562,14 @@
       "ouvrirDocument": "Open",
       "surCetAppareil": "Stored on this device only, and removed when you sign out.",
       "retourApplication": "Back to the app"
+    },
+    "hebergement": {
+      "chercher": "Hotel name, city…",
+      "bouton": "Search",
+      "aucun": "No accommodation found — use the free-text field below.",
+      "rejoindra": "will join your hotels",
+      "retirer": "Remove accommodation",
+      "voirFiche": "Open the page"
     }
   },
   "depenses": {
@@ -1047,7 +1056,8 @@
       "titre": "Why it's here",
       "modifier": "Edit",
       "aucune": "No origin recorded",
-      "sheetTitre": "Where does this place come from?"
+      "sheetTitre": "Where does this place come from?",
+      "viaVoyage": "Added via Trips · {titre}"
     },
     "visite": {
       "titre": "I stayed here — {nom}",
@@ -1166,6 +1176,17 @@
       "siteOfficiel": "Official site",
       "booking": "Booking",
       "horaires": "Check-in {checkin} · check-out {checkout}"
+    },
+    "reservation": {
+      "sansDates": "No dates given",
+      "bascule": "Record the stay",
+      "basculeAide": "Your booking dates are carried over — correct them if the stay changed.",
+      "etats": {
+        "a_venir": "upcoming",
+        "en_cours": "under way",
+        "passee": "past stay",
+        "sans_dates": "booked"
+      }
     }
   },
   "accueil": {
