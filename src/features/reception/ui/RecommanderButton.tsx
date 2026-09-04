@@ -4,19 +4,28 @@ import { useTranslations } from "next-intl";
 import { Send } from "lucide-react";
 import { Modal } from "@/features/shared/ui/Modal";
 import { Button } from "@/features/shared/ui/Button";
-import { recommanderAdresse } from "../data/actions";
+import { recommanderAdresse, recommanderVin } from "../data/actions";
 import { destinatairesPossibles } from "../domain/reception";
 
 type Proche = { id: string; nom: string; profileId: string | null };
 
-// « Recommander à… » depuis une fiche (lot 2). Ne s'affiche que si quelqu'un
-// peut recevoir : un proche sans compte rattaché n'a pas de boîte.
-export function RecommanderButton({ proches, categorie, placeId, libelle }: {
+/** Ce qu'on recommande : une adresse (référencée chez le fournisseur) ou un vin
+ *  (décrit, puisqu'il n'a pas de fournisseur derrière lui). */
+export type Cible =
+  | { type: "adresse"; categorie: "resto" | "hotel"; placeId: string; libelle: string }
+  | {
+      type: "vin"; libelle: string; nom: string;
+      domaine?: string | null; millesime?: number | null;
+      couleur?: string | null; region?: string | null;
+    };
+
+// « Recommander à… » depuis une fiche. Ne s'affiche que si quelqu'un peut
+// recevoir : un proche sans compte rattaché n'a pas de boîte.
+export function RecommanderButton({ proches, cible }: {
   proches: Proche[];
-  categorie: "resto" | "hotel";
-  placeId: string;
-  libelle: string;
+  cible: Cible;
 }) {
+  const libelle = cible.libelle;
   const t = useTranslations("reception");
   const [ouvert, setOuvert] = useState(false);
   const [mot, setMot] = useState("");
@@ -32,11 +41,21 @@ export function RecommanderButton({ proches, categorie, placeId, libelle }: {
     setErreur(null);
     const fd = new FormData();
     fd.set("familyMemberId", familyMemberId);
-    fd.set("categorie", categorie);
-    fd.set("placeId", placeId);
-    fd.set("libelle", libelle);
+    fd.set("libelle", cible.libelle);
     if (mot.trim()) fd.set("mot", mot.trim());
-    const res = await recommanderAdresse(undefined, fd);
+    if (cible.type === "adresse") {
+      fd.set("categorie", cible.categorie);
+      fd.set("placeId", cible.placeId);
+    } else {
+      fd.set("nom", cible.nom);
+      if (cible.domaine) fd.set("domaine", cible.domaine);
+      if (cible.millesime != null) fd.set("millesime", String(cible.millesime));
+      if (cible.couleur) fd.set("couleur", cible.couleur);
+      if (cible.region) fd.set("region", cible.region);
+    }
+    const res = cible.type === "adresse"
+      ? await recommanderAdresse(undefined, fd)
+      : await recommanderVin(undefined, fd);
     setEnCours(null);
     if (!("ok" in res) || !res.ok) {
       setErreur(("error" in res && res.error) || t("echec"));

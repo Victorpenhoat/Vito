@@ -8,9 +8,12 @@ export type Recommandation = {
   deProfileId: string;
   /** Nom de l'expéditeur, tel que mon carnet le connaît (ou son nom de compte). */
   deNom: string;
-  categorie: "resto" | "hotel";
-  placeId: string;
+  categorie: "resto" | "hotel" | "vin";
+  /** Adresse : l'identifiant du fournisseur. Null pour un vin, qui n'en a pas. */
+  placeId: string | null;
   libelle: string;
+  /** Vin : ce qu'il faut pour le retrouver dans une cave (nom, domaine, millésime). */
+  vin: { nom: string; domaine: string | null; millesime: number | null } | null;
   mot: string | null;
   creeLe: string;
 };
@@ -20,9 +23,13 @@ export function trierReception(boite: Recommandation[]): Recommandation[] {
   return [...boite].sort((a, b) => b.creeLe.localeCompare(a.creeLe));
 }
 
-/** Cette adresse est-elle déjà dans mon carnet ? On le dit avant d'accepter. */
+/**
+ * Cette adresse est-elle déjà dans mon carnet ? On le dit avant d'accepter.
+ * Un vin n'a pas de place_id : la question ne se pose pas de la même façon, et
+ * `find_or_create_vin` s'en charge de toute manière au moment d'accepter.
+ */
 export function dejaAuCarnet(reco: Recommandation, placeIdsDuCarnet: string[]): boolean {
-  return placeIdsDuCarnet.includes(reco.placeId);
+  return reco.placeId != null && placeIdsDuCarnet.includes(reco.placeId);
 }
 
 /**

@@ -1164,10 +1164,15 @@ export type Database = {
           id: string
           libelle: string
           mot: string | null
-          place_id: string
+          place_id: string | null
           statut: string
           traitee_le: string | null
           vers_profile_id: string
+          vin_couleur: Database["public"]["Enums"]["vin_couleur"] | null
+          vin_domaine: string | null
+          vin_millesime: number | null
+          vin_nom: string | null
+          vin_region: string | null
         }
         Insert: {
           categorie: string
@@ -1176,10 +1181,15 @@ export type Database = {
           id?: string
           libelle: string
           mot?: string | null
-          place_id: string
+          place_id?: string | null
           statut?: string
           traitee_le?: string | null
           vers_profile_id: string
+          vin_couleur?: Database["public"]["Enums"]["vin_couleur"] | null
+          vin_domaine?: string | null
+          vin_millesime?: number | null
+          vin_nom?: string | null
+          vin_region?: string | null
         }
         Update: {
           categorie?: string
@@ -1188,10 +1198,15 @@ export type Database = {
           id?: string
           libelle?: string
           mot?: string | null
-          place_id?: string
+          place_id?: string | null
           statut?: string
           traitee_le?: string | null
           vers_profile_id?: string
+          vin_couleur?: Database["public"]["Enums"]["vin_couleur"] | null
+          vin_domaine?: string | null
+          vin_millesime?: number | null
+          vin_nom?: string | null
+          vin_region?: string | null
         }
         Relationships: [
           {
@@ -2123,6 +2138,19 @@ export type Database = {
           p_libelle: string
           p_mot?: string
           p_place_id: string
+        }
+        Returns: Json
+      }
+      recommander_vin: {
+        Args: {
+          p_couleur?: Database["public"]["Enums"]["vin_couleur"]
+          p_domaine?: string
+          p_family_member_id: string
+          p_libelle?: string
+          p_millesime?: number
+          p_mot?: string
+          p_nom: string
+          p_region?: string
         }
         Returns: Json
       }

@@ -9,6 +9,8 @@ import { AXES_PROFIL, niveauProfil, remplissageProfil } from "../domain/analyse"
 import { BuyButton } from "./BuyButton";
 import { VerresLecture } from "./NoteVerres";
 import { CorrigerButton, type CorrectionVin } from "./CorrectionAnalyse";
+import { RecommanderButton } from "@/features/reception/ui/RecommanderButton";
+import { getProches } from "@/features/famille/data/queries";
 import { Card } from "@/features/shared/ui/Card";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 
@@ -21,6 +23,10 @@ export async function VinFiche({ id }: { id: string }) {
   const locale = await getLocale();
   const fiche = await getVinFiche(id);
   if (!fiche) notFound();
+  // Destinataires possibles : mes proches ayant un compte rattaché.
+  const proches = (await getProches()).map((p) => ({
+    id: p.id, nom: `${p.first_name} ${p.last_name}`, profileId: p.profile_id,
+  }));
   const { vin, analyse, degustations, noteMoyenne } = fiche;
 
   const merchantUrl = getMerchantProvider().buyUrl(
@@ -197,6 +203,22 @@ export async function VinFiche({ id }: { id: string }) {
           </Card>
         </aside>
       </div>
+
+      {/* Recommander cette bouteille à un proche (boîte de réception). Un vin
+          n'a pas de fournisseur : il se décrit, et l'acceptation le crée dans
+          la cave du destinataire. */}
+      <section className="pt-2">
+        <RecommanderButton proches={proches}
+          cible={{
+            type: "vin",
+            libelle: [vin.domaine ?? vin.nom, vin.millesime].filter(Boolean).join(" "),
+            nom: vin.nom,
+            domaine: vin.domaine,
+            millesime: vin.millesime,
+            couleur: vin.couleur,
+            region: vin.region,
+          }} />
+      </section>
     </article>
   );
 }
