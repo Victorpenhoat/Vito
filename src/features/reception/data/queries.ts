@@ -71,3 +71,45 @@ export async function getPlaceIdsDuCarnet(): Promise<string[]> {
     return e?.place_id ? [e.place_id] : [];
   });
 }
+
+export type Envoyee = {
+  id: string;
+  aNom: string;
+  libelle: string;
+  categorie: "resto" | "hotel";
+  creeLe: string;
+};
+
+/**
+ * Ce que j'ai recommandé (lot 3). Volontairement SANS la suite donnée : le PO
+ * a tranché que refuser ne se notifie pas, et un statut affiché ici reviendrait
+ * à le notifier par la bande.
+ */
+export async function getEnvoyees(): Promise<Envoyee[]> {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("recommandations")
+    .select("id, vers_profile_id, categorie, libelle, created_at")
+    .eq("de_profile_id", auth.user.id)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw error;
+
+  // Le destinataire est nommé par MON carnet : c'est ainsi que je le connais.
+  const { data: proches } = await supabase
+    .from("family_members")
+    .select("profile_id, first_name, last_name")
+    .not("profile_id", "is", null);
+  const nom = new Map((proches ?? []).map((p) => [p.profile_id, `${p.first_name} ${p.last_name}`.trim()]));
+
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    aNom: nom.get(r.vers_profile_id) ?? "",
+    libelle: r.libelle,
+    categorie: r.categorie === "hotel" ? ("hotel" as const) : ("resto" as const),
+    creeLe: r.created_at,
+  }));
+}

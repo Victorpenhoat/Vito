@@ -2062,6 +2062,7 @@ export type Database = {
         Returns: string
       }
       custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      delai_purge_recommandations_jours: { Args: never; Returns: number }
       delai_retractation_jours: { Args: never; Returns: number }
       delier_client: { Args: { p_client_id: string }; Returns: undefined }
       demander_suppression_compte: { Args: never; Returns: string }
@@ -2113,6 +2114,7 @@ export type Database = {
       }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       purger_comptes_supprimes: { Args: never; Returns: number }
+      purger_recommandations: { Args: never; Returns: number }
       quitter_famille: { Args: never; Returns: undefined }
       recommander_adresse: {
         Args: {

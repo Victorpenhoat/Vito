@@ -1575,6 +1575,9 @@
     "aQui": "A quién",
     "envoyer": "Enviar",
     "envoye": "Enviado",
-    "aide": "Solo tus allegados con cuenta pueden recibir una recomendación."
+    "aide": "Solo tus allegados con cuenta pueden recibir una recomendación.",
+    "envoyees": "Lo que he recomendado",
+    "a": "a {nom}",
+    "envoyeesAide": "No sabrás si la dirección fue añadida: es su cuaderno."
   }
 }

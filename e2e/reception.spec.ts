@@ -63,12 +63,21 @@ test("recommander une adresse à un proche, qui l'accepte et la retrouve à son 
   await expect(carte).toContainText(`Pour toi ${marque}`);
   await carte.getByTestId("reco-accepter").click();
 
+  // le menu annonçait ce qui l'attendait (lot 3)
+  await expect(pageB.getByTestId("nav-reception-badge").first()).toBeVisible();
+
   // elle quitte la boîte…
   await expect(pageB.getByTestId("reco-row")).toHaveCount(0, { timeout: 15_000 });
   // …et l'adresse est à son carnet, en « À tester », recommandée par le carnet
   await pageB.goto("/fr/restos?onglet=a_tester");
   const ajoutee = pageB.getByTestId("place-card").filter({ hasText: nomAdresse.trim().slice(0, 12) });
   await expectVisibleWithReload(pageB, ajoutee.first(), { timeout: 15_000 });
+
+  // côté expéditeur, l'historique garde la trace — sans dire ce qu'elle est
+  // devenue (refuser ne se notifie pas)
+  await pageA.goto("/fr/reception");
+  const envoyee = pageA.getByTestId("reco-envoyee").filter({ hasText: prenom });
+  await expectVisibleWithReload(pageA, envoyee.first(), { timeout: 15_000 });
 
   await ctxA.close();
   await ctxB.close();

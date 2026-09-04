@@ -1,12 +1,15 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { NavGroups } from "./NavGroups";
-import type { NavEntry } from "../nav-config";
+import type { NavEntry, NavKey } from "../nav-config";
 import { ShellFooter } from "./ShellFooter";
 
 export function Sidebar({
-  items, userName, role, pathname,
-}: { items: NavEntry[]; userName: string; role: string; pathname: string }) {
+  items, userName, role, pathname, compteurs,
+}: {
+  items: NavEntry[]; userName: string; role: string; pathname: string;
+  compteurs?: Partial<Record<NavKey, number>>;
+}) {
   const tApp = useTranslations("app");
   return (
     <aside
@@ -17,7 +20,7 @@ export function Sidebar({
         <span className="text-lg font-extrabold uppercase tracking-[0.28em] text-ink">{tApp("name")}</span>
         <span className="font-serif text-sm italic text-faint">{tApp("subtitle")}</span>
       </div>
-      <NavGroups items={items} pathname={pathname} />
+      <NavGroups items={items} pathname={pathname} compteurs={compteurs} />
       <ShellFooter userName={userName} role={role} />
     </aside>
   );

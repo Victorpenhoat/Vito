@@ -1575,6 +1575,9 @@
     "aQui": "A chi",
     "envoyer": "Invia",
     "envoye": "Inviato",
-    "aide": "Solo i tuoi cari con un account possono ricevere un consiglio."
+    "aide": "Solo i tuoi cari con un account possono ricevere un consiglio.",
+    "envoyees": "Ciò che ho consigliato",
+    "a": "a {nom}",
+    "envoyeesAide": "Non saprai se l'indirizzo è stato aggiunto: è il suo taccuino."
   }
 }
