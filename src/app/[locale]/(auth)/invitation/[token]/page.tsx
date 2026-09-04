@@ -2,17 +2,24 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import { lireInvitation } from "@/features/invitations/data/actions";
 import { CreerCompteTunnel } from "@/features/invitations/ui/CreerCompteTunnel";
+import { RejoindreVoyage } from "@/features/invitations/ui/RejoindreVoyage";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { formatDay } from "@/lib/format/date";
 import { getLocale } from "next-intl/server";
 
 // Accueil de l'invité (design Onboarding écran 12) : qui invite, à quoi, et la
 // création de compte. Un compte est TOUJOURS requis, même pour un voyage
 // partagé — l'invité n'aura accès qu'à ce voyage.
+//
+// Lot F : celui qui a DÉJÀ un compte et une session ouverte rejoint d'un clic,
+// au lieu de se voir proposer d'en créer un second.
 export default async function InvitationPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const t = await getTranslations("invitations");
   const locale = await getLocale();
   const invitation = await lireInvitation(token);
+  const supabase = await createServerSupabase();
+  const { data: session } = await supabase.auth.getUser();
 
   if (!invitation.valide) {
     return (
@@ -53,9 +60,23 @@ export default async function InvitationPage({ params }: { params: Promise<{ tok
           )}
         </div>
 
-        <CreerCompteTunnel token={token}
-          emailIndice={invitation.email_indice ?? null}
-          emailImpose={invitation.email_impose === true} />
+        {session.user ? (
+          <RejoindreVoyage token={token} voyageTitre={invitation.voyage_titre ?? null} />
+        ) : (
+          <>
+            <CreerCompteTunnel token={token}
+              emailIndice={invitation.email_indice ?? null}
+              emailImpose={invitation.email_impose === true} />
+            {/* Déjà inscrit mais pas connecté : le dire, plutôt que de laisser
+                créer un doublon de compte. */}
+            <p className="mt-3 text-center text-[11.5px] text-muted">
+              {t("dejaUnCompte")}{" "}
+              <Link href="/login" data-testid="invitation-se-connecter" className="font-semibold text-accent hover:underline">
+                {t("seConnecterPuisRouvrir")}
+              </Link>
+            </p>
+          </>
+        )}
       </div>
     </main>
   );

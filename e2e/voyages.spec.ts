@@ -241,3 +241,51 @@ test("le planning déroule douze mois et y place les voyages datés", async ({ p
   await page.getByTestId("planning-retour").click();
   await expect(page).toHaveURL(/\/fr\/voyages$/);
 });
+
+// Lot F : partager un voyage par lien. Le lien donne accès à CE voyage
+// seulement, exige un compte, s'épuise et se révoque.
+test("un lien de partage fait entrer un autre compte dans le voyage", async ({ browser }) => {
+  // le propriétaire crée le lien
+  const ctxA = await browser.newContext();
+  const pageA = await ctxA.newPage();
+  await login(pageA, "client@vito.test");
+  await pageA.goto(`/fr/voyages/${VOYAGE_ROME}`);
+  await pageA.getByTestId("lien-creer").click();
+
+  // Le seed porte déjà un lien de voyage (usage unique) : on vise le nôtre par
+  // son quota de dix, sans quoi on assertirait sur celui d'un autre lot.
+  const ligne = pageA.getByTestId("lien-partage").filter({ hasText: "sur 10" }).first();
+  await expect(ligne).toBeVisible({ timeout: 15_000 });
+  const url = (await ligne.locator("span.font-mono").first().textContent()) ?? "";
+  expect(url).toContain("/invitation/");
+  // Le jeton identifie NOTRE lien : un run précédent a pu en laisser d'autres.
+  const jeton = new URL(url).pathname.split("/").pop() ?? "";
+
+  // un autre compte ouvre le lien : il a déjà un compte, il rejoint d'un clic
+  const ctxB = await browser.newContext();
+  const pageB = await ctxB.newPage();
+  await login(pageB, "demo@vito.test");
+  await pageB.goto(new URL(url).pathname);
+  await expect(pageB.getByTestId("invitation-accueil")).toContainText("Rome");
+  await pageB.getByTestId("rejoindre-valider").click();
+  await expect(pageB).toHaveURL(new RegExp(`/fr/voyages/${VOYAGE_ROME}`), { timeout: 15_000 });
+
+  // il est bien membre : le voyage figure dans sa liste
+  await pageB.goto("/fr/voyages");
+  await expectVisibleWithReload(pageB, pageB.getByTestId("voyage-card").filter({ hasText: "Rome" }).first());
+
+  // Révocation SANS recharger : le lien créé à l'instant doit pouvoir être
+  // coupé tout de suite — même après avoir servi.
+  const aRevoquer = pageA.getByTestId("lien-partage").filter({ hasText: jeton }).first();
+  await aRevoquer.getByTestId("lien-revoquer").click();
+  await expect(pageA.getByTestId("lien-partage").filter({ hasText: jeton })).toHaveCount(0, { timeout: 15_000 });
+
+  const ctxC = await browser.newContext();
+  const pageC = await ctxC.newPage();
+  await pageC.goto(new URL(url).pathname);
+  await expect(pageC.getByTestId("invitation-invalide")).toBeVisible();
+
+  await ctxA.close();
+  await ctxB.close();
+  await ctxC.close();
+});

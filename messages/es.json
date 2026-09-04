@@ -660,6 +660,17 @@
       "pendantVacances": "durante {libelle}",
       "horsFenetre": "{titre}: fuera de los doce meses mostrados",
       "aucunVoyageDate": "Ningún viaje con fechas que situar en la línea de tiempo."
+    },
+    "partageLien": {
+      "titre": "Compartir con enlace",
+      "aide": "El enlace da acceso solo a este viaje y siempre exige una cuenta.",
+      "creer": "Crear un enlace",
+      "copier": "Copiar el enlace",
+      "revoquer": "Revocar el enlace",
+      "usages": "quedan {restants} usos de {max}",
+      "expire": "caduca el {date}",
+      "copieImpossible": "No se puede copiar: selecciona el enlace a mano.",
+      "echec": "No se puede crear el enlace por ahora."
     }
   },
   "depenses": {
@@ -1513,6 +1524,14 @@
       "restoSous": "Ese al que siempre vuelves",
       "voyage": "Crea una idea de viaje",
       "voyageSous": "Aunque no tengas fechas"
+    },
+    "dejaUnCompte": "¿Ya tienes una cuenta?",
+    "seConnecterPuisRouvrir": "Inicia sesión y vuelve a abrir este enlace",
+    "rejoindre": {
+      "cta": "Unirse",
+      "ctaVoyage": "Unirse a «{titre}»",
+      "aide": "Solo tendrás acceso a este viaje.",
+      "echec": "Este enlace ya no es válido."
     }
   },
   "protege": {

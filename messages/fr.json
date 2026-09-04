@@ -660,6 +660,17 @@
       "pendantVacances": "pendant {libelle}",
       "horsFenetre": "{titre} — hors des douze mois affichés",
       "aucunVoyageDate": "Aucun voyage daté à placer sur la frise."
+    },
+    "partageLien": {
+      "titre": "Partager par lien",
+      "aide": "Le lien donne accès à ce voyage seulement, et demande toujours un compte.",
+      "creer": "Créer un lien de partage",
+      "copier": "Copier le lien",
+      "revoquer": "Révoquer le lien",
+      "usages": "{restants} usages restants sur {max}",
+      "expire": "expire le {date}",
+      "copieImpossible": "Copie impossible — sélectionnez le lien à la main.",
+      "echec": "Création du lien impossible pour l'instant."
     }
   },
   "depenses": {
@@ -1513,6 +1524,14 @@
       "restoSous": "Celui où vous retournez toujours",
       "voyage": "Créez une idée de voyage",
       "voyageSous": "Même sans dates précises"
+    },
+    "dejaUnCompte": "Vous avez déjà un compte ?",
+    "seConnecterPuisRouvrir": "Connectez-vous, puis rouvrez ce lien",
+    "rejoindre": {
+      "cta": "Rejoindre",
+      "ctaVoyage": "Rejoindre « {titre} »",
+      "aide": "Vous n'aurez accès qu'à ce voyage.",
+      "echec": "Ce lien n'est plus valable."
     }
   },
   "protege": {

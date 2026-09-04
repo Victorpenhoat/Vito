@@ -19,6 +19,8 @@ import { resumeDetails } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
+import { PartageParLien } from "./PartageParLien";
+import { getLiensVoyage } from "../data/queries";
 import { DocumentUploadForm } from "./DocumentUploadForm";
 import { DocumentsList } from "./DocumentsList";
 import { ModeVoyageBlock } from "./ModeVoyageBlock";
@@ -49,6 +51,8 @@ export async function VoyageDetail({ id }: { id: string }) {
   const documents = await getVoyageDocuments(voyage.id);
   // Lot D : les comptes du voyage, entre voyageurs.
   const { depenses, remboursements } = await getDepensesVoyage(voyage.id);
+  // Lot F : mes liens de partage pour ce voyage (la RLS ne montre que les miens).
+  const liens = await getLiensVoyage(voyage.id);
 
   const today = new Date().toISOString().slice(0, 10);
   const chip = voyageChip(voyage.statut, voyage.date_debut, voyage.date_fin, today);
@@ -222,6 +226,7 @@ export async function VoyageDetail({ id }: { id: string }) {
             <SectionLabel>{t("membres")}</SectionLabel>
             <MembersList voyageId={voyage.id} membres={membres} isOwner={isOwner} />
             {isOwner && <ShareForm voyageId={voyage.id} />}
+            {isOwner && <PartageParLien voyageId={voyage.id} liens={liens} locale={locale} />}
           </Card>
           <Card>
             <SectionLabel>{t("horsLigne.section")}</SectionLabel>

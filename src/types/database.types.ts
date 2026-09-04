@@ -847,6 +847,8 @@ export type Database = {
           id: string
           role_vise: string
           token: string
+          usages: number
+          usages_max: number
           voyage_id: string | null
         }
         Insert: {
@@ -859,6 +861,8 @@ export type Database = {
           id?: string
           role_vise?: string
           token: string
+          usages?: number
+          usages_max?: number
           voyage_id?: string | null
         }
         Update: {
@@ -871,6 +875,8 @@ export type Database = {
           id?: string
           role_vise?: string
           token?: string
+          usages?: number
+          usages_max?: number
           voyage_id?: string | null
         }
         Relationships: [

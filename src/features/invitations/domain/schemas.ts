@@ -19,4 +19,7 @@ export const inviterSchema = z.object({
   email: z.string().email().optional().or(z.literal("")),
   roleVise: z.enum(INVITATION_ROLES),
   voyageId: z.string().uuid().optional().or(z.literal("")),
+  // Lot F : un lien de voyage s'envoie à un groupe — il sert donc plusieurs
+  // fois. Les invitations de compte restent à un seul usage.
+  usagesMax: z.coerce.number().int().min(1).max(50).optional(),
 });
