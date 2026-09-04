@@ -788,6 +788,7 @@ export type Database = {
           id: string
           last_name: string
           phone: string | null
+          profile_id: string | null
           relation: string
           updated_at: string
           user_id: string
@@ -805,6 +806,7 @@ export type Database = {
           id?: string
           last_name: string
           phone?: string | null
+          profile_id?: string | null
           relation: string
           updated_at?: string
           user_id: string
@@ -822,11 +824,19 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
+          profile_id?: string | null
           relation?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "family_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "family_members_user_id_fkey"
             columns: ["user_id"]
@@ -844,6 +854,7 @@ export type Database = {
           cree_par: string
           email: string | null
           expire_le: string
+          family_member_id: string | null
           id: string
           role_vise: string
           token: string
@@ -858,6 +869,7 @@ export type Database = {
           cree_par: string
           email?: string | null
           expire_le?: string
+          family_member_id?: string | null
           id?: string
           role_vise?: string
           token: string
@@ -872,6 +884,7 @@ export type Database = {
           cree_par?: string
           email?: string | null
           expire_le?: string
+          family_member_id?: string | null
           id?: string
           role_vise?: string
           token?: string
@@ -892,6 +905,13 @@ export type Database = {
             columns: ["cree_par"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
             referencedColumns: ["id"]
           },
           {

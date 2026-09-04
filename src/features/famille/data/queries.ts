@@ -48,6 +48,9 @@ export type ProcheDetail = {
   birth_place: string | null;
   address: string | null;
   address_inherit: boolean;
+  /** Compte rattaché à ce proche (lot 1 « boîte de réception ») : null tant
+   *  qu'il n'a pas accepté d'invitation, et remis à null si son compte part. */
+  profile_id: string | null;
 };
 
 // pire statut d'expiration + mois restants si "soon" + type du doc fautif
@@ -114,7 +117,7 @@ export async function getProche(
   if (!auth.user) return null;
   const { data: m, error } = await supabase
     .from("family_members")
-    .select("id, first_name, last_name, relation, circle, avatar_color, phone, email, birth_date, birth_place, address, address_inherit")
+    .select("id, first_name, last_name, relation, circle, avatar_color, phone, email, birth_date, birth_place, address, address_inherit, profile_id")
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
@@ -192,4 +195,26 @@ export async function getFamilleRestos(familleId: string) {
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data ?? [];
+}
+
+/**
+ * L'invitation en cours pour ce proche (lot 1 « boîte de réception ») : celle
+ * qu'on peut encore lui transmettre ou annuler. La RLS de `invitations` ne
+ * montre que celles qu'on a émises.
+ */
+export async function getInvitationProche(familyMemberId: string) {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+  const { data, error } = await supabase
+    .from("invitations")
+    .select("id, token, expire_le")
+    .eq("family_member_id", familyMemberId)
+    .is("consomme_le", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? { id: data.id, token: data.token, expireLe: data.expire_le } : null;
 }

@@ -143,3 +143,54 @@ test("ajouter, voir, modifier puis supprimer un proche", async ({ page }) => {
   await expect(page).toHaveURL(/\/fr\/famille$/);
   await expect(page.getByTestId("proche-row").filter({ hasText: `${PRENOM} Bernard` })).toHaveCount(0);
 });
+
+// Lot 1 « boîte de réception » : rattacher un proche à SON compte. C'est le
+// chaînon qui manquait — sans lui, « un proche voit sa propre fiche » n'était
+// pas tenable, et une recommandation ne saurait pas de qui elle vient.
+test("inviter un proche à créer son compte, et voir la fiche le reconnaître", async ({ browser }) => {
+  const marque = String(Date.now()).slice(-6);
+  const prenom = `Lien${marque}`;
+
+  // Le carnet crée un proche neuf : la fiche du seed serait rattachée dès le
+  // premier run et le test ne pourrait plus rejouer.
+  const ctxA = await browser.newContext();
+  const pageA = await ctxA.newPage();
+  await login(pageA, "client@vito.test");
+  await pageA.goto("/fr/famille/proches/nouveau");
+  await pageA.getByTestId("proche-form").locator('input[name="first_name"]').fill(prenom);
+  await pageA.getByTestId("proche-form").locator('input[name="last_name"]').fill("Cercle");
+  await pageA.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
+  await expectVisibleWithReload(pageA, pageA.getByRole("heading", { name: `${prenom} Cercle` }));
+
+  // pas encore de compte : la fiche propose de l'inviter
+  await expect(pageA.getByTestId("compte-proche")).toBeVisible();
+  await pageA.getByTestId("compte-inviter").click();
+  const lien = pageA.getByTestId("compte-lien");
+  await expect(lien).toBeVisible({ timeout: 15_000 });
+  const url = (await lien.textContent()) ?? "";
+  const chemin = url.startsWith("http") ? new URL(url).pathname : url;
+  expect(chemin).toContain("/invitation/");
+
+  // le proche ouvre son lien et crée son compte
+  const ctxB = await browser.newContext();
+  const pageB = await ctxB.newPage();
+  await pageB.goto(chemin);
+  await expect(pageB.getByTestId("creer-compte-tunnel")).toBeVisible();
+  await pageB.getByTestId("compte-email").fill(`proche${marque}@vito.test`);
+  await pageB.getByTestId("compte-mot-de-passe").fill("password123");
+  await pageB.getByTestId("etape-suivante").click();
+  await pageB.getByTestId("compte-prenom").fill(prenom);
+  await pageB.getByTestId("compte-nom").fill("Cercle");
+  await pageB.getByTestId("etape-suivante").click();
+  await pageB.getByTestId("compte-conditions").check();
+  await pageB.getByTestId("creer-compte").click();
+  await expect(pageB).toHaveURL(/\/fr\/bienvenue/, { timeout: 30_000 });
+
+  // la fiche, côté carnet, reconnaît désormais son compte
+  await pageA.reload();
+  await expect(pageA.getByTestId("compte-rattache")).toBeVisible({ timeout: 15_000 });
+  await expect(pageA.getByTestId("compte-inviter")).toHaveCount(0);
+
+  await ctxA.close();
+  await ctxB.close();
+});

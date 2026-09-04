@@ -10,6 +10,7 @@ import { familleInputSchema, inviteSchema, procheInputSchema, documentInputSchem
 import { encryptDocument } from "@/lib/crypto/documents";
 import { chiffrerChamp, dechiffrerChamp } from "@/lib/crypto/champs";
 import { verifierMotDePasse } from "@/lib/auth/motDePasse";
+import { randomBytes } from "node:crypto";
 import { getDocumentKey } from "@/lib/crypto/documentKey";
 import { avatarColor } from "../domain/avatarColor";
 
@@ -476,4 +477,55 @@ export async function ouvrirScanProtege(_prev: unknown, formData: FormData) {
   });
   if (error) { logActionError("famille.ouvrirScanProtege", error); return { error: "Vérification impossible" }; }
   return { ok: true as const, ticket };
+}
+
+/**
+ * Invite un proche à créer SON compte (lot 1 « boîte de réception »). Le lien
+ * porte le proche visé : à l'acceptation, `consommer_invitation` rattache le
+ * compte à sa fiche.
+ *
+ * L'invitation est NOMINATIVE quand on connaît l'adresse du proche — le lien
+ * ne vaut alors que pour elle, et un lien égaré ne donne rien à personne
+ * d'autre.
+ */
+export async function inviterProche(_prev: unknown, formData: FormData) {
+  const familyMemberId = formData.get("familyMemberId");
+  if (typeof familyMemberId !== "string" || !familyMemberId) return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+
+  // La FK ne garantit aucun accès : on relit le proche SOUS RLS (pattern
+  // setOrigine), ce qui vérifie du même coup qu'il est bien à moi.
+  const { data: proche } = await supabase
+    .from("family_members").select("id, email, profile_id").eq("id", familyMemberId).maybeSingle();
+  if (!proche) return { error: "Proche introuvable" };
+  if (proche.profile_id) return { error: "Ce proche a déjà un compte" };
+
+  const token = randomBytes(32).toString("base64url");
+  const { data: cree, error } = await supabase.from("invitations").insert({
+    token,
+    email: proche.email || null,
+    role_vise: "cercle",
+    family_member_id: familyMemberId,
+    cree_par: uid,
+  }).select("id").single();
+  if (error || !cree) { logActionError("famille.inviterProche", error); return { error: "Invitation non créée" }; }
+
+  revalidatePath("/famille", "layout");
+  return { ok: true as const, token, id: cree.id as string };
+}
+
+/** Retire l'invitation en cours pour ce proche (rien n'a encore été accepté). */
+export async function annulerInvitationProche(_prev: unknown, formData: FormData) {
+  const invitationId = formData.get("invitationId");
+  if (typeof invitationId !== "string") return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { data, error } = await supabase
+    .from("invitations").delete().eq("id", invitationId).select("id").maybeSingle();
+  if (error) { logActionError("famille.annulerInvitationProche", error); return { error: "Annulation échouée" }; }
+  if (!data) return { error: "Annulation non autorisée" };
+  revalidatePath("/famille", "layout");
+  return { ok: true as const };
 }
