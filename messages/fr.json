@@ -992,6 +992,17 @@
       "supprimerConfirm": "Supprimer ce document ?",
       "modifierTitre": "Modifier le document",
       "numeroRemplacer": "Laissez vide pour conserver le numéro actuel."
+    },
+    "compte": {
+      "titre": "Son compte",
+      "rattache": "Compte rattaché",
+      "aide": "Invitez {nom} à créer son compte : il pourra voir sa propre fiche, et vous recommander des adresses.",
+      "inviter": "Inviter à créer son compte",
+      "lienPret": "Transmettez ce lien à {nom} — il ne vaut que pour lui.",
+      "copier": "Copier le lien",
+      "annuler": "Annuler l'invitation",
+      "copieImpossible": "Copie impossible — sélectionnez le lien à la main.",
+      "echec": "Invitation impossible pour l'instant."
     }
   },
   "agence": {

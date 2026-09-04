@@ -992,6 +992,17 @@
       "supprimerConfirm": "Delete this document?",
       "modifierTitre": "Edit document",
       "numeroRemplacer": "Leave empty to keep the current number."
+    },
+    "compte": {
+      "titre": "Their account",
+      "rattache": "Account linked",
+      "aide": "Invite {nom} to create an account: they will see their own page, and can recommend places to you.",
+      "inviter": "Invite to create an account",
+      "lienPret": "Send this link to {nom} — it only works for them.",
+      "copier": "Copy the link",
+      "annuler": "Cancel the invitation",
+      "copieImpossible": "Cannot copy — select the link manually.",
+      "echec": "Cannot invite right now."
     }
   },
   "agence": {

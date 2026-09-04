@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(53);
+select plan(58);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -362,6 +362,45 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
                        where token = ''jeton-lien-voyage-multi-000000000001'' returning 1)
            select count(*) from s'),
           1::bigint, 'le propriétaire révoque son lien de voyage déjà utilisé');
+
+-- ── Cercle : le compte d'un proche (00046) ─────────────────────────────────
+-- Sans ce lien, on ne peut ni tenir « un proche voit sa propre fiche », ni
+-- savoir de qui vient une recommandation. On vérifie qu'il se pose, et surtout
+-- qu'il ne se pose PAS dans le carnet d'un tiers.
+insert into public.invitations (token, role_vise, family_member_id, cree_par)
+  values ('jeton-cercle-camille-000000000001', 'cercle',
+          'f1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111');
+
+-- 53) le proche n'a pas de compte au départ
+select is((select profile_id from public.family_members
+            where id = 'f1111111-1111-4111-8111-111111111111'),
+          null, 'un proche n''a aucun compte rattaché au départ');
+
+-- 54) le compte qui consomme l'invitation est rattaché à SA fiche
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select case when (public.consommer_invitation(''jeton-cercle-camille-000000000001'') ->> ''ok'')::boolean
+                       then 1 else 0 end'),
+          1::bigint, 'une invitation de Cercle se consomme');
+select is((select profile_id from public.family_members
+            where id = 'f1111111-1111-4111-8111-111111111111'),
+          'de110000-0000-4000-8000-000000000000'::uuid,
+          'le compte est rattaché à la fiche du proche visé');
+
+-- 55) une invitation ÉMISE PAR UN TIERS ne peut pas écrire dans le carnet du
+--     client : le proche visé ne lui appartient pas.
+insert into public.invitations (token, role_vise, family_member_id, cree_par)
+  values ('jeton-cercle-usurpe-0000000000001', 'cercle',
+          'f1111111-1111-4111-8111-111111111111', '22222222-2222-2222-2222-222222222222');
+update public.family_members set profile_id = null
+  where id = 'f1111111-1111-4111-8111-111111111111';
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select case when (public.consommer_invitation(''jeton-cercle-usurpe-0000000000001'') ->> ''ok'')::boolean
+                       then 1 else 0 end'),
+          1::bigint, 'l''invitation usurpée se consomme (elle reste une invitation valable)');
+select is((select profile_id from public.family_members
+            where id = 'f1111111-1111-4111-8111-111111111111'),
+          null, 'mais elle ne rattache aucun compte dans le carnet d''un tiers');
 
 select finish();
 rollback;

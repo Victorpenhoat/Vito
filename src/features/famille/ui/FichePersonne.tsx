@@ -1,6 +1,8 @@
 import { ChevronLeft, FileText, Mail, MapPin, MessageCircle, Phone, Plus } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { getTranslations, getLocale } from "next-intl/server";
+import { CompteProcheBlock } from "./CompteProcheBlock";
+import { getInvitationProche } from "../data/queries";
 import type { ProcheDetail, DocMeta } from "../data/queries";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { Button } from "@/features/shared/ui/Button";
@@ -23,6 +25,9 @@ export async function FichePersonne({
 }) {
   const t = await getTranslations("famille");
   const locale = await getLocale();
+  // Compte rattaché (lot 1 « boîte de réception ») : le proche a-t-il le sien,
+  // et sinon, une invitation l'attend-elle déjà ?
+  const invitation = proche.profile_id ? null : await getInvitationProche(proche.id);
   const fullName = `${proche.first_name} ${proche.last_name}`;
   const age = ageYears(proche.birth_date, new Date());
   const inherited = proche.address_inherit && !!foyerAddress;
@@ -74,6 +79,14 @@ export async function FichePersonne({
       </header>
 
       <div className="flex flex-col gap-6 pt-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8">
+        {/* Son compte : c'est ce lien qui lui permettra de voir sa propre fiche,
+            et de recommander une adresse (boîte de réception). */}
+        <section className="flex flex-col">
+          <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("compte.titre")}</h2>
+          <CompteProcheBlock familyMemberId={proche.id} nom={proche.first_name}
+            rattache={proche.profile_id != null} invitation={invitation} locale={locale} />
+        </section>
+
         {/* Contact */}
         {(proche.phone || proche.email || address || proche.birth_date) && (
           <section className="flex flex-col">

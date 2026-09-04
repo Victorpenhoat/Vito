@@ -992,6 +992,17 @@
       "supprimerConfirm": "Eliminare questo documento?",
       "modifierTitre": "Modifica il documento",
       "numeroRemplacer": "Lascia vuoto per conservare il numero attuale."
+    },
+    "compte": {
+      "titre": "Il suo account",
+      "rattache": "Account collegato",
+      "aide": "Invita {nom} a creare il suo account: vedrà la propria scheda e potrà consigliarti indirizzi.",
+      "inviter": "Invita a creare l'account",
+      "lienPret": "Invia questo link a {nom}: vale solo per lui.",
+      "copier": "Copia il link",
+      "annuler": "Annulla l'invito",
+      "copieImpossible": "Copia non riuscita: seleziona il link a mano.",
+      "echec": "Invito non possibile al momento."
     }
   },
   "agence": {
