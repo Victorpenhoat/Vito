@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(58);
+select plan(63);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -401,6 +401,46 @@ select is(tests.count_as('de110000-0000-4000-8000-000000000000',
 select is((select profile_id from public.family_members
             where id = 'f1111111-1111-4111-8111-111111111111'),
           null, 'mais elle ne rattache aucun compte dans le carnet d''un tiers');
+
+-- ── Boîte de réception (00047) ─────────────────────────────────────────────
+-- La seule barrière anti-indésirables est le lien de Cercle : on la vérifie des
+-- deux côtés, et on s'assure qu'AUCUNE écriture directe n'est possible.
+update public.family_members set profile_id = 'de110000-0000-4000-8000-000000000000'
+  where id = 'f1111111-1111-4111-8111-111111111111';
+
+-- 59) le carnet recommande à son proche : la RPC accepte
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select case when (public.recommander_adresse(
+             ''f1111111-1111-4111-8111-111111111111'', ''resto'', ''place-e2e-1'', ''Le Bistrot'') ->> ''ok'')::boolean
+           then 1 else 0 end'),
+          1::bigint, 'on recommande à un proche ayant un compte');
+
+-- 60) le destinataire la voit, et lui seul
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.recommandations'),
+          1::bigint, 'le destinataire voit la recommandation');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.recommandations'),
+          0::bigint, 'un tiers ne voit aucune recommandation');
+
+-- 61) écrire à quelqu'un qui n'est pas mon proche est refusé — c'est TOUTE la
+--     barrière anti-indésirables du produit.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select case when (public.recommander_adresse(
+             ''f1111111-1111-4111-8111-111111111111'', ''resto'', ''place-usurpee'', ''Chez Personne'') ->> ''ok'')::boolean
+           then 1 else 0 end'),
+          0::bigint, 'un compte étranger ne peut recommander à ce proche');
+
+-- 62) et l'écriture DIRECTE n'existe pas : aucune policy d'insertion.
+select throws_ok(
+  $$ select tests.count_as('22222222-2222-2222-2222-222222222222',
+       'with u as (insert into public.recommandations
+          (de_profile_id, vers_profile_id, categorie, place_id, libelle)
+          values (''22222222-2222-2222-2222-222222222222'',
+                  ''de110000-0000-4000-8000-000000000000'', ''resto'', ''p'', ''X'') returning 1)
+        select count(*) from u') $$,
+  '42501', null,
+  'aucune insertion directe dans recommandations (RPC obligatoire)');
 
 select finish();
 rollback;

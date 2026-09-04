@@ -2,7 +2,7 @@ export type Role = "client" | "agence" | "admin";
 export type NavGroup = "carnet" | "voyages" | "cercle";
 export type NavKey =
   | "accueil" | "restos" | "hotels" | "vins" | "recherche" | "voyages" | "famille"
-  | "depenses" | "conciergerie" | "abonnement" | "agence" | "admin";
+  | "reception" | "depenses" | "conciergerie" | "abonnement" | "agence" | "admin";
 
 export type NavEntry = { key: NavKey; href: string; group: NavGroup; roles?: Role[] };
 
@@ -15,6 +15,9 @@ export const NAV_ITEMS: NavEntry[] = [
   { key: "voyages", href: "/voyages", group: "voyages" },
   { key: "depenses", href: "/depenses", group: "voyages" },
   { key: "famille", href: "/famille", group: "cercle" },
+  // Boîte de réception : ce qu'un proche m'a recommandé (lot 2). Dans le Cercle,
+  // parce que c'est de là que ça vient.
+  { key: "reception", href: "/reception", group: "cercle" },
   { key: "conciergerie", href: "/conciergerie", group: "cercle" },
   { key: "abonnement", href: "/abonnement", group: "cercle" },
   { key: "agence", href: "/agence", group: "cercle", roles: ["agence", "admin"] },

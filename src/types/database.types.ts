@@ -1156,6 +1156,60 @@ export type Database = {
           },
         ]
       }
+      recommandations: {
+        Row: {
+          categorie: string
+          created_at: string
+          de_profile_id: string
+          id: string
+          libelle: string
+          mot: string | null
+          place_id: string
+          statut: string
+          traitee_le: string | null
+          vers_profile_id: string
+        }
+        Insert: {
+          categorie: string
+          created_at?: string
+          de_profile_id: string
+          id?: string
+          libelle: string
+          mot?: string | null
+          place_id: string
+          statut?: string
+          traitee_le?: string | null
+          vers_profile_id: string
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          de_profile_id?: string
+          id?: string
+          libelle?: string
+          mot?: string | null
+          place_id?: string
+          statut?: string
+          traitee_le?: string | null
+          vers_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommandations_de_profile_id_fkey"
+            columns: ["de_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recommandations_vers_profile_id_fkey"
+            columns: ["vers_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       remboursements: {
         Row: {
           created_at: string
@@ -2060,6 +2114,16 @@ export type Database = {
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       purger_comptes_supprimes: { Args: never; Returns: number }
       quitter_famille: { Args: never; Returns: undefined }
+      recommander_adresse: {
+        Args: {
+          p_categorie: string
+          p_family_member_id: string
+          p_libelle: string
+          p_mot?: string
+          p_place_id: string
+        }
+        Returns: Json
+      }
       retirer_membre_famille: {
         Args: { p_famille_id: string; p_profile_id: string }
         Returns: undefined

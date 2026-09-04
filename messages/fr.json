@@ -1070,7 +1070,8 @@
       "carnet": "Carnet",
       "voyages": "Voyages",
       "cercle": "Cercle"
-    }
+    },
+    "reception": "Recommandations"
   },
   "places": {
     "favoris": "Favoris",
@@ -1556,5 +1557,24 @@
       "echec": "Vérification impossible."
     },
     "afficherDocument": "Afficher le document"
+  },
+  "reception": {
+    "eyebrow": "Le Cercle",
+    "titre": "Recommandations reçues",
+    "de": "de {nom}",
+    "accepter": "Ajouter au carnet",
+    "refuser": "Non merci",
+    "dejaAuCarnet": "Déjà dans votre carnet",
+    "videTitre": "Rien ne vous attend",
+    "videTexte": "Les adresses que vos proches vous recommandent arriveront ici.",
+    "echec": "Impossible pour l'instant.",
+    "recommander": "Recommander",
+    "recommanderTitre": "Recommander {nom}",
+    "mot": "Un mot (facultatif)",
+    "motPlaceholder": "Le poisson est parfait…",
+    "aQui": "À qui",
+    "envoyer": "Envoyer",
+    "envoye": "Envoyé",
+    "aide": "Seuls vos proches ayant un compte peuvent recevoir une recommandation."
   }
 }

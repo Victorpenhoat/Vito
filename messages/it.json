@@ -1070,7 +1070,8 @@
       "carnet": "Taccuino",
       "voyages": "Viaggi",
       "cercle": "Cerchia"
-    }
+    },
+    "reception": "Consigli"
   },
   "places": {
     "favoris": "Preferiti",
@@ -1556,5 +1557,24 @@
       "echec": "Verifica non riuscita."
     },
     "afficherDocument": "Mostra il documento"
+  },
+  "reception": {
+    "eyebrow": "La Cerchia",
+    "titre": "Consigli ricevuti",
+    "de": "da {nom}",
+    "accepter": "Aggiungi al taccuino",
+    "refuser": "No, grazie",
+    "dejaAuCarnet": "Già nel tuo taccuino",
+    "videTitre": "Non ti aspetta nulla",
+    "videTexte": "Gli indirizzi consigliati dai tuoi cari arriveranno qui.",
+    "echec": "Impossibile al momento.",
+    "recommander": "Consiglia",
+    "recommanderTitre": "Consiglia {nom}",
+    "mot": "Due parole (facoltativo)",
+    "motPlaceholder": "Il pesce è perfetto…",
+    "aQui": "A chi",
+    "envoyer": "Invia",
+    "envoye": "Inviato",
+    "aide": "Solo i tuoi cari con un account possono ricevere un consiglio."
   }
 }
