@@ -159,3 +159,63 @@ test("un vol porte ses champs, son résumé, et son billet joint", async ({ page
   await expect(dansLesDocuments).toBeVisible({ timeout: 10_000 });
   await expect(dansLesDocuments.getByTestId("document-rattache")).toContainText("Air France");
 });
+
+// Lot D : les dépenses se partagent entre VOYAGEURS, y compris ceux qui n'ont
+// pas de compte — c'est là que le lot B prend tout son sens.
+test("une dépense partagée entre voyageurs, son solde, puis le remboursement qui l'annule", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+
+  // deux voyageurs propres à ce run : les soldes sont alors prévisibles
+  const marque = String(Date.now()).slice(-6);
+  for (const nom of [`Payeur ${marque}`, `Partageur ${marque}`]) {
+    await page.getByTestId("participant-ajouter").click();
+    await page.getByTestId("participant-nom").fill(nom);
+    await page.getByTestId("participant-valider").click();
+    await expect(page.getByTestId("participant-row").filter({ hasText: nom })).toBeVisible({ timeout: 15_000 });
+  }
+
+  // Le bloc Dépenses est alimenté par le SERVEUR : il lui faut les identifiants
+  // persistés des voyageurs, que l'affichage optimiste de la liste ne lui donne
+  // pas. On demande donc un rendu frais avant de partager quoi que ce soit.
+  await page.reload();
+  await expect(page.getByTestId("depenses-voyage")).toBeVisible({ timeout: 15_000 });
+
+  // 30 € payés par le premier, partagés avec le second seulement
+  await page.getByTestId("depense-ajouter").click();
+  const form = page.getByTestId("depense-form");
+  await form.getByTestId("depense-libelle").fill(`Taxi ${marque}`);
+  await form.getByTestId("depense-montant").fill("30");
+  await form.getByTestId("depense-paye-par").selectOption({ label: `Payeur ${marque}` });
+  // on ne coche que nos deux voyageurs : les autres ne partagent pas ce taxi
+  for (const c of await form.locator('input[name="participants"]').all()) {
+    const label = await c.getAttribute("aria-label");
+    if (label && !label.includes(marque)) await c.uncheck();
+  }
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("depense-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("depense-row").filter({ hasText: `Taxi ${marque}` });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+
+  // 15 € dus par le partageur au payeur : le transfert le dit sans détour
+  const soldes = page.getByTestId("depenses-soldes");
+  await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("15");
+  await expect(page.getByTestId("transfert-row").filter({ hasText: `Partageur ${marque}` })).toContainText("15");
+
+  // le remboursement remet les compteurs à zéro
+  const remb = page.getByTestId("remboursement-form");
+  await remb.getByTestId("remboursement-de").selectOption({ label: `Partageur ${marque}` });
+  await remb.getByTestId("remboursement-vers").selectOption({ label: `Payeur ${marque}` });
+  await remb.getByTestId("remboursement-montant").fill("15");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    remb.getByTestId("remboursement-valider").click(),
+  ]);
+
+  await page.reload();
+  await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("0,00");
+  await expect(page.getByTestId("transfert-row").filter({ hasText: marque })).toHaveCount(0);
+});

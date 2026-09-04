@@ -629,6 +629,29 @@
       "chambre": "N.º de habitación",
       "typeChambre": "Tipo de habitación",
       "petitDejeuner": "Desayuno"
+    },
+    "depensesVoyage": {
+      "titre": "Gastos",
+      "total": "Total del viaje",
+      "ajouter": "Añadir un gasto",
+      "libelle": "Concepto",
+      "montant": "Importe",
+      "mode": "Reparto",
+      "modeEgal": "Partes iguales",
+      "modeExact": "Importes exactos",
+      "concernes": "Quién comparte",
+      "payePar": "pagado por {nom}",
+      "partsCount": "{n, plural, one {# parte} other {# partes}}",
+      "valider": "Guardar",
+      "annuler": "Cancelar",
+      "supprimer": "Eliminar el gasto {libelle}",
+      "soldes": "Saldos",
+      "doit": "{de} debe {montant} a {vers}",
+      "remboursementDe": "Quién paga",
+      "remboursementVers": "Quién cobra",
+      "rembourser": "Reembolsar",
+      "echec": "No se puede guardar por ahora.",
+      "sansVoyageur": "Añade primero viajeros: un gasto se reparte entre ellos."
     }
   },
   "depenses": {

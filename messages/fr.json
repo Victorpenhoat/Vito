@@ -629,6 +629,29 @@
       "chambre": "N° de chambre",
       "typeChambre": "Type de chambre",
       "petitDejeuner": "Petit-déjeuner"
+    },
+    "depensesVoyage": {
+      "titre": "Dépenses",
+      "total": "Total du voyage",
+      "ajouter": "Ajouter une dépense",
+      "libelle": "Libellé",
+      "montant": "Montant",
+      "mode": "Répartition",
+      "modeEgal": "Parts égales",
+      "modeExact": "Montants exacts",
+      "concernes": "Qui partage",
+      "payePar": "payé par {nom}",
+      "partsCount": "{n, plural, one {# part} other {# parts}}",
+      "valider": "Enregistrer",
+      "annuler": "Annuler",
+      "supprimer": "Supprimer la dépense {libelle}",
+      "soldes": "Soldes",
+      "doit": "{de} doit {montant} à {vers}",
+      "remboursementDe": "Qui rembourse",
+      "remboursementVers": "Qui est remboursé",
+      "rembourser": "Rembourser",
+      "echec": "Enregistrement impossible pour l'instant.",
+      "sansVoyageur": "Ajoutez d'abord des voyageurs : une dépense se partage entre eux."
     }
   },
   "depenses": {

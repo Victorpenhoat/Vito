@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { centsFromEuros } from "@/features/depenses/domain/money";
+import { DEPENSE_MODES } from "@/features/depenses/domain/schemas";
 
 // idee/en_preparation : refonte Voyages (00028). planifie/en_cours restent valides
 // (données existantes) ; « En cours » est normalement dérivé des dates (affichageVoyage).
@@ -80,3 +82,32 @@ export const etapeInputSchema = z.object({
   notes: z.string().max(2000).optional(),
 });
 export type EtapeInput = z.infer<typeof etapeInputSchema>;
+
+// ── Lot D : dépenses du voyage (entre VOYAGEURS, pas entre comptes) ─────────
+// `centsFromEuros` et les modes viennent du domaine Dépenses : le partage est
+// le même calcul, seule l'identité des participants change.
+
+export const depenseVoyageInputSchema = z.object({
+  voyageId: z.guid(),
+  payePar: z.guid(),
+  libelle: z.string().trim().min(1).max(200),
+  montantCents: centsFromEuros,
+  date: z.string().date().optional(),
+  mode: z.enum(DEPENSE_MODES),
+  participants: z.array(z.guid()).min(1),
+});
+export type DepenseVoyageInput = z.infer<typeof depenseVoyageInputSchema>;
+
+export const remboursementVoyageInputSchema = z
+  .object({
+    voyageId: z.guid(),
+    deParticipantId: z.guid(),
+    versParticipantId: z.guid(),
+    montantCents: centsFromEuros,
+    date: z.string().date().optional(),
+  })
+  .refine((d) => d.deParticipantId !== d.versParticipantId, {
+    message: "Se rembourser soi-même ne veut rien dire",
+    path: ["versParticipantId"],
+  });
+export type RemboursementVoyageInput = z.infer<typeof remboursementVoyageInputSchema>;

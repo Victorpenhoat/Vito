@@ -1503,6 +1503,97 @@ export type Database = {
           },
         ]
       }
+      voyage_depense_parts: {
+        Row: {
+          depense_id: string
+          part_cents: number
+          participant_id: string
+        }
+        Insert: {
+          depense_id: string
+          part_cents: number
+          participant_id: string
+        }
+        Update: {
+          depense_id?: string
+          part_cents?: number
+          participant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_depense_parts_depense_id_fkey"
+            columns: ["depense_id"]
+            isOneToOne: false
+            referencedRelation: "voyage_depenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_depense_parts_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "voyage_participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voyage_depenses: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string | null
+          id: string
+          libelle: string
+          mode: Database["public"]["Enums"]["depense_mode"]
+          montant_cents: number
+          paye_par: string
+          voyage_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          date?: string | null
+          id?: string
+          libelle: string
+          mode?: Database["public"]["Enums"]["depense_mode"]
+          montant_cents: number
+          paye_par: string
+          voyage_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string | null
+          id?: string
+          libelle?: string
+          mode?: Database["public"]["Enums"]["depense_mode"]
+          montant_cents?: number
+          paye_par?: string
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_depenses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_depenses_paye_par_fkey"
+            columns: ["paye_par"]
+            isOneToOne: false
+            referencedRelation: "voyage_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_depenses_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voyage_documents: {
         Row: {
           contenu_chiffre: string
@@ -1719,6 +1810,68 @@ export type Database = {
           },
           {
             foreignKeyName: "voyage_participants_voyage_id_fkey"
+            columns: ["voyage_id"]
+            isOneToOne: false
+            referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voyage_remboursements: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string | null
+          de_participant_id: string
+          id: string
+          montant_cents: number
+          vers_participant_id: string
+          voyage_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          date?: string | null
+          de_participant_id: string
+          id?: string
+          montant_cents: number
+          vers_participant_id: string
+          voyage_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string | null
+          de_participant_id?: string
+          id?: string
+          montant_cents?: number
+          vers_participant_id?: string
+          voyage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voyage_remboursements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_remboursements_de_participant_id_fkey"
+            columns: ["de_participant_id"]
+            isOneToOne: false
+            referencedRelation: "voyage_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_remboursements_vers_participant_id_fkey"
+            columns: ["vers_participant_id"]
+            isOneToOne: false
+            referencedRelation: "voyage_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voyage_remboursements_voyage_id_fkey"
             columns: ["voyage_id"]
             isOneToOne: false
             referencedRelation: "voyages"
