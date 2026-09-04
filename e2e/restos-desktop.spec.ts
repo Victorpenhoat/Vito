@@ -61,3 +61,38 @@ test.describe("liste + détail (desktop)", () => {
     await expect(page.getByTestId("restos-tabs")).toBeHidden();
   });
 });
+
+// Volet de filtres : sur grand écran, ils tiennent tous visibles dans un rail à
+// gauche. Sur téléphone, ils restent empilés au-dessus de la liste.
+test.describe("volet de filtres (desktop)", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("le rail rassemble les filtres, qui continuent de filtrer", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await page.goto("/fr/restos?onglet=a_tester");
+
+    const rail = page.getByTestId("places-filtres");
+    await expect(rail).toBeVisible();
+    // recherche, vues et filtres contextuels vivent dans le rail
+    await expect(rail.getByTestId("places-search")).toBeVisible();
+    await expect(rail.getByTestId("view-vignettes")).toBeVisible();
+    await expect(rail.getByTestId("origine-reco")).toBeVisible();
+
+    // et ils filtrent toujours : le Comptoir du seed est une reco de Camille
+    const avant = await page.getByTestId("place-card").count();
+    expect(avant).toBeGreaterThanOrEqual(1);
+    await rail.getByTestId("places-search").fill("zzz-aucune-adresse");
+    await expect(page.getByTestId("place-card")).toHaveCount(0);
+    await rail.getByTestId("places-search").fill("");
+    await expect(page.getByTestId("place-card")).toHaveCount(avant);
+  });
+
+  test("une fiche ouverte laisse les filtres au-dessus de la liste, sans troisième colonne", async ({ page }) => {
+    await login(page, "client@vito.test");
+    await page.goto("/fr/restos?onglet=tous");
+    await page.getByTestId("place-card").first().getByRole("link").first().click();
+    await expect(page.getByTestId("places-detail")).toBeVisible();
+    await expect(page.getByTestId("places-filtres")).toHaveCount(0);
+    await expect(page.getByTestId("places-search")).toBeVisible();
+  });
+});

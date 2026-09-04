@@ -103,13 +103,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
     });
   }
 
-  // Liste + détail : deux colonnes au-delà de `lg`, la fiche seule en dessous.
-  // La liste n'est pas démontée sur téléphone, elle est masquée — le composant
-  // reste monté, et revenir à la liste ne repart pas de zéro.
-  const enfants = (
-    <div data-testid={config.rootTestId}
-      className={`flex flex-col gap-3.5 ${detail ? "hidden lg:flex" : ""}`}>
-      {/* sous-onglets */}
+  const sousOnglets = (
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 [scrollbar-width:none]" role="tablist">
         {ONGLETS.map((o) => {
           const active = onglet === o;
@@ -124,10 +118,15 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           );
         })}
       </div>
+  );
 
+  // FILTRES — composés plus bas : rail à gauche sur grand écran quand aucune
+  // fiche n'est ouverte, empilés au-dessus de la liste sinon.
+  const filtres = (
+    <>
       {/* recherche interne + Trouver */}
       {onglet !== "carte" && (
-        <div className="flex gap-2.5">
+        <div className="flex gap-2.5 lg:flex-wrap">
           <label className="flex min-w-0 flex-1 items-center gap-2.5 rounded-control border border-line bg-surface px-3.5 py-2.5">
             <Search size={15} className="shrink-0 text-faint" aria-hidden />
             <input type="search" data-testid="places-search" value={q} onChange={(e) => setQ(e.target.value)}
@@ -203,6 +202,11 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           {t("archives")} <span className="text-faint">({archived.length})</span>
         </button>
       )}
+    </>
+  );
+
+  const panneau = (
+    <>
       {archives && <ArchivedPanel places={archived} />}
 
       {/* panneau */}
@@ -238,6 +242,32 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
         )}
       </div>
       )}
+    </>
+  );
+
+  const composition = detail ? (
+    // Fiche ouverte : la colonne de liste est déjà étroite, les filtres
+    // restent empilés au-dessus plutôt que de la réduire encore.
+    <>{filtres}{panneau}</>
+  ) : (
+    <div className="flex flex-col gap-3.5 lg:grid lg:grid-cols-[232px_minmax(0,1fr)] lg:items-start lg:gap-6">
+      {/* Rail des filtres : sur grand écran ils tiennent tous visibles à la
+          fois, et suivent le défilement de la liste. */}
+      <div data-testid="places-filtres" className="flex flex-col gap-3 lg:sticky lg:top-4">
+        {filtres}
+      </div>
+      <div className="flex min-w-0 flex-col gap-3.5">{panneau}</div>
+    </div>
+  );
+
+  // Liste + détail : deux colonnes au-delà de `lg`, la fiche seule en dessous.
+  // La liste n'est pas démontée sur téléphone, elle est masquée — le composant
+  // reste monté, et revenir à la liste ne repart pas de zéro.
+  const enfants = (
+    <div data-testid={config.rootTestId}
+      className={`flex flex-col gap-3.5 ${detail ? "hidden lg:flex" : ""}`}>
+      {sousOnglets}
+      {composition}
 
       {/* recherche externe priorisée (écran 7) — le statut proposé suit le sous-onglet */}
       <Modal open={recherche} onClose={() => setRecherche(false)} title={tr("trouverTitre")}>
