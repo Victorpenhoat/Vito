@@ -1575,6 +1575,9 @@
     "aQui": "À qui",
     "envoyer": "Envoyer",
     "envoye": "Envoyé",
-    "aide": "Seuls vos proches ayant un compte peuvent recevoir une recommandation."
+    "aide": "Seuls vos proches ayant un compte peuvent recevoir une recommandation.",
+    "envoyees": "Ce que j'ai recommandé",
+    "a": "à {nom}",
+    "envoyeesAide": "Vous ne saurez pas si l'adresse a été ajoutée — c'est leur carnet."
   }
 }

@@ -1,12 +1,13 @@
 "use client";
 import { NavGroups } from "./NavGroups";
 import { ShellFooter } from "./ShellFooter";
-import type { NavEntry } from "../nav-config";
+import type { NavEntry, NavKey } from "../nav-config";
 
 export function Drawer({
-  open, onClose, items, userName, role, pathname,
+  open, onClose, items, userName, role, pathname, compteurs,
 }: {
   open: boolean; onClose: () => void; items: NavEntry[]; userName: string; role: string; pathname: string;
+  compteurs?: Partial<Record<NavKey, number>>;
 }) {
   if (!open) return null;
   return (
@@ -16,7 +17,7 @@ export function Drawer({
         className="absolute inset-y-0 left-0 flex w-72 flex-col gap-4 bg-sidebar p-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <NavGroups items={items} pathname={pathname} />
+        <NavGroups items={items} pathname={pathname} compteurs={compteurs} />
         <ShellFooter userName={userName} role={role} />
       </div>
     </div>

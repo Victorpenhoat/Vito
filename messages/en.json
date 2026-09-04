@@ -1575,6 +1575,9 @@
     "aQui": "To whom",
     "envoyer": "Send",
     "envoye": "Sent",
-    "aide": "Only people in your circle with an account can receive a recommendation."
+    "aide": "Only people in your circle with an account can receive a recommendation.",
+    "envoyees": "What I recommended",
+    "a": "to {nom}",
+    "envoyeesAide": "You will not know whether it was added — it's their book."
   }
 }

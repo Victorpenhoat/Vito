@@ -13,7 +13,11 @@ export const NAV_ICONS: Record<NavKey, LucideIcon> = {
   agence: Briefcase, admin: Shield,
 };
 
-export function NavGroups({ items, pathname }: { items: NavEntry[]; pathname: string }) {
+export function NavGroups({ items, pathname, compteurs }: {
+  items: NavEntry[]; pathname: string;
+  /** Compteurs par entrée (boîte de réception aujourd'hui). */
+  compteurs?: Partial<Record<NavKey, number>>;
+}) {
   const t = useTranslations("nav");
   return (
     <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
@@ -32,6 +36,7 @@ export function NavGroups({ items, pathname }: { items: NavEntry[]; pathname: st
                 label={t(it.key)}
                 href={it.href}
                 active={pathname.startsWith(it.href)}
+                badge={compteurs?.[it.key]}
               />
             );
           })}

@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(63);
+select plan(66);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -441,6 +441,22 @@ select throws_ok(
         select count(*) from u') $$,
   '42501', null,
   'aucune insertion directe dans recommandations (RPC obligatoire)');
+
+-- ── Boîte de réception, purge (00048) ──────────────────────────────────────
+-- 63) une recommandation EN ATTENTE ne se purge jamais, même ancienne
+update public.recommandations set created_at = now() - interval '200 days';
+select is(public.purger_recommandations(), 0,
+          'une recommandation en attente survit à la purge');
+
+-- 64) une recommandation traitée récemment reste : on ne purge pas à chaud
+update public.recommandations set statut = 'refusee', traitee_le = now() - interval '10 days';
+select is(public.purger_recommandations(), 0,
+          'une recommandation traitée récemment reste');
+
+-- 65) au-delà du délai, elle part
+update public.recommandations set traitee_le = now() - interval '120 days';
+select is(public.purger_recommandations(), 1,
+          'une recommandation traitée il y a plus de 90 jours est purgée');
 
 select finish();
 rollback;
