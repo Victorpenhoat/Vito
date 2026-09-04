@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(66);
+select plan(69);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -457,6 +457,31 @@ select is(public.purger_recommandations(), 0,
 update public.recommandations set traitee_le = now() - interval '120 days';
 select is(public.purger_recommandations(), 1,
           'une recommandation traitée il y a plus de 90 jours est purgée');
+
+-- ── Boîte de réception : les vins (00049) ──────────────────────────────────
+-- 66) on recommande un vin comme une adresse : même barrière de Cercle
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select case when (public.recommander_vin(
+             ''f1111111-1111-4111-8111-111111111111'', ''Bandol'', ''Domaine Tempier'',
+             2021::smallint, ''rouge''::public.vin_couleur, ''Provence'') ->> ''ok'')::boolean
+           then 1 else 0 end'),
+          1::bigint, 'on recommande un vin à un proche ayant un compte');
+
+-- 67) un compte étranger ne peut pas plus recommander un vin qu'une adresse
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select case when (public.recommander_vin(
+             ''f1111111-1111-4111-8111-111111111111'', ''Chablis'') ->> ''ok'')::boolean
+           then 1 else 0 end'),
+          0::bigint, 'un compte étranger ne peut recommander aucun vin');
+
+-- 68) une recommandation vise UNE chose : ni les deux, ni aucune
+select throws_ok(
+  $$ insert into public.recommandations
+       (de_profile_id, vers_profile_id, categorie, place_id, vin_nom, libelle)
+     values ('11111111-1111-1111-1111-111111111111',
+             'de110000-0000-4000-8000-000000000000', 'vin', 'place-x', 'Bandol', 'X') $$,
+  '23514', null,
+  'une recommandation ne peut pas viser à la fois une adresse et un vin');
 
 select finish();
 rollback;

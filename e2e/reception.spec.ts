@@ -82,3 +82,66 @@ test("recommander une adresse à un proche, qui l'accepte et la retrouve à son 
   await ctxA.close();
   await ctxB.close();
 });
+
+// Les vins : recommander une bouteille. Elle n'a pas de fournisseur — accepter
+// la crée dans la Cave du destinataire, par la même RPC de dédoublonnage que la
+// capture d'étiquette.
+test("recommander un vin, que le proche retrouve dans sa cave", async ({ browser }) => {
+  const marque = String(Date.now()).slice(-6);
+  const prenom = `Vin${marque}`;
+
+  const ctxA = await browser.newContext();
+  const pageA = await ctxA.newPage();
+  await login(pageA, "client@vito.test");
+  await pageA.goto("/fr/famille/proches/nouveau");
+  await pageA.getByTestId("proche-form").locator('input[name="first_name"]').fill(prenom);
+  await pageA.getByTestId("proche-form").locator('input[name="last_name"]').fill("Cercle");
+  await pageA.getByTestId("proche-form").getByRole("button", { name: "Enregistrer" }).click();
+  await expectVisibleWithReload(pageA, pageA.getByRole("heading", { name: `${prenom} Cercle` }));
+  await pageA.getByTestId("compte-inviter").click();
+  const lien = pageA.getByTestId("compte-lien");
+  await expect(lien).toBeVisible({ timeout: 15_000 });
+  const url = (await lien.textContent()) ?? "";
+  const chemin = url.startsWith("http") ? new URL(url).pathname : url;
+
+  const ctxB = await browser.newContext();
+  const pageB = await ctxB.newPage();
+  await pageB.goto(chemin);
+  await pageB.getByTestId("compte-email").fill(`vin${marque}@vito.test`);
+  await pageB.getByTestId("compte-mot-de-passe").fill("password123");
+  await pageB.getByTestId("etape-suivante").click();
+  await pageB.getByTestId("compte-prenom").fill(prenom);
+  await pageB.getByTestId("compte-nom").fill("Cercle");
+  await pageB.getByTestId("etape-suivante").click();
+  await pageB.getByTestId("compte-conditions").check();
+  await pageB.getByTestId("creer-compte").click();
+  await expect(pageB).toHaveURL(/\/fr\/bienvenue/, { timeout: 30_000 });
+
+  // depuis la fiche d'un vin de sa cave, le carnet le recommande
+  await pageA.goto("/fr/restos?onglet=cave");
+  await pageA.getByTestId("cave-row").filter({ hasText: "Domaine de Démo" }).first().getByRole("link").click();
+  await expect(pageA).toHaveURL(/\/fr\/vins\//);
+  await pageA.getByTestId("recommander").click();
+  const form = pageA.getByTestId("recommander-form");
+  await form.getByTestId("recommander-mot").fill(`À goûter ${marque}`);
+  await form.locator("li").filter({ hasText: prenom }).getByRole("button").click();
+  await expect(form.getByTestId("recommander-envoye")).toBeVisible({ timeout: 15_000 });
+
+  // le proche l'accepte : la bouteille rejoint SA cave
+  await pageB.goto("/fr/reception");
+  const carte = pageB.getByTestId("reco-row").first();
+  await expectVisibleWithReload(pageB, carte, { timeout: 15_000 });
+  await expect(carte).toContainText(`À goûter ${marque}`);
+  await carte.getByTestId("reco-accepter").click();
+  await expect(pageB.getByTestId("reco-row")).toHaveCount(0, { timeout: 15_000 });
+
+  await pageB.goto("/fr/restos?onglet=cave");
+  await expectVisibleWithReload(
+    pageB,
+    pageB.getByTestId("cave-row").filter({ hasText: "Démo" }).first(),
+    { timeout: 15_000 },
+  );
+
+  await ctxA.close();
+  await ctxB.close();
+});

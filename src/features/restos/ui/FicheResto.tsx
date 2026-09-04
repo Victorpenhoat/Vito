@@ -294,8 +294,9 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
           n'y a rien à transmettre : le destinataire ne pourrait pas l'ajouter. */}
       {item && etab.place_id && (
         <section>
-          <RecommanderButton proches={proches} categorie={isResto ? "resto" : "hotel"}
-            placeId={etab.place_id} libelle={etab.nom} />
+          <RecommanderButton proches={proches}
+            cible={{ type: "adresse", categorie: isResto ? "resto" : "hotel",
+                     placeId: etab.place_id, libelle: etab.nom }} />
         </section>
       )}
     </article>

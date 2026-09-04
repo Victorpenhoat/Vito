@@ -17,7 +17,7 @@ export async function getReception(): Promise<Recommandation[]> {
 
   const { data, error } = await supabase
     .from("recommandations")
-    .select("id, de_profile_id, categorie, place_id, libelle, mot, created_at, expediteur:profiles!recommandations_de_profile_id_fkey(display_name, first_name)")
+    .select("id, de_profile_id, categorie, place_id, libelle, mot, created_at, vin_nom, vin_domaine, vin_millesime, expediteur:profiles!recommandations_de_profile_id_fkey(display_name, first_name)")
     .eq("statut", "en_attente")
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -36,8 +36,12 @@ export async function getReception(): Promise<Recommandation[]> {
       id: r.id,
       deProfileId: r.de_profile_id,
       deNom: nomDeMonCercle.get(r.de_profile_id) ?? exp?.display_name ?? exp?.first_name ?? "",
-      categorie: r.categorie === "hotel" ? ("hotel" as const) : ("resto" as const),
+      categorie: r.categorie === "hotel" ? ("hotel" as const)
+        : r.categorie === "vin" ? ("vin" as const) : ("resto" as const),
       placeId: r.place_id,
+      vin: r.vin_nom
+        ? { nom: r.vin_nom, domaine: r.vin_domaine, millesime: r.vin_millesime }
+        : null,
       libelle: r.libelle,
       mot: r.mot,
       creeLe: r.created_at,
@@ -76,7 +80,7 @@ export type Envoyee = {
   id: string;
   aNom: string;
   libelle: string;
-  categorie: "resto" | "hotel";
+  categorie: "resto" | "hotel" | "vin";
   creeLe: string;
 };
 
@@ -109,7 +113,8 @@ export async function getEnvoyees(): Promise<Envoyee[]> {
     id: r.id,
     aNom: nom.get(r.vers_profile_id) ?? "",
     libelle: r.libelle,
-    categorie: r.categorie === "hotel" ? ("hotel" as const) : ("resto" as const),
+    categorie: r.categorie === "hotel" ? ("hotel" as const)
+      : r.categorie === "vin" ? ("vin" as const) : ("resto" as const),
     creeLe: r.created_at,
   }));
 }

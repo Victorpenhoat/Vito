@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { Check, X, Utensils, Hotel } from "lucide-react";
+import { Check, X, Utensils, Hotel, Wine } from "lucide-react";
 import { useRouter } from "@/lib/i18n/routing";
 import { accepterRecommandation, refuserRecommandation } from "../data/actions";
 import { trierReception, dejaAuCarnet, type Recommandation } from "../domain/reception";
@@ -56,7 +56,7 @@ export function ReceptionList({ boite, placeIdsDuCarnet }: {
       {erreur && <p role="alert" className="text-[12px] text-danger">{erreur}</p>}
       <ul className="flex flex-col gap-2.5">
         {visibles.map((r) => {
-          const Icone = r.categorie === "hotel" ? Hotel : Utensils;
+          const Icone = r.categorie === "hotel" ? Hotel : r.categorie === "vin" ? Wine : Utensils;
           const connue = dejaAuCarnet(r, placeIdsDuCarnet);
           return (
             <li key={r.id} data-testid="reco-row" className="flex flex-col gap-2 rounded-card border border-line bg-surface p-3.5">

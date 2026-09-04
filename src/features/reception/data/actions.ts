@@ -60,7 +60,7 @@ export async function accepterRecommandation(_prev: unknown, formData: FormData)
   // m'est bien adressée, et qu'elle attend encore.
   const { data: reco } = await supabase
     .from("recommandations")
-    .select("id, de_profile_id, categorie, place_id")
+    .select("id, de_profile_id, categorie, place_id, vin_nom, vin_domaine, vin_millesime, vin_couleur, vin_region")
     .eq("id", id).eq("statut", "en_attente").maybeSingle();
   if (!reco) return { error: "Recommandation introuvable" };
 
@@ -77,10 +77,31 @@ export async function accepterRecommandation(_prev: unknown, formData: FormData)
     ? `${proche.first_name} ${proche.last_name}`.trim()
     : (profil?.display_name ?? profil?.first_name ?? "");
 
-  const ajout = await ajouterAuCarnet(supabase, uid, reco.place_id,
-    reco.categorie === "hotel" ? "hotel" : "resto",
-    { origine: { type: "reco", qui: nom || null, familyMemberId: proche?.id ?? null } });
-  if ("error" in ajout) { logActionError("reception.accepter", ajout.error); return { error: ajout.error }; }
+  // Un vin n'a pas de fournisseur : il rejoint la Cave par la RPC de
+  // dédoublonnage — la même que la capture d'étiquette, pour qu'un vin
+  // recommandé et un vin photographié ne fassent jamais deux entrées.
+  let etablissementId: string | null = null;
+  if (reco.categorie === "vin") {
+    if (!reco.vin_nom) return { error: "Recommandation incomplète" };
+    const { error: vinErr } = await supabase.rpc("find_or_create_vin", {
+      p: {
+        nom: reco.vin_nom,
+        domaine: reco.vin_domaine ?? "",
+        millesime: reco.vin_millesime ?? null,
+        region: reco.vin_region ?? "",
+        couleur: reco.vin_couleur ?? null,
+        cepages: [],
+      },
+    });
+    if (vinErr) { logActionError("reception.accepter", vinErr); return { error: "Ajout à la cave échoué" }; }
+  } else {
+    if (!reco.place_id) return { error: "Recommandation incomplète" };
+    const ajout = await ajouterAuCarnet(supabase, uid, reco.place_id,
+      reco.categorie === "hotel" ? "hotel" : "resto",
+      { origine: { type: "reco", qui: nom || null, familyMemberId: proche?.id ?? null } });
+    if ("error" in ajout) { logActionError("reception.accepter", ajout.error); return { error: ajout.error }; }
+    etablissementId = ajout.etablissementId;
+  }
 
   const { error } = await supabase
     .from("recommandations")
@@ -89,8 +110,9 @@ export async function accepterRecommandation(_prev: unknown, formData: FormData)
   if (error) { logActionError("reception.accepter", error); return { error: "Traitement échoué" }; }
 
   revalidatePath("/reception");
+  // La Cave vit dans l'onglet Restaurants (6ᵉ sous-onglet), d'où /restos ici.
   revalidatePath(reco.categorie === "hotel" ? "/hotels" : "/restos", "layout");
-  return { ok: true as const, etablissementId: ajout.etablissementId };
+  return { ok: true as const, etablissementId };
 }
 
 /**
@@ -110,5 +132,45 @@ export async function refuserRecommandation(_prev: unknown, formData: FormData) 
   if (error) { logActionError("reception.refuser", error); return { error: "Traitement échoué" }; }
   if (!data) return { error: "Recommandation introuvable" };
   revalidatePath("/reception");
+  return { ok: true as const };
+}
+
+/**
+ * Recommander un vin. Même barrière que pour une adresse — la RPC vérifie le
+ * lien de Cercle —, mais le vin se décrit au lieu de se référencer : il n'a pas
+ * de fournisseur derrière lui.
+ */
+export async function recommanderVin(_prev: unknown, formData: FormData) {
+  const familyMemberId = formData.get("familyMemberId");
+  const nom = formData.get("nom");
+  if (typeof familyMemberId !== "string" || typeof nom !== "string" || !nom.trim()) {
+    return { error: "Entrée invalide" };
+  }
+  const texte = (cle: string) => {
+    const v = formData.get(cle);
+    return typeof v === "string" && v.trim() ? v.trim() : undefined;
+  };
+  const millesimeBrut = formData.get("millesime");
+  const millesime = typeof millesimeBrut === "string" && millesimeBrut.trim()
+    ? Number(millesimeBrut) : undefined;
+  if (millesime !== undefined && !Number.isInteger(millesime)) return { error: "Entrée invalide" };
+
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+  const { data, error } = await supabase.rpc("recommander_vin", {
+    p_family_member_id: familyMemberId,
+    p_nom: nom.trim(),
+    p_domaine: texte("domaine"),
+    p_millesime: millesime,
+    p_couleur: texte("couleur") as never,
+    p_region: texte("region"),
+    p_libelle: texte("libelle"),
+    p_mot: texte("mot"),
+  });
+  if (error) { logActionError("reception.recommanderVin", error); return { error: "Envoi impossible" }; }
+  const res = data as { ok?: boolean; motif?: string } | null;
+  if (!res?.ok) {
+    return { error: res?.motif === "destinataire_invalide" ? "Ce proche ne peut rien recevoir" : "Envoi impossible" };
+  }
   return { ok: true as const };
 }

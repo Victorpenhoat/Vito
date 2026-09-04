@@ -3,7 +3,8 @@ import { trierReception, dejaAuCarnet, destinatairesPossibles, type Recommandati
 
 const reco = (p: Partial<Recommandation>): Recommandation => ({
   id: "r", deProfileId: "p1", deNom: "Camille", categorie: "resto",
-  placeId: "place-1", libelle: "Le Bistrot", mot: null, creeLe: "2026-09-01T10:00:00Z", ...p,
+  placeId: "place-1", vin: null, libelle: "Le Bistrot", mot: null,
+  creeLe: "2026-09-01T10:00:00Z", ...p,
 });
 
 describe("trierReception", () => {
@@ -32,6 +33,14 @@ describe("dejaAuCarnet", () => {
 
   it("un carnet vide ne fait ressembler personne à personne", () => {
     expect(dejaAuCarnet(reco({}), [])).toBe(false);
+  });
+
+  it("un vin n'a pas d'adresse : la question ne se pose pas", () => {
+    const vin = reco({
+      categorie: "vin", placeId: null,
+      vin: { nom: "Bandol", domaine: "Tempier", millesime: 2021 },
+    });
+    expect(dejaAuCarnet(vin, ["place-1"])).toBe(false);
   });
 });
 
