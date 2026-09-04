@@ -24,11 +24,18 @@ import { Modal } from "@/features/shared/ui/Modal";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
-export function CategoryTabs({ places, archived, tags, categorie = "resto", ongletSupplementaire }: {
+export function CategoryTabs({ places, archived, tags, categorie = "resto", ongletSupplementaire, detail, selectedId }: {
   places: Place[]; archived: Place[]; tags: TagLite[]; categorie?: CategorieUi;
   /** Sous-onglet greffé en fin de barre, dont le contenu est rendu ailleurs
    *  (la Cave, côté vins) : la brique générique ne connaît pas son domaine. */
   ongletSupplementaire?: { slug: string; contenu: React.ReactNode };
+  /** Fiche de l'adresse ouverte, rendue par le SERVEUR et passée en nœud
+   *  (liste + détail sur grand écran). Elle n'est construite qu'une fois : sur
+   *  téléphone, c'est elle seule qui s'affiche ; au-delà de `lg`, elle prend la
+   *  colonne de droite et la liste reste à gauche. */
+  detail?: React.ReactNode;
+  /** Adresse ouverte, mise en évidence dans la liste. */
+  selectedId?: string | null;
 }) {
   const config = CATEGORY_UI[categorie];
   const ONGLETS = [
@@ -55,6 +62,13 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
   const [archives, setArchives] = useState(false);
 
   function selectOnglet(o: Onglet) {
+    // Depuis une fiche (liste + détail), changer de sous-onglet ramène à la
+    // liste : on quitte l'adresse ouverte, et les sous-onglets qui ne vivent
+    // que sur l'index (la Cave) restent atteignables.
+    if (detail) {
+      router.push(o === "favoris" ? config.basePath : `${config.basePath}?onglet=${o}`);
+      return;
+    }
     const params = new URLSearchParams(searchParams);
     if (o === "favoris") params.delete("onglet");
     else params.set("onglet", o);
@@ -89,8 +103,12 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
     });
   }
 
-  return (
-    <div data-testid={config.rootTestId} className="flex flex-col gap-3.5">
+  // Liste + détail : deux colonnes au-delà de `lg`, la fiche seule en dessous.
+  // La liste n'est pas démontée sur téléphone, elle est masquée — le composant
+  // reste monté, et revenir à la liste ne repart pas de zéro.
+  const enfants = (
+    <div data-testid={config.rootTestId}
+      className={`flex flex-col gap-3.5 ${detail ? "hidden lg:flex" : ""}`}>
       {/* sous-onglets */}
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 [scrollbar-width:none]" role="tablist">
         {ONGLETS.map((o) => {
@@ -200,12 +218,18 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           <CategoryMapLazy places={triees} categorie={categorie} />
         ) : view === "vignettes" ? (
           <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {triees.map((p) => <PlaceCard key={p.id} place={p} variant="vignette" />)}
+            {triees.map((p) => (
+              <li key={p.id} data-selected={p.etablissement.id === selectedId ? "true" : undefined}
+                className={p.etablissement.id === selectedId ? "rounded-card ring-2 ring-accent/40" : ""}>
+                <ul><PlaceCard place={p} variant="vignette" /></ul>
+              </li>
+            ))}
           </ul>
         ) : (
           <ul className="divide-y divide-line">
             {triees.map((p) => (
-              <li key={p.id} className="relative">
+              <li key={p.id} data-selected={p.etablissement.id === selectedId ? "true" : undefined}
+                className={`relative ${p.etablissement.id === selectedId ? "rounded-[6px] bg-accent-50/60 ring-1 ring-accent/20" : ""}`}>
                 <ul><PlaceCard place={p} variant="liste" /></ul>
                 <RowExtras place={p} onglet={onglet} slugTeste={config.slugTeste} tr={tr} onVisite={() => setVisitePour(p)} />
               </li>
@@ -227,6 +251,19 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           <ExperienceForm listeItemId={visitePour.id} tags={tags} categorie={categorie} onDone={() => setVisitePour(null)} />
         )}
       </Modal>
+    </div>
+  );
+
+  if (!detail) return enfants;
+
+  return (
+    <div data-testid="places-liste-detail" className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-7 lg:items-start">
+      {enfants}
+      {/* La fiche colle en haut quand la liste défile : sur un grand écran, on
+          parcourt la liste sans perdre de vue l'adresse ouverte. */}
+      <aside data-testid="places-detail" className="lg:sticky lg:top-4 lg:max-h-[calc(100dvh-2rem)] lg:overflow-y-auto">
+        {detail}
+      </aside>
     </div>
   );
 }
