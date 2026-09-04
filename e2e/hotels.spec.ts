@@ -123,3 +123,54 @@ test("carte hôtels : légende par statut et compteur", async ({ page }) => {
   await expect(page.getByTestId("map-legend")).toBeVisible();
   await expect(page.getByTestId("map-count")).toBeVisible();
 });
+
+// Lot H4 : dates + occupation de la recherche. Rien n'est envoyé au
+// fournisseur (Google Places New n'en veut pas) — le contexte sert à
+// préremplir le séjour, et c'est ce report que ce test vérifie.
+const jourDans = (n: number) => {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
+test("recherche hôtel : les dates et l'occupation choisies préremplissent le séjour", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels?onglet=a_tester");
+  await page.getByTestId("trouver-hotel").click();
+
+  const arrivee = jourDans(10);
+  const depart = jourDans(13);
+
+  await page.getByTestId("chip-dates").click();
+  await page.getByTestId(`jour-${arrivee}`).click();
+  await page.getByTestId(`jour-${depart}`).click();
+  await expect(page.getByTestId("contexte-nuits")).toContainText("3");
+  await page.getByTestId("contexte-appliquer").click();
+
+  // occupation : un adulte de plus, une chambre de plus
+  await page.getByTestId("chip-occupation").click();
+  await page.getByTestId("adultes-plus").click();
+  await page.getByTestId("chambres-plus").click();
+  await expect(page.getByTestId("compte-adultes")).toHaveText("3");
+  await page.getByTestId("contexte-appliquer").click();
+  await expect(page.getByTestId("chip-occupation")).toContainText("3 ad.");
+
+  // le formulaire de séjour reprend tout, et l'annonce
+  await page.goto(`/fr/hotels/${HOTEL_DEMO}`);
+  await page.getByTestId("visite-cta").click();
+  const form = page.getByTestId("sejour-form");
+  await expect(form).toBeVisible();
+  await expect(page.getByTestId("contexte-repris")).toBeVisible();
+  await expect(form.locator('input[name="visiteLe"]')).toHaveValue(arrivee);
+  await expect(form.locator('input[name="dateFin"]')).toHaveValue(depart);
+  await expect(form.getByTestId("occupation-adultes")).toHaveValue("3");
+  await expect(form.getByTestId("occupation-chambres")).toHaveValue("2");
+});
+
+test("les restaurants ignorent le contexte de séjour (brique générique paramétrée)", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos?onglet=a_tester");
+  await page.getByTestId("trouver-restaurant").click();
+  await expect(page.getByTestId("add-resto-search")).toBeVisible();
+  await expect(page.getByTestId("sejour-contexte")).toHaveCount(0);
+});

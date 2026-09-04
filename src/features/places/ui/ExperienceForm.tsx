@@ -5,6 +5,8 @@ import { marquerVisite, marquerSejour } from "@/features/restos/data/actions";
 import { creerTag } from "@/features/restos/data/tagActions";
 import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
 import { voyagesCouvrant, type VoyageLite } from "../domain/voyageCouvrant";
+import { CONTEXTE_DEFAUT } from "../domain/sejourContexte";
+import { useContexteRepris } from "./useSejourContexte";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
 import { fieldClass } from "@/features/shared/ui/Input";
@@ -45,10 +47,27 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
   const [arrivee, setArrivee] = useState(aujourdhui);
   const [depart, setDepart] = useState("");
   const [delie, setDelie] = useState(false);
+  const [occupation, setOccupation] = useState({
+    adultes: CONTEXTE_DEFAUT.adultes, enfants: CONTEXTE_DEFAUT.enfants, chambres: CONTEXTE_DEFAUT.chambres,
+  });
+  // Dates et occupation choisies dans la recherche (lot H4) : elles arrivent
+  // après l'hydratation, et ne servent qu'à éviter une deuxième saisie.
+  const repris = useContexteRepris();
+  const aRepris = sejour && repris != null && (
+    repris.arrivee != null || repris.adultes !== CONTEXTE_DEFAUT.adultes
+    || repris.enfants !== CONTEXTE_DEFAUT.enfants || repris.chambres !== CONTEXTE_DEFAUT.chambres
+  );
 
   useEffect(() => {
     if (state && "ok" in state && state.ok) onDone?.();
   }, [state, onDone]);
+
+  useEffect(() => {
+    if (!sejour || !repris) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- report du contexte de recherche, disponible après hydratation
+    if (repris.arrivee) { setArrivee(repris.arrivee); setDepart(repris.depart ?? ""); }
+    setOccupation({ adultes: repris.adultes, enfants: repris.enfants, chambres: repris.chambres });
+  }, [repris, sejour]);
 
   // Voyage couvrant la plage saisie : proposé automatiquement, déliable.
   const candidats = sejour ? voyagesCouvrant(voyages, arrivee, depart || null) : [];
@@ -171,11 +190,16 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
         {sejour && (
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-medium text-muted">{t("visite.occupation")}</span>
+            {aRepris && (
+              <p data-testid="contexte-repris" className="text-[11px] text-faint">{t("visite.reprisDeLaRecherche")}</p>
+            )}
             <div className="flex gap-2.5">
-              {([["adultes", 2], ["enfants", 0], ["chambres", 1]] as const).map(([champ, def]) => (
+              {(["adultes", "enfants", "chambres"] as const).map((champ) => (
                 <label key={champ} className="flex flex-1 flex-col gap-1 text-[11px] text-muted">
                   {t(`visite.${champ}`)}
-                  <input type="number" name={champ} min={champ === "enfants" ? 0 : 1} max={20} defaultValue={def}
+                  <input type="number" name={champ} min={champ === "enfants" ? 0 : 1} max={20}
+                    value={occupation[champ]}
+                    onChange={(e) => setOccupation((o) => ({ ...o, [champ]: Number(e.target.value) }))}
                     data-testid={`occupation-${champ}`} aria-label={t(`visite.${champ}`)}
                     className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
                 </label>

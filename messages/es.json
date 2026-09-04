@@ -1070,7 +1070,8 @@
       "adultes": "Adultos",
       "enfants": "Niños",
       "chambres": "Habitaciones",
-      "voyageLien": "Viaje {titre}"
+      "voyageLien": "Viaje {titre}",
+      "reprisDeLaRecherche": "Recuperado de tu búsqueda: se puede modificar."
     },
     "vide": {
       "aucunResultat": "Sin resultados",
@@ -1108,7 +1109,28 @@
       },
       "rayon": "< 2 km",
       "choisirStatut": "Elegir estado",
-      "statutSuit": "El estado propuesto sigue la subpestaña actual"
+      "statutSuit": "El estado propuesto sigue la subpestaña actual",
+      "dates": "Fechas",
+      "datesTitre": "Fechas de la estancia",
+      "sansDates": "Sin fechas",
+      "aucuneDate": "Ninguna fecha seleccionada",
+      "nuits": "{n, plural, one {# noche seleccionada} other {# noches seleccionadas}}",
+      "occupationCourte": "{adultes} ad. · {enfants} niñ. · {chambres} hab.",
+      "appliquer": "Aplicar",
+      "contexteOptionnel": "Fechas y ocupación opcionales: rellenan tu estancia, no filtran los resultados.",
+      "jours": {
+        "l": "L",
+        "m": "M",
+        "me": "X",
+        "j": "J",
+        "v": "V",
+        "s": "S",
+        "d": "D"
+      },
+      "moins": "Disminuir",
+      "plus": "Aumentar",
+      "prixNuit": "{prix} €/noche",
+      "prixIndisponible": "precio no disponible"
     },
     "carte": {
       "autourDeMoi": "Cerca de mí",
