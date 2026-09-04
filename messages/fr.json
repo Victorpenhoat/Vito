@@ -1070,7 +1070,8 @@
       "adultes": "Adultes",
       "enfants": "Enfants",
       "chambres": "Chambres",
-      "voyageLien": "Voyage {titre}"
+      "voyageLien": "Voyage {titre}",
+      "reprisDeLaRecherche": "Repris de votre recherche — modifiable."
     },
     "vide": {
       "aucunResultat": "Aucun résultat",
@@ -1108,7 +1109,28 @@
       },
       "rayon": "< 2 km",
       "choisirStatut": "Choisir le statut",
-      "statutSuit": "Le statut proposé suit le sous-onglet d'origine"
+      "statutSuit": "Le statut proposé suit le sous-onglet d'origine",
+      "dates": "Dates",
+      "datesTitre": "Dates du séjour",
+      "sansDates": "Sans dates",
+      "aucuneDate": "Aucune date sélectionnée",
+      "nuits": "{n, plural, one {# nuit sélectionnée} other {# nuits sélectionnées}}",
+      "occupationCourte": "{adultes} ad. · {enfants} enf. · {chambres} ch.",
+      "appliquer": "Appliquer",
+      "contexteOptionnel": "Dates et occupation optionnelles — elles préremplissent votre séjour, elles ne filtrent pas les résultats.",
+      "jours": {
+        "l": "L",
+        "m": "M",
+        "me": "M",
+        "j": "J",
+        "v": "V",
+        "s": "S",
+        "d": "D"
+      },
+      "moins": "Diminuer",
+      "plus": "Augmenter",
+      "prixNuit": "{prix} €/nuit",
+      "prixIndisponible": "prix indisponible"
     },
     "carte": {
       "autourDeMoi": "Autour de moi",

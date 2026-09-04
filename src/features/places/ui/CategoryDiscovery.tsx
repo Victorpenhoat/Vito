@@ -11,6 +11,8 @@ import { searchEnvies, addRecent, removeRecent } from "../domain/discovery";
 import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
 import { restoStatut, RESTO_STATUTS, type RestoStatut } from "@/features/restos/domain/statut";
 import { haversineKm, formatDistance } from "@/features/restos/domain/distance";
+import { SejourContexteChips } from "./SejourContexteChips";
+import { useSejourContexte } from "./useSejourContexte";
 import { Button } from "@/features/shared/ui/Button";
 import { Input } from "@/features/shared/ui/Input";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
@@ -45,6 +47,9 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
   const [cuisineOuverte, setCuisineOuverte] = useState(false);
   const storageKey = config.storageKey;
   const envies = searchEnvies(categorie);
+  // Dates + occupation du séjour (lot H4) : hébergements seulement, et jamais
+  // envoyées au fournisseur — elles préremplissent le formulaire de séjour.
+  const { contexte, enregistrer } = useSejourContexte();
 
   useEffect(() => {
     try {
@@ -102,6 +107,13 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
     return place ? [{ result: r, place }] : [];
   });
   const externes = results.filter((r) => !byPlaceId.has(r.placeId));
+
+  // Le prix/nuit est SAISI dans le carnet (le fournisseur n'en donne aucun) :
+  // il s'affiche tel quel, sans prétendre valoir pour les dates choisies.
+  const prixNuit = (place: Place): string | null =>
+    config.contexteSejour && place.prix_nuit != null
+      ? tr("recherche.prixNuit", { prix: place.prix_nuit })
+      : null;
 
   const chipCls = (active: boolean) =>
     `rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
@@ -166,6 +178,8 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
         </button>
       </div>
 
+      {config.contexteSejour && <SejourContexteChips contexte={contexte} onChange={enregistrer} />}
+
       {addError && <p role="alert" className="text-sm text-danger">{addError}</p>}
 
       {!searched && (
@@ -220,7 +234,11 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
                           {s === "favori" ? "♥ " : ""}{tr(`statut.${s}`)}
                         </span>
                       </span>
-                      {result.adresse && <span className="block truncate text-xs text-muted">{result.adresse}</span>}
+                      {(result.adresse || prixNuit(place)) && (
+                        <span className="block truncate text-xs text-muted">
+                          {[result.adresse, prixNuit(place)].filter(Boolean).join(" · ")}
+                        </span>
+                      )}
                     </span>
                     <ChevronRight size={15} className="shrink-0 text-faint" aria-hidden />
                   </Link>
@@ -247,7 +265,7 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-serif text-base text-ink">{r.nom}</span>
                     <span className="block truncate text-xs text-muted">
-                      {[r.adresse, dist].filter(Boolean).join(" · ")}
+                      {[r.adresse, dist, config.contexteSejour ? tr("recherche.prixIndisponible") : null].filter(Boolean).join(" · ")}
                       {r.openNow ? <span className="font-semibold text-kpi-green"> · {tr("recherche.ouvert")}</span> : null}
                     </span>
                   </span>

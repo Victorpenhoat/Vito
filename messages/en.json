@@ -1070,7 +1070,8 @@
       "adultes": "Adults",
       "enfants": "Children",
       "chambres": "Rooms",
-      "voyageLien": "Trip {titre}"
+      "voyageLien": "Trip {titre}",
+      "reprisDeLaRecherche": "Carried over from your search — editable."
     },
     "vide": {
       "aucunResultat": "No results",
@@ -1108,7 +1109,28 @@
       },
       "rayon": "< 2 km",
       "choisirStatut": "Choose status",
-      "statutSuit": "The suggested status follows the current sub-tab"
+      "statutSuit": "The suggested status follows the current sub-tab",
+      "dates": "Dates",
+      "datesTitre": "Stay dates",
+      "sansDates": "No dates",
+      "aucuneDate": "No dates selected",
+      "nuits": "{n, plural, one {# night selected} other {# nights selected}}",
+      "occupationCourte": "{adultes} ad. · {enfants} ch. · {chambres} rm.",
+      "appliquer": "Apply",
+      "contexteOptionnel": "Dates and occupancy are optional — they prefill your stay, they do not filter results.",
+      "jours": {
+        "l": "M",
+        "m": "T",
+        "me": "W",
+        "j": "T",
+        "v": "F",
+        "s": "S",
+        "d": "S"
+      },
+      "moins": "Decrease",
+      "plus": "Increase",
+      "prixNuit": "€{prix}/night",
+      "prixIndisponible": "price unavailable"
     },
     "carte": {
       "autourDeMoi": "Around me",

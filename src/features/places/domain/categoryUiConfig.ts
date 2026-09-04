@@ -31,6 +31,9 @@ export type CategoryUiConfig = {
   /** Clés i18n du menu de type : libellé fermé + « tous ». */
   typeFiltreKeys: { label: string; tous: string };
   map: { clusters: boolean; typeFilter: boolean };
+  /** Recherche : dates + occupation du séjour et prix/nuit dans les résultats
+   *  (hébergements seulement — un restaurant ne se réserve pas par nuitée). */
+  contexteSejour: boolean;
   /** Formulaire « j'y suis allé » : visite datée simple (resto) ou séjour arrivée→départ (hôtel). */
   experience: "visite" | "sejour";
 };
@@ -51,6 +54,7 @@ export const CATEGORY_UI: Record<CategorieUi, CategoryUiConfig> = {
     typeChipsNs: "recherche.cuisines",
     typeFiltreKeys: { label: "recherche.cuisine", tous: "recherche.toutesCuisines" },
     map: { clusters: false, typeFilter: false },
+    contexteSejour: false,
     experience: "visite",
   },
   hotel: {
@@ -68,6 +72,7 @@ export const CATEGORY_UI: Record<CategorieUi, CategoryUiConfig> = {
     typeChipsNs: "recherche.types",
     typeFiltreKeys: { label: "recherche.type", tous: "recherche.tousTypes" },
     map: { clusters: true, typeFilter: true },
+    contexteSejour: true,
     experience: "sejour",
   },
 };
