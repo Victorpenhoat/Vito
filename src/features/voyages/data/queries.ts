@@ -144,3 +144,32 @@ export async function getDepensesVoyage(voyageId: string) {
     })),
   };
 }
+
+// ── Lot F : liens de partage ────────────────────────────────────────────────
+
+/**
+ * Les liens de partage d'un voyage. La RLS de `invitations` ne montre à chacun
+ * que CEUX QU'IL A ÉMIS : un co-membre ne voit donc pas les liens du
+ * propriétaire, et c'est voulu — un lien est un secret dont on reste le seul
+ * gardien.
+ */
+export async function getLiensVoyage(voyageId: string) {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("invitations")
+    .select("id, token, usages, usages_max, expire_le, created_at")
+    .eq("voyage_id", voyageId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((i) => ({
+    id: i.id,
+    token: i.token,
+    usages: i.usages,
+    usagesMax: i.usages_max,
+    expireLe: i.expire_le,
+    creeLe: i.created_at,
+  }));
+}

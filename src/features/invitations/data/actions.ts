@@ -98,6 +98,7 @@ export async function creerInvitation(_prev: unknown, formData: FormData) {
     email: formData.get("email") ?? "",
     roleVise: formData.get("roleVise") ?? "membre",
     voyageId: formData.get("voyageId") ?? "",
+    usagesMax: formData.get("usagesMax") ?? undefined,
   });
   if (!parsed.success) return { error: "Invitation invalide" };
   const supabase = await createServerSupabase();
@@ -105,14 +106,55 @@ export async function creerInvitation(_prev: unknown, formData: FormData) {
   if (!auth.user) return { error: "Non authentifié" };
   // 32 octets en base64url : assez long pour n'être pas devinable.
   const token = randomBytes(32).toString("base64url");
-  const { error } = await supabase.from("invitations").insert({
+  // L'id revient à l'appelant : sans lui, une révocation faite juste après la
+  // création (avant le rafraîchissement) viserait un identifiant inexistant.
+  const { data: cree, error } = await supabase.from("invitations").insert({
     token,
     email: parsed.data.email || null,
     role_vise: parsed.data.roleVise,
     voyage_id: parsed.data.voyageId || null,
+    usages_max: parsed.data.usagesMax ?? 1,
     cree_par: auth.user.id,
-  });
-  if (error) { logActionError("invitations.creerInvitation", error); return { error: "Invitation non créée" }; }
+  }).select("id, expire_le").single();
+  if (error || !cree) { logActionError("invitations.creerInvitation", error); return { error: "Invitation non créée" }; }
   revalidatePath("/reglages");
-  return { ok: true as const, token };
+  if (parsed.data.voyageId) revalidatePath(`/voyages/${parsed.data.voyageId}`);
+  return { ok: true as const, token, id: cree.id as string, expireLe: cree.expire_le as string };
+}
+
+/**
+ * Révoque un lien (Lot F). La RLS n'autorise l'émetteur qu'à supprimer les
+ * siens — et, pour un lien de voyage, même après un premier usage : c'est là
+ * que la révocation sert. Couper le lien n'expulse personne, les membres déjà
+ * admis se retirent depuis la liste des membres.
+ */
+export async function revoquerInvitation(_prev: unknown, formData: FormData) {
+  const id = formData.get("invitationId");
+  const voyageId = formData.get("voyageId");
+  if (typeof id !== "string") return { error: "Entrée invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { data, error } = await supabase
+    .from("invitations").delete().eq("id", id).select("id").maybeSingle();
+  if (error) { logActionError("invitations.revoquer", error); return { error: "Révocation échouée" }; }
+  if (!data) return { error: "Révocation non autorisée" };
+  revalidatePath("/reglages");
+  if (typeof voyageId === "string" && voyageId) revalidatePath(`/voyages/${voyageId}`);
+  return { ok: true as const };
+}
+
+/** Rejoindre un voyage avec un lien, quand on a DÉJÀ un compte (Lot F). */
+export async function rejoindreAvecInvitation(_prev: unknown, formData: FormData) {
+  const token = formData.get("token");
+  if (typeof token !== "string" || !token) return { error: "Lien invalide" };
+  const supabase = await createServerSupabase();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "Non authentifié" };
+  const { data, error } = await supabase.rpc("consommer_invitation", { p_token: token });
+  if (error) { logActionError("invitations.rejoindre", error); return { error: "Lien invalide" }; }
+  const res = data as { ok?: boolean; voyage_id?: string | null } | null;
+  if (!res?.ok) return { error: "Lien invalide" };
+  revalidatePath("/voyages", "layout");
+  return { ok: true as const, voyageId: res.voyage_id ?? null };
 }

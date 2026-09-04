@@ -660,6 +660,17 @@
       "pendantVacances": "during {libelle}",
       "horsFenetre": "{titre} — outside the twelve months shown",
       "aucunVoyageDate": "No dated trip to place on the timeline."
+    },
+    "partageLien": {
+      "titre": "Share by link",
+      "aide": "The link grants access to this trip only, and always requires an account.",
+      "creer": "Create a share link",
+      "copier": "Copy the link",
+      "revoquer": "Revoke the link",
+      "usages": "{restants} of {max} uses left",
+      "expire": "expires on {date}",
+      "copieImpossible": "Cannot copy — select the link manually.",
+      "echec": "Cannot create the link right now."
     }
   },
   "depenses": {
@@ -1513,6 +1524,14 @@
       "restoSous": "The one you always go back to",
       "voyage": "Create a trip idea",
       "voyageSous": "Even without exact dates"
+    },
+    "dejaUnCompte": "Already have an account?",
+    "seConnecterPuisRouvrir": "Sign in, then reopen this link",
+    "rejoindre": {
+      "cta": "Join",
+      "ctaVoyage": "Join “{titre}”",
+      "aide": "You will only have access to this trip.",
+      "echec": "This link is no longer valid."
     }
   },
   "protege": {

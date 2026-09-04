@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(50);
+select plan(53);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -337,6 +337,31 @@ select throws_ok(
   $$ delete from public.voyage_participants where id = 'aaaa0001-0000-4000-8000-000000000001' $$,
   '23503', null,
   'retirer un voyageur qui a payé est refusé (restrict)');
+
+-- ── Voyages, Lot F (00045) : liens de partage à usages multiples ───────────
+-- Un lien de voyage s'envoie à un groupe : il doit rester valable après un
+-- premier usage, et se fermer une fois le quota atteint.
+insert into public.invitations (token, role_vise, voyage_id, usages, usages_max, cree_par)
+  values ('jeton-lien-voyage-multi-000000000001', 'invite', '11111111-2222-4333-8444-555555555555',
+          1, 10, '11111111-1111-1111-1111-111111111111'),
+         ('jeton-lien-voyage-epuise-00000000001', 'invite', '11111111-2222-4333-8444-555555555555',
+          10, 10, '11111111-1111-1111-1111-111111111111');
+
+-- 50) un lien entamé reste valable
+select is((public.invitation_infos('jeton-lien-voyage-multi-000000000001') ->> 'valide')::boolean,
+          true, 'un lien de voyage déjà utilisé une fois reste valable');
+
+-- 51) un lien épuisé ne l'est plus (et ne dit pas pourquoi : anti-énumération)
+select is((public.invitation_infos('jeton-lien-voyage-epuise-00000000001') ->> 'valide')::boolean,
+          false, 'un lien de voyage épuisé n''est plus valable');
+
+-- 52) révoquer un lien de voyage reste possible APRÈS un usage — c'est là que
+--     ça sert. La policy de 00035 l'interdisait (consomme_le is null).
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with s as (delete from public.invitations
+                       where token = ''jeton-lien-voyage-multi-000000000001'' returning 1)
+           select count(*) from s'),
+          1::bigint, 'le propriétaire révoque son lien de voyage déjà utilisé');
 
 select finish();
 rollback;
