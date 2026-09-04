@@ -22,6 +22,7 @@ import { DemandeRestoForm } from "@/features/conciergerie/ui/DemandeRestoForm";
 import { Link } from "@/lib/i18n/routing";
 import { getMaFamille } from "@/features/famille/data/queries";
 import { AjouterFamilleButton } from "@/features/famille/ui/AjouterFamilleButton";
+import { RecommanderButton } from "@/features/reception/ui/RecommanderButton";
 
 /** Nuits entre deux dates ISO (séjour) — null si la plage est incomplète. */
 function nuitsEntre(debut: string | null, fin: string | null): number | null {
@@ -59,7 +60,12 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
   const maFamille = await getMaFamille();
   // Suggestions Cercle pour l'origine — les deux catégories depuis Hôtels v2.
   const proches = item
-    ? (await getProches()).map((p) => ({ id: p.id, nom: `${p.first_name} ${p.last_name}`, couleur: p.avatar_color }))
+    ? (await getProches()).map((p) => ({
+        id: p.id, nom: `${p.first_name} ${p.last_name}`, couleur: p.avatar_color,
+        // Boîte de réception (lot 2) : seul un proche ayant un compte rattaché
+        // peut recevoir une recommandation.
+        profileId: p.profile_id,
+      }))
     : [];
 
   let photoRefs: string[] = [];
@@ -281,6 +287,15 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
       {maFamille && (
         <section>
           <AjouterFamilleButton etablissementId={etab.id} />
+        </section>
+      )}
+
+      {/* Recommander à un proche (boîte de réception, lot 2). Sans place_id, il
+          n'y a rien à transmettre : le destinataire ne pourrait pas l'ajouter. */}
+      {item && etab.place_id && (
+        <section>
+          <RecommanderButton proches={proches} categorie={isResto ? "resto" : "hotel"}
+            placeId={etab.place_id} libelle={etab.nom} />
         </section>
       )}
     </article>

@@ -16,6 +16,9 @@ export type Proche = {
   urgency: "expired" | "soon" | "valid" | null;
   urgency_months: number | null;
   urgency_doc_type: string | null;
+  /** Compte rattaché : seul un proche qui en a un peut recevoir une
+   *  recommandation (boîte de réception, lot 2). */
+  profile_id: string | null;
 };
 
 export type DocMeta = {
@@ -85,7 +88,7 @@ export const getProches = cache(async (): Promise<Proche[]> => {
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("family_members")
-    .select("id, first_name, last_name, relation, circle, avatar_color, phone, family_documents(expiry_date, doc_type)")
+    .select("id, first_name, last_name, relation, circle, avatar_color, phone, profile_id, family_documents(expiry_date, doc_type)")
     .order("last_name", { ascending: true })
     .order("first_name", { ascending: true });
   if (error) throw error;
@@ -100,6 +103,7 @@ export const getProches = cache(async (): Promise<Proche[]> => {
       circle: m.circle,
       avatar_color: m.avatar_color,
       phone: m.phone,
+      profile_id: m.profile_id,
       doc_count: docs.length,
       ...worstUrgency(docs, now),
     };

@@ -1070,7 +1070,8 @@
       "carnet": "Journal",
       "voyages": "Trips",
       "cercle": "Circle"
-    }
+    },
+    "reception": "Recommendations"
   },
   "places": {
     "favoris": "Favourites",
@@ -1556,5 +1557,24 @@
       "echec": "Verification failed."
     },
     "afficherDocument": "Show the document"
+  },
+  "reception": {
+    "eyebrow": "The Circle",
+    "titre": "Recommendations received",
+    "de": "from {nom}",
+    "accepter": "Add to my book",
+    "refuser": "No thanks",
+    "dejaAuCarnet": "Already in your book",
+    "videTitre": "Nothing waiting",
+    "videTexte": "Places your circle recommends will arrive here.",
+    "echec": "Not possible right now.",
+    "recommander": "Recommend",
+    "recommanderTitre": "Recommend {nom}",
+    "mot": "A word (optional)",
+    "motPlaceholder": "The fish is perfect…",
+    "aQui": "To whom",
+    "envoyer": "Send",
+    "envoye": "Sent",
+    "aide": "Only people in your circle with an account can receive a recommendation."
   }
 }

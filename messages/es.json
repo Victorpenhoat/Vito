@@ -1070,7 +1070,8 @@
       "carnet": "Cuaderno",
       "voyages": "Viajes",
       "cercle": "Círculo"
-    }
+    },
+    "reception": "Recomendaciones"
   },
   "places": {
     "favoris": "Favoritos",
@@ -1556,5 +1557,24 @@
       "echec": "No se ha podido verificar."
     },
     "afficherDocument": "Mostrar el documento"
+  },
+  "reception": {
+    "eyebrow": "El Círculo",
+    "titre": "Recomendaciones recibidas",
+    "de": "de {nom}",
+    "accepter": "Añadir a mi cuaderno",
+    "refuser": "No, gracias",
+    "dejaAuCarnet": "Ya está en tu cuaderno",
+    "videTitre": "Nada te espera",
+    "videTexte": "Las direcciones que te recomienden tus allegados llegarán aquí.",
+    "echec": "Imposible por ahora.",
+    "recommander": "Recomendar",
+    "recommanderTitre": "Recomendar {nom}",
+    "mot": "Unas palabras (opcional)",
+    "motPlaceholder": "El pescado es perfecto…",
+    "aQui": "A quién",
+    "envoyer": "Enviar",
+    "envoye": "Enviado",
+    "aide": "Solo tus allegados con cuenta pueden recibir una recomendación."
   }
 }

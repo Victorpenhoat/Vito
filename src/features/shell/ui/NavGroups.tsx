@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import {
-  Home, Utensils, Hotel, Wine, Search, Plane, Users, Wallet, ConciergeBell, CreditCard, Briefcase, Shield,
+  Home, Utensils, Hotel, Wine, Search, Plane, Users, Wallet, ConciergeBell, CreditCard, Briefcase, Shield, Inbox,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavItem } from "@/features/shared/ui/NavItem";
@@ -9,7 +9,7 @@ import { groupNav, type NavEntry, type NavKey } from "../nav-config";
 
 export const NAV_ICONS: Record<NavKey, LucideIcon> = {
   accueil: Home, restos: Utensils, hotels: Hotel, vins: Wine, recherche: Search, voyages: Plane,
-  famille: Users, depenses: Wallet, conciergerie: ConciergeBell, abonnement: CreditCard,
+  famille: Users, reception: Inbox, depenses: Wallet, conciergerie: ConciergeBell, abonnement: CreditCard,
   agence: Briefcase, admin: Shield,
 };
 
