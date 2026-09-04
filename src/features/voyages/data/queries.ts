@@ -25,7 +25,7 @@ export async function getVoyageDetail(id: string) {
 
   const [voyageRes, resRes, memRes, partRes, etapesRes] = await Promise.all([
     supabase.from("voyages").select("id, titre, destination, date_debut, date_fin, statut, owner_id, periode_texte, cover_photo_ref, cover_url, devise").eq("id", id).single(),
-    supabase.from("reservations").select("id, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien, notes, etablissement_id").eq("voyage_id", id).order("date_debut", { ascending: true, nullsFirst: false }),
+    supabase.from("reservations").select("id, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien, notes, etablissement_id, details").eq("voyage_id", id).order("date_debut", { ascending: true, nullsFirst: false }),
     supabase.from("voyage_membres").select("profile_id, role, profile:profiles(display_name)").eq("voyage_id", id),
     // Lot B : qui part (participants) et quoi faire sur place (programme).
     supabase.from("voyage_participants")
@@ -78,7 +78,7 @@ export async function getVoyageDocuments(voyageId: string) {
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("voyage_documents")
-    .select("id, nom, mime_type, taille, created_at")
+    .select("id, nom, mime_type, taille, created_at, reservation_id")
     .eq("voyage_id", voyageId)
     .order("created_at", { ascending: false });
   if (error) throw error;

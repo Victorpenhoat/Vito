@@ -7,6 +7,7 @@ import {
   participantInputSchema, etapeInputSchema,
 } from "../domain/schemas";
 import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
+import { champsDuType } from "../domain/reservationDetails";
 import { TYPES_HEBERGEMENT } from "../domain/reservationHebergement";
 import { getIsPremium } from "@/features/abonnement/data/queries";
 import { FREE_VOYAGE_LIMIT } from "@/features/abonnement/domain/constants";
@@ -115,6 +116,15 @@ export async function addReservation(_prev: unknown, formData: FormData) {
     placeId: formData.get("placeId") || undefined,
   });
   if (!parsed.success) return { error: "Réservation invalide" };
+
+  // Détails propres au type (Lot C) : seuls les champs DU TYPE sont retenus,
+  // et seulement s'ils portent quelque chose. Le formulaire peut envoyer les
+  // champs d'un autre type quand on en change en cours de saisie.
+  const details: Record<string, string> = {};
+  for (const champ of champsDuType(String(formData.get("type") ?? ""))) {
+    const v = formData.get(`details_${champ}`);
+    if (typeof v === "string" && v.trim()) details[champ] = v.trim().slice(0, 200);
+  }
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
   if (!uid) return { error: "Non authentifié" };
@@ -143,6 +153,7 @@ export async function addReservation(_prev: unknown, formData: FormData) {
     conciergerie_tel: d.conciergerieTel ?? null, conciergerie_mail: d.conciergerieMail ?? null,
     lien: d.lien ?? null, notes: d.notes ?? null,
     etablissement_id: etablissementId,
+    details: Object.keys(details).length > 0 ? details : null,
   });
   if (error) { logActionError("voyages.addReservation", error); return { error: "Ajout de réservation échoué" }; }
   revalidatePath(`/voyages/${d.voyageId}`);

@@ -505,7 +505,11 @@
       "supprimer": "Delete",
       "vide": "No documents.",
       "typeNonSupporte": "Unsupported type (PDF, JPEG, PNG, WebP)",
-      "tropVolumineux": "File too large (max 5 MB)"
+      "tropVolumineux": "File too large (max 5 MB)",
+      "voucherAjouter": "Attach a ticket",
+      "annuler": "Cancel",
+      "echec": "Cannot upload right now.",
+      "rattache": "ticket · {libelle}"
     },
     "eyebrow": "My journal",
     "heading": "Trips",
@@ -602,6 +606,29 @@
       "annuler": "Cancel",
       "supprimer": "Delete the step {titre}",
       "echec": "Cannot add the step right now."
+    },
+    "details": {
+      "compagnie": "Carrier",
+      "numero": "Number",
+      "depart": "From",
+      "arrivee": "To",
+      "heureDepart": "Departure time",
+      "heureArrivee": "Arrival time",
+      "terminal": "Terminal",
+      "siege": "Seat",
+      "gareDepart": "From station",
+      "gareArrivee": "To station",
+      "voiture": "Coach",
+      "place": "Seat",
+      "agence": "Rental company",
+      "lieuPrise": "Pick-up",
+      "lieuRestitution": "Drop-off",
+      "heurePrise": "Pick-up time",
+      "heureRestitution": "Drop-off time",
+      "categorie": "Category",
+      "chambre": "Room no.",
+      "typeChambre": "Room type",
+      "petitDejeuner": "Breakfast"
     }
   },
   "depenses": {

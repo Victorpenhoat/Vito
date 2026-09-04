@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { addReservation } from "../data/actions";
 import { RESERVATION_TYPES } from "../domain/schemas";
 import { estHebergement } from "../domain/reservationHebergement";
+import { champsDuType } from "../domain/reservationDetails";
 import { HebergementPicker } from "./HebergementPicker";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
@@ -31,6 +32,17 @@ export function ReservationForm({ voyageId }: { voyageId: string }) {
       )}
       <Input name="fournisseur" placeholder={t("fournisseur")}
         value={fournisseur} onChange={(e) => setFournisseur(e.target.value)} />
+
+      {/* Champs propres au type (Lot C) : un vol a un numéro et deux aéroports,
+          une voiture une agence — on ne montre que ce qui concerne ce type. */}
+      {champsDuType(type).length > 0 && (
+        <div data-testid="reservation-details" className="grid grid-cols-2 gap-2">
+          {champsDuType(type).map((champ) => (
+            <Input key={champ} name={`details_${champ}`} data-testid={`details-${champ}`}
+              placeholder={t(`details.${champ}`)} aria-label={t(`details.${champ}`)} />
+          ))}
+        </div>
+      )}
       <Input name="reference" placeholder={t("reference")} />
       <div className="flex gap-2">
         <DateField name="dateDebut" aria-label={t("dateDebut")} />

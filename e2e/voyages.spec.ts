@@ -112,3 +112,50 @@ test("le programme : les jours du voyage, une étape datée et une à caler", as
   await page.getByTestId("programme-etape").filter({ hasText: etape }).getByTestId("etape-supprimer").click();
   await expect(page.getByTestId("programme-etape").filter({ hasText: etape })).toHaveCount(0, { timeout: 15_000 });
 });
+
+// Lot C : chaque type de réservation a ses champs propres, et son billet se
+// dépose là où on le cherche — sous la réservation.
+const PDF_BILLET = Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF");
+
+test("un vol porte ses champs, son résumé, et son billet joint", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+
+  const form = page.getByTestId("reservation-form");
+  await form.locator('select[name="type"]').selectOption("vol");
+  // les champs suivent le type : plus de recherche d'hébergement, mais un vol
+  await expect(form.getByTestId("hebergement-recherche")).toHaveCount(0);
+  await expect(form.getByTestId("details-numero")).toBeVisible();
+
+  const numero = `AF${Date.now() % 100000}`;
+  await form.locator('input[name="fournisseur"]').fill("Air France");
+  await form.getByTestId("details-numero").fill(numero);
+  await form.getByTestId("details-depart").fill("CDG");
+  await form.getByTestId("details-arrivee").fill("FCO");
+  await form.getByTestId("details-heureDepart").fill("10:15");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.locator('button[type="submit"]').click(),
+  ]);
+
+  const ligne = page.getByTestId("reservation-row").filter({ hasText: numero });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne.getByTestId("reservation-resume")).toContainText("CDG → FCO");
+  await expect(ligne.getByTestId("reservation-resume")).toContainText("10:15");
+
+  // le billet se joint depuis la réservation elle-même
+  const billet = `billet-${Date.now()}.pdf`;
+  await ligne.getByTestId("voucher-ajouter").click();
+  await ligne.getByTestId("voucher-form").locator('input[type="file"]')
+    .setInputFiles({ name: billet, mimeType: "application/pdf", buffer: PDF_BILLET });
+  await ligne.getByTestId("voucher-deposer").click();
+  await expect(ligne.getByTestId("voucher-lien").filter({ hasText: billet })).toBeVisible({ timeout: 15_000 });
+
+  // il reste un document du voyage, mais on voit d'où il vient. Rendu frais
+  // demandé explicitement : deux gardes de rechargement d'affilée épuisent le
+  // budget de 30 s du test avant d'avoir rien prouvé.
+  await page.reload();
+  const dansLesDocuments = page.getByTestId("document-row").filter({ hasText: billet });
+  await expect(dansLesDocuments).toBeVisible({ timeout: 10_000 });
+  await expect(dansLesDocuments.getByTestId("document-rattache")).toContainText("Air France");
+});

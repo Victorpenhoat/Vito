@@ -505,7 +505,11 @@
       "supprimer": "Elimina",
       "vide": "Nessun documento.",
       "typeNonSupporte": "Tipo non supportato (PDF, JPEG, PNG, WebP)",
-      "tropVolumineux": "File troppo grande (max 5 MB)"
+      "tropVolumineux": "File troppo grande (max 5 MB)",
+      "voucherAjouter": "Allega un biglietto",
+      "annuler": "Annulla",
+      "echec": "Caricamento non possibile al momento.",
+      "rattache": "biglietto · {libelle}"
     },
     "eyebrow": "Il mio taccuino",
     "heading": "Viaggi",
@@ -602,6 +606,29 @@
       "annuler": "Annulla",
       "supprimer": "Elimina la tappa {titre}",
       "echec": "Aggiunta della tappa non possibile al momento."
+    },
+    "details": {
+      "compagnie": "Compagnia",
+      "numero": "Numero",
+      "depart": "Partenza",
+      "arrivee": "Arrivo",
+      "heureDepart": "Ora di partenza",
+      "heureArrivee": "Ora di arrivo",
+      "terminal": "Terminal",
+      "siege": "Posto",
+      "gareDepart": "Stazione di partenza",
+      "gareArrivee": "Stazione di arrivo",
+      "voiture": "Carrozza",
+      "place": "Posto",
+      "agence": "Agenzia",
+      "lieuPrise": "Luogo di ritiro",
+      "lieuRestitution": "Luogo di riconsegna",
+      "heurePrise": "Ora di ritiro",
+      "heureRestitution": "Ora di riconsegna",
+      "categorie": "Categoria",
+      "chambre": "N. camera",
+      "typeChambre": "Tipo di camera",
+      "petitDejeuner": "Colazione"
     }
   },
   "depenses": {

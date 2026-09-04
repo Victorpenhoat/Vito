@@ -12,6 +12,8 @@ import { ShareVoyageButton } from "./ShareVoyageButton";
 import { ReservationForm } from "./ReservationForm";
 import { ParticipantsList } from "./ParticipantsList";
 import { ProgrammeBlock } from "./ProgrammeBlock";
+import { ReservationVouchers } from "./ReservationVouchers";
+import { resumeDetails } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
@@ -170,6 +172,10 @@ export async function VoyageDetail({ id }: { id: string }) {
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{t(`types.${r.type}`)}</span>
                   <span className="font-serif text-lg text-ink">{[r.fournisseur, r.reference].filter(Boolean).join(" · ") || t(`types.${r.type}`)}</span>
                   {(r.date_debut || r.date_fin) && <span className="text-sm text-muted">{formatRange(r.date_debut, r.date_fin, locale)}</span>}
+                  {/* Résumé des détails du type : « AF1204 · CDG → FCO · 10:15 » */}
+                  {resumeDetails(r.type, r.details) && (
+                    <span data-testid="reservation-resume" className="text-sm text-muted">{resumeDetails(r.type, r.details)}</span>
+                  )}
                   <span className="flex flex-wrap gap-3 text-sm">
                     {r.conciergerie_tel && <a href={`tel:${r.conciergerie_tel}`} className="text-accent hover:underline">{r.conciergerie_tel}</a>}
                     {r.conciergerie_mail && <a href={`mailto:${r.conciergerie_mail}`} className="text-accent hover:underline">{r.conciergerie_mail}</a>}
@@ -180,6 +186,10 @@ export async function VoyageDetail({ id }: { id: string }) {
                         className="font-semibold text-accent hover:underline">{t("hebergement.voirFiche")} →</Link>
                     )}
                   </span>
+                  {/* Le billet se dépose et se relit sous sa réservation (Lot C) */}
+                  <ReservationVouchers voyageId={voyage.id} reservationId={r.id}
+                    documents={documents.filter((d) => d.reservation_id === r.id)
+                      .map((d) => ({ id: d.id, nom: d.nom, taille: d.taille }))} />
                 </li>
               ))}
             </ul>
@@ -188,7 +198,10 @@ export async function VoyageDetail({ id }: { id: string }) {
 
           <section id="documents" data-testid="documents-section" className="scroll-mt-4">
             <SectionLabel>{t("documents.titre")}</SectionLabel>
-            <DocumentsList voyageId={voyage.id} documents={documents} />
+            <DocumentsList voyageId={voyage.id} documents={documents}
+              libellesReservations={Object.fromEntries(reservations.map((r) => [
+                r.id, [r.fournisseur, r.reference].filter(Boolean).join(" · ") || t(`types.${r.type}`),
+              ]))} />
             <DocumentUploadForm voyageId={voyage.id} />
           </section>
         </div>
