@@ -988,7 +988,8 @@
     "tagTous": "Tutti",
     "adressesCount": "{n} indirizzi",
     "archives": "Archiviati",
-    "archivesVide": "Nessun locale archiviato"
+    "archivesVide": "Nessun locale archiviato",
+    "adressesZone": "{n} nell'area visibile"
   },
   "hotels": {
     "title": "Hotel",

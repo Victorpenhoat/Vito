@@ -18,10 +18,19 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
   const [actifs, setActifs] = useState<Set<RestoStatut>>(new Set(RESTO_STATUTS));
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [surbrillance, setSurbrillance] = useState<string | null>(null);
+  // Adresses visibles dans le cadrage (lot H5) : null tant que la carte n'a rien
+  // dit — on ne prétend pas connaître la zone avant qu'elle soit rendue.
+  const [zone, setZone] = useState<string[] | null>(null);
 
   const parStatut = places.filter((p) => actifs.has(restoStatut(p)));
   const filtered = filterByTag(parStatut, selectedTag);
   const tags = tagsForMap(places);
+
+  // Le compteur et la liste suivent le cadrage là où les marqueurs se regroupent
+  // (hôtels, éparpillés sur plusieurs pays). Les restos tiennent dans une ville :
+  // leur compteur reste celui du filtre, comme au design Resto v2.
+  const suitLaZone = config.map.clusters;
+  const enZone = suitLaZone && zone ? filtered.filter((p) => zone.includes(p.id)) : filtered;
 
   function toggleStatut(s: RestoStatut) {
     setActifs((prev) => {
@@ -74,14 +83,16 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
       )}
 
       <div className="flex justify-end text-xs text-muted">
-        <span data-testid="map-count">{t("adressesCount", { n: filtered.length })}</span>
+        <span data-testid="map-count">
+          {suitLaZone ? t("adressesZone", { n: enZone.length }) : t("adressesCount", { n: filtered.length })}
+        </span>
       </div>
 
       <div className="lg:grid lg:grid-cols-[340px_1fr] lg:gap-4">
         {/* liste synchronisée (desktop) : survol → marqueur en surbrillance */}
         <aside data-testid="map-list" className="hidden lg:block lg:max-h-[60vh] lg:overflow-y-auto">
           <ul className="flex flex-col">
-            {filtered.map((p) => {
+            {enZone.map((p) => {
               const s = restoStatut(p);
               return (
                 <li key={p.id} data-testid="map-list-item"
@@ -99,7 +110,8 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
             })}
           </ul>
         </aside>
-        <CategoryMapLazy places={filtered} surbrillanceId={surbrillance} categorie={categorie} />
+        <CategoryMapLazy places={filtered} surbrillanceId={surbrillance} categorie={categorie}
+          onZone={suitLaZone ? setZone : undefined} />
       </div>
     </div>
   );

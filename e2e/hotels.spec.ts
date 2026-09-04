@@ -174,3 +174,35 @@ test("les restaurants ignorent le contexte de séjour (brique générique param�
   await expect(page.getByTestId("add-resto-search")).toBeVisible();
   await expect(page.getByTestId("sejour-contexte")).toHaveCount(0);
 });
+
+// Lot H5 : les hôtels s'éparpillent sur plusieurs pays — dézoomés, leurs
+// marqueurs se regroupent. Les deux hôtels du seed sont à ~1 km l'un de
+// l'autre : au cadrage d'ouverture, ils ne font qu'une pastille.
+test("carte hôtels : les marqueurs se regroupent, et la pastille éclate au clic", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/hotels?onglet=carte");
+  await expect(page.getByTestId("places-map")).toBeVisible({ timeout: 15_000 });
+
+  const pastille = page.getByTestId("cluster-pastille").first();
+  await expect(pastille).toBeVisible({ timeout: 15_000 });
+  await expect(pastille).toContainText("Paris");
+  const nb = Number(await pastille.getAttribute("data-nb"));
+  expect(nb).toBeGreaterThanOrEqual(2);
+
+  // le clic zoome jusqu'à séparer le groupe : les épingles individuelles sortent
+  await pastille.click();
+  await expect(page.getByTestId("cluster-pastille")).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.locator(".leaflet-marker-icon")).toHaveCount(nb);
+
+  // le compteur décrit alors ce que la carte montre
+  await expect(page.getByTestId("map-count")).toContainText("zone visible");
+});
+
+test("carte restos : pas de regroupement (config map.clusters = false)", async ({ page }) => {
+  await login(page);
+  await page.goto("/fr/restos?onglet=carte");
+  await expect(page.getByTestId("places-map")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("cluster-pastille")).toHaveCount(0);
+  // le compteur restos reste celui du filtre, pas celui du cadrage
+  await expect(page.getByTestId("map-count")).not.toContainText("zone visible");
+});

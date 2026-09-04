@@ -76,18 +76,21 @@ insert into public.liste_items (user_id, etablissement_id, statut, is_favorite, 
 values ('11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'a_faire', false, true);
 
 -- Hôtel démo (catégorie hotel) + dans la liste du client (à tester)
-insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at, type_hebergement, equipements)
+-- Coordonnées : sans elles, la carte des hôtels n'a aucun marqueur à regrouper
+-- (lot H5). Les deux hôtels sont à ~1 km l'un de l'autre : dézoomés, ils font
+-- une seule pastille — c'est exactement ce que le sous-onglet Carte doit montrer.
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, photo_ref, photo_fetched_at, type_hebergement, equipements, lat, lng)
 values ('11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_1', 'hotel', 'hotel',
   'Hôtel Démo', 'Paris', '75001', '1er', 'seed', 'mock_photo_1', now(),
-  'hotel', '{"breakfast": true, "parking": false}'::jsonb);
+  'hotel', '{"breakfast": true, "parking": false}'::jsonb, 48.8620, 2.3360);
 insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite)
 values ('11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', '11111111-1111-1111-1111-111111111111', '11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'a_faire', false);
 -- Tag ambiance « Spa » (tag hôtel existant, 00017) lié à l'Hôtel Démo
 insert into public.liste_item_tags (liste_item_id, tag_id)
 select '11111111-aaaa-4aaa-8aaa-bbbbbbbb0001', id from public.tags where slug = 'spa';
 -- 2e hôtel sans tag (pour que le filtre ambiance fasse varier le nombre)
-insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, type_hebergement)
-values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed', 'hotel');
+insert into public.etablissements (id, place_id, categorie, type, nom, ville, code_postal, arrondissement, source, type_hebergement, lat, lng)
+values ('22222222-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'demo_hotel_2', 'hotel', 'hotel', 'Hôtel Démo 2', 'Paris', '75002', '2e', 'seed', 'hotel', 48.8690, 2.3410);
 -- Hôtels v2 (Lot H2) : statut 'visite' → l'Hôtel Démo 2 vit dans le sous-onglet
 -- « Séjours » (cohérent avec son séjour seedé plus bas, lié au voyage Rome).
 insert into public.liste_items (id, user_id, etablissement_id, statut, is_favorite, etoiles, prix_nuit)
