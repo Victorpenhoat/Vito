@@ -652,6 +652,14 @@
       "rembourser": "Reembolsar",
       "echec": "No se puede guardar por ahora.",
       "sansVoyageur": "Añade primero viajeros: un gasto se reparte entre ellos."
+    },
+    "planning": {
+      "titre": "Planificación",
+      "retour": "Volver a los viajes",
+      "calendrierAbsent": "El calendario de vacaciones escolares aún no está cargado: la línea de tiempo solo muestra tus viajes.",
+      "pendantVacances": "durante {libelle}",
+      "horsFenetre": "{titre}: fuera de los doce meses mostrados",
+      "aucunVoyageDate": "Ningún viaje con fechas que situar en la línea de tiempo."
     }
   },
   "depenses": {

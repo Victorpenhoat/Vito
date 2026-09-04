@@ -219,3 +219,25 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
   await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("0,00");
   await expect(page.getByTestId("transfert-row").filter({ hasText: marque })).toHaveCount(0);
 });
+
+// Lot E : la frise de douze mois — ce qui tombe pendant les vacances, et ce
+// qui reste libre.
+test("le planning déroule douze mois et y place les voyages datés", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/voyages");
+  await page.getByTestId("lien-planning").click();
+  await expect(page).toHaveURL(/\/fr\/voyages\/planning/);
+
+  await expect(page.getByTestId("planning-mois")).toHaveCount(12);
+
+  // Le voyage Rome du seed est daté : il a sa ligne. On ne vise ni la barre ni
+  // le libellé « hors fenêtre » — selon la date du jour, le voyage tombe dans
+  // les douze mois affichés ou non, et le test doit survivre aux deux.
+  await expect(page.getByTestId("planning-voyage").filter({ hasText: "Rome" }).first()).toBeVisible();
+
+  // tant que le calendrier officiel n'est pas renseigné, la frise le dit
+  await expect(page.getByTestId("planning-sans-vacances")).toBeVisible();
+
+  await page.getByTestId("planning-retour").click();
+  await expect(page).toHaveURL(/\/fr\/voyages$/);
+});

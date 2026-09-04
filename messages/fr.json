@@ -652,6 +652,14 @@
       "rembourser": "Rembourser",
       "echec": "Enregistrement impossible pour l'instant.",
       "sansVoyageur": "Ajoutez d'abord des voyageurs : une dépense se partage entre eux."
+    },
+    "planning": {
+      "titre": "Planning",
+      "retour": "Retour aux voyages",
+      "calendrierAbsent": "Le calendrier des vacances scolaires n'est pas encore renseigné — la frise n'affiche donc que vos voyages.",
+      "pendantVacances": "pendant {libelle}",
+      "horsFenetre": "{titre} — hors des douze mois affichés",
+      "aucunVoyageDate": "Aucun voyage daté à placer sur la frise."
     }
   },
   "depenses": {
