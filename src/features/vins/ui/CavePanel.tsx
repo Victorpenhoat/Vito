@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { filtrerCave, facettesCave, trierParDerniereDegustation, SEUIL_COUP_DE_COEUR, type CaveFiltres, type VinCave } from "../domain/caveFilters";
+import type { LieuAilleurs, LieuCarte } from "../domain/caveCarte";
 import { VerresLecture } from "./NoteVerres";
 import { AjouterVinButton } from "./AjouterVinButton";
+import { CaveMapLazy } from "./CaveMapLazy";
 
 // Cave (design Vins & Cave écran 5) : 6ᵉ sous-onglet de Restaurants. Le
 // filtrage est en mémoire — une cave se compte en dizaines de bouteilles, et
@@ -14,13 +16,18 @@ import { AjouterVinButton } from "./AjouterVinButton";
 type Onglet = "tous" | "coups_de_coeur" | "a_retrouver";
 const ONGLETS: Onglet[] = ["tous", "coups_de_coeur", "a_retrouver"];
 
-export function CavePanel({ vins, vinsConnus, tags }: {
+export type LieuxCave = { carte: LieuCarte[]; ailleurs: LieuAilleurs[]; sansCoordonnees: number };
+
+export function CavePanel({ vins, vinsConnus, tags, lieux }: {
   vins: VinCave[];
   vinsConnus: { id: string; cle: string; nb: number; dernier: string | null }[];
   tags: { id: string; slug: string; label: string; color: string | null }[];
+  lieux: LieuxCave;
 }) {
   const t = useTranslations("vins");
-  const [onglet, setOnglet] = useState<Onglet>("tous");
+  // « carte » vit à côté des trois sous-onglets de liste : elle montre des
+  // LIEUX, pas des vins, et n'a donc ni compteur de bouteilles ni facettes.
+  const [onglet, setOnglet] = useState<Onglet | "carte">("tous");
   const [q, setQ] = useState("");
   const [facettes, setFacettes] = useState<Pick<CaveFiltres, "couleur" | "region" | "cepage" | "noteMin" | "prixMax">>({});
 
@@ -35,12 +42,14 @@ export function CavePanel({ vins, vinsConnus, tags }: {
   return (
     <div data-testid="cave-panel" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
+        {onglet !== "carte" && (
         <label className="relative flex min-w-0 flex-1 items-center">
           <Search size={14} className="pointer-events-none absolute left-3 text-faint" aria-hidden />
           <input value={q} onChange={(e) => setQ(e.target.value)} data-testid="cave-recherche"
             placeholder={t("cave.recherche")} aria-label={t("cave.recherche")}
             className="w-full rounded-control border border-line bg-surface py-2 pl-8 pr-3 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
         </label>
+        )}
         <AjouterVinButton vinsConnus={vinsConnus} tags={tags} />
       </div>
 
@@ -55,8 +64,20 @@ export function CavePanel({ vins, vinsConnus, tags }: {
             <span className="ml-1 opacity-70">{compte(o)}</span>
           </button>
         ))}
+        <button type="button" role="tab" aria-selected={onglet === "carte"}
+          data-testid="cave-onglet-carte" onClick={() => setOnglet("carte")}
+          className={`rounded-full border px-3 py-1.5 text-[11.5px] font-semibold ${
+            onglet === "carte" ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
+          }`}>
+          {t("cave.onglets.carte")}
+        </button>
+        <Link href="/vins/stats" data-testid="cave-lien-stats"
+          className="ml-auto self-center text-[11.5px] font-semibold text-accent hover:underline">
+          {t("stats.lien")} →
+        </Link>
       </div>
 
+      {onglet !== "carte" && (
       <div className="flex flex-wrap gap-1.5">
         <Facette label={t("couleur")} value={facettes.couleur ?? ""} testId="cave-couleur"
           onChange={(v) => setFacettes((f) => ({ ...f, couleur: v || null }))}
@@ -74,8 +95,11 @@ export function CavePanel({ vins, vinsConnus, tags }: {
           onChange={(v) => setFacettes((f) => ({ ...f, prixMax: v ? Number(v) : null }))}
           options={[20, 40, 80].map((p) => ({ value: String(p), label: t("cave.prixMax", { p }) }))} />
       </div>
+      )}
 
-      {visibles.length === 0 ? (
+      {onglet === "carte" ? (
+        <CarteEtAilleurs lieux={lieux} />
+      ) : visibles.length === 0 ? (
         <div data-testid="cave-vide" className="flex flex-col items-center gap-2 py-10 text-center">
           {vins.length === 0 ? (
             <>
@@ -111,6 +135,53 @@ export function CavePanel({ vins, vinsConnus, tags }: {
             </li>
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+/**
+ * La carte et son complément obligé : les lieux sans coordonnées. Un vin bu à
+ * la maison ou chez un caviste compte autant que celui bu au restaurant — il ne
+ * peut simplement pas être épinglé, alors il est listé.
+ */
+function CarteEtAilleurs({ lieux }: { lieux: LieuxCave }) {
+  const t = useTranslations("vins");
+  const rien = lieux.carte.length === 0 && lieux.ailleurs.length === 0;
+
+  if (rien) {
+    return (
+      <div data-testid="cave-carte-vide" className="flex flex-col items-center gap-2 py-10 text-center">
+        <p className="font-serif text-lg text-ink">{t("carte.videTitre")}</p>
+        <p className="max-w-xs text-[12.5px] text-muted">{t("carte.videTexte")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {lieux.carte.length > 0 && <CaveMapLazy lieux={lieux.carte} />}
+      {lieux.sansCoordonnees > 0 && (
+        <p className="text-[12px] text-muted">{t("carte.sansCoordonnees", { n: lieux.sansCoordonnees })}</p>
+      )}
+
+      {lieux.ailleurs.length > 0 && (
+        <section data-testid="cave-ailleurs" className="flex flex-col gap-1">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">{t("carte.ailleurs")}</h3>
+          <ul className="flex flex-col">
+            {lieux.ailleurs.map((l) => (
+              <li key={l.cle} data-testid="cave-ailleurs-row" className="flex items-center gap-3 border-b border-line-soft py-2.5">
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px] text-ink">{l.nom ?? t(`lieux.${l.type}`)}</span>
+                  <span className="block truncate text-[12px] text-muted">
+                    {[l.nom ? t(`lieux.${l.type}`) : null, t("nDegustations", { n: l.nb })].filter(Boolean).join(" · ")}
+                  </span>
+                </span>
+                <VerresLecture note={l.note_moyenne} />
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );

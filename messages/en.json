@@ -162,7 +162,8 @@
       "onglets": {
         "tous": "All",
         "coups_de_coeur": "Favourites",
-        "a_retrouver": "To find again"
+        "a_retrouver": "To find again",
+        "carte": "Map"
       },
       "noteMin": "{n} glasses and up",
       "prixMax": "Up to €{p}",
@@ -226,6 +227,31 @@
       "sectionVisite": "Wines",
       "ajoutes": "{n, plural, one {# added} other {# added}}",
       "vinSansNom": "Unnamed wine"
+    },
+    "carte": {
+      "autourDeMoi": "Around me",
+      "ficheResto": "Restaurant page",
+      "fermer": "Close",
+      "ailleurs": "Elsewhere",
+      "sansCoordonnees": "{n, plural, one {# tasting with no known address} other {# tastings with no known address}}",
+      "videTitre": "No place to show yet",
+      "videTexte": "Your tastings will appear here as soon as you record one."
+    },
+    "stats": {
+      "lien": "My cellar in numbers",
+      "titre": "My cellar in numbers",
+      "retour": "Back to the cellar",
+      "vins": "wines",
+      "degustations": "tastings",
+      "noteMoyenne": "average rating",
+      "parCouleur": "By colour",
+      "regions": "Most-drunk regions",
+      "cepages": "Favourite grapes",
+      "depense": "Restaurant spend vs estimated shop price",
+      "totalPaye": "{montant} spent in total",
+      "comparaison": "{paye} paid · estimated {estime} · across {n, plural, one {# bottle} other {# bottles}}",
+      "comparaisonIndispo": "Photograph a label to estimate its shop price.",
+      "videTitre": "Nothing to count yet"
     }
   },
   "gouts": {

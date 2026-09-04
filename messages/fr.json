@@ -162,7 +162,8 @@
       "onglets": {
         "tous": "Tous",
         "coups_de_coeur": "Coups de cœur",
-        "a_retrouver": "À retrouver"
+        "a_retrouver": "À retrouver",
+        "carte": "Carte"
       },
       "noteMin": "{n} verres et plus",
       "prixMax": "Jusqu'à {p} €",
@@ -226,6 +227,31 @@
       "sectionVisite": "Vins",
       "ajoutes": "{n, plural, one {# ajouté} other {# ajoutés}}",
       "vinSansNom": "Vin sans nom"
+    },
+    "carte": {
+      "autourDeMoi": "Autour de moi",
+      "ficheResto": "Fiche resto",
+      "fermer": "Fermer",
+      "ailleurs": "Ailleurs",
+      "sansCoordonnees": "{n, plural, one {# dégustation sans adresse connue} other {# dégustations sans adresse connue}}",
+      "videTitre": "Aucun lieu à afficher",
+      "videTexte": "Vos dégustations apparaîtront ici dès que vous en aurez enregistré une."
+    },
+    "stats": {
+      "lien": "Ma cave en chiffres",
+      "titre": "Ma cave en chiffres",
+      "retour": "Retour à la cave",
+      "vins": "vins",
+      "degustations": "dégustations",
+      "noteMoyenne": "note moyenne",
+      "parCouleur": "Par couleur",
+      "regions": "Régions les plus bues",
+      "cepages": "Cépages préférés",
+      "depense": "Dépense au restaurant vs prix caviste estimé",
+      "totalPaye": "{montant} payés au total",
+      "comparaison": "{paye} payés · estimé caviste {estime} · sur {n, plural, one {# bouteille} other {# bouteilles}}",
+      "comparaisonIndispo": "Photographiez l'étiquette d'un vin pour estimer son prix caviste.",
+      "videTitre": "Rien à compter pour l'instant"
     }
   },
   "gouts": {

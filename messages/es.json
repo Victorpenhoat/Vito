@@ -162,7 +162,8 @@
       "onglets": {
         "tous": "Todos",
         "coups_de_coeur": "Favoritos",
-        "a_retrouver": "Por reencontrar"
+        "a_retrouver": "Por reencontrar",
+        "carte": "Mapa"
       },
       "noteMin": "{n} copas o más",
       "prixMax": "Hasta {p} €",
@@ -226,6 +227,31 @@
       "sectionVisite": "Vinos",
       "ajoutes": "{n, plural, one {# añadido} other {# añadidos}}",
       "vinSansNom": "Vino sin nombre"
+    },
+    "carte": {
+      "autourDeMoi": "Cerca de mí",
+      "ficheResto": "Ficha del restaurante",
+      "fermer": "Cerrar",
+      "ailleurs": "En otros lugares",
+      "sansCoordonnees": "{n, plural, one {# cata sin dirección conocida} other {# catas sin dirección conocida}}",
+      "videTitre": "Todavía no hay lugares que mostrar",
+      "videTexte": "Tus catas aparecerán aquí en cuanto registres una."
+    },
+    "stats": {
+      "lien": "Mi bodega en cifras",
+      "titre": "Mi bodega en cifras",
+      "retour": "Volver a la bodega",
+      "vins": "vinos",
+      "degustations": "catas",
+      "noteMoyenne": "nota media",
+      "parCouleur": "Por color",
+      "regions": "Regiones más bebidas",
+      "cepages": "Uvas favoritas",
+      "depense": "Gasto en restaurante vs precio estimado en tienda",
+      "totalPaye": "{montant} gastados en total",
+      "comparaison": "{paye} pagados · estimado {estime} · sobre {n, plural, one {# botella} other {# botellas}}",
+      "comparaisonIndispo": "Fotografía una etiqueta para estimar su precio en tienda.",
+      "videTitre": "Todavía no hay nada que contar"
     }
   },
   "gouts": {
