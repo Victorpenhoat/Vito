@@ -8,6 +8,8 @@ import { StatutChip } from "./StatutChip";
 import { VisiteCta } from "./VisiteCta";
 import { OrigineBlock } from "./OrigineBlock";
 import { EquipementsBlock } from "@/features/places/ui/EquipementsBlock";
+import { SejoursAVenirBlock } from "@/features/places/ui/SejoursAVenirBlock";
+import { getReservationsHebergement } from "@/features/places/data/queries";
 import { InfosHotelForm } from "@/features/places/ui/InfosHotelForm";
 import { getMesVoyages } from "@/features/voyages/data/queries";
 import { getPlacesProvider } from "@/lib/services/places";
@@ -49,6 +51,9 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
   const voyages = isResto ? [] : (await getMesVoyages()).map((v) => ({
     id: v.id, titre: v.titre, date_debut: v.date_debut, date_fin: v.date_fin,
   }));
+  // Hôtels v2 (H6) : les séjours RÉSERVÉS via un voyage, lus depuis les
+  // réservations — aucune visite n'est créée par une réservation.
+  const reservations = isResto ? [] : await getReservationsHebergement(etablissementId);
   const tc = await getTranslations("conciergerie");
   const isPremium = await getIsPremium();
   const maFamille = await getMaFamille();
@@ -196,8 +201,9 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
           listeItemId={item.id}
           categorie={isResto ? "resto" : "hotel"}
           origine={{
-            // colonne text + CHECK ('reco'|'trouve') : le type généré reste string
-            type: (item.origine_type === "reco" || item.origine_type === "trouve" ? item.origine_type : null),
+            // colonne text + CHECK ('reco'|'trouve'|'voyage') : le type généré reste string
+            type: (item.origine_type === "reco" || item.origine_type === "trouve" || item.origine_type === "voyage"
+              ? item.origine_type : null),
             qui: item.origine_qui,
             source: item.origine_source,
           }}
@@ -214,6 +220,12 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{tCat("visite.mesVisites")}</h2>
             <span className="text-[11px] text-faint">{tCat("visite.count", { n: visites.length })}</span>
           </div>
+          {!isResto && reservations.length > 0 && (
+            <SejoursAVenirBlock reservations={reservations}
+              sejours={visites.map((v) => ({ visite_le: v.visite_le, date_fin: v.date_fin ?? null }))}
+              listeItemId={item.id} nom={etab.nom} tags={tags} voyages={voyages}
+              aujourdhui={new Date().toISOString().slice(0, 10)} />
+          )}
           {visites.length > 0 && (
             <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
               {visites.map((v) => {

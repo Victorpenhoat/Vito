@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { voyageInputSchema, reservationInputSchema, shareInputSchema } from "../domain/schemas";
+import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
+import { TYPES_HEBERGEMENT } from "../domain/reservationHebergement";
 import { getIsPremium } from "@/features/abonnement/data/queries";
 import { FREE_VOYAGE_LIMIT } from "@/features/abonnement/domain/constants";
 
@@ -107,21 +109,42 @@ export async function addReservation(_prev: unknown, formData: FormData) {
     conciergerieMail: formData.get("conciergerieMail") || undefined,
     lien: formData.get("lien") || undefined,
     notes: formData.get("notes") || undefined,
+    placeId: formData.get("placeId") || undefined,
   });
   if (!parsed.success) return { error: "Réservation invalide" };
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
   if (!uid) return { error: "Non authentifié" };
   const d = parsed.data;
+
+  // Hôtels v2 (H6) : un hébergement désigné rejoint le carnet, avec l'origine
+  // « Ajouté via Voyages · <titre> ». Le titre est lu SOUS RLS : c'est aussi ce
+  // qui vérifie que ce voyage m'est accessible avant d'écrire quoi que ce soit
+  // (une FK ne garantit aucun accès).
+  let etablissementId: string | null = null;
+  if (d.placeId && TYPES_HEBERGEMENT.includes(d.type)) {
+    const { data: voyage } = await supabase
+      .from("voyages").select("titre").eq("id", d.voyageId).maybeSingle();
+    if (!voyage) return { error: "Voyage inaccessible" };
+    const ajout = await ajouterAuCarnet(supabase, uid, d.placeId, "hotel", {
+      origine: { type: "voyage", qui: voyage.titre },
+    });
+    if ("error" in ajout) { logActionError("voyages.addReservation", ajout.error); return { error: ajout.error }; }
+    etablissementId = ajout.etablissementId;
+  }
+
   const { error } = await supabase.from("reservations").insert({
     voyage_id: d.voyageId, created_by: uid, type: d.type,
     fournisseur: d.fournisseur ?? null, reference: d.reference ?? null,
     date_debut: d.dateDebut ?? null, date_fin: d.dateFin ?? null,
     conciergerie_tel: d.conciergerieTel ?? null, conciergerie_mail: d.conciergerieMail ?? null,
     lien: d.lien ?? null, notes: d.notes ?? null,
+    etablissement_id: etablissementId,
   });
   if (error) { logActionError("voyages.addReservation", error); return { error: "Ajout de réservation échoué" }; }
   revalidatePath(`/voyages/${d.voyageId}`);
+  // L'hôtel vient d'entrer au carnet : sa liste et sa fiche doivent le montrer.
+  if (etablissementId) revalidatePath("/hotels", "layout");
   return { ok: true as const };
 }
 

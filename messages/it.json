@@ -356,7 +356,8 @@
       "titre": "Perché è qui",
       "modifier": "Modifica",
       "aucune": "Origine non registrata",
-      "sheetTitre": "Da dove viene questo indirizzo?"
+      "sheetTitre": "Da dove viene questo indirizzo?",
+      "viaVoyage": "Aggiunto tramite Viaggi · {titre}"
     },
     "visite": {
       "titre": "Ci sono stato — {nom}",
@@ -561,6 +562,14 @@
       "ouvrirDocument": "Apri",
       "surCetAppareil": "Salvato solo su questo dispositivo, e rimosso alla disconnessione.",
       "retourApplication": "Torna all'applicazione"
+    },
+    "hebergement": {
+      "chercher": "Nome dell'hotel, città…",
+      "bouton": "Cerca",
+      "aucun": "Nessun alloggio trovato: usa il campo libero qui sotto.",
+      "rejoindra": "entrerà nei tuoi hotel",
+      "retirer": "Rimuovi l'alloggio",
+      "voirFiche": "Apri la scheda"
     }
   },
   "depenses": {
@@ -1047,7 +1056,8 @@
       "titre": "Perché è qui",
       "modifier": "Modifica",
       "aucune": "Origine non registrata",
-      "sheetTitre": "Da dove viene questo indirizzo?"
+      "sheetTitre": "Da dove viene questo indirizzo?",
+      "viaVoyage": "Aggiunto tramite Viaggi · {titre}"
     },
     "visite": {
       "titre": "Ho soggiornato — {nom}",
@@ -1166,6 +1176,17 @@
       "siteOfficiel": "Sito ufficiale",
       "booking": "Booking",
       "horaires": "Check-in {checkin} · check-out {checkout}"
+    },
+    "reservation": {
+      "sansDates": "Date non indicate",
+      "bascule": "Registra il soggiorno",
+      "basculeAide": "Le date della prenotazione sono riprese: correggile se il soggiorno è cambiato.",
+      "etats": {
+        "a_venir": "in arrivo",
+        "en_cours": "in corso",
+        "passee": "soggiorno passato",
+        "sans_dates": "prenotato"
+      }
     }
   },
   "accueil": {

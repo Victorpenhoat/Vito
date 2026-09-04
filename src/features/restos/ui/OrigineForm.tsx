@@ -17,13 +17,18 @@ export function OrigineForm({
   onDone,
 }: {
   listeItemId: string;
-  initial?: { type: "reco" | "trouve" | null; qui: string | null; source: string | null };
+  initial?: { type: "reco" | "trouve" | "voyage" | null; qui: string | null; source: string | null };
   proches: ProcheSuggestion[];
   onDone?: () => void;
 }) {
   const t = useTranslations("restos");
   const [state, action, pending] = useActionState(setOrigine, undefined);
-  const [type, setType] = useState<"reco" | "trouve">(initial?.type ?? "reco");
+  // Le formulaire ne propose que « recommandé » et « trouvé » : une origine
+  // « voyage » est posée par une réservation, jamais choisie à la main. La
+  // modifier revient donc à la remplacer par l'une des deux.
+  const [type, setType] = useState<"reco" | "trouve">(
+    initial?.type === "trouve" ? "trouve" : "reco",
+  );
   const [qui, setQui] = useState(initial?.qui ?? "");
   const [fmId, setFmId] = useState<string>("");
 

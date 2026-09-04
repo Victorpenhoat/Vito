@@ -1,5 +1,6 @@
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import type { Place } from "../domain/filterPlaces";
+import type { ReservationHebergement } from "../domain/sejourAVenir";
 
 const SELECT =
   "id, statut, is_favorite, reco_source, origine_type, origine_qui, origine_source, etoiles, prix_nuit, etablissement:etablissements!inner(id, nom, type, ville, arrondissement, categorie, photo_ref, lat, lng, place_id, rating, rating_count, type_hebergement, equipements), tags:liste_item_tags(tag:tags(slug, label, color)), visites(note, visite_le, date_fin)";
@@ -50,4 +51,36 @@ export function getPlaces(category: "resto" | "hotel"): Promise<Place[]> {
 
 export function getArchivedPlaces(category: "resto" | "hotel"): Promise<Place[]> {
   return queryPlaces(category, true);
+}
+
+// ── Réservations d'hébergement (Lot H6) ─────────────────────────────────────
+
+/**
+ * Les réservations de voyage qui désignent cet hébergement. La RLS des
+ * réservations (`can_access_voyage`) fait le tri : seules celles des voyages
+ * auxquels j'ai accès reviennent, sans garde applicative supplémentaire.
+ */
+export async function getReservationsHebergement(etablissementId: string): Promise<ReservationHebergement[]> {
+  const supabase = await createServerSupabase();
+  // Fail-safe anon (cf. #61/#63)
+  const auth = await getCachedUser();
+  if (!auth.user) return [];
+  const { data, error } = await supabase
+    .from("reservations")
+    .select("id, date_debut, date_fin, voyage:voyages(id, titre)")
+    .eq("etablissement_id", etablissementId)
+    .order("date_debut", { ascending: true, nullsFirst: false });
+  if (error) throw error;
+
+  return (data ?? []).flatMap((r) => {
+    const voyage = Array.isArray(r.voyage) ? r.voyage[0] : r.voyage;
+    if (!voyage) return [];
+    return [{
+      id: r.id,
+      voyageId: voyage.id,
+      voyageTitre: voyage.titre,
+      dateDebut: r.date_debut,
+      dateFin: r.date_fin,
+    }];
+  });
 }

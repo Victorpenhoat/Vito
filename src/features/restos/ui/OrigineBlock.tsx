@@ -13,7 +13,7 @@ export function OrigineBlock({
   categorie = "resto",
 }: {
   listeItemId: string;
-  origine: { type: "reco" | "trouve" | null; qui: string | null; source: string | null };
+  origine: { type: "reco" | "trouve" | "voyage" | null; qui: string | null; source: string | null };
   proches: ProcheSuggestion[];
   categorie?: CategorieUi;
 }) {
@@ -22,6 +22,9 @@ export function OrigineBlock({
   const texte =
     origine.type === "reco" ? t("origines.recoPar", { qui: origine.qui ?? "?" })
     : origine.type === "trouve" ? t("origines.trouvePar", { source: origine.source ?? "—" })
+    // « Ajouté via Voyages · Rome » (H6) : posé par la réservation, et modifiable
+    // comme les autres — le formulaire n'en propose simplement pas la création.
+    : origine.type === "voyage" ? t("origines.viaVoyage", { titre: origine.qui ?? "—" })
     : t("origines.aucune");
   return (
     <div data-testid="origine-block" className="rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3.5 py-3">

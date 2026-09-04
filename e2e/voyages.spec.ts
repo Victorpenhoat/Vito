@@ -22,7 +22,9 @@ test("créer un voyage, ajouter une réservation, partager avec l'agence", async
   // Ajouter une réservation hôtel
   await page.getByTestId("reservation-form").locator('select[name="type"]').selectOption("hotel");
   await page.getByTestId("reservation-form").locator('input[name="fournisseur"]').fill("Hotel Lisboa");
-  await page.getByTestId("reservation-form").getByRole("button").click();
+  // Le formulaire porte deux boutons depuis le lot H6 (rechercher un hébergement,
+  // et enregistrer) : on vise l'envoi, pas « le » bouton.
+  await page.getByTestId("reservation-form").locator('button[type="submit"]').click();
   await expectVisibleWithReload(page, page.getByTestId("reservation-row").filter({ hasText: "Hotel Lisboa" }));
 
   // Partager avec l'agence
