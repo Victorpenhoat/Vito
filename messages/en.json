@@ -605,7 +605,33 @@
       "valider": "Add",
       "annuler": "Cancel",
       "supprimer": "Delete the step {titre}",
-      "echec": "Cannot add the step right now."
+      "echec": "Cannot add the step right now.",
+      "resume": {
+        "arrivee": "arrival",
+        "retour": "return",
+        "libre": "free",
+        "etapes": "{n, plural, one {# step} other {# steps}}"
+      },
+      "categorie": "Category",
+      "sansCategorie": "No category",
+      "categories": {
+        "trajet": "Travel",
+        "hebergement": "Stay",
+        "restaurant": "Restaurant",
+        "activite": "Activity",
+        "note": "Note",
+        "autre": "Other"
+      },
+      "moment": "Time of day",
+      "sansMoment": "Exact time",
+      "moments": {
+        "matin": "Morning",
+        "midi": "Midday",
+        "apres_midi": "Afternoon",
+        "soir": "Evening"
+      },
+      "ajouterAu": "Add a step on {jour}",
+      "reservationLiee": "linked booking"
     },
     "details": {
       "compagnie": "Carrier",

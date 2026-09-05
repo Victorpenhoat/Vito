@@ -605,7 +605,33 @@
       "valider": "Aggiungi",
       "annuler": "Annulla",
       "supprimer": "Elimina la tappa {titre}",
-      "echec": "Aggiunta della tappa non possibile al momento."
+      "echec": "Aggiunta della tappa non possibile al momento.",
+      "resume": {
+        "arrivee": "arrivo",
+        "retour": "ritorno",
+        "libre": "libero",
+        "etapes": "{n, plural, one {# tappa} other {# tappe}}"
+      },
+      "categorie": "Categoria",
+      "sansCategorie": "Senza categoria",
+      "categories": {
+        "trajet": "Tragitto",
+        "hebergement": "Alloggio",
+        "restaurant": "Ristorante",
+        "activite": "Attività",
+        "note": "Nota",
+        "autre": "Altro"
+      },
+      "moment": "Momento",
+      "sansMoment": "Ora esatta",
+      "moments": {
+        "matin": "Mattina",
+        "midi": "Mezzogiorno",
+        "apres_midi": "Pomeriggio",
+        "soir": "Sera"
+      },
+      "ajouterAu": "Aggiungi una tappa il {jour}",
+      "reservationLiee": "prenotazione collegata"
     },
     "details": {
       "compagnie": "Compagnia",

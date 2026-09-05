@@ -60,3 +60,16 @@ export function resumeDetails(type: string, brut: unknown): string | null {
   const resume = morceaux.filter(Boolean).join(" · ");
   return resume || null;
 }
+
+/**
+ * L'heure à laquelle une réservation s'inscrit dans une journée de programme :
+ * le départ pour un trajet, l'arrivée pour un hébergement. Null quand elle
+ * n'est pas connue — l'étape se range alors après celles qui ont une heure.
+ */
+export function heureDeReservation(type: string, brut: unknown): string | null {
+  const d = lireDetails(type, brut);
+  if (type === "vol" || type === "train" || type === "voiture") {
+    return d.heureDepart ?? d.heurePrise ?? null;
+  }
+  return d.heureArrivee ?? null;
+}

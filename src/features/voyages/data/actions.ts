@@ -278,6 +278,8 @@ export async function addEtape(_prev: unknown, formData: FormData) {
     lieu: formData.get("lieu") || undefined,
     etablissementId: formData.get("etablissementId") || undefined,
     notes: formData.get("notes") || undefined,
+    categorie: formData.get("categorie") || undefined,
+    moment: formData.get("moment") || undefined,
   });
   if (!parsed.success) return { error: "Étape invalide" };
   const supabase = await createServerSupabase();
@@ -303,6 +305,8 @@ export async function addEtape(_prev: unknown, formData: FormData) {
     lieu: d.lieu ?? null,
     etablissement_id: d.etablissementId ?? null,
     notes: d.notes ?? null,
+    categorie: d.categorie ?? null,
+    moment: d.moment ?? null,
     ordre: count ?? 0,
     created_by: uid,
   }).select("id").single();
