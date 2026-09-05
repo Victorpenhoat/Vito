@@ -335,6 +335,7 @@ export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
     montantCents: formData.get("montant"),
     date: formData.get("date") || undefined,
     mode: formData.get("mode"),
+    categorie: formData.get("categorie") || undefined,
     participants: formData.getAll("participants"),
   });
   if (!parsed.success) return { error: "Dépense invalide" };
@@ -366,7 +367,8 @@ export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
     .from("voyage_depenses")
     .insert({
       voyage_id: d.voyageId, paye_par: d.payePar, libelle: d.libelle,
-      montant_cents: d.montantCents, date: d.date ?? null, mode: d.mode, created_by: uid,
+      montant_cents: d.montantCents, date: d.date ?? null, mode: d.mode,
+      categorie: d.categorie ?? null, created_by: uid,
     })
     .select("id")
     .single();

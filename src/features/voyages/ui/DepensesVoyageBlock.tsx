@@ -9,27 +9,47 @@ import {
   type DepenseVoyage, type RemboursementVoyage,
 } from "../domain/depensesVoyage";
 import type { Participant } from "../domain/participants";
+import { participantMoi, maPart, porteeDepense, parPersonne } from "../domain/depensesResume";
+import { CATEGORIES_DEPENSE } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
 
-type DepenseAffichee = DepenseVoyage & { libelle: string; date: string | null };
+function Chiffre({ label, valeur, teinte, note }: {
+  label: string; valeur: string; teinte?: string; note?: string;
+}) {
+  return (
+    <span className="flex flex-col">
+      <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-faint">{label}</span>
+      <span className={`font-serif text-lg ${teinte ?? "text-ink"}`}>{valeur}</span>
+      {note && <span className="text-[10.5px] text-muted">{note}</span>}
+    </span>
+  );
+}
+
+type DepenseAffichee = DepenseVoyage & { libelle: string; date: string | null; categorie: string | null };
 
 // Dépenses du voyage (Lot D) : le partage entre VOYAGEURS, y compris ceux qui
 // n'ont pas de compte. Sans voyageur, il n'y a personne entre qui partager —
 // le bloc invite alors à en ajouter plutôt que d'afficher un formulaire mort.
 export function DepensesVoyageBlock({
-  voyageId, participants, depenses, remboursements, devise,
+  voyageId, participants, depenses, remboursements, devise, monProfileId,
 }: {
   voyageId: string;
   participants: Participant[];
   depenses: DepenseAffichee[];
   remboursements: (RemboursementVoyage & { id: string })[];
   devise: string;
+  /** Mon compte, pour dire « ma part » et « mon solde » — la maquette les met
+   *  en tête, avant même la liste : c'est ce qu'on vient chercher. */
+  monProfileId: string | null;
 }) {
   const t = useTranslations("voyages.depensesVoyage");
   const format = useFormatter();
   const router = useRouter();
+  const [onglet, setOnglet] = useState<"depenses" | "equilibres">("depenses");
   const [ouvert, setOuvert] = useState(false);
   const [mode, setMode] = useState<"egal" | "exact">("egal");
+  const [montantSaisi, setMontantSaisi] = useState("");
+  const [partages, setPartages] = useState<string[] | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
   const [supprimees, setSupprimees] = useState<string[]>([]);
@@ -41,6 +61,9 @@ export function DepensesVoyageBlock({
 
   const soldes = soldesParticipants(participants.map((p) => p.id), visibles, remboursements);
   const transferts = transfertsSimplifies(soldes);
+  const moi = participantMoi(participants.map((p) => ({ id: p.id, profileId: p.profileId })), monProfileId);
+  const monSolde = moi ? (soldes.find((s) => s.participantId === moi.id)?.soldeCents ?? 0) : null;
+  const mesDepenses = maPart(visibles, moi?.id ?? null);
 
   if (participants.length === 0) {
     return <p data-testid="depenses-sans-voyageur" className="text-[12.5px] text-muted">{t("sansVoyageur")}</p>;
@@ -66,6 +89,26 @@ export function DepensesVoyageBlock({
     return true;
   }
 
+  /** Confirme le transfert proposé, sans le ressaisir (maquette « Marquer comme remboursé »). */
+  async function rembourser(de: string, vers: string, montantCents: number) {
+    setEnCours(true);
+    setErreur(null);
+    const fd = new FormData();
+    fd.set("voyageId", voyageId);
+    fd.set("deParticipantId", de);
+    fd.set("versParticipantId", vers);
+    // L'action attend des euros (centsFromEuros) : on repasse par la même porte
+    // que la saisie manuelle plutôt que d'ouvrir un chemin parallèle.
+    fd.set("montant", (montantCents / 100).toFixed(2));
+    const res = await addRemboursementVoyage(undefined, fd);
+    setEnCours(false);
+    if (!("id" in res) || !res.id) {
+      setErreur(("error" in res && res.error) || t("echec"));
+      return;
+    }
+    router.refresh();
+  }
+
   async function supprimer(depenseId: string) {
     const fd = new FormData();
     fd.set("voyageId", voyageId);
@@ -78,21 +121,53 @@ export function DepensesVoyageBlock({
 
   return (
     <div data-testid="depenses-voyage" className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <span className="text-[12.5px] text-muted">{t("total")}</span>
-        <span data-testid="depenses-total" className="font-serif text-xl text-ink">{euros(totalDepenses(visibles))}</span>
+      {/* En-tête de la maquette : ce que coûte le voyage, puis ce qu'il me coûte. */}
+      <div data-testid="depenses-entete" className="grid grid-cols-3 gap-2 rounded-card border border-line bg-surface p-3">
+        <Chiffre label={t("total")} valeur={euros(totalDepenses(visibles))} />
+        {moi ? (
+          <>
+            <Chiffre label={t("maPart")} valeur={euros(mesDepenses)} />
+            <Chiffre label={t("monSolde")} valeur={euros(monSolde ?? 0)}
+              teinte={(monSolde ?? 0) > 0 ? "text-kpi-green" : (monSolde ?? 0) < 0 ? "text-danger" : "text-muted"}
+              note={(monSolde ?? 0) > 0 ? t("onMeDoit") : (monSolde ?? 0) < 0 ? t("jeDois") : undefined} />
+          </>
+        ) : (
+          // Je ne figure pas parmi les voyageurs : il n'y a pas de « ma part »
+          // à inventer, on le dit plutôt que d'afficher zéro.
+          <span data-testid="depenses-pas-voyageur" className="col-span-2 self-center text-[11.5px] text-muted">
+            {t("pasVoyageur")}
+          </span>
+        )}
+      </div>
+
+      <div className="flex gap-1 self-start rounded-control border border-line p-0.5">
+        {(["depenses", "equilibres"] as const).map((o) => (
+          <button key={o} type="button" data-testid={`onglet-${o}`} aria-pressed={onglet === o}
+            onClick={() => setOnglet(o)}
+            className={`rounded-[3px] px-3 py-1.5 text-[11.5px] font-semibold ${
+              onglet === o ? "bg-accent text-white" : "text-muted hover:text-ink"
+            }`}>
+            {t(`onglets.${o}`)}
+          </button>
+        ))}
       </div>
 
       {erreur && <p role="alert" className="text-[12px] text-danger">{erreur}</p>}
 
-      {visibles.length > 0 && (
+      {onglet === "depenses" && visibles.length > 0 && (
         <ul className="flex flex-col">
           {visibles.map((d) => (
             <li key={d.id} data-testid="depense-row" className="flex items-center gap-2 border-b border-line-soft py-2">
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13.5px] text-ink">{d.libelle}</span>
                 <span className="block truncate text-[11.5px] text-muted">
-                  {t("payePar", { nom: nom(d.payePar) })} · {t("partsCount", { n: d.parts.length })}
+                  {t("payePar", { nom: nom(d.payePar) })}
+                  {d.date ? ` · ${format.dateTime(new Date(`${d.date}T00:00:00Z`), { day: "numeric", month: "short", timeZone: "UTC" })}` : ""}
+                  {" · "}
+                  {porteeDepense(d, participants.length).tous
+                    ? t("pourTous")
+                    : t("pourN", { n: porteeDepense(d, participants.length).nb })}
+                  {d.categorie ? ` · ${t(`categories.${d.categorie}`)}` : ""}
                 </span>
               </span>
               <span className="shrink-0 text-[13px] tabular-nums text-ink">{euros(d.montantCents)}</span>
@@ -107,6 +182,7 @@ export function DepensesVoyageBlock({
       )}
 
       {/* Soldes et transferts : qui doit quoi à qui */}
+      {onglet === "equilibres" && (
       <div data-testid="depenses-soldes" className="flex flex-col gap-1 rounded-card border border-line bg-surface p-3">
         <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("soldes")}</span>
         <ul className="flex flex-col gap-0.5">
@@ -120,17 +196,27 @@ export function DepensesVoyageBlock({
           ))}
         </ul>
         {transferts.length > 0 && (
-          <ul className="mt-1.5 flex flex-col gap-0.5 border-t border-line-soft pt-1.5">
+          <ul className="mt-1.5 flex flex-col gap-1 border-t border-line-soft pt-1.5">
             {transferts.map((tr, i) => (
-              <li key={i} data-testid="transfert-row" className="text-[12px] text-muted">
-                {t("doit", { de: nom(tr.deParticipantId), vers: nom(tr.versParticipantId), montant: euros(tr.montantCents) })}
+              <li key={i} data-testid="transfert-row" className="flex flex-wrap items-center gap-2 text-[12px] text-muted">
+                <span className="min-w-0 flex-1">
+                  {t("doit", { de: nom(tr.deParticipantId), vers: nom(tr.versParticipantId), montant: euros(tr.montantCents) })}
+                </span>
+                {/* Le geste de la maquette : le remboursement proposé se
+                    confirme d'un bouton, il ne se ressaisit pas. */}
+                <button type="button" data-testid="marquer-rembourse" disabled={enCours}
+                  onClick={() => rembourser(tr.deParticipantId, tr.versParticipantId, tr.montantCents)}
+                  className="shrink-0 rounded-full border border-line bg-surface-hover px-2.5 py-1 text-[11px] font-semibold text-ink focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50">
+                  {t("marquerRembourse")}
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
+      )}
 
-      {!ouvert ? (
+      {onglet === "depenses" && (!ouvert ? (
         <button type="button" data-testid="depense-ajouter" onClick={() => setOuvert(true)}
           className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-accent-50 px-3 py-1.5 text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
           + {t("ajouter")}
@@ -145,13 +231,19 @@ export function DepensesVoyageBlock({
             className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
           <div className="flex gap-2">
             <input name="montant" data-testid="depense-montant" inputMode="decimal" placeholder={t("montant")}
-              aria-label={t("montant")}
+              aria-label={t("montant")} value={montantSaisi}
+              onChange={(e) => setMontantSaisi(e.target.value)}
               className="w-28 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
             <select name="payePar" data-testid="depense-paye-par" aria-label={t("payePar", { nom: "" })}
               className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
               {participants.map((p) => <option key={p.id} value={p.id}>{p.displayName}</option>)}
             </select>
           </div>
+          <select name="categorie" data-testid="depense-categorie" aria-label={t("categorie")} defaultValue=""
+            className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
+            <option value="">{t("sansCategorie")}</option>
+            {CATEGORIES_DEPENSE.map((c) => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}
+          </select>
           <select name="mode" data-testid="depense-mode" aria-label={t("mode")} value={mode}
             onChange={(e) => setMode(e.target.value as "egal" | "exact")}
             className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
@@ -163,7 +255,12 @@ export function DepensesVoyageBlock({
           <ul className="flex flex-col gap-1">
             {participants.map((p) => (
               <li key={p.id} className="flex items-center gap-2 text-[13px] text-ink">
-                <input type="checkbox" name="participants" value={p.id} defaultChecked
+                <input type="checkbox" name="participants" value={p.id}
+                  checked={(partages ?? participants.map((x) => x.id)).includes(p.id)}
+                  onChange={(e) => setPartages((prev) => {
+                    const base = prev ?? participants.map((x) => x.id);
+                    return e.target.checked ? [...base, p.id] : base.filter((x) => x !== p.id);
+                  })}
                   data-testid={`depense-part-${p.id}`} aria-label={p.displayName} />
                 <span className="min-w-0 flex-1 truncate">{p.displayName}</span>
                 {mode === "exact" && (
@@ -175,12 +272,24 @@ export function DepensesVoyageBlock({
             ))}
           </ul>
 
+          {/* Aide à la saisie de la maquette : ce que ça fait par tête. */}
+          {mode === "egal" && (() => {
+            const cents = Math.round(Number(montantSaisi.replace(",", ".")) * 100);
+            const n = (partages ?? participants.map((p) => p.id)).length;
+            const part = Number.isFinite(cents) && cents > 0 ? parPersonne(cents, n) : null;
+            return part != null ? (
+              <p data-testid="depense-par-personne" className="text-[11.5px] text-muted">
+                {t("parPersonne", { montant: euros(part), n })}
+              </p>
+            ) : null;
+          })()}
+
           <div className="flex gap-2">
             <Button type="submit" data-testid="depense-valider" pending={enCours}>{t("valider")}</Button>
             <Button type="button" variant="ghost" onClick={() => setOuvert(false)}>{t("annuler")}</Button>
           </div>
         </form>
-      )}
+      ))}
 
       {/* Remboursement : ce qui a été rendu de la main à la main */}
       {participants.length > 1 && (

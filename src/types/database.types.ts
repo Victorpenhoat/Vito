@@ -1633,6 +1633,7 @@ export type Database = {
       }
       voyage_depenses: {
         Row: {
+          categorie: string | null
           created_at: string
           created_by: string
           date: string | null
@@ -1644,6 +1645,7 @@ export type Database = {
           voyage_id: string
         }
         Insert: {
+          categorie?: string | null
           created_at?: string
           created_by: string
           date?: string | null
@@ -1655,6 +1657,7 @@ export type Database = {
           voyage_id: string
         }
         Update: {
+          categorie?: string | null
           created_at?: string
           created_by?: string
           date?: string | null

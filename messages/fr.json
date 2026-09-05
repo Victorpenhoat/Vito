@@ -651,7 +651,30 @@
       "remboursementVers": "Qui est remboursé",
       "rembourser": "Rembourser",
       "echec": "Enregistrement impossible pour l'instant.",
-      "sansVoyageur": "Ajoutez d'abord des voyageurs : une dépense se partage entre eux."
+      "sansVoyageur": "Ajoutez d'abord des voyageurs : une dépense se partage entre eux.",
+      "maPart": "Ma part",
+      "monSolde": "Mon solde",
+      "onMeDoit": "on me doit",
+      "jeDois": "je dois",
+      "pasVoyageur": "Vous ne figurez pas parmi les voyageurs de ce voyage.",
+      "onglets": {
+        "depenses": "Dépenses",
+        "equilibres": "Équilibres"
+      },
+      "pourTous": "pour tous",
+      "pourN": "pour {n} voyageurs",
+      "marquerRembourse": "Marquer comme remboursé",
+      "categorie": "Catégorie",
+      "sansCategorie": "Sans catégorie",
+      "categories": {
+        "hebergement": "Hébergement",
+        "restaurant": "Restaurant",
+        "transport": "Transport",
+        "activite": "Activité",
+        "courses": "Courses",
+        "autre": "Autre"
+      },
+      "parPersonne": "{montant} par personne ({n} participants)"
     },
     "planning": {
       "titre": "Planning",
