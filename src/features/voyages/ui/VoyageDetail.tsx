@@ -15,6 +15,7 @@ import { ProgrammeBlock } from "./ProgrammeBlock";
 import { ReservationVouchers } from "./ReservationVouchers";
 import { DepensesVoyageBlock } from "./DepensesVoyageBlock";
 import { getDepensesVoyage } from "../data/queries";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { resumeDetails } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
@@ -53,6 +54,8 @@ export async function VoyageDetail({ id }: { id: string }) {
   const { depenses, remboursements } = await getDepensesVoyage(voyage.id);
   // Lot F : mes liens de partage pour ce voyage (la RLS ne montre que les miens).
   const liens = await getLiensVoyage(voyage.id);
+  // Mon compte : c'est lui qui permet de dire « ma part » et « mon solde ».
+  const { data: auth } = await (await createServerSupabase()).auth.getUser();
 
   const today = new Date().toISOString().slice(0, 10);
   const chip = voyageChip(voyage.statut, voyage.date_debut, voyage.date_fin, today);
@@ -208,7 +211,8 @@ export async function VoyageDetail({ id }: { id: string }) {
           <section id="depenses" data-testid="depenses-section" className="scroll-mt-4">
             <SectionLabel>{t("depensesVoyage.titre")}</SectionLabel>
             <DepensesVoyageBlock voyageId={voyage.id} participants={participants}
-              depenses={depenses} remboursements={remboursements} devise={voyage.devise} />
+              depenses={depenses} remboursements={remboursements} devise={voyage.devise}
+              monProfileId={auth.user?.id ?? null} />
           </section>
 
           <section id="documents" data-testid="documents-section" className="scroll-mt-4">

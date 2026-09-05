@@ -28,7 +28,7 @@ export type VoyageInput = z.infer<typeof voyageInputSchema>;
 
 export const reservationInputSchema = z
   .object({
-    voyageId: z.string().uuid(),
+    voyageId: z.guid(),
     type: z.enum(RESERVATION_TYPES),
     fournisseur: z.string().max(200).optional(),
     // Hôtels v2 (H6) : l'hébergement réservé, désigné chez le fournisseur.
@@ -47,7 +47,7 @@ export const reservationInputSchema = z
 export type ReservationInput = z.infer<typeof reservationInputSchema>;
 
 export const shareInputSchema = z.object({
-  voyageId: z.string().uuid(),
+  voyageId: z.guid(),
   email: z.string().email(),
 });
 export type ShareInput = z.infer<typeof shareInputSchema>;
@@ -58,9 +58,14 @@ export type ShareInput = z.infer<typeof shareInputSchema>;
  *  (saisie libre) — jamais de deux sources à la fois. */
 export const participantInputSchema = z
   .object({
-    voyageId: z.string().uuid(),
-    profileId: z.string().uuid().optional(),
-    familyMemberId: z.string().uuid().optional(),
+    // z.guid() et non z.uuid() : Zod v4 impose à `uuid()` les bits de variante
+    // RFC 4122, ce qui REJETTE des identifiants pourtant valides côté base (les
+    // comptes de démonstration, mais aussi tout id importé). Le reste du dépôt
+    // fait déjà ce choix — l'oubli ici empêchait d'ajouter un compte comme
+    // voyageur, sans message compréhensible.
+    voyageId: z.guid(),
+    profileId: z.guid().optional(),
+    familyMemberId: z.guid().optional(),
     displayName: z.string().trim().min(1).max(120),
     email: z.string().email().max(200).optional(),
     role: z.enum(["organisateur", "voyageur"]).optional(),
@@ -73,12 +78,12 @@ export type ParticipantInput = z.infer<typeof participantInputSchema>;
 
 /** Une étape peut n'avoir ni jour ni heure : une envie se note avant de se caler. */
 export const etapeInputSchema = z.object({
-  voyageId: z.string().uuid(),
+  voyageId: z.guid(),
   jour: z.string().date().optional(),
   heure: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Heure invalide").optional(),
   titre: z.string().trim().min(1).max(200),
   lieu: z.string().max(200).optional(),
-  etablissementId: z.string().uuid().optional(),
+  etablissementId: z.guid().optional(),
   notes: z.string().max(2000).optional(),
 });
 export type EtapeInput = z.infer<typeof etapeInputSchema>;
@@ -87,8 +92,12 @@ export type EtapeInput = z.infer<typeof etapeInputSchema>;
 // `centsFromEuros` et les modes viennent du domaine Dépenses : le partage est
 // le même calcul, seule l'identité des participants change.
 
+/** Catégories de la maquette « Ajout d'une dépense ». */
+export const CATEGORIES_DEPENSE = ["hebergement", "restaurant", "transport", "activite", "courses", "autre"] as const;
+
 export const depenseVoyageInputSchema = z.object({
   voyageId: z.guid(),
+  categorie: z.enum(CATEGORIES_DEPENSE).optional(),
   payePar: z.guid(),
   libelle: z.string().trim().min(1).max(200),
   montantCents: centsFromEuros,

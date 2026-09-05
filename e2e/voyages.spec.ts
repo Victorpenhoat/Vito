@@ -168,12 +168,26 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
 
   // deux voyageurs propres à ce run : les soldes sont alors prévisibles
   const marque = String(Date.now()).slice(-6);
-  for (const nom of [`Payeur ${marque}`, `Partageur ${marque}`]) {
+  // Trois voyageurs : le taxi n'en concernera que deux, sans quoi « pour tous »
+  // serait exact et la portée ne prouverait rien.
+  for (const nom of [`Payeur ${marque}`, `Partageur ${marque}`, `Absent ${marque}`]) {
     await page.getByTestId("participant-ajouter").click();
     await page.getByTestId("participant-nom").fill(nom);
     await page.getByTestId("participant-valider").click();
     await expect(page.getByTestId("participant-row").filter({ hasText: nom })).toBeVisible({ timeout: 15_000 });
   }
+
+  // Le compte connecté rejoint le voyage : sans cela, « Ma part » et « Mon
+  // solde » n'ont personne à désigner — l'écran le dit, mais on veut ici
+  // éprouver le cas où j'y suis.
+  await page.getByTestId("participant-ajouter").click();
+  // `count()` n'attend pas, contrairement aux assertions : sans cette attente,
+  // le formulaire n'est pas encore rendu et le compte semble absent.
+  await expect(page.getByTestId("participant-form")).toBeVisible();
+  const moi = page.getByTestId("participant-compte").first();
+  await expect(moi).toBeVisible();
+  await moi.click();
+  await expect(page.getByTestId("participant-row").filter({ hasText: "Victor" }).first()).toBeVisible({ timeout: 15_000 });
 
   // Le bloc Dépenses est alimenté par le SERVEUR : il lui faut les identifiants
   // persistés des voyageurs, que l'affichage optimiste de la liste ne lui donne
@@ -187,10 +201,12 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
   await form.getByTestId("depense-libelle").fill(`Taxi ${marque}`);
   await form.getByTestId("depense-montant").fill("30");
   await form.getByTestId("depense-paye-par").selectOption({ label: `Payeur ${marque}` });
-  // on ne coche que nos deux voyageurs : les autres ne partagent pas ce taxi
+  // Seuls le payeur et le partageur montent dans le taxi : tout le reste — y
+  // compris « Absent », qui porte pourtant la marque du run — est décoché.
   for (const c of await form.locator('input[name="participants"]').all()) {
-    const label = await c.getAttribute("aria-label");
-    if (label && !label.includes(marque)) await c.uncheck();
+    const label = (await c.getAttribute("aria-label")) ?? "";
+    const concerne = label === `Payeur ${marque}` || label === `Partageur ${marque}`;
+    if (!concerne) await c.uncheck();
   }
   await Promise.all([
     page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
@@ -199,23 +215,27 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
 
   const ligne = page.getByTestId("depense-row").filter({ hasText: `Taxi ${marque}` });
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  // la portée est dite : ce taxi ne concerne pas tout le monde
+  await expect(ligne).toContainText("2 voyageurs");
 
-  // 15 € dus par le partageur au payeur : le transfert le dit sans détour
+  // et l'en-tête annonce ce que le voyage me coûte
+  await expect(page.getByTestId("depenses-entete")).toContainText("Ma part");
+
+  // 15 € dus par le partageur au payeur, sous l'onglet Équilibres
+  await page.getByTestId("onglet-equilibres").click();
   const soldes = page.getByTestId("depenses-soldes");
   await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("15");
-  await expect(page.getByTestId("transfert-row").filter({ hasText: `Partageur ${marque}` })).toContainText("15");
+  const transfert = page.getByTestId("transfert-row").filter({ hasText: `Partageur ${marque}` });
+  await expect(transfert).toContainText("15");
 
-  // le remboursement remet les compteurs à zéro
-  const remb = page.getByTestId("remboursement-form");
-  await remb.getByTestId("remboursement-de").selectOption({ label: `Partageur ${marque}` });
-  await remb.getByTestId("remboursement-vers").selectOption({ label: `Payeur ${marque}` });
-  await remb.getByTestId("remboursement-montant").fill("15");
+  // le remboursement proposé se confirme d'un bouton, sans le ressaisir
   await Promise.all([
     page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
-    remb.getByTestId("remboursement-valider").click(),
+    transfert.getByTestId("marquer-rembourse").click(),
   ]);
 
   await page.reload();
+  await page.getByTestId("onglet-equilibres").click();
   await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("0,00");
   await expect(page.getByTestId("transfert-row").filter({ hasText: marque })).toHaveCount(0);
 });

@@ -651,7 +651,30 @@
       "remboursementVers": "Who is repaid",
       "rembourser": "Repay",
       "echec": "Cannot save right now.",
-      "sansVoyageur": "Add travellers first: an expense is shared between them."
+      "sansVoyageur": "Add travellers first: an expense is shared between them.",
+      "maPart": "My share",
+      "monSolde": "My balance",
+      "onMeDoit": "I am owed",
+      "jeDois": "I owe",
+      "pasVoyageur": "You are not among this trip's travellers.",
+      "onglets": {
+        "depenses": "Expenses",
+        "equilibres": "Balances"
+      },
+      "pourTous": "for everyone",
+      "pourN": "for {n} travellers",
+      "marquerRembourse": "Mark as repaid",
+      "categorie": "Category",
+      "sansCategorie": "No category",
+      "categories": {
+        "hebergement": "Accommodation",
+        "restaurant": "Restaurant",
+        "transport": "Transport",
+        "activite": "Activity",
+        "courses": "Groceries",
+        "autre": "Other"
+      },
+      "parPersonne": "{montant} per person ({n} travellers)"
     },
     "planning": {
       "titre": "Planner",

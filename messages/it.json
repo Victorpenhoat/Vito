@@ -651,7 +651,30 @@
       "remboursementVers": "Chi viene rimborsato",
       "rembourser": "Rimborsa",
       "echec": "Salvataggio non possibile al momento.",
-      "sansVoyageur": "Aggiungi prima i viaggiatori: una spesa si divide tra loro."
+      "sansVoyageur": "Aggiungi prima i viaggiatori: una spesa si divide tra loro.",
+      "maPart": "La mia parte",
+      "monSolde": "Il mio saldo",
+      "onMeDoit": "mi devono",
+      "jeDois": "devo",
+      "pasVoyageur": "Non sei tra i viaggiatori di questo viaggio.",
+      "onglets": {
+        "depenses": "Spese",
+        "equilibres": "Saldi"
+      },
+      "pourTous": "per tutti",
+      "pourN": "per {n} viaggiatori",
+      "marquerRembourse": "Segna come rimborsato",
+      "categorie": "Categoria",
+      "sansCategorie": "Senza categoria",
+      "categories": {
+        "hebergement": "Alloggio",
+        "restaurant": "Ristorante",
+        "transport": "Trasporto",
+        "activite": "Attività",
+        "courses": "Spesa",
+        "autre": "Altro"
+      },
+      "parPersonne": "{montant} a persona ({n} viaggiatori)"
     },
     "planning": {
       "titre": "Pianificazione",

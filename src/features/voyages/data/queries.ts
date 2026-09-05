@@ -110,7 +110,7 @@ export async function getDepensesVoyage(voyageId: string) {
   const [depRes, remRes] = await Promise.all([
     supabase
       .from("voyage_depenses")
-      .select("id, paye_par, libelle, montant_cents, date, mode, parts:voyage_depense_parts(participant_id, part_cents)")
+      .select("id, paye_par, libelle, montant_cents, date, mode, categorie, parts:voyage_depense_parts(participant_id, part_cents)")
       .eq("voyage_id", voyageId)
       .order("date", { ascending: false, nullsFirst: false }),
     supabase
@@ -130,6 +130,7 @@ export async function getDepensesVoyage(voyageId: string) {
       montantCents: Number(d.montant_cents),
       date: d.date,
       mode: d.mode,
+      categorie: d.categorie,
       parts: (d.parts ?? []).map((p) => ({
         participantId: p.participant_id,
         partCents: Number(p.part_cents),
