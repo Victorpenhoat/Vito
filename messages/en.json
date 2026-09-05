@@ -659,7 +659,34 @@
       "calendrierAbsent": "The school holiday calendar has not been filled in yet — the timeline shows your trips only.",
       "pendantVacances": "during {libelle}",
       "horsFenetre": "{titre} — outside the twelve months shown",
-      "aucunVoyageDate": "No dated trip to place on the timeline."
+      "aucunVoyageDate": "No dated trip to place on the timeline.",
+      "zone": "School holidays · Zone {zone}",
+      "vues": {
+        "semaine": "Week",
+        "mois": "Month",
+        "annee": "Year"
+      },
+      "jours": {
+        "lun": "Mon",
+        "mar": "Tue",
+        "mer": "Wed",
+        "jeu": "Thu",
+        "ven": "Fri",
+        "sam": "Sat",
+        "dim": "Sun"
+      },
+      "moisPrecedent": "Previous month",
+      "moisSuivant": "Next month",
+      "datesAConfirmer": "dates to confirm",
+      "participants": "{n, plural, one {# traveller} other {# travellers}}",
+      "legende": {
+        "a_venir": "Upcoming",
+        "en_cours": "Under way",
+        "en_preparation": "Planning / idea",
+        "vacances": "School holidays (zone {zone})"
+      },
+      "anneeScolaire": "School year",
+      "creerIdee": "Create an idea"
     },
     "partageLien": {
       "titre": "Share by link",
