@@ -1,3 +1,6 @@
+-- ⚠ pgcrypto vit dans le schéma `extensions` (local ET projets Supabase distants).
+-- Les appels sont donc QUALIFIÉS : sans cela, le seed passe en local (search_path
+-- permissif) mais échoue sur un projet distant avec « gen_salt does not exist ».
 -- Comptes de dev. Le trigger handle_new_user crée TOUS les profils en 'client'
 -- (le rôle n'est jamais lu depuis raw_user_meta_data — anti-escalade). Les rôles
 -- agence/admin sont attribués juste après par UPDATE privilégié (le seed tourne en superuser).
@@ -8,19 +11,19 @@ insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
 values
   ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'client@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Victor (client)","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', ''),
   ('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'agence@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Agence Démo","role":"agence"}', now(), now(),
    '', '', '', '', '', '', '', ''),
   ('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'admin@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Admin","role":"admin"}', now(), now(),
    '', '', '', '', '', '', '', '');
@@ -187,13 +190,13 @@ insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
 values
   ('44444444-4444-4444-8444-444444444444', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'free@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Free Démo","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', ''),
   ('55555555-5555-4555-8555-555555555555', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'premium@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Premium Démo","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', '');
@@ -222,13 +225,13 @@ insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
 values
   ('77777777-7777-4777-8777-777777777777', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'famille1@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Famille Un","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', ''),
   ('88888888-8888-4888-8888-888888888888', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'famille2@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Famille Deux","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', '');
@@ -248,7 +251,7 @@ insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
 values
   ('99999999-9999-4999-8999-999999999999', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'client7b@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Client 7b","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', '');
@@ -281,7 +284,7 @@ insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
 values
   ('de110000-0000-4000-8000-000000000000', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'demo@vito.test',
-   crypt('password123', gen_salt('bf')), now(),
+   extensions.crypt('password123', extensions.gen_salt('bf')), now(),
    '{"provider":"email","providers":["email"]}',
    '{"display_name":"Démo Vito","role":"client"}', now(), now(),
    '', '', '', '', '', '', '', '');

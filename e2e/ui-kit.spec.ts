@@ -9,12 +9,12 @@ test("la page kit UI s'affiche", async ({ page }) => {
 test("le toggle de thème bascule data-theme sur <html>", async ({ page }) => {
   await page.goto("/fr/ui-kit");
   const html = page.locator("html");
-  // App is dark by default (no cookie → dark)
-  await expect(html).toHaveAttribute("data-theme", "dark");
-  await page.getByTestId("theme-toggle").click();
+  // Le CLAIR est le défaut (aucun cookie → clair), comme les maquettes.
   await expect(html).toHaveAttribute("data-theme", "light");
   await page.getByTestId("theme-toggle").click();
   await expect(html).toHaveAttribute("data-theme", "dark");
+  await page.getByTestId("theme-toggle").click();
+  await expect(html).toHaveAttribute("data-theme", "light");
 });
 
 test("la modale s'ouvre et se ferme", async ({ page }) => {
