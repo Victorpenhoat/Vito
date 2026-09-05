@@ -37,7 +37,11 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
+  // Le CLAIR est le défaut : toutes les maquettes (docs/design/*.dc.html) sont
+  // claires, sans une seule variante sombre. Un visiteur qui découvre Vito doit
+  // voir ce qui a été dessiné ; le sombre reste à un clic, et le choix est
+  // mémorisé par le cookie.
+  const theme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
   return (
     <html lang={locale} data-theme={theme} className={`${inter.variable} ${newsreader.variable}`}>
       <body>

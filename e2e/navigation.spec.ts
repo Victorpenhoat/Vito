@@ -23,7 +23,7 @@ test.describe("desktop", () => {
   test("le thème est sombre par défaut + déconnexion", async ({ page }) => {
     await login(page, "client@vito.test");
     await page.goto("/fr/restos");
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await page.getByRole("button", { name: "Déconnexion" }).click();
     await expect(page).toHaveURL(/\/fr\/login/);
   });
