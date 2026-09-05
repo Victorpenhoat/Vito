@@ -659,7 +659,34 @@
       "calendrierAbsent": "Il calendario delle vacanze scolastiche non è ancora compilato: la linea del tempo mostra solo i tuoi viaggi.",
       "pendantVacances": "durante {libelle}",
       "horsFenetre": "{titre} — fuori dai dodici mesi mostrati",
-      "aucunVoyageDate": "Nessun viaggio con date da collocare sulla linea del tempo."
+      "aucunVoyageDate": "Nessun viaggio con date da collocare sulla linea del tempo.",
+      "zone": "Vacanze · Zona {zone}",
+      "vues": {
+        "semaine": "Settimana",
+        "mois": "Mese",
+        "annee": "Anno"
+      },
+      "jours": {
+        "lun": "Lun",
+        "mar": "Mar",
+        "mer": "Mer",
+        "jeu": "Gio",
+        "ven": "Ven",
+        "sam": "Sab",
+        "dim": "Dom"
+      },
+      "moisPrecedent": "Mese precedente",
+      "moisSuivant": "Mese successivo",
+      "datesAConfirmer": "date da confermare",
+      "participants": "{n, plural, one {# viaggiatore} other {# viaggiatori}}",
+      "legende": {
+        "a_venir": "In arrivo",
+        "en_cours": "In corso",
+        "en_preparation": "In preparazione / idea",
+        "vacances": "Vacanze scolastiche (zona {zone})"
+      },
+      "anneeScolaire": "Anno scolastico",
+      "creerIdee": "Crea un'idea"
     },
     "partageLien": {
       "titre": "Condividi con un link",

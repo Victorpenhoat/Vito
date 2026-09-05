@@ -222,21 +222,33 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
 
 // Lot E : la frise de douze mois — ce qui tombe pendant les vacances, et ce
 // qui reste libre.
-test("le planning déroule douze mois et y place les voyages datés", async ({ page }) => {
+test("le planning est un calendrier : mois, semaine, et la frise en vue Année", async ({ page }) => {
   await login(page, "client@vito.test");
   await page.goto("/fr/voyages");
   await page.getByTestId("lien-planning").click();
   await expect(page).toHaveURL(/\/fr\/voyages\/planning/);
 
+  // vue Mois par défaut : un vrai calendrier, avec la zone scolaire annoncée
+  await expect(page.getByTestId("planning-calendrier")).toBeVisible();
+  await expect(page.getByTestId("planning-zone")).toContainText("C");
+  const semainesDuMois = await page.getByTestId("planning-semaine").count();
+  expect(semainesDuMois).toBeGreaterThanOrEqual(4);
+  await expect(page.getByTestId("planning-legende")).toBeVisible();
+
+  // navigation de mois : le titre change
+  const titre = page.getByTestId("planning-mois-titre");
+  const avant = await titre.textContent();
+  await page.getByTestId("mois-suivant").click();
+  await expect(titre).not.toHaveText(avant ?? "");
+  await page.getByTestId("mois-precedent").click();
+  await expect(titre).toHaveText(avant ?? "");
+
+  // la vue Semaine ne montre qu'une semaine ; la vue Année reprend la frise
+  await page.getByTestId("vue-semaine").click();
+  await expect(page.getByTestId("planning-semaine")).toHaveCount(1);
+  await page.getByTestId("vue-annee").click();
+  await expect(page.getByTestId("planning-frise")).toBeVisible();
   await expect(page.getByTestId("planning-mois")).toHaveCount(12);
-
-  // Le voyage Rome du seed est daté : il a sa ligne. On ne vise ni la barre ni
-  // le libellé « hors fenêtre » — selon la date du jour, le voyage tombe dans
-  // les douze mois affichés ou non, et le test doit survivre aux deux.
-  await expect(page.getByTestId("planning-voyage").filter({ hasText: "Rome" }).first()).toBeVisible();
-
-  // tant que le calendrier officiel n'est pas renseigné, la frise le dit
-  await expect(page.getByTestId("planning-sans-vacances")).toBeVisible();
 
   await page.getByTestId("planning-retour").click();
   await expect(page).toHaveURL(/\/fr\/voyages$/);

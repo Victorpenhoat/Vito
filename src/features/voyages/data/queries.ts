@@ -173,3 +173,20 @@ export async function getLiensVoyage(voyageId: string) {
     creeLe: i.created_at,
   }));
 }
+
+/**
+ * Nombre de voyageurs par voyage, pour la bande du planning (« Rome 12 → 15 ·
+ * 4 participants »). Un seul aller-retour, compté en mémoire : la RLS a déjà
+ * restreint aux voyages accessibles.
+ */
+export async function compterParticipants(): Promise<Record<string, number>> {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return {};
+  const { data, error } = await supabase.from("voyage_participants").select("voyage_id");
+  if (error) throw error;
+  return (data ?? []).reduce<Record<string, number>>((acc, p) => {
+    acc[p.voyage_id] = (acc[p.voyage_id] ?? 0) + 1;
+    return acc;
+  }, {});
+}

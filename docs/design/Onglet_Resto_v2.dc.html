@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;}
+  .serif{font-family:'Newsreader',Georgia,serif;}
+  a{color:#2563EB;text-decoration:none;}
+  a:hover{color:#1D4ED8;}
+</style>
+</helmet>
+
+<div style="position:absolute;left:80px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Restaurants v2 · Mobile</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">1 · Favoris (liste)</div></div>
+  <div data-screen-label="M · Favoris" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="display:flex;gap:9px;padding:0 18px 10px;">
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Nom, ville, tag…</span></div>
+      <button style="display:flex;align-items:center;gap:6px;padding:10px 13px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;color:#2563EB;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Trouver</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 12px;">
+      <div style="display:flex;gap:6px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Italien</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Terrasse</span></div>
+      <div style="display:inline-flex;gap:3px;padding:3px;background:#EFEADF;border-radius:5px;"><span style="display:grid;place-items:center;width:30px;height:26px;border-radius:3px;background:#fff;box-shadow:0 1px 2px rgba(33,30,26,.12);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><span style="display:grid;place-items:center;width:30px;height:26px;border-radius:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span style="display:grid;place-items:center;width:30px;height:26px;border-radius:3px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.8" stroke-linejoin="round"><path d="m9 4-6 2v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg></span></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;"><div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Chez Marius</div><svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Provençal · Bordeaux centre · 850 m</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Terrasse</span><span style="font-size:10.5px;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Valeur sûre</span><span style="font-size:10.5px;color:#9A9081;padding:2px 2px;">+2</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;"><div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Osteria Da Nino</div><svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Italien · Chartrons · 1,2 km</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Italien</span><span style="font-size:10.5px;color:#A65D57;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">Date night</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:13px;padding:13px 0;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;"><div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Le Quatrième Mur</div><svg width="18" height="18" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Gastronomique · Grand Théâtre · 600 m</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Occasion</span><span style="font-size:10.5px;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">Avec les parents</span><span style="font-size:10.5px;color:#9A9081;padding:2px 2px;">+3</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2 · À tester (origine + swipe)</div></div>
+  <div data-screen-label="M · À tester" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="display:flex;gap:9px;padding:0 18px 10px;">
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Nom, ville, tag…</span></div>
+      <button style="display:flex;align-items:center;gap:6px;padding:10px 13px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;color:#2563EB;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Trouver</button>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Toutes</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Recommandations</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Trouvés par moi</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Ischia</div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Italien · Saint-Michel · 1,8 km</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11 12 6l5 5"/><path d="M12 6v12"/></svg>Reco par Camille</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Pizza</span></div>
+        </div>
+      </div>
+      <div style="position:relative;margin:0 -18px;">
+        <div style="position:absolute;right:0;top:0;bottom:1px;width:118px;display:flex;align-items:center;justify-content:center;background:#5B7F5B;"><span style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#fff;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg><span style="font-size:10.5px;font-weight:600;">J'y suis allé</span></span></div>
+        <div style="position:relative;display:flex;gap:13px;padding:13px 18px;background:#FBF9F3;border-bottom:1px solid #EDE7DB;transform:translateX(-96px);box-shadow:6px 0 14px rgba(33,30,26,.08);">
+          <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Kuzina</div>
+            <div style="font-size:12px;color:#9A9081;margin-top:2px;">Grec moderne · Bastide · 2,4 km</div>
+            <div style="display:flex;gap:5px;margin-top:7px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Trouvé par moi · Instagram</span></div>
+          </div>
+        </div>
+        <div style="text-align:right;padding:5px 18px 0;"><span style="font-size:10px;color:#9A9081;font-style:italic;">← swipe pour marquer la visite</span></div>
+      </div>
+      <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="serif" style="font-size:17.5px;color:#211E1A;line-height:1.15;">Maison Nouvelle</div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Bistronomique · Saint-Pierre · 700 m</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11 12 6l5 5"/><path d="M12 6v12"/></svg>Reco par Marcel (Cercle)</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">3 · Testés + 8 · Marquer une visite</div></div>
+  <div data-screen-label="M · Testés + visite" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin-bottom:2px;">Dernière visite en premier</div>
+      <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #EDE7DB;opacity:.55;">
+        <div style="width:66px;height:66px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><div class="serif" style="font-size:17.5px;color:#211E1A;">Yamato</div><span style="font-size:12px;font-weight:600;color:#211E1A;">7,5</span></div>
+          <div style="font-size:12px;color:#9A9081;margin-top:2px;">Japonais · visité le 22 août</div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="font-size:10.5px;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Bon rapport Q/P</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Bruyant</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #E4DDD0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.14);padding:14px 18px 28px;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 14px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:19px;color:#211E1A;">J'y suis allé — Kuzina</span><span style="font-size:12px;color:#2563EB;font-weight:600;">Aujourd'hui ▾</span></div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:14px 0 7px;">Ma note</div>
+      <div style="display:flex;align-items:center;gap:10px;"><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;position:relative;"><span style="position:absolute;left:0;top:0;bottom:0;width:82%;border-radius:999px;background:#2563EB;"></span><span style="position:absolute;left:82%;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #2563EB;box-shadow:0 1px 4px rgba(33,30,26,.2);"></span></div><span class="serif" style="font-size:22px;color:#211E1A;">8,2</span></div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:14px 0 7px;">Tags de verdict</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:6px 12px;">On y retourne</span><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:6px 12px;">Généreux</span><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 12px;">Date night</span><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 12px;">Bruyant</span><span style="font-size:11.5px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:6px 12px;">+ Nouveau tag</span></div>
+      <div style="margin-top:12px;padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">Feta rôtie incroyable, pita maison. Réserver en terrasse.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px;"><span style="font-size:13px;color:#211E1A;">Passer en favori ?</span><div style="position:relative;width:46px;height:28px;border-radius:999px;background:#2563EB;"><span style="position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(33,30,26,.25);"></span></div></div>
+      <button style="width:100%;margin-top:14px;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la visite</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">4 · Tous (filtres + boîte de réception)</div></div>
+  <div data-screen-label="M · Tous" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="margin:0 18px 12px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:8px;"><span style="display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#EAF0FD;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"/></svg></span><div><div style="font-size:13px;font-weight:600;color:#211E1A;">Boîte de réception</div><div style="font-size:11px;color:#9A9081;">2 adresses reçues à trier</div></div></div><span style="display:grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#2563EB;color:#fff;font-size:11px;font-weight:600;">2</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid #F0EBE0;"><span style="width:34px;height:34px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Le Cent 33 <span style="font-weight:400;color:#9A9081;">· envoyé par Camille</span></div></div><button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">À tester</button><button style="padding:6px 9px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;font-size:10.5px;color:#7A736A;font-family:inherit;cursor:pointer;">Ignorer</button></div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 10px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #A9C2F2;border-radius:999px;padding:5px 11px;">Favori ✓</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #E9CE93;border-radius:999px;padding:5px 11px;">À tester ✓</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Testé</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Tags ▾</span></div>
+    <div style="padding:0 18px 6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">14 restaurants</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:56px;height:56px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16.5px;color:#211E1A;">Chez Marius</span><svg width="15" height="15" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Provençal · Bordeaux centre</div></div>
+      </div>
+      <div style="display:flex;gap:13px;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <div style="width:56px;height:56px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16.5px;color:#211E1A;">Ischia</span><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 7px;">À tester</span></div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Italien · Saint-Michel · reco Camille</div></div>
+      </div>
+      <div style="display:flex;gap:13px;padding:12px 0;">
+        <div style="width:56px;height:56px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&q=80&auto=format&fit=crop') center/cover;"></div>
+        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16.5px;color:#211E1A;">Osteria Da Nino</span><svg width="15" height="15" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Italien · Chartrons</div></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">5 · Carte (marqueurs par statut)</div></div>
+  <div data-screen-label="M · Carte" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="flex:1;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:#E8E4DA;">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 39%,transparent 39%),linear-gradient(0deg,transparent 0 62%,#DAD4C6 62% 63%,transparent 63%),linear-gradient(90deg,transparent 0 72%,#E0DACE 72% 72.6%,transparent 72.6%),linear-gradient(0deg,transparent 0 28%,#E0DACE 28% 28.6%,transparent 28.6%);"></div>
+        <div style="position:absolute;left:-10%;top:44%;width:130%;height:34px;background:#BFD6E8;transform:rotate(-6deg);opacity:.65;"></div>
+      </div>
+      <div style="position:absolute;left:14px;right:14px;top:12px;display:flex;gap:6px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#2563EB;"></span>Favoris</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#C28A1B;"></span>À tester</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#9A9081;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;opacity:.6;"><span style="width:8px;height:8px;border-radius:50%;background:#8F867A;"></span>Testés</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;margin-left:auto;">Tags ▾</span></div>
+      <div style="position:absolute;left:26%;top:30%;transform:translate(-50%,-100%);"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#2563EB"/><path d="M12 19s-4-2.6-5.4-5.1C5.7 12 6.5 10 8.5 10c1.1 0 1.9.7 2.4 1.3.5-.6 1.2-1.3 2.4-1.3 2 0 2.8 2 1.9 3.9C13.9 16.4 12 19 12 19Z" fill="#fff" transform="translate(3,-1)"/></svg></div>
+      <div style="position:absolute;left:60%;top:24%;transform:translate(-50%,-100%);"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 3 27 24.5c1 1.9-.4 4.5-2.6 4.5H5.6C3.4 29 2 26.4 3 24.5L15 3Z" fill="#C28A1B" transform="translate(0,2)"/><circle cx="15" cy="21" r="3.4" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:72%;top:56%;transform:translate(-50%,-100%);opacity:.75;"><svg width="24" height="24" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px rgba(33,30,26,.3));"><rect x="3" y="3" width="18" height="18" rx="4" fill="#8F867A"/><path d="m8 12.5 3 3 5.5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div style="position:absolute;left:40%;top:62%;transform:translate(-50%,-100%) scale(1.25);z-index:3;"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 4px 7px rgba(33,30,26,.35));"><path d="M15 3 27 24.5c1 1.9-.4 4.5-2.6 4.5H5.6C3.4 29 2 26.4 3 24.5L15 3Z" fill="#C28A1B" transform="translate(0,2)"/><circle cx="15" cy="21" r="3.4" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);"><span style="display:block;width:16px;height:16px;border-radius:50%;background:#2563EB;border:3px solid #fff;box-shadow:0 0 0 6px rgba(37,99,235,.18);"></span></div>
+      <button style="position:absolute;right:14px;bottom:150px;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:10px 15px;font-size:12px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(33,30,26,.15);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Autour de moi</button>
+      <div style="position:absolute;left:14px;right:14px;bottom:14px;display:flex;gap:12px;padding:12px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 30px rgba(33,30,26,.22);">
+        <span style="width:58px;height:58px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16.5px;color:#211E1A;">Kuzina</span><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 7px;">À tester</span></div>
+          <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Grec moderne · Bastide · reco Instagram</div>
+          <div style="display:flex;gap:12px;margin-top:6px;"><a style="font-size:12px;font-weight:600;">Ouvrir la fiche</a><a style="font-size:12px;font-weight:600;">Itinéraire ↗</a></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+
+<div style="position:absolute;left:80px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">6 · Fiche restaurant</div></div>
+  <div data-screen-label="M · Fiche restaurant" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="position:relative;height:230px;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=800&q=80&auto=format&fit=crop') center/cover;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,26,.4),rgba(33,30,26,0) 45%);"></div>
+      <div style="position:absolute;top:14px;left:16px;right:16px;display:flex;justify-content:space-between;"><button style="display:grid;place-items:center;width:38px;height:38px;background:rgba(255,255,255,.92);border:none;border-radius:999px;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button><button style="display:grid;place-items:center;width:38px;height:38px;background:rgba(255,255,255,.92);border:none;border-radius:999px;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg></button></div>
+      <div style="position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:5px;"><span style="width:16px;height:4px;border-radius:2px;background:#fff;"></span><span style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.55);"></span><span style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.55);"></span></div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:16px 18px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+        <div><h1 class="serif" style="margin:0;font-size:26px;font-weight:500;color:#211E1A;">Kuzina</h1><div style="font-size:12.5px;color:#9A9081;margin-top:3px;">Grec moderne · €€ · Bastide, Bordeaux</div></div>
+        <button style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:6px 12px;font-family:inherit;cursor:pointer;">À tester ▾</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Grec</span><span style="font-size:10.5px;color:#A65D57;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:3px 9px;">Date night</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Terrasse</span><span style="font-size:10.5px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:3px 9px;">+ Tag</span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;margin-top:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="font-size:13px;color:#211E1A;">32 quai des Queyries, Bordeaux</div><a style="font-size:11.5px;font-weight:600;">Maps ↗</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="font-size:13px;color:#211E1A;">05 56 40 12 08</div><a style="font-size:11.5px;font-weight:600;">Appeler</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="font-size:13px;"><span style="color:#5B7F5B;font-weight:600;">Ouvert</span><span style="color:#211E1A;"> · jusqu'à 23h</span></div><span style="font-size:11.5px;color:#9A9081;">Semaine ▾</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;"><div style="font-size:13px;color:#211E1A;">kuzina-bordeaux.fr</div><a style="font-size:11.5px;font-weight:600;">Réserver ↗</a></div>
+      </div>
+      <div style="font-size:10px;color:#b3a896;margin-top:5px;text-align:right;">Données Google Places</div>
+      <div style="margin-top:12px;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:5px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#C28A1B;">Pourquoi c'est là</span><a style="font-size:11.5px;font-weight:600;">Modifier</a></div>
+        <div style="font-size:13px;color:#211E1A;margin-top:6px;">Trouvé par moi · Instagram — « la moussaka déstructurée »</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Mes visites</span><span style="font-size:11px;color:#9A9081;">0 pour l'instant</span></div>
+      <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>J'y suis allé</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">7 · Recherche externe (priorisée)</div></div>
+  <div data-screen-label="M · Recherche externe" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 18px 10px;">
+      <button style="background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;">Fermer</button>
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:11px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:14px;color:#211E1A;">pizza<span style="display:inline-block;width:1.5px;height:16px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></span></div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;white-space:nowrap;">Bordeaux</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;white-space:nowrap;">Cuisine ▾</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;white-space:nowrap;">Prix ▾</span><span style="font-size:11px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:5px 11px;white-space:nowrap;">Ouvert mnt ✓</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;white-space:nowrap;">&lt; 2 km</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#2563EB;margin-bottom:2px;">Déjà dans Vito</div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:52px;height:52px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16px;color:#211E1A;">Ischia</span><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 7px;">À tester</span></div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Pizza napolitaine · Saint-Michel · 1,8 km</div></div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:52px;height:52px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;"><span class="serif" style="font-size:16px;color:#211E1A;">Osteria Da Nino</span><span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;padding:1px 7px;">♥ Favori</span></div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Italien · Chartrons · 1,2 km</div></div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+      <div style="font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin:14px 0 2px;">Résultats externes</div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="width:52px;height:52px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;"><div class="serif" style="font-size:16px;color:#211E1A;">Mamma Pizza</div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Pizzeria · rue Sainte-Catherine · 400 m · <span style="color:#5B7F5B;font-weight:600;">ouvert</span></div></div>
+        <button style="display:flex;align-items:center;gap:5px;padding:8px 12px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">+ À tester ▾</button>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;">
+        <span style="width:52px;height:52px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+        <div style="flex:1;min-width:0;"><div class="serif" style="font-size:16px;color:#211E1A;">La Piazzetta</div><div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Pizzeria · Chartrons · 1,4 km · <span style="color:#5B7F5B;font-weight:600;">ouvert</span></div></div>
+        <button style="display:flex;align-items:center;gap:5px;padding:8px 12px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">+ À tester ▾</button>
+      </div>
+      <div style="font-size:10.5px;color:#b3a896;margin-top:8px;text-align:center;">Le statut proposé suit le sous-onglet d'origine (À tester)</div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">9 · Origine (bottom sheet)</div></div>
+  <div data-screen-label="M · Origine" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="flex:1;position:relative;background:#E8E4DA;">
+      <div style="position:absolute;inset:0;background:rgba(33,30,26,.35);"></div>
+    </div>
+    <div style="background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.2);padding:14px 18px 30px;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 14px;"></div>
+      <span class="serif" style="font-size:19px;color:#211E1A;">D'où vient cette adresse ?</span>
+      <div style="font-size:12px;color:#9A9081;margin-top:2px;">Maison Nouvelle · À tester</div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <div style="flex:1;padding:13px 14px;background:#FBF3E1;border:1.5px solid #C28A1B;border-radius:6px;"><div style="display:flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11 12 6l5 5"/><path d="M12 6v12"/></svg><span style="font-size:13px;font-weight:600;color:#211E1A;">Recommandation</span></div><div style="font-size:11px;color:#9A9081;margin-top:3px;">Quelqu'un me l'a conseillé</div></div>
+        <div style="flex:1;padding:13px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;"><div style="display:flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span style="font-size:13px;font-weight:600;color:#211E1A;">Trouvé par moi</span></div><div style="font-size:11px;color:#9A9081;margin-top:3px;">Instagram, presse, hasard…</div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 5px;">Recommandé par</div>
+      <div style="padding:12px 13px;background:#FBF9F3;border:1.5px solid #2563EB;border-radius:3px;font-size:14px;color:#211E1A;">Mar<span style="display:inline-block;width:1.5px;height:16px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></div>
+      <div style="display:flex;gap:7px;margin-top:9px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 8px 6px 6px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#cdbfa8;color:#fff;font-size:8.5px;">M</span>Marcel (Cercle)</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:6px 8px 6px 6px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#9BB0C4;color:#fff;font-size:8.5px;">M</span>Marie L.</span>
+      </div>
+      <button style="width:100%;margin-top:16px;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer l'origine</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">10 · Administration des tags</div></div>
+  <div data-screen-label="M · Admin tags" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:6px 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Réglages</button>
+      <span style="font-size:15px;font-weight:600;color:#211E1A;">Gérer les tags</span>
+      <button style="background:none;border:none;color:#2563EB;font-size:20px;font-family:inherit;cursor:pointer;padding:0 4px;">+</button>
+    </div>
+    <div style="display:flex;gap:6px;padding:8px 18px 12px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Communs</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Restaurant</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Hôtel</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid #EDE7DB;"><span style="width:14px;height:14px;border-radius:4px;background:#5B7F5B;flex-shrink:0;"></span><div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#211E1A;">Valeur sûre</div><div style="font-size:11px;color:#9A9081;">Commun · 12 adresses</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/></svg></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid #EDE7DB;"><span style="width:14px;height:14px;border-radius:4px;background:#A65D57;flex-shrink:0;"></span><div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#211E1A;">Date night</div><div style="font-size:11px;color:#9A9081;">Restaurant · 6 adresses</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/></svg></div>
+      <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid #EDE7DB;"><span style="width:14px;height:14px;border-radius:4px;background:#2563EB;flex-shrink:0;"></span><div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#211E1A;">Bord de mer</div><div style="font-size:11px;color:#9A9081;">Hôtel · 4 adresses</div></div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h.01M8 12h.01M8 18h.01M16 6h.01M16 12h.01M16 18h.01"/></svg></div>
+      <div style="margin:14px 0;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:14px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Fusionner</div>
+        <div style="display:flex;align-items:center;gap:9px;margin-top:10px;"><span style="font-size:11.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Terrasse sympa</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span style="font-size:11.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Terrasse</span></div>
+        <div style="font-size:11.5px;color:#9A9081;margin-top:9px;">9 adresses seront re-taguées « Terrasse ». Action irréversible.</div>
+        <div style="display:flex;gap:8px;margin-top:11px;"><button style="flex:1;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Fusionner</button><button style="padding:10px 16px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;color:#7A736A;font-family:inherit;cursor:pointer;">Annuler</button></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid #EDE7DB;opacity:.6;"><span style="width:14px;height:14px;border-radius:4px;background:#C28A1B;flex-shrink:0;"></span><div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#211E1A;">Terrasse sympa</div><div style="font-size:11px;color:#9A9081;">Restaurant · 3 adresses · en cours de fusion</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">11 · Filtres actifs · aucun résultat</div></div>
+  <div data-screen-label="M · Aucun résultat" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:9px;padding:0 18px 10px;">
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="flex:1;font-size:13.5px;color:#211E1A;">coréen</span><button style="display:grid;place-items:center;width:19px;height:19px;background:#E4DDD0;border:none;border-radius:50%;cursor:pointer;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding:0 18px 12px;">
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Terrasse ✕</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Chartrons ✕</span>
+      <button style="background:none;border:none;color:#2563EB;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;margin-left:auto;">Tout effacer</button>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px 120px;">
+      <div style="width:84px;height:84px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;display:grid;place-items:center;margin-bottom:20px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+      <h2 class="serif" style="margin:0;font-size:22px;font-weight:500;color:#211E1A;">Aucun résultat</h2>
+      <p style="margin:9px 0 20px;font-size:13.5px;line-height:1.6;color:#7A736A;">Aucun restaurant « coréen » avec ces filtres dans votre carnet.</p>
+      <button style="display:flex;align-items:center;gap:8px;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:13px 20px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Chercher « coréen » sur Google</button>
+      <button style="margin-top:10px;background:none;border:none;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">Effacer les filtres</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:2430px;top:1020px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">12 · État vide (À tester)</div></div>
+  <div data-screen-label="M · État vide" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Restaurants</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Favoris</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">À tester</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Testés</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px 100px;">
+      <div style="width:92px;height:92px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;display:grid;place-items:center;margin-bottom:22px;"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg></div>
+      <h2 class="serif" style="margin:0;font-size:22px;font-weight:500;color:#211E1A;">Rien à tester pour l'instant</h2>
+      <p style="margin:10px 0 24px;font-size:13.5px;line-height:1.6;color:#7A736A;">Notez ici les adresses qu'on vous recommande ou que vous repérez, pour ne plus jamais les oublier.</p>
+      <button style="display:flex;align-items:center;gap:8px;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:13px 22px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Trouver un restaurant</button>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 3l9 7"/><path d="M5 9v11h14V9"/></svg><span style="font-size:10px;">Accueil</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;font-weight:600;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:2060px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Restaurants v2 · Desktop</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">1+6 · Favoris — liste + fiche</div></div>
+  <div data-screen-label="D · Favoris liste+fiche" style="display:flex;min-height:780px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;display:flex;flex-direction:column;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:9px;padding-top:16px;border-top:1px solid #E4DDD0;"><span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#211E1A;color:#fff;font-size:11px;font-weight:600;">VP</span><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Victor</div></div>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #E4DDD0;background:#FBF9F3;">
+        <div style="flex:1;display:flex;align-items:center;gap:9px;padding:9px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;max-width:420px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Rechercher — nom, ville, tag…</span></div>
+        <button style="display:flex;align-items:center;gap:6px;padding:9px 15px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Trouver un restaurant</button>
+        <span style="margin-left:auto;font-size:12px;color:#9A9081;">⌘K</span>
+      </div>
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:13px 0 11px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">Favoris</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">À tester</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Testés</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Carte</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:380px;flex-shrink:0;border-right:1px solid #E4DDD0;display:flex;flex-direction:column;">
+          <div style="display:flex;gap:6px;padding:14px 18px 10px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Italien</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Terrasse</span><a style="font-size:11px;font-weight:600;margin-left:auto;align-self:center;">Gérer</a></div>
+          <div style="flex:1;overflow:hidden;padding:0 18px;">
+            <div style="display:flex;gap:11px;padding:11px 12px;margin:0 -12px;background:#fff;border-left:2px solid #2563EB;border-bottom:1px solid #EDE7DB;">
+              <span style="width:50px;height:50px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:15.5px;color:#211E1A;">Chez Marius</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Provençal · centre · 850 m</div></div>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#2563EB" stroke="#2563EB" stroke-width="1.6" style="align-self:center;"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg>
+            </div>
+            <div style="display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="width:50px;height:50px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:15.5px;color:#211E1A;">Osteria Da Nino</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Italien · Chartrons · 1,2 km</div></div>
+            </div>
+            <div style="display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="width:50px;height:50px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:15.5px;color:#211E1A;">Le Quatrième Mur</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Gastronomique · 600 m</div></div>
+            </div>
+            <div style="display:flex;gap:11px;padding:11px 0;">
+              <span style="width:50px;height:50px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:15.5px;color:#211E1A;">Le Bouchon</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Bistrot · Saint-Pierre · 500 m</div></div>
+            </div>
+          </div>
+          <div style="padding:12px 18px;border-top:1px solid #E4DDD0;font-size:11.5px;color:#9A9081;">8 favoris · triés par distance</div>
+        </div>
+        <div style="flex:1;overflow:hidden;background:#fff;">
+          <div style="position:relative;height:200px;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1000&q=80&auto=format&fit=crop') center/cover;">
+            <div style="position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:5px;"><span style="width:14px;height:4px;border-radius:2px;background:#fff;"></span><span style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.55);"></span><span style="width:4px;height:4px;border-radius:2px;background:rgba(255,255,255,.55);"></span></div>
+          </div>
+          <div style="padding:20px 26px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+              <div><h2 class="serif" style="margin:0;font-size:26px;font-weight:500;color:#211E1A;">Chez Marius</h2><div style="font-size:12.5px;color:#9A9081;margin-top:3px;">Provençal · €€ · Bordeaux centre</div></div>
+              <div style="display:flex;gap:8px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;padding:6px 12px;">♥ Favori ▾</span><button style="padding:7px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Maps ↗</button></div>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:10px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Terrasse</span><span style="font-size:10.5px;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:3px 9px;">Valeur sûre</span><span style="font-size:10.5px;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:3px 9px;">Avec les parents</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;">
+              <div style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;">
+                <div style="display:flex;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12.5px;color:#211E1A;">7 rue du Parlement</span><a style="font-size:11px;font-weight:600;">Itinéraire ↗</a></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12.5px;color:#211E1A;">05 56 81 33 07</span><a style="font-size:11px;font-weight:600;">Appeler ↗</a></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 13px;"><span style="font-size:12.5px;"><span style="color:#5B7F5B;font-weight:600;">Ouvert</span> · 12h–14h30, 19h–22h30</span><span style="font-size:11px;color:#9A9081;">Semaine ▾</span></div>
+                <div style="font-size:9.5px;color:#b3a896;padding:0 13px 8px;text-align:right;">Données Google Places</div>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Mes visites · 3</span><button style="display:flex;align-items:center;gap:5px;padding:7px 12px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">✓ J'y suis allé</button></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F0EBE0;margin-top:6px;"><div><span style="font-size:12.5px;color:#211E1A;font-weight:500;">14 juin 2026</span><span style="font-size:11px;color:#9A9081;"> · « terrasse au calme »</span></div><span style="font-size:12.5px;font-weight:600;color:#211E1A;">9,0</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F0EBE0;"><div><span style="font-size:12.5px;color:#211E1A;font-weight:500;">2 mars 2026</span><span style="font-size:11px;color:#9A9081;"> · anniversaire Claire</span></div><span style="font-size:12.5px;font-weight:600;color:#211E1A;">8,5</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;"><div><span style="font-size:12.5px;color:#211E1A;font-weight:500;">11 oct. 2025</span></div><span style="font-size:12.5px;font-weight:600;color:#211E1A;">8,8</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:2060px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">4+11 · Tous — volet filtres + boîte de réception</div></div>
+  <div data-screen-label="D · Tous + filtres" style="display:flex;min-height:780px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;display:flex;flex-direction:column;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #E4DDD0;">
+        <div style="flex:1;display:flex;align-items:center;gap:9px;padding:9px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;max-width:420px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Rechercher…</span></div>
+        <button style="display:flex;align-items:center;gap:6px;padding:9px 15px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Trouver un restaurant</button>
+      </div>
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Favoris</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">À tester</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Testés</span><span style="font-size:13px;padding:13px 0 11px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">Tous</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Carte</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:240px;flex-shrink:0;border-right:1px solid #E4DDD0;padding:18px;background:#FBF9F3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Filtres</span><a style="font-size:11px;font-weight:600;">Effacer</a></div>
+          <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 7px;">Statut</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #A9C2F2;border-radius:999px;padding:6px 12px;">♥ Favori ✓</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #E9CE93;border-radius:999px;padding:6px 12px;">À tester ✓</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;">Testé</span>
+          </div>
+          <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 7px;">Tags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Terrasse</span>
+            <span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Italien</span>
+            <span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Date night</span>
+            <span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Valeur sûre</span>
+          </div>
+          <a style="display:block;font-size:11px;font-weight:600;margin-top:12px;">Gérer les tags →</a>
+        </div>
+        <div style="flex:1;padding:18px 24px;min-width:0;">
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 16px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="display:grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:#2563EB;color:#fff;font-size:11px;font-weight:600;">2</span><span style="font-size:13px;font-weight:600;color:#211E1A;">Boîte de réception</span><span style="font-size:12px;color:#9A9081;">adresses envoyées par des amis, à trier</span></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #F0EBE0;"><span style="width:32px;height:32px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&q=80&auto=format&fit=crop') center/cover;"></span><span style="flex:1;font-size:12.5px;color:#211E1A;"><b>Le Cent 33</b> · envoyé par Camille</span><button style="padding:6px 12px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">À tester</button><button style="padding:6px 12px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;font-size:11px;color:#7A736A;font-family:inherit;cursor:pointer;">Ignorer</button></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:12px;color:#9A9081;"><b style="color:#211E1A;">9 résultats</b> · Favori + À tester · tag Terrasse</span><span style="font-size:11.5px;color:#9A9081;">Tri : distance ▾</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+            <article style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;background:#fff;"><div style="height:96px;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop') center/cover;"></div><div style="padding:10px 12px 12px;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:15px;color:#211E1A;">Chez Marius</span><svg width="13" height="13" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Provençal · 850 m</div></div></article>
+            <article style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;background:#fff;"><div style="height:96px;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80&auto=format&fit=crop') center/cover;"></div><div style="padding:10px 12px 12px;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:15px;color:#211E1A;">Ischia</span><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 6px;">À tester</span></div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Italien · 1,8 km · reco Camille</div></div></article>
+            <article style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;background:#fff;"><div style="height:96px;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&q=80&auto=format&fit=crop') center/cover;"></div><div style="padding:10px 12px 12px;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:15px;color:#211E1A;">Osteria Da Nino</span><svg width="13" height="13" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Italien · 1,2 km</div></div></article>
+            <article style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;background:#fff;"><div style="height:96px;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&q=80&auto=format&fit=crop') center/cover;"></div><div style="padding:10px 12px 12px;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:15px;color:#211E1A;">Kuzina</span><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 6px;">À tester</span></div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Grec · 2,4 km · Instagram</div></div></article>
+            <article style="border:1px solid #E4DDD0;border-radius:5px;overflow:hidden;background:#fff;"><div style="height:96px;background:#cdbfa8 url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80&auto=format&fit=crop') center/cover;"></div><div style="padding:10px 12px 12px;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:15px;color:#211E1A;">Le Quatrième Mur</span><svg width="13" height="13" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3.5 0 5 3.5 3.5 6.5C19 16.5 12 21 12 21Z"/></svg></div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Gastronomique · 600 m</div></div></article>
+            <article style="border:1px dashed #D8CFBE;border-radius:5px;display:flex;align-items:center;justify-content:center;min-height:150px;"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:#9A9081;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span style="font-size:12px;font-weight:600;color:#211E1A;">Trouver un restaurant</span></div></article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:3000px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">5 · Carte + liste synchronisée</div></div>
+  <div data-screen-label="D · Carte + liste" style="display:flex;min-height:780px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;display:flex;flex-direction:column;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Favoris</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">À tester</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Testés</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">Carte</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:330px;flex-shrink:0;border-right:1px solid #E4DDD0;display:flex;flex-direction:column;">
+          <div style="padding:14px 16px 8px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">12 dans la zone visible</div>
+          <div style="flex:1;overflow:hidden;padding:0 16px;">
+            <div style="display:flex;gap:11px;padding:10px 12px;margin:0 -12px;background:#FBF3E1;border-left:2px solid #C28A1B;border-bottom:1px solid #EDE7DB;">
+              <span style="width:44px;height:44px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+              <div style="flex:1;min-width:0;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Kuzina</div><div style="font-size:10.5px;color:#9A9081;">Grec · survolé — marqueur en surbrillance</div></div>
+            </div>
+            <div style="display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #EDE7DB;"><span style="width:44px;height:44px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Chez Marius</div><div style="font-size:10.5px;color:#9A9081;">Provençal · favori</div></div></div>
+            <div style="display:flex;gap:11px;padding:10px 0;border-bottom:1px solid #EDE7DB;"><span style="width:44px;height:44px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=300&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Osteria Da Nino</div><div style="font-size:10.5px;color:#9A9081;">Italien · favori</div></div></div>
+            <div style="display:flex;gap:11px;padding:10px 0;"><span style="width:44px;height:44px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=300&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Yamato</div><div style="font-size:10.5px;color:#9A9081;">Japonais · testé 7,5</div></div></div>
+          </div>
+        </div>
+        <div style="flex:1;position:relative;background:#E8E4DA;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 38.6%,transparent 38.6%),linear-gradient(0deg,transparent 0 58%,#DAD4C6 58% 58.6%,transparent 58.6%);"></div>
+          <div style="position:absolute;left:-10%;top:48%;width:130%;height:44px;background:#BFD6E8;transform:rotate(-5deg);opacity:.6;"></div>
+          <div style="position:absolute;left:16px;top:14px;display:flex;gap:6px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#2563EB;"></span>Favoris</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#C28A1B;"></span>À tester</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:2px;background:#8F867A;"></span>Testés</span><span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;">Tags ▾</span></div>
+          <div style="position:absolute;left:24%;top:34%;transform:translate(-50%,-100%);"><svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#2563EB"/><circle cx="15" cy="13.5" r="4" fill="#fff"/></svg></div>
+          <div style="position:absolute;left:55%;top:26%;transform:translate(-50%,-100%);"><svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#2563EB"/><circle cx="15" cy="13.5" r="4" fill="#fff"/></svg></div>
+          <div style="position:absolute;left:68%;top:64%;transform:translate(-50%,-100%);opacity:.8;"><svg width="22" height="22" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px rgba(33,30,26,.3));"><rect x="3" y="3" width="18" height="18" rx="4" fill="#8F867A"/><path d="m8 12.5 3 3 5.5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div style="position:absolute;left:42%;top:52%;transform:translate(-50%,-100%) scale(1.35);z-index:3;">
+            <svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 5px 8px rgba(33,30,26,.4));"><path d="M15 3 27 24.5c1 1.9-.4 4.5-2.6 4.5H5.6C3.4 29 2 26.4 3 24.5L15 3Z" fill="#C28A1B"/><circle cx="15" cy="22" r="3.4" fill="#fff"/></svg>
+            <div style="position:absolute;left:50%;bottom:40px;transform:translateX(-50%);background:#fff;border:1px solid #E4DDD0;border-radius:6px;box-shadow:0 8px 24px rgba(33,30,26,.22);padding:9px 11px;width:170px;">
+              <div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:13px;color:#211E1A;">Kuzina</span><span style="font-size:8.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 6px;">À tester</span></div>
+              <div style="display:flex;gap:9px;margin-top:5px;"><a style="font-size:10px;font-weight:600;">Ouvrir la fiche</a><a style="font-size:10px;font-weight:600;">Itinéraire ↗</a></div>
+            </div>
+          </div>
+          <button style="position:absolute;right:16px;bottom:16px;display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(33,30,26,.15);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Autour de moi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:3000px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">7+8 · Recherche externe (panneau) + visite (modale)</div></div>
+  <div data-screen-label="D · Recherche + visite" style="position:relative;display:flex;min-height:780px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="padding:16px 24px 0;">
+        <div style="display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px 3px 0 0;max-width:560px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13.5px;color:#211E1A;">pizza<span style="display:inline-block;width:1.5px;height:15px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></span><span style="margin-left:auto;font-size:11px;color:#9A9081;">Échap pour fermer</span></div>
+        <div style="max-width:560px;background:#fff;border:1px solid #E4DDD0;border-top:none;border-radius:0 0 6px 6px;box-shadow:0 14px 34px rgba(33,30,26,.16);">
+          <div style="display:flex;gap:6px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><span style="font-size:10.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:4px 10px;">Bordeaux</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Cuisine ▾</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">Prix ▾</span><span style="font-size:10.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:4px 10px;">Ouvert ✓</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 10px;">&lt; 2 km</span></div>
+          <div style="padding:9px 14px 3px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#2563EB;">Déjà dans Vito</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid #F0EBE0;"><span style="width:40px;height:40px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span class="serif" style="font-size:14px;color:#211E1A;">Ischia</span><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 6px;">À tester</span></div><div style="font-size:10.5px;color:#9A9081;">Pizza napolitaine · 1,8 km</div></div><a style="font-size:11px;font-weight:600;">Ouvrir</a></div>
+          <div style="padding:9px 14px 3px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Résultats externes</div>
+          <div style="display:flex;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid #F0EBE0;"><span style="width:40px;height:40px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14px;color:#211E1A;">Mamma Pizza</div><div style="font-size:10.5px;color:#9A9081;">rue Sainte-Catherine · 400 m · <span style="color:#5B7F5B;font-weight:600;">ouvert</span></div></div><button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Favori ▾</button></div>
+          <div style="display:flex;gap:10px;align-items:center;padding:9px 14px 13px;"><span style="width:40px;height:40px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=200&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14px;color:#211E1A;">La Piazzetta</div><div style="font-size:10.5px;color:#9A9081;">Chartrons · 1,4 km · <span style="color:#5B7F5B;font-weight:600;">ouvert</span></div></div><button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:999px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Favori ▾</button></div>
+        </div>
+      </div>
+      <div style="flex:1;position:relative;">
+        <div style="position:absolute;inset:0;background:rgba(33,30,26,.28);"></div>
+        <div style="position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:440px;background:#fff;border-radius:8px;box-shadow:0 24px 60px rgba(33,30,26,.3);padding:22px 24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:20px;color:#211E1A;">J'y suis allé — Ischia</span><span style="font-size:12px;color:#2563EB;font-weight:600;">Aujourd'hui ▾</span></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:14px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Note</span><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;position:relative;"><span style="position:absolute;left:0;top:0;bottom:0;width:88%;border-radius:999px;background:#2563EB;"></span><span style="position:absolute;left:88%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #2563EB;"></span></div><span class="serif" style="font-size:20px;color:#211E1A;">8,8</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">On y retourne</span><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Pizza parfaite</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Bruyant</span><span style="font-size:11px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:5px 11px;">+ Nouveau</span></div>
+          <div style="margin-top:12px;padding:10px 12px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:12.5px;color:#211E1A;">Marinara exceptionnelle. Y aller tôt, pas de résa.</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px;"><span style="font-size:12.5px;color:#211E1A;">Passer en favori ? <span style="font-size:11px;color:#9A9081;">(remplace le statut Testé, visites conservées)</span></span><div style="position:relative;width:42px;height:25px;border-radius:999px;background:#2563EB;"><span style="position:absolute;right:3px;top:3px;width:19px;height:19px;border-radius:50%;background:#fff;"></span></div></div>
+          <div style="display:flex;gap:9px;margin-top:16px;"><button style="flex:1;padding:12px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer la visite</button><button style="padding:12px 18px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#7A736A;font-family:inherit;cursor:pointer;">Annuler</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:3940px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2+3+9 · À tester / Testés + origine</div></div>
+  <div data-screen-label="D · À tester + Testés" style="display:flex;min-height:720px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Favoris</span><span style="font-size:13px;padding:15px 0 13px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">À tester</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Testés</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Carte</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 24px 0;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 12px;">Toutes</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 12px;">Recommandations</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 12px;">Trouvés par moi</span></div>
+      <div style="flex:1;padding:16px 24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div style="display:flex;gap:12px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;">
+            <span style="width:62px;height:62px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:16.5px;color:#211E1A;">Ischia</div>
+              <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Italien · Saint-Michel · 1,8 km</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">Reco par Camille</span><button style="margin-left:auto;padding:6px 12px;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;font-size:10.5px;font-weight:600;color:#5B7F5B;font-family:inherit;cursor:pointer;">✓ J'y suis allé</button></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;">
+            <span style="width:62px;height:62px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:16.5px;color:#211E1A;">Kuzina</div>
+              <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Grec moderne · Bastide · 2,4 km</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Trouvé par moi · Instagram</span><button style="margin-left:auto;padding:6px 12px;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;font-size:10.5px;font-weight:600;color:#5B7F5B;font-family:inherit;cursor:pointer;">✓ J'y suis allé</button></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:13px 15px;">
+            <span style="width:62px;height:62px;border-radius:5px;flex-shrink:0;background:#cdbfa8 url('https://images.unsplash.com/photo-1600891964092-4316c288032e?w=300&q=80&auto=format&fit=crop') center/cover;"></span>
+            <div style="flex:1;min-width:0;">
+              <div class="serif" style="font-size:16.5px;color:#211E1A;">Maison Nouvelle</div>
+              <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Bistronomique · Saint-Pierre · 700 m</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">Reco par Marcel (Cercle)</span><button style="margin-left:auto;padding:6px 12px;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;font-size:10.5px;font-weight:600;color:#5B7F5B;font-family:inherit;cursor:pointer;">✓ J'y suis allé</button></div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Origine — mini-formulaire</div>
+            <div style="display:flex;gap:7px;margin-top:9px;"><span style="font-size:11px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1.5px solid #C28A1B;border-radius:999px;padding:5px 11px;">Recommandation</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Trouvé par moi</span></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding:9px 11px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;"><span style="font-size:12.5px;color:#211E1A;">Par :</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 8px 3px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#cdbfa8;color:#fff;font-size:7.5px;">M</span>Marcel (Cercle)</span><span style="font-size:11px;color:#b3a896;">suggestions du Cercle…</span></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Aperçu Testés · dernière visite en premier</span><a style="font-size:11.5px;font-weight:600;">Ouvrir le sous-onglet →</a></div>
+        <div style="display:flex;gap:14px;">
+          <div style="flex:1;display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 14px;"><span style="width:44px;height:44px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=300&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Yamato <span style="font-size:12px;font-weight:600;">· 7,5</span></div><div style="font-size:10.5px;color:#9A9081;">22 août · Bon rapport Q/P, Bruyant</div></div><button style="padding:6px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;font-size:10.5px;font-weight:600;color:#2563EB;font-family:inherit;cursor:pointer;">♥ Passer en favori</button></div>
+          <div style="flex:1;display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 14px;"><span style="width:44px;height:44px;border-radius:5px;background:#cdbfa8 url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&q=80&auto=format&fit=crop') center/cover;"></span><div style="flex:1;"><div class="serif" style="font-size:14.5px;color:#211E1A;">Le Bouchon <span style="font-size:12px;font-weight:600;">· 6,8</span></div><div style="font-size:10.5px;color:#9A9081;">14 juil. · Correct sans plus</div></div><button style="padding:6px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;font-size:10.5px;font-weight:600;color:#2563EB;font-family:inherit;cursor:pointer;">♥ Passer en favori</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:3940px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">10+12 · Admin tags + état vide</div></div>
+  <div data-screen-label="D · Tags + vide" style="display:flex;min-height:720px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Accueil</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;min-width:0;">
+      <div style="flex:1;padding:26px 28px;border-right:1px solid #E4DDD0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;"><h2 class="serif" style="margin:0;font-size:22px;font-weight:500;color:#211E1A;">Gérer les tags</h2><button style="padding:8px 14px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">+ Nouveau tag</button></div>
+        <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:0 14px;align-items:center;margin-top:16px;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:4px 16px;">
+          <div style="display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid #F0EBE0;"><span style="width:13px;height:13px;border-radius:4px;background:#5B7F5B;"></span><span style="font-size:13.5px;font-weight:500;color:#211E1A;">Valeur sûre</span></div><span style="font-size:11px;color:#9A9081;border-bottom:1px solid #F0EBE0;padding:11px 0;">Commun</span><span style="font-size:11px;color:#9A9081;border-bottom:1px solid #F0EBE0;padding:11px 0;">12 adresses</span><a style="font-size:11px;font-weight:600;border-bottom:1px solid #F0EBE0;padding:11px 0;">Modifier</a>
+          <div style="display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid #F0EBE0;"><span style="width:13px;height:13px;border-radius:4px;background:#A65D57;"></span><span style="font-size:13.5px;font-weight:500;color:#211E1A;">Date night</span></div><span style="font-size:11px;color:#9A9081;border-bottom:1px solid #F0EBE0;padding:11px 0;">Restaurant</span><span style="font-size:11px;color:#9A9081;border-bottom:1px solid #F0EBE0;padding:11px 0;">6 adresses</span><a style="font-size:11px;font-weight:600;border-bottom:1px solid #F0EBE0;padding:11px 0;">Modifier</a>
+          <div style="display:flex;align-items:center;gap:9px;padding:11px 0;"><span style="width:13px;height:13px;border-radius:4px;background:#2563EB;"></span><span style="font-size:13.5px;font-weight:500;color:#211E1A;">Bord de mer</span></div><span style="font-size:11px;color:#9A9081;padding:11px 0;">Hôtel</span><span style="font-size:11px;color:#9A9081;padding:11px 0;">4 adresses</span><a style="font-size:11px;font-weight:600;padding:11px 0;">Modifier</a>
+        </div>
+        <div style="margin-top:14px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:6px;padding:13px 16px;">
+          <div style="font-size:12.5px;font-weight:600;color:#A65D57;">Supprimer « Terrasse sympa » ?</div>
+          <div style="font-size:11.5px;color:#7A736A;margin-top:4px;">3 restaurants perdront ce tag. Vous pouvez plutôt le <a style="font-weight:600;">fusionner avec « Terrasse »</a>.</div>
+          <div style="display:flex;gap:8px;margin-top:10px;"><button style="padding:8px 14px;background:#A65D57;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">Supprimer</button><button style="padding:8px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:11.5px;color:#7A736A;font-family:inherit;cursor:pointer;">Annuler</button></div>
+        </div>
+      </div>
+      <div style="width:420px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 44px;">
+        <div style="width:84px;height:84px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;display:grid;place-items:center;margin-bottom:20px;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg></div>
+        <h2 class="serif" style="margin:0;font-size:21px;font-weight:500;color:#211E1A;">Rien à tester pour l'instant</h2>
+        <p style="margin:9px 0 20px;font-size:13px;line-height:1.6;color:#7A736A;">Notez ici les adresses qu'on vous recommande, pour ne plus les oublier.</p>
+        <button style="display:flex;align-items:center;gap:8px;background:#2563EB;color:#fff;border:none;border-radius:3px;padding:12px 20px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Trouver un restaurant</button>
+        <div style="font-size:10.5px;color:#b3a896;margin-top:14px;">État vide desktop — même invitation par sous-onglet</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

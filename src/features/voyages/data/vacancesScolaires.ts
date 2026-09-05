@@ -14,4 +14,7 @@ import type { Periode } from "../domain/planning";
 //
 // Exemple de ligne, à remplacer par le calendrier réel :
 //   { id: "toussaint-2026", libelle: "Toussaint", debut: "2026-10-17", fin: "2026-11-02" },
+/** Zone annoncée à l'écran (badge « Vacances · Zone C » de la maquette). */
+export const ZONE_SCOLAIRE = "C";
+
 export const VACANCES_ZONE_C: Periode[] = [];

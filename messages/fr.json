@@ -659,7 +659,34 @@
       "calendrierAbsent": "Le calendrier des vacances scolaires n'est pas encore renseigné — la frise n'affiche donc que vos voyages.",
       "pendantVacances": "pendant {libelle}",
       "horsFenetre": "{titre} — hors des douze mois affichés",
-      "aucunVoyageDate": "Aucun voyage daté à placer sur la frise."
+      "aucunVoyageDate": "Aucun voyage daté à placer sur la frise.",
+      "zone": "Vacances · Zone {zone}",
+      "vues": {
+        "semaine": "Semaine",
+        "mois": "Mois",
+        "annee": "Année"
+      },
+      "jours": {
+        "lun": "Lun",
+        "mar": "Mar",
+        "mer": "Mer",
+        "jeu": "Jeu",
+        "ven": "Ven",
+        "sam": "Sam",
+        "dim": "Dim"
+      },
+      "moisPrecedent": "Mois précédent",
+      "moisSuivant": "Mois suivant",
+      "datesAConfirmer": "dates à confirmer",
+      "participants": "{n, plural, one {# participant} other {# participants}}",
+      "legende": {
+        "a_venir": "À venir",
+        "en_cours": "En cours",
+        "en_preparation": "En préparation / idée",
+        "vacances": "Vacances scolaires (zone {zone})"
+      },
+      "anneeScolaire": "Année scolaire",
+      "creerIdee": "Créer une idée"
     },
     "partageLien": {
       "titre": "Partager par lien",
