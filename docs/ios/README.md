@@ -97,6 +97,8 @@ navigateur du système ne partage pas la session, il afficherait une erreur.
 
 - `docs/ios/authentification.md` — liens profonds, Universal Links, redirect URLs
   à saisir dans Supabase, persistance de session.
+- `docs/ios/app-store-checklist.md` — fiche, captures, compte de test, notes au
+  reviewer, et le point d'arrêt sur l'abonnement (règle 3.1.1).
 - `docs/ios/cles-externes.md` — carte et Places dans la WebView (rien à
   configurer), et les deux pièges rencontrés en le vérifiant.
 

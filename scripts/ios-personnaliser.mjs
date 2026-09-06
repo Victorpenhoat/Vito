@@ -69,4 +69,33 @@ if (!pbx.includes("CODE_SIGN_ENTITLEMENTS")) {
   writeFileSync(PBXPROJ, pbx);
   console.log("project.pbxproj : CODE_SIGN_ENTITLEMENTS rattaché");
 }
+// 4. Manifeste de confidentialité — obligatoire à la soumission. Le fichier
+//    doit être RESSOURCE de la cible, sinon il ne part pas dans le bundle et
+//    App Store Connect le réclame après coup.
+const REF = "AA00PRIV0000000000000001";
+const BUILD = "AA00PRIV0000000000000002";
+if (!pbx.includes("PrivacyInfo.xcprivacy")) {
+  pbx = pbx
+    .replace(
+      /(\/\* Begin PBXBuildFile section \*\/\n)/,
+      `$1\t\t${BUILD} /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ${REF} /* PrivacyInfo.xcprivacy */; };\n`,
+    )
+    .replace(
+      /(\/\* Begin PBXFileReference section \*\/\n)/,
+      `$1\t\t${REF} /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };\n`,
+    )
+    // Dans le groupe « App », à côté d'Info.plist.
+    .replace(
+      /(\t+)([0-9A-F]{24} \/\* Info\.plist \*\/,\n)/,
+      `$1$2$1${REF} /* PrivacyInfo.xcprivacy */,\n`,
+    )
+    // Et dans la phase Resources, pour être copié dans le bundle.
+    .replace(
+      /(\t+)([0-9A-F]{24} \/\* Assets\.xcassets in Resources \*\/,\n)/,
+      `$1$2$1${BUILD} /* PrivacyInfo.xcprivacy in Resources */,\n`,
+    );
+  writeFileSync(PBXPROJ, pbx);
+  console.log("project.pbxproj : PrivacyInfo.xcprivacy ajouté aux ressources");
+}
+
 console.log("Personnalisation iOS appliquée.");
