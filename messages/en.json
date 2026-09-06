@@ -579,7 +579,7 @@
       "titre": "Travellers",
       "vide": "Nobody is on this trip yet.",
       "ajouter": "Add a traveller",
-      "depuisCercle": "From my Circle",
+      "depuisCercle": "From my circle",
       "depuisComptes": "Shared accounts",
       "libre": "Someone else",
       "nomPlaceholder": "First and last name",
@@ -591,7 +591,18 @@
         "cercle": "Circle",
         "libre": "guest"
       },
-      "echec": "Cannot add right now."
+      "echec": "Cannot invite right now.",
+      "groupeExternes": "External guests",
+      "type": "Type",
+      "adulte": "Adult",
+      "enfant": "Child",
+      "enfantAge": "Child · {age} years",
+      "organisateur": "Organiser",
+      "enAttente": "invitation sent · pending",
+      "inviteExterne": "Invite someone outside the Circle",
+      "emailPlaceholder": "Email address",
+      "inviter": "Invite",
+      "aideExterne": "They create a free Vito account by opening the link, and then appear in the expenses."
     },
     "programme": {
       "titre": "Itinerary",

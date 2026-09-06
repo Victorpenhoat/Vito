@@ -167,6 +167,7 @@ export async function VoyageDetail({ id }: { id: string }) {
           <section id="voyageurs" className="scroll-mt-4">
             <SectionLabel>{t("participants.titre")}</SectionLabel>
             <ParticipantsList voyageId={voyage.id} participants={participants} proches={proches}
+              aujourdhui={today}
               comptes={membres.map((m) => ({ profileId: m.profile_id, nom: m.display_name ?? m.profile_id }))} />
           </section>
 
