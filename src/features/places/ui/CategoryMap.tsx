@@ -14,6 +14,8 @@ import {
 import type { Place } from "../domain/filterPlaces";
 import { CATEGORY_UI, type CategorieUi } from "../domain/categoryUiConfig";
 import { restoStatut, type RestoStatut } from "@/features/restos/domain/statut";
+import { LienExterne } from "@/features/shared/ui/LienExterne";
+import { positionActuelle } from "@/lib/platform/position";
 
 // Carte v2 (design Onglet_Resto_v2, écran 5) : marqueurs distincts par statut
 // (pin accent favori / triangle ambre à tester / carré gris testé), fiche
@@ -167,9 +169,13 @@ function AutourDeMoi({ label }: { label: string }) {
     <button
       type="button"
       data-testid="autour-de-moi"
-      onClick={() =>
-        navigator.geolocation?.getCurrentPosition((p) => map.setView([p.coords.latitude, p.coords.longitude], 14))
-      }
+      onClick={async () => {
+        // Passe par le helper de plateforme : dans la coque, c'est iOS qui
+        // demande l'autorisation et rend la position. Un refus ne bouge pas la
+        // carte, plutôt que d'afficher une alerte de plus.
+        const pos = await positionActuelle();
+        if (pos) map.setView([pos.lat, pos.lng], 14);
+      }}
       className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_rgba(33,30,26,.15)] focus-visible:outline-2 focus-visible:outline-accent"
     >
       <LocateFixed size={13} className="text-accent" aria-hidden />
@@ -225,12 +231,12 @@ export function CategoryMap({ places, surbrillanceId, categorie = "resto", onZon
                 <Link href={`${config.basePath}/${selection.etablissement.id}`} className="text-xs font-semibold text-accent hover:underline">
                   {tr("carte.ouvrirFiche")}
                 </Link>
-                <a
+                <LienExterne
                   href={`https://www.google.com/maps/dir/?api=1&destination=${selection.etablissement.lat},${selection.etablissement.lng}`}
-                  target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-accent hover:underline"
+                  className="text-xs font-semibold text-accent hover:underline"
                 >
                   {tr("carte.itineraire")} ↗
-                </a>
+                </LienExterne>
               </div>
             </div>
             <button type="button" aria-label={tr("carte.fermer")} onClick={() => setSelection(null)}

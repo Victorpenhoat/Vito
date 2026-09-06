@@ -8,6 +8,7 @@ import { LocateFixed } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { centreLieux, type LieuCarte } from "../domain/caveCarte";
 import { VerresLecture } from "./NoteVerres";
+import { positionActuelle } from "@/lib/platform/position";
 
 // Carte de la Cave (design Vins & Cave écran 6). Les marqueurs des restos
 // portent le NOMBRE de dégustations : ici, ce qui compte n'est pas le statut du
@@ -32,9 +33,10 @@ function AutourDeMoi({ label }: { label: string }) {
     <button
       type="button"
       data-testid="cave-autour-de-moi"
-      onClick={() =>
-        navigator.geolocation?.getCurrentPosition((p) => map.setView([p.coords.latitude, p.coords.longitude], 13))
-      }
+      onClick={async () => {
+        const pos = await positionActuelle();
+        if (pos) map.setView([pos.lat, pos.lng], 13);
+      }}
       className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_rgba(33,30,26,.15)] focus-visible:outline-2 focus-visible:outline-accent"
     >
       <LocateFixed size={13} className="text-accent" aria-hidden />

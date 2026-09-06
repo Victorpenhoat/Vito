@@ -61,6 +61,38 @@ xcodebuild -scheme App -sdk iphonesimulator -configuration Debug \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
+## Plugins natifs, un par un
+
+Aucun plugin n'est installé « au cas où » : chacun doit apporter quelque chose
+que le web ne fait pas.
+
+| Plugin | Ce qu'il apporte |
+|---|---|
+| `@capacitor/browser` | Ouvre les liens externes (Maps, site du lieu, marchand) dans le navigateur du système, PAR-DESSUS l'app. Sans lui, un lien remplace Vito par le site visité, sans barre d'adresse ni retour : l'utilisateur est piégé. |
+| `@capacitor/geolocation` | Autorisation iOS native et position plus précise pour « autour de moi », sans la bannière permanente de Safari. |
+| `@capacitor/share` | Feuille de partage iOS sur une fiche ou un voyage. |
+| `@capacitor/haptics` | Un seul point de contact : l'interrupteur « passer en favori », qu'on bascule du pouce sans qu'aucun écran ne le confirme. Partout ailleurs, ce serait du bruit. |
+
+`@capacitor/app` viendra avec les liens profonds (retour du lien magique dans
+l'app), pas avant : un plugin qui ne sert à rien ne s'installe pas.
+
+## Les helpers de plateforme
+
+`src/lib/platform/` — le seul endroit du code qui sait qu'une coque existe.
+
+- `natif.ts` — détecte le pont Capacitor **par le global injecté**, sans importer
+  `@capacitor/core` : le bundle web ne paie rien pour l'existence de l'app.
+- `liens.ts`, `partage.ts`, `position.ts`, `haptique.ts` — chacun essaie le
+  chemin natif, puis retombe sur le web. Les plugins sont chargés en **import
+  paresseux** : leur code n'est téléchargé que dans la coque.
+
+Si la détection échoue, tout retombe sur le comportement web. Une coque qui
+n'est pas reconnue dégrade, elle ne casse pas. 17 tests unitaires couvrent les
+deux chemins et les refus (`src/lib/platform/platform.test.ts`).
+
+Un document privé de Vito (un scan, un voucher) reste dans la WebView : le
+navigateur du système ne partage pas la session, il afficherait une erreur.
+
 ## Ce qui reste ouvert
 
 - **Bundle ID et nom** : `com.badakan.vito` / « Vito » sont **provisoires**

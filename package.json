@@ -25,7 +25,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
+    "@capacitor/browser": "^8.0.4",
     "@capacitor/core": "^8.5.1",
+    "@capacitor/geolocation": "^8.2.2",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/share": "^8.0.1",
     "@sentry/nextjs": "^10.64.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",

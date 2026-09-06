@@ -2,24 +2,23 @@
 import { useState } from "react";
 import { Check, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { partager } from "@/lib/platform/partage";
 
-// Partage natif du lien de la fiche (Web Share API) ; fallback : copie du lien.
+// Partage du lien de la fiche.
+//
+// Trois chemins, un seul geste : la feuille de partage iOS dans la coque,
+// l'API du navigateur quand il en a une, le presse-papiers sinon. C'est le
+// helper qui choisit ; ici on se contente de dire « copié » quand ça l'est —
+// et surtout pas quand l'utilisateur a refermé la feuille de partage.
 export function ShareVoyageButton({ titre }: { titre: string }) {
   const t = useTranslations("voyages");
   const [copied, setCopied] = useState(false);
   async function share() {
-    const url = window.location.href;
     try {
-      if (navigator.share) { await navigator.share({ title: titre, url }); return; }
-      throw new Error("share-indisponible");
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "AbortError") return;
-      try {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      } catch { /* presse-papier indisponible */ }
-    }
+      if ((await partager({ titre, url: window.location.href })) !== "copie") return;
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* presse-papiers indisponible : le geste n'a rien à rattraper */ }
   }
   return (
     <button type="button" onClick={() => void share()} aria-label={t("partager")}

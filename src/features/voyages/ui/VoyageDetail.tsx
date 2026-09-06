@@ -29,6 +29,7 @@ import { openVoyageGroupe } from "@/features/depenses/data/actions";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { Card } from "@/features/shared/ui/Card";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
+import { LienExterne } from "@/features/shared/ui/LienExterne";
 
 const TYPE_ICONS: Record<string, LucideIcon> = {
   vol: Plane,
@@ -203,7 +204,7 @@ export async function VoyageDetail({ id }: { id: string }) {
                   <span className="flex flex-wrap gap-3 text-sm">
                     {r.conciergerie_tel && <a href={`tel:${r.conciergerie_tel}`} className="text-accent hover:underline">{r.conciergerie_tel}</a>}
                     {r.conciergerie_mail && <a href={`mailto:${r.conciergerie_mail}`} className="text-accent hover:underline">{r.conciergerie_mail}</a>}
-                    {r.lien && <a href={r.lien} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">{t("voirLien")}</a>}
+                    {r.lien && <LienExterne href={r.lien} className="text-accent hover:underline">{t("voirLien")}</LienExterne>}
                     {/* H6 : l'hébergement réservé est au carnet — on y mène. */}
                     {r.etablissement_id && (
                       <Link href={`/hotels/${r.etablissement_id}`} data-testid="reservation-hotel"
