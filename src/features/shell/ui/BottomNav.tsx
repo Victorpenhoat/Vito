@@ -13,7 +13,7 @@ export function BottomNav({
   return (
     <nav
       data-testid="bottom-nav"
-      className="fixed inset-x-0 bottom-0 z-20 flex border-t border-line bg-sidebar md:hidden"
+      className="fixed inset-x-0 bottom-0 z-20 flex border-t border-line bg-sidebar pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       {bottom.map((it) => {
         const Icon = NAV_ICONS[it.key];

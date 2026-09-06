@@ -14,6 +14,10 @@
     "test:e2e": "playwright test",
     "test:rls": "supabase test db",
     "test:ci": "npm run typecheck && npm run lint && npm run test && npm run test:e2e",
+    "ios:sync": "cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:assets": "capacitor-assets generate --ios",
+    "ios:regen": "rm -rf ios && cap add ios --packagemanager SPM && cap sync ios",
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --local > src/types/database.types.ts",
     "storybook": "storybook dev -p 6006",
@@ -21,6 +25,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
+    "@capacitor/core": "^8.5.1",
     "@sentry/nextjs": "^10.64.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
@@ -36,6 +41,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/ios": "^8.5.1",
     "@playwright/test": "^1.61.1",
     "@storybook/addon-a11y": "^10.4.6",
     "@storybook/addon-docs": "^10.4.6",
