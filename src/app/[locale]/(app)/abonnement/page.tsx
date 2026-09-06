@@ -5,6 +5,7 @@ import { SubscribeButtons } from "@/features/abonnement/ui/SubscribeButtons";
 import { CancelButton } from "@/features/abonnement/ui/CancelButton";
 import { ManageButton } from "@/features/abonnement/ui/ManageButton";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
+import { estDansLaCoque } from "@/lib/platform/coque";
 
 function FeatureRow({ ok, label }: { ok: boolean; label: string }) {
   return (
@@ -20,8 +21,32 @@ export default async function AbonnementPage() {
   const locale = await getLocale();
   const sub = await getSubscription();
   const isPremium = await getIsPremium();
+  // Règle 3.1.1 : ce qui débloque des fonctions dans l'app doit passer par un
+  // achat intégré. Vito n'en a pas — l'abonnement se prend donc sur le web, et
+  // l'app n'en montre ni le prix ni le bouton. On dit son état, rien de plus :
+  // un utilisateur Premium doit pouvoir le vérifier ici.
   const canceled = sub?.status === "canceled";
   const periodEnd = formatDay(sub?.current_period_end ?? null, locale);
+
+  const dansLaCoque = await estDansLaCoque();
+  if (dansLaCoque) {
+    return (
+      <main className="flex flex-col gap-6 p-4 md:p-8">
+        <PageHeader eyebrow={t("eyebrow")} title={t("title")} />
+        <div data-testid="abonnement-coque" className="max-w-md rounded-card border border-line bg-surface p-7">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
+            {t(isPremium ? "premium" : "gratuit")}
+          </div>
+          <p className="mt-2 text-sm text-muted">{t("horsApp")}</p>
+          {isPremium && (
+            <p className="mt-2 text-sm text-muted">
+              {canceled ? t("premiumUntil", { date: periodEnd }) : t("renewsOn", { date: periodEnd })}
+            </p>
+          )}
+        </div>
+      </main>
+    );
+  }
   const feats = [
     { key: "carnet", free: true },
     { key: "voyages", free: true },

@@ -5,6 +5,8 @@ import { partager } from "./partage";
 import { positionActuelle } from "./position";
 import { toucher } from "./haptique";
 import { cheminDuLien, ecouterLiensProfonds } from "./liensProfonds";
+import { uaEstCoque, MARQUEUR_COQUE } from "./coque";
+import { filterNav, NAV_ITEMS } from "@/features/shell/nav-config";
 
 const ouvrirNatif = vi.fn();
 const partagerNatif = vi.fn();
@@ -231,5 +233,37 @@ describe("ecouterLiensProfonds", () => {
 
     arreter();
     expect(retire).toHaveBeenCalled();
+  });
+});
+
+describe("uaEstCoque", () => {
+  const SAFARI = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15";
+
+  it("reconnaît la coque à son marqueur", () => {
+    expect(uaEstCoque(`${SAFARI} ${MARQUEUR_COQUE}`)).toBe(true);
+  });
+
+  it("ne prend pas Safari pour la coque", () => {
+    expect(uaEstCoque(SAFARI)).toBe(false);
+    expect(uaEstCoque(null)).toBe(false);
+    expect(uaEstCoque(undefined)).toBe(false);
+    expect(uaEstCoque("")).toBe(false);
+  });
+});
+
+describe("filterNav dans la coque", () => {
+  it("retire l'abonnement de la navigation de l'app — et de nulle part ailleurs", () => {
+    const web = filterNav(NAV_ITEMS, "client").map((i) => i.key);
+    const app = filterNav(NAV_ITEMS, "client", true).map((i) => i.key);
+    expect(web).toContain("abonnement");
+    expect(app).not.toContain("abonnement");
+    // Le reste ne bouge pas : on masque une entrée, on ne réécrit pas le menu.
+    expect(app).toEqual(web.filter((k) => k !== "abonnement"));
+  });
+
+  it("le filtrage par rôle continue de s'appliquer dans la coque", () => {
+    const app = filterNav(NAV_ITEMS, "client", true).map((i) => i.key);
+    expect(app).not.toContain("admin");
+    expect(filterNav(NAV_ITEMS, "admin", true).map((i) => i.key)).toContain("admin");
   });
 });

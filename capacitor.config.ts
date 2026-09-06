@@ -36,6 +36,10 @@ const config: CapacitorConfig = {
   },
 
   ios: {
+    // La coque s'annonce. C'est ce qui permet au SERVEUR de savoir qu'il rend
+    // pour l'app — et donc de ne pas y afficher l'abonnement (règle 3.1.1
+    // d'Apple), sans que la page clignote le temps qu'un script s'en aperçoive.
+    appendUserAgent: "VitoiOS",
     // Le fond de l'app (--app du thème clair) : la bande sous la WebView
     // pendant le rebond du défilement, et derrière les safe areas.
     backgroundColor: "#FBF9F3",

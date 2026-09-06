@@ -842,7 +842,8 @@
       "voyages": "Viaggi e prenotazioni",
       "conciergerie": "Concierge illimitato",
       "foyer": "Nucleo condiviso"
-    }
+    },
+    "horsApp": "L'abbonamento non si gestisce dall'app."
   },
   "conciergerie": {
     "title": "Concierge",

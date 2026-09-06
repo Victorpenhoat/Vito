@@ -5,33 +5,30 @@ Ce document dit quoi remplir, avec quoi, et pourquoi.
 
 ---
 
-## ⚠️ À trancher AVANT de soumettre : l'abonnement
+## L'abonnement, et la règle 3.1.1
 
-**C'est le point qui fait rejeter une app, pas un détail de fiche.**
+Vito vend un abonnement qui débloque des fonctions de l'app. La règle **3.1.1**
+réserve cela aux **achats intégrés** ; un lien vers un paiement extérieur est un
+motif de rejet classique.
 
-Vito vend un abonnement (`/abonnement`, boutons mensuel et annuel) qui passe par
-**Stripe** et débloque des fonctions de l'app — au-delà de deux voyages, il faut
-être Premium. La règle **3.1.1** d'Apple est sans ambiguïté : un contenu ou une
-fonctionnalité débloqués dans l'app doivent être vendus par **achat intégré**,
-avec la commission qui va avec. Un lien vers un paiement extérieur est un motif
-de rejet classique.
+**Décision du PO (2026-09-06) : l'abonnement est masqué dans la coque.** On
+s'abonne sur le web, l'app en tient compte — c'est ce que font Netflix ou
+Spotify. Les achats intégrés restent hors périmètre.
 
-Trois voies, par ordre de coût croissant :
+Concrètement, quand l'app tourne en natif :
 
-1. **Masquer l'abonnement dans la coque** — la page et l'invitation à
-   s'abonner disparaissent quand l'app tourne en natif ; on s'abonne sur le web,
-   et l'app en tient compte. C'est ce que font Netflix ou Spotify. Techniquement :
-   quelques lignes derrière `estNatif()`, moins d'une journée. **Ma
-   recommandation** — les achats intégrés sont hors périmètre de ce chantier, et
-   tu es ton propre premier utilisateur.
-2. **Implémenter les achats intégrés** — le chemin conforme et complet, mais
-   c'est un chantier à part entière (StoreKit, produits, restauration d'achat,
-   accord fiscal, et 15 à 30 % de commission).
-3. **Ne rien changer** — rejet quasi certain dès la première revue.
+- la page `/abonnement` ne montre **ni prix ni bouton** — seulement l'état du
+  compte (Gratuit ou Premium), qu'un abonné doit pouvoir vérifier ;
+- l'entrée « Abonnement » disparaît de la navigation ;
+- la limite de voyages du plan gratuit se dit, mais ne mène plus nulle part.
 
-Le lot 7 ne peut pas commencer tant que ce n'est pas tranché.
+La détection se fait **côté serveur**, au User-Agent que la coque ajoute
+(`appendUserAgent: "VitoiOS"`) : la page ne rend pas ce qu'elle doit cacher,
+plutôt que de le rendre puis de l'effacer sous les yeux du reviewer. Trois tests
+e2e le vérifient, dont un qui s'assure qu'aucun « € » ne subsiste dans la page.
 
----
+Si un jour les achats intégrés arrivent, c'est ce même point de bascule qu'il
+faudra rouvrir.
 
 ## Fiche App Store Connect
 
@@ -152,7 +149,7 @@ fait des choses qu'un site ne fait pas.
 
 ## Avant d'envoyer la première build
 
-- [ ] L'abonnement est tranché (voir tout en haut)
+- [x] L'abonnement est masqué dans la coque (voir tout en haut)
 - [ ] Nom et bundle ID arrêtés, `npm run ios:regen` passé
 - [ ] `APPLE_APP_ID` posé dans Vercel, et
       `/.well-known/apple-app-site-association` répond 200 en JSON

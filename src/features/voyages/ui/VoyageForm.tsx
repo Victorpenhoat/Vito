@@ -8,6 +8,7 @@ import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
 import { Input } from "@/features/shared/ui/Input";
 import { Select } from "@/features/shared/ui/Select";
+import { estNatif } from "@/lib/platform/natif";
 
 export type VoyageInitial = {
   id: string;
@@ -54,8 +55,13 @@ export function VoyageForm({ mode = "create", initial }: { mode?: "create" | "ed
       <Input name="coverUrl" type="url" placeholder={t("coverUrl")} defaultValue={initial?.cover_url ?? ""} aria-label={t("coverUrl")} />
       {state?.error && <p role="alert" className="text-danger">{state.error}</p>}
       {state && "limit" in state && state.limit && (
+        // Dans la coque iOS, la limite se dit mais ne mène nulle part : la
+        // règle 3.1.1 d'Apple interdit de conduire à un paiement hors achat
+        // intégré. Sur le web, le lien reste.
         <p data-testid="voyage-limit-cta">
-          <Link href="/abonnement" className="text-accent hover:underline">{t("limitCta")}</Link>
+          {estNatif()
+            ? <span className="text-muted">{t("limitCta")}</span>
+            : <Link href="/abonnement" className="text-accent hover:underline">{t("limitCta")}</Link>}
         </p>
       )}
       <Button type="submit" pending={pending}>{mode === "create" ? t("create") : t("save")}</Button>

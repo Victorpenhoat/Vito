@@ -842,7 +842,8 @@
       "voyages": "Trips & bookings",
       "conciergerie": "Unlimited concierge",
       "foyer": "Shared household"
-    }
+    },
+    "horsApp": "Subscriptions aren't managed in the app."
   },
   "conciergerie": {
     "title": "Concierge",
