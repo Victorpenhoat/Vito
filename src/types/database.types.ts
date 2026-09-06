@@ -1752,6 +1752,7 @@ export type Database = {
       }
       voyage_etapes: {
         Row: {
+          categorie: string | null
           created_at: string
           created_by: string
           etablissement_id: string | null
@@ -1759,12 +1760,14 @@ export type Database = {
           id: string
           jour: string | null
           lieu: string | null
+          moment: string | null
           notes: string | null
           ordre: number
           titre: string
           voyage_id: string
         }
         Insert: {
+          categorie?: string | null
           created_at?: string
           created_by: string
           etablissement_id?: string | null
@@ -1772,12 +1775,14 @@ export type Database = {
           id?: string
           jour?: string | null
           lieu?: string | null
+          moment?: string | null
           notes?: string | null
           ordre?: number
           titre: string
           voyage_id: string
         }
         Update: {
+          categorie?: string | null
           created_at?: string
           created_by?: string
           etablissement_id?: string | null
@@ -1785,6 +1790,7 @@ export type Database = {
           id?: string
           jour?: string | null
           lieu?: string | null
+          moment?: string | null
           notes?: string | null
           ordre?: number
           titre?: string

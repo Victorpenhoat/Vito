@@ -16,7 +16,7 @@ import { ReservationVouchers } from "./ReservationVouchers";
 import { DepensesVoyageBlock } from "./DepensesVoyageBlock";
 import { getDepensesVoyage } from "../data/queries";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { resumeDetails } from "../domain/reservationDetails";
+import { resumeDetails, heureDeReservation } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
@@ -173,6 +173,17 @@ export async function VoyageDetail({ id }: { id: string }) {
           <section id="programme" className="scroll-mt-4">
             <SectionLabel>{t("programme.titre")}</SectionLabel>
             <ProgrammeBlock voyageId={voyage.id} etapes={etapes}
+              // « Les réservations liées apparaissent automatiquement » : on les
+              // passe au programme plutôt que de demander de les ressaisir.
+              reservations={reservations.map((r) => ({
+                id: r.id,
+                type: r.type,
+                libelle: [r.fournisseur, r.reference].filter(Boolean).join(" · ") || t(`types.${r.type}`),
+                dateDebut: r.date_debut,
+                dateFin: r.date_fin,
+                heure: heureDeReservation(r.type, r.details),
+                resume: resumeDetails(r.type, r.details),
+              }))}
               dateDebut={voyage.date_debut} dateFin={voyage.date_fin} />
           </section>
 

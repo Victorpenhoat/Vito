@@ -31,7 +31,7 @@ export async function getVoyageDetail(id: string) {
     supabase.from("voyage_participants")
       .select("id, profile_id, family_member_id, display_name, email, role").eq("voyage_id", id),
     supabase.from("voyage_etapes")
-      .select("id, jour, heure, titre, lieu, etablissement_id, notes, ordre").eq("voyage_id", id),
+      .select("id, jour, heure, titre, lieu, etablissement_id, notes, ordre, categorie, moment").eq("voyage_id", id),
   ]);
   if (voyageRes.error) throw voyageRes.error;
   if (resRes.error) throw resRes.error;
@@ -65,6 +65,8 @@ export async function getVoyageDetail(id: string) {
       etablissementId: e.etablissement_id,
       notes: e.notes,
       ordre: e.ordre,
+      categorie: e.categorie,
+      moment: e.moment,
     })),
     isOwner: voyageRes.data.owner_id === uid,
   };

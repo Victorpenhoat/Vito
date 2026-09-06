@@ -76,6 +76,11 @@ export const participantInputSchema = z
   });
 export type ParticipantInput = z.infer<typeof participantInputSchema>;
 
+/** Catégories d'étape de la maquette « Programme ». */
+export const CATEGORIES_ETAPE = ["trajet", "hebergement", "restaurant", "activite", "note", "autre"] as const;
+/** Moments de journée, quand l'heure exacte n'a pas de sens. */
+export const MOMENTS_ETAPE = ["matin", "midi", "apres_midi", "soir"] as const;
+
 /** Une étape peut n'avoir ni jour ni heure : une envie se note avant de se caler. */
 export const etapeInputSchema = z.object({
   voyageId: z.guid(),
@@ -85,6 +90,11 @@ export const etapeInputSchema = z.object({
   lieu: z.string().max(200).optional(),
   etablissementId: z.guid().optional(),
   notes: z.string().max(2000).optional(),
+  categorie: z.enum(CATEGORIES_ETAPE).optional(),
+  moment: z.enum(MOMENTS_ETAPE).optional(),
+}).refine((d) => !(d.heure && d.moment), {
+  message: "Une étape porte une heure OU un moment, pas les deux",
+  path: ["moment"],
 });
 export type EtapeInput = z.infer<typeof etapeInputSchema>;
 

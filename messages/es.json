@@ -605,7 +605,33 @@
       "valider": "Añadir",
       "annuler": "Cancelar",
       "supprimer": "Eliminar la etapa {titre}",
-      "echec": "No se puede añadir la etapa por ahora."
+      "echec": "No se puede añadir la etapa por ahora.",
+      "resume": {
+        "arrivee": "llegada",
+        "retour": "regreso",
+        "libre": "libre",
+        "etapes": "{n, plural, one {# etapa} other {# etapas}}"
+      },
+      "categorie": "Categoría",
+      "sansCategorie": "Sin categoría",
+      "categories": {
+        "trajet": "Trayecto",
+        "hebergement": "Alojamiento",
+        "restaurant": "Restaurante",
+        "activite": "Actividad",
+        "note": "Nota",
+        "autre": "Otro"
+      },
+      "moment": "Momento",
+      "sansMoment": "Hora exacta",
+      "moments": {
+        "matin": "Mañana",
+        "midi": "Mediodía",
+        "apres_midi": "Tarde",
+        "soir": "Noche"
+      },
+      "ajouterAu": "Añadir una etapa el {jour}",
+      "reservationLiee": "reserva vinculada"
     },
     "details": {
       "compagnie": "Compañía",

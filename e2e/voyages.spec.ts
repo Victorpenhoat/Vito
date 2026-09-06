@@ -82,23 +82,28 @@ test("les voyageurs : un proche du Cercle, un invité libre, et le retrait", asy
   await expect(ligne).toHaveCount(0, { timeout: 15_000 });
 });
 
-test("le programme : les jours du voyage, une étape datée et une à caler", async ({ page }) => {
+test("le programme : onglets par jour, étape typée, réservation qui s'y invite", async ({ page }) => {
   await login(page, "client@vito.test");
   await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
 
-  // du 12 au 15 septembre : quatre journées, affichées même vides
-  await expect(page.getByTestId("programme-jour")).toHaveCount(4);
+  // du 12 au 15 septembre : quatre onglets, avec leur résumé
+  await expect(page.getByTestId("programme-onglet-jour")).toHaveCount(4);
+  await expect(page.getByTestId("programme-onglets")).toContainText("arrivée");
+  await expect(page.getByTestId("programme-onglets")).toContainText("retour");
 
   const etape = `Colisée ${Date.now()}`;
-  const premierJour = page.getByTestId("programme-jour").first();
-  await premierJour.getByTestId("etape-ajouter").click();
-  await premierJour.getByTestId("etape-heure").fill("09:30");
-  await premierJour.getByTestId("etape-titre").fill(etape);
-  await premierJour.getByTestId("etape-valider").click();
+  const jourOuvert = page.getByTestId("programme-jour");
+  await jourOuvert.getByTestId("etape-ajouter").click();
+  await jourOuvert.getByTestId("etape-heure").fill("09:30");
+  await jourOuvert.getByTestId("etape-titre").fill(etape);
+  await jourOuvert.getByTestId("etape-categorie").selectOption("activite");
+  await jourOuvert.getByTestId("etape-valider").click();
 
   const ligne = page.getByTestId("programme-etape").filter({ hasText: etape });
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
   await expect(ligne).toContainText("09:30");
+  // la catégorie choisie se lit sur la ligne
+  await expect(ligne).toContainText("Activité");
 
   // une envie sans date : elle attend dans « à caler », elle ne se perd pas
   const envie = `Marché aux puces ${Date.now()}`;
@@ -107,6 +112,10 @@ test("le programme : les jours du voyage, une étape datée et une à caler", as
   await aCaler.getByTestId("etape-titre").fill(envie);
   await aCaler.getByTestId("etape-valider").click();
   await expectVisibleWithReload(page, aCaler.getByTestId("programme-etape").filter({ hasText: envie }), { timeout: 15_000 });
+
+  // La réservation d'hôtel du seed couvre ces journées : elle s'invite dans le
+  // programme sans avoir été ressaisie, et s'y montre en lecture seule.
+  await expect(page.getByTestId("programme-reservation").first()).toBeVisible();
 
   // suppression de l'étape datée
   await page.getByTestId("programme-etape").filter({ hasText: etape }).getByTestId("etape-supprimer").click();
