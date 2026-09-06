@@ -226,7 +226,8 @@ export async function VoyageDetail({ id }: { id: string }) {
             <DepensesVoyageBlock voyageId={voyage.id} participants={participants}
               depenses={depenses} remboursements={remboursements} devise={voyage.devise}
               monProfileId={auth.user?.id ?? null}
-              tickets={documents.map((d) => ({ id: d.id, nom: d.nom, taille: d.taille, depenseId: d.depense_id }))} />
+              tickets={documents.map((d) => ({ id: d.id, nom: d.nom, taille: d.taille, depenseId: d.depense_id }))}
+              aujourdhui={new Date().toISOString().slice(0, 10)} />
           </section>
 
           <section id="documents" data-testid="documents-section" className="scroll-mt-4">

@@ -269,6 +269,54 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
   await page.getByTestId("onglet-equilibres").click();
   await expect(soldes.getByTestId("solde-row").filter({ hasText: `Payeur ${marque}` })).toContainText("0,00");
   await expect(page.getByTestId("transfert-row").filter({ hasText: marque })).toHaveCount(0);
+
+});
+
+// Multi-devise : une dépense payée en dollars pèse des euros dans les comptes
+// du voyage, et se souvient de ce qui a été payé.
+test("une dépense en devise locale est convertie une fois pour toutes", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
+
+  const marque = String(Date.now()).slice(-6);
+  await page.getByTestId("participant-ajouter").click();
+  await page.getByTestId("participant-nom").fill(`Payeur ${marque}`);
+  await page.getByTestId("participant-valider").click();
+  await expect(page.getByTestId("participant-row").filter({ hasText: `Payeur ${marque}` }))
+    .toBeVisible({ timeout: 15_000 });
+
+  // Le bloc Dépenses est alimenté par le serveur : il lui faut l'identifiant
+  // persisté du voyageur, que l'affichage optimiste ne lui donne pas.
+  await page.reload();
+  await page.getByTestId("depense-ajouter").click();
+  const form = page.getByTestId("depense-form");
+  await form.getByTestId("depense-libelle").fill(`Diner ${marque}`);
+  await form.getByTestId("depense-montant").fill("50");
+  await form.getByTestId("depense-paye-par").selectOption({ label: `Payeur ${marque}` });
+  // La dépense ne concerne QUE son payeur : elle ne laisse alors aucune dette
+  // derrière elle, et les soldes du voyage de Rome — éprouvés par un autre test
+  // — restent ceux qu'il attend. Un test mutateur range ce qu'il dérange.
+  for (const c of await form.locator('input[name="participants"]').all()) {
+    if ((await c.getAttribute("aria-label")) !== `Payeur ${marque}`) await c.uncheck();
+  }
+  await form.getByTestId("depense-devise").selectOption("USD");
+
+  // le taux se corrige à la main : celui de la carte n'est pas celui de la BCE
+  await expect(page.getByTestId("depense-taux")).toBeVisible();
+  await page.getByTestId("depense-taux-saisi").fill("0,5");
+  // ce que ça pèsera dans les comptes se voit AVANT d'enregistrer
+  await expect(page.getByTestId("depense-converti")).toContainText("25,00");
+
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("depense-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("depense-row").filter({ hasText: `Diner ${marque}` });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  // le voyage compte 25 €, et se souvient des 50 $ payés
+  await expect(ligne).toContainText("25,00");
+  await expect(ligne.getByTestId("depense-origine")).toContainText("50");
 });
 
 // Lot E : la frise de douze mois — ce qui tombe pendant les vacances, et ce

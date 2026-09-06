@@ -715,7 +715,15 @@
       "ticketAjouter": "Adjuntar un recibo",
       "ticketPhoto": "Foto",
       "ticketAucun": "Sin recibo",
-      "ticketEchec": "Recibo no subido"
+      "ticketEchec": "Recibo no subido",
+      "devise": "Moneda",
+      "deviseAide": "Moneda del viaje ({devise}) · puedes introducir el importe local",
+      "tauxRecherche": "Buscando el tipo de cambio…",
+      "tauxLigne": "1 {de} = {valeur} {vers}",
+      "tauxDu": "tipo del {date}",
+      "tauxIndisponible": "Tipo no disponible — introdúcelo",
+      "tauxCorriger": "Tipo {de} → {vers}",
+      "converti": "≈ {montant} para el viaje"
     },
     "planning": {
       "titre": "Planificación",

@@ -715,7 +715,15 @@
       "ticketAjouter": "Allega uno scontrino",
       "ticketPhoto": "Foto",
       "ticketAucun": "Nessuno scontrino",
-      "ticketEchec": "Scontrino non caricato"
+      "ticketEchec": "Scontrino non caricato",
+      "devise": "Valuta",
+      "deviseAide": "Valuta del viaggio ({devise}) · puoi inserire l'importo locale",
+      "tauxRecherche": "Ricerca del tasso…",
+      "tauxLigne": "1 {de} = {valeur} {vers}",
+      "tauxDu": "tasso del {date}",
+      "tauxIndisponible": "Tasso non disponibile — inseriscilo",
+      "tauxCorriger": "Tasso {de} → {vers}",
+      "converti": "≈ {montant} per il viaggio"
     },
     "planning": {
       "titre": "Pianificazione",

@@ -1637,11 +1637,15 @@ export type Database = {
           created_at: string
           created_by: string
           date: string | null
+          devise_saisie: string | null
           id: string
           libelle: string
           mode: Database["public"]["Enums"]["depense_mode"]
           montant_cents: number
+          montant_saisi_cents: number | null
           paye_par: string
+          taux: number | null
+          taux_date: string | null
           voyage_id: string
         }
         Insert: {
@@ -1649,11 +1653,15 @@ export type Database = {
           created_at?: string
           created_by: string
           date?: string | null
+          devise_saisie?: string | null
           id?: string
           libelle: string
           mode?: Database["public"]["Enums"]["depense_mode"]
           montant_cents: number
+          montant_saisi_cents?: number | null
           paye_par: string
+          taux?: number | null
+          taux_date?: string | null
           voyage_id: string
         }
         Update: {
@@ -1661,11 +1669,15 @@ export type Database = {
           created_at?: string
           created_by?: string
           date?: string | null
+          devise_saisie?: string | null
           id?: string
           libelle?: string
           mode?: Database["public"]["Enums"]["depense_mode"]
           montant_cents?: number
+          montant_saisi_cents?: number | null
           paye_par?: string
+          taux?: number | null
+          taux_date?: string | null
           voyage_id?: string
         }
         Relationships: [
