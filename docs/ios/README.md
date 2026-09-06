@@ -104,9 +104,10 @@ navigateur du système ne partage pas la session, il afficherait une erreur.
 
 ## Ce qui reste ouvert
 
-- **Bundle ID et nom** : `com.badakan.vito` / « Vito » sont **provisoires**
-  (`CAP_APP_ID`, `CAP_APP_NAME`). Le bundle ID devient définitif à la création de
-  l'app dans App Store Connect — pas avant.
+- **Bundle ID et nom** : `com.badakan.vito` / « Vito », arrêtés par le PO le
+  2026-09-06 (`CAP_APP_ID`, `CAP_APP_NAME` permettent d'en changer pour une
+  build de test). Le bundle ID devient **définitif à la création de l'app dans
+  App Store Connect**.
 - **Cible iOS minimale** : 15.0 (valeur par défaut de Capacitor). Recommandation :
   16.0, pour WebAuthn et les safe areas.
 - Signature, certificats, TestFlight et soumission : lots ultérieurs, et actions

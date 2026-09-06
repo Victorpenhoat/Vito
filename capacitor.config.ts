@@ -17,9 +17,9 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // Ce que l'app apporte de natif — géolocalisation, partage, ouverture des liens
 // hors WebView, carnet hors ligne — arrive par les plugins, lot par lot.
 const config: CapacitorConfig = {
-  // Provisoires tant que le nom n'est pas arrêté. Le jour où il l'est :
-  // `npm run ios:regen` régénère le projet Xcode avec les bonnes valeurs.
-  // ⚠ Définitif une fois l'app créée dans App Store Connect — pas avant.
+  // Arrêtés par le PO le 2026-09-06. Le bundle ID devient DÉFINITIF à la
+  // création de l'app dans App Store Connect : après, il ne se change plus.
+  // Les variables restent, pour une build de test sous un autre identifiant.
   appId: process.env.CAP_APP_ID ?? "com.badakan.vito",
   appName: process.env.CAP_APP_NAME ?? "Vito",
 

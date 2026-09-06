@@ -32,6 +32,13 @@ for (const [cle, texte] of PERMISSIONS) {
     console.log(`Info.plist : ${cle} ajouté`);
   }
 }
+// `cap add` laisse CFBundleName à « App », le nom de la CIBLE Xcode. C'est ce
+// nom-là qui apparaît dans Réglages et dans quelques recoins du système : il
+// doit dire Vito, comme l'icône.
+plist = plist.replace(
+  /(<key>CFBundleName<\/key>\s*\n\s*<string>)[^<]*(<\/string>)/,
+  `$1${process.env.CAP_APP_NAME ?? "Vito"}$2`,
+);
 // L'app est francophone d'abord : c'est la langue de ses textes et de ses
 // permissions.
 plist = plist.replace(
