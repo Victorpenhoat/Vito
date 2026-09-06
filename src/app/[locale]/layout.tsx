@@ -5,6 +5,7 @@ import { Inter, Newsreader } from "next/font/google";
 import { cookies } from "next/headers";
 import { routing } from "@/lib/i18n/routing";
 import { PwaRegister } from "./pwa-register";
+import { LiensProfonds } from "@/features/shell/ui/LiensProfonds";
 import { SentryClientInit } from "@/lib/observability/sentryClient";
 import "../globals.css";
 
@@ -55,6 +56,8 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider>
           <PwaRegister />
+          {/* Coque iOS : les liens que le système remet à l'app (sans effet sur le web). */}
+          <LiensProfonds />
           <SentryClientInit />
           {children}
         </NextIntlClientProvider>

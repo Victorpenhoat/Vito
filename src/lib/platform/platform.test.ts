@@ -4,15 +4,27 @@ import { ouvrirLienExterne } from "./liens";
 import { partager } from "./partage";
 import { positionActuelle } from "./position";
 import { toucher } from "./haptique";
+import { cheminDuLien, ecouterLiensProfonds } from "./liensProfonds";
 
 const ouvrirNatif = vi.fn();
 const partagerNatif = vi.fn();
 const positionNative = vi.fn();
 const impact = vi.fn();
+const retire = vi.fn();
+/** Les écouteurs enregistrés par le code, pour les déclencher depuis le test. */
+const ecouteurs: Record<string, ((e: { url: string }) => void) | undefined> = {};
 
 vi.mock("@capacitor/browser", () => ({ Browser: { open: (o: unknown) => ouvrirNatif(o) } }));
 vi.mock("@capacitor/share", () => ({ Share: { share: (o: unknown) => partagerNatif(o) } }));
 vi.mock("@capacitor/geolocation", () => ({ Geolocation: { getCurrentPosition: (o: unknown) => positionNative(o) } }));
+vi.mock("@capacitor/app", () => ({
+  App: {
+    addListener: async (nom: string, cb: (e: { url: string }) => void) => {
+      ecouteurs[nom] = cb;
+      return { remove: retire };
+    },
+  },
+}));
 vi.mock("@capacitor/haptics", () => ({
   Haptics: { impact: (o: unknown) => impact(o) },
   ImpactStyle: { Light: "LIGHT" },
@@ -170,5 +182,54 @@ describe("toucher", () => {
     dansLaCoque();
     impact.mockRejectedValue(new Error("pas de moteur"));
     await expect(toucher()).resolves.toBeUndefined();
+  });
+});
+
+describe("cheminDuLien", () => {
+  const nous = "https://vito.exemple";
+
+  it("garde le chemin, la requête et le fragment d'un lien à nous", () => {
+    expect(cheminDuLien(`${nous}/api/auth/confirm?token_hash=abc&type=email`, nous))
+      .toBe("/api/auth/confirm?token_hash=abc&type=email");
+    expect(cheminDuLien(`${nous}/fr/invitation/xyz#part`, nous)).toBe("/fr/invitation/xyz#part");
+  });
+
+  it("refuse un lien d'un autre domaine : ce serait une redirection ouverte", () => {
+    expect(cheminDuLien("https://ailleurs.test/api/auth/confirm?token_hash=abc", nous)).toBeNull();
+    // Le piège classique : un domaine qui commence comme le nôtre.
+    expect(cheminDuLien("https://vito.exemple.attaquant.test/fr/accueil", nous)).toBeNull();
+    // Et le même hôte sur un autre schéma.
+    expect(cheminDuLien("http://vito.exemple/fr/accueil", nous)).toBeNull();
+  });
+
+  it("refuse ce qui n'est pas une URL", () => {
+    expect(cheminDuLien("pas une url", nous)).toBeNull();
+    expect(cheminDuLien("", nous)).toBeNull();
+  });
+});
+
+describe("ecouterLiensProfonds", () => {
+  it("sur le web, il n'y a rien à écouter", async () => {
+    const ouvrir = vi.fn();
+    const arreter = await ecouterLiensProfonds("https://vito.exemple", ouvrir);
+    expect(ouvrir).not.toHaveBeenCalled();
+    expect(() => arreter()).not.toThrow();
+  });
+
+  it("dans la coque, une URL reçue d'iOS ouvre son chemin — et une URL étrangère, rien", async () => {
+    dansLaCoque();
+    const ouvrir = vi.fn();
+    const arreter = await ecouterLiensProfonds("https://vito.exemple", ouvrir);
+    expect(typeof ecouteurs.appUrlOpen).toBe("function");
+
+    ecouteurs.appUrlOpen?.({ url: "https://vito.exemple/api/auth/confirm?token_hash=abc&type=email" });
+    expect(ouvrir).toHaveBeenCalledWith("/api/auth/confirm?token_hash=abc&type=email");
+
+    ouvrir.mockClear();
+    ecouteurs.appUrlOpen?.({ url: "https://ailleurs.test/api/auth/confirm?token_hash=abc" });
+    expect(ouvrir).not.toHaveBeenCalled();
+
+    arreter();
+    expect(retire).toHaveBeenCalled();
   });
 });

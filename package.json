@@ -17,14 +17,16 @@
     "ios:sync": "cap sync ios",
     "ios:open": "cap open ios",
     "ios:assets": "capacitor-assets generate --ios",
-    "ios:regen": "rm -rf ios && cap add ios --packagemanager SPM && cap sync ios",
+    "ios:regen": "rm -rf ios && cap add ios --packagemanager SPM && node scripts/ios-personnaliser.mjs && cap sync ios",
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --local > src/types/database.types.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "ios:personnaliser": "node scripts/ios-personnaliser.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
+    "@capacitor/app": "^8.1.1",
     "@capacitor/browser": "^8.0.4",
     "@capacitor/core": "^8.5.1",
     "@capacitor/geolocation": "^8.2.2",

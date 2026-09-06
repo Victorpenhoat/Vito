@@ -11,6 +11,9 @@ const schema = z
     // Taux de change des dépenses de voyage (Frankfurter, taux BCE, sans clé).
     // Absent : aucun taux n'est proposé, il se saisit à la main.
     TAUX_CHANGE_URL: z.string().url().optional(),
+    // Universal Links iOS : « <TeamID>.<bundleId> ». Absent : le fichier
+    // apple-app-site-association n'est pas servi.
+    APPLE_APP_ID: z.string().optional(),
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
     STRIPE_PRICE_MONTHLY: z.string().optional(),
@@ -39,6 +42,7 @@ const parsed = schema.safeParse({
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
   MERCHANT_PARTNER_URL: process.env.MERCHANT_PARTNER_URL,
   TAUX_CHANGE_URL: process.env.TAUX_CHANGE_URL,
+  APPLE_APP_ID: process.env.APPLE_APP_ID,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_PRICE_MONTHLY: process.env.STRIPE_PRICE_MONTHLY,
