@@ -334,6 +334,12 @@ test("le planning est un calendrier : mois, semaine, et la frise en vue Année",
   expect(semainesDuMois).toBeGreaterThanOrEqual(4);
   await expect(page.getByTestId("planning-legende")).toBeVisible();
 
+  // le calendrier scolaire est là : chaque période dit ce qui s'y passe, ou
+  // s'offre à être remplie. Sans dates, l'écran n'aurait rien à proposer.
+  const anneeScolaire = page.getByTestId("planning-annee-scolaire");
+  await expect(anneeScolaire).toContainText("Toussaint");
+  await expect(anneeScolaire.getByTestId("periode-scolaire").first()).toBeVisible();
+
   // navigation de mois : le titre change
   const titre = page.getByTestId("planning-mois-titre");
   const avant = await titre.textContent();
