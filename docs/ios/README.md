@@ -93,6 +93,13 @@ deux chemins et les refus (`src/lib/platform/platform.test.ts`).
 Un document privé de Vito (un scan, un voucher) reste dans la WebView : le
 navigateur du système ne partage pas la session, il afficherait une erreur.
 
+## Documents voisins
+
+- `docs/ios/authentification.md` — liens profonds, Universal Links, redirect URLs
+  à saisir dans Supabase, persistance de session.
+- `docs/ios/cles-externes.md` — carte et Places dans la WebView (rien à
+  configurer), et les deux pièges rencontrés en le vérifiant.
+
 ## Ce qui reste ouvert
 
 - **Bundle ID et nom** : `com.badakan.vito` / « Vito » sont **provisoires**
