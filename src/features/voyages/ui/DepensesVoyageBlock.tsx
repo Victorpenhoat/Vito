@@ -12,6 +12,9 @@ import type { Participant } from "../domain/participants";
 import { participantMoi, maPart, porteeDepense, parPersonne } from "../domain/depensesResume";
 import { CATEGORIES_DEPENSE } from "../domain/schemas";
 import { Button } from "@/features/shared/ui/Button";
+import { PiecesJointes } from "./PiecesJointes";
+import { FileField } from "@/features/shared/ui/FileField";
+import { ajouterDocument } from "../data/documents";
 
 function Chiffre({ label, valeur, teinte, note }: {
   label: string; valeur: string; teinte?: string; note?: string;
@@ -31,7 +34,7 @@ type DepenseAffichee = DepenseVoyage & { libelle: string; date: string | null; c
 // n'ont pas de compte. Sans voyageur, il n'y a personne entre qui partager —
 // le bloc invite alors à en ajouter plutôt que d'afficher un formulaire mort.
 export function DepensesVoyageBlock({
-  voyageId, participants, depenses, remboursements, devise, monProfileId,
+  voyageId, participants, depenses, remboursements, devise, monProfileId, tickets,
 }: {
   voyageId: string;
   participants: Participant[];
@@ -41,6 +44,8 @@ export function DepensesVoyageBlock({
   /** Mon compte, pour dire « ma part » et « mon solde » — la maquette les met
    *  en tête, avant même la liste : c'est ce qu'on vient chercher. */
   monProfileId: string | null;
+  /** Tickets déjà déposés, par dépense (documents du voyage). */
+  tickets: { id: string; nom: string; taille: number; depenseId: string | null }[];
 }) {
   const t = useTranslations("voyages.depensesVoyage");
   const format = useFormatter();
@@ -79,14 +84,30 @@ export function DepensesVoyageBlock({
     setEnCours(false);
     if (!("id" in res) || !res.id) {
       setErreur(("error" in res && res.error) || t("echec"));
-      return false;
+      return null;
     }
     form.reset();
     // Les soldes se recalculent à partir des données du serveur : ici, pas
     // d'affichage optimiste possible sans dupliquer le calcul — on demande donc
     // un rendu frais, et l'écran attend d'avoir la vérité pour l'afficher.
     router.refresh();
-    return true;
+    return res.id as string;
+  }
+
+  /**
+   * Le ticket de la maquette : photographié en même temps qu'on saisit la
+   * dépense, donc déposé dans la foulée de sa création. Un échec de dépôt ne
+   * défait pas la dépense — elle est juste, seule la preuve manque — mais il se
+   * dit, sans quoi on croirait le ticket rangé.
+   */
+  async function deposerTicket(fichier: File, depenseId: string) {
+    const fd = new FormData();
+    fd.set("voyageId", voyageId);
+    fd.set("depenseId", depenseId);
+    fd.set("file", fichier);
+    const res = await ajouterDocument(undefined, fd);
+    if (!("id" in res) || !res.id) setErreur(("error" in res && res.error) || t("ticketEchec"));
+    else router.refresh();
   }
 
   /** Confirme le transfert proposé, sans le ressaisir (maquette « Marquer comme remboursé »). */
@@ -157,7 +178,7 @@ export function DepensesVoyageBlock({
       {onglet === "depenses" && visibles.length > 0 && (
         <ul className="flex flex-col">
           {visibles.map((d) => (
-            <li key={d.id} data-testid="depense-row" className="flex items-center gap-2 border-b border-line-soft py-2">
+            <li key={d.id} data-testid="depense-row" className="flex flex-wrap items-center gap-2 border-b border-line-soft py-2">
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13.5px] text-ink">{d.libelle}</span>
                 <span className="block truncate text-[11.5px] text-muted">
@@ -171,6 +192,12 @@ export function DepensesVoyageBlock({
                 </span>
               </span>
               <span className="shrink-0 text-[13px] tabular-nums text-ink">{euros(d.montantCents)}</span>
+              <span className="order-last w-full">
+              <PiecesJointes voyageId={voyageId} cible={{ type: "depense", id: d.id }}
+                libelleAjout={t("ticketAjouter")}
+                documents={tickets.filter((x) => x.depenseId === d.id)
+                  .map((x) => ({ id: x.id, nom: x.nom, taille: x.taille }))} />
+              </span>
               <button type="button" data-testid="depense-supprimer" aria-label={t("supprimer", { libelle: d.libelle })}
                 onClick={() => supprimer(d.id)}
                 className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-line text-muted focus-visible:outline-2 focus-visible:outline-accent">
@@ -225,7 +252,15 @@ export function DepensesVoyageBlock({
         <form data-testid="depense-form" className="flex flex-col gap-2 rounded-card border border-line bg-surface p-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (await envoyer(e.currentTarget, addDepenseVoyage)) setOuvert(false);
+            const form = e.currentTarget;
+            // Le fichier est lu AVANT l'await : après, le formulaire est
+            // réinitialisé et l'input vidé (piège du lot V-C).
+            const choisi = new FormData(form).get("ticket");
+            const ticket = choisi instanceof File && choisi.size > 0 ? choisi : null;
+            const cree = await envoyer(form, addDepenseVoyage);
+            if (!cree) return;
+            setOuvert(false);
+            if (ticket) await deposerTicket(ticket, cree);
           }}>
           <input name="libelle" data-testid="depense-libelle" placeholder={t("libelle")} aria-label={t("libelle")}
             className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
@@ -239,11 +274,20 @@ export function DepensesVoyageBlock({
               {participants.map((p) => <option key={p.id} value={p.id}>{p.displayName}</option>)}
             </select>
           </div>
-          <select name="categorie" data-testid="depense-categorie" aria-label={t("categorie")} defaultValue=""
-            className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
-            <option value="">{t("sansCategorie")}</option>
-            {CATEGORIES_DEPENSE.map((c) => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}
-          </select>
+          <div className="flex flex-wrap gap-2">
+            <select name="categorie" data-testid="depense-categorie" aria-label={t("categorie")} defaultValue=""
+              className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
+              <option value="">{t("sansCategorie")}</option>
+              {CATEGORIES_DEPENSE.map((c) => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}
+            </select>
+            {/* « Ticket · Photo » de la maquette : on le prend pendant qu'on a
+                le reçu en main, pas dans une seconde visite à la dépense.
+                `capture` ouvre l'appareil photo sur mobile ; ailleurs, c'est un
+                choix de fichier ordinaire. */}
+            <FileField name="ticket" data-testid="depense-ticket" accept="image/*,application/pdf"
+              capture="environment" label={t("ticketPhoto")} emptyLabel={t("ticketAucun")}
+              className="shrink-0 text-[12.5px]" />
+          </div>
           <select name="mode" data-testid="depense-mode" aria-label={t("mode")} value={mode}
             onChange={(e) => setMode(e.target.value as "egal" | "exact")}
             className="rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">

@@ -13,6 +13,8 @@ export async function ajouterDocument(_prev: unknown, formData: FormData) {
   // Voucher rattaché à une réservation (Lot C) — facultatif : un document du
   // voyage n'a pas toujours de réservation derrière lui.
   const reservationId = formData.get("reservationId");
+  // Ticket d'une dépense (maquette « Ajout d'une dépense ») : même mécanique.
+  const depenseId = formData.get("depenseId");
   if (typeof voyageId !== "string" || !(file instanceof File)) return { error: "Entrée invalide" };
   if (!ALLOWED.includes(file.type)) return { error: "Type non supporté" };
   if (file.size <= 0 || file.size > MAX_TAILLE) return { error: "Fichier vide ou trop volumineux (max 5 Mo)" };
@@ -36,6 +38,7 @@ export async function ajouterDocument(_prev: unknown, formData: FormData) {
     contenu_chiffre: chiffre,
     uploaded_by: auth.user.id,
     reservation_id: typeof reservationId === "string" && reservationId ? reservationId : null,
+    depense_id: typeof depenseId === "string" && depenseId ? depenseId : null,
   }).select("id").single();
   if (error) return { error: "Dépôt échoué" };
   revalidatePath(`/voyages/${voyageId}`);

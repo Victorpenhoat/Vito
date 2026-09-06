@@ -711,7 +711,11 @@
         "courses": "Spesa",
         "autre": "Altro"
       },
-      "parPersonne": "{montant} a persona ({n} viaggiatori)"
+      "parPersonne": "{montant} a persona ({n} viaggiatori)",
+      "ticketAjouter": "Allega uno scontrino",
+      "ticketPhoto": "Foto",
+      "ticketAucun": "Nessuno scontrino",
+      "ticketEchec": "Scontrino non caricato"
     },
     "planning": {
       "titre": "Pianificazione",

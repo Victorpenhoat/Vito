@@ -711,7 +711,11 @@
         "courses": "Courses",
         "autre": "Autre"
       },
-      "parPersonne": "{montant} par personne ({n} participants)"
+      "parPersonne": "{montant} par personne ({n} participants)",
+      "ticketAjouter": "Joindre un ticket",
+      "ticketPhoto": "Photo",
+      "ticketAucun": "Aucun ticket",
+      "ticketEchec": "Ticket non déposé"
     },
     "planning": {
       "titre": "Planning",

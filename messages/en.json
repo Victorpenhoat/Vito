@@ -711,7 +711,11 @@
         "courses": "Groceries",
         "autre": "Other"
       },
-      "parPersonne": "{montant} per person ({n} travellers)"
+      "parPersonne": "{montant} per person ({n} travellers)",
+      "ticketAjouter": "Attach a receipt",
+      "ticketPhoto": "Photo",
+      "ticketAucun": "No receipt",
+      "ticketEchec": "Receipt not uploaded"
     },
     "planning": {
       "titre": "Planner",

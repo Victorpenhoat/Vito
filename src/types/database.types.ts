@@ -1696,6 +1696,7 @@ export type Database = {
         Row: {
           contenu_chiffre: string
           created_at: string
+          depense_id: string | null
           id: string
           mime_type: string
           nom: string
@@ -1707,6 +1708,7 @@ export type Database = {
         Insert: {
           contenu_chiffre: string
           created_at?: string
+          depense_id?: string | null
           id?: string
           mime_type: string
           nom: string
@@ -1718,6 +1720,7 @@ export type Database = {
         Update: {
           contenu_chiffre?: string
           created_at?: string
+          depense_id?: string | null
           id?: string
           mime_type?: string
           nom?: string
@@ -1727,6 +1730,13 @@ export type Database = {
           voyage_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "voyage_documents_depense_id_fkey"
+            columns: ["depense_id"]
+            isOneToOne: false
+            referencedRelation: "voyage_depenses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "voyage_documents_reservation_id_fkey"
             columns: ["reservation_id"]

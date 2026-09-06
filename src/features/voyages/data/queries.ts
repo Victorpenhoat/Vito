@@ -98,7 +98,7 @@ export async function getVoyageDocuments(voyageId: string) {
   if (!auth.user) return [];
   const { data, error } = await supabase
     .from("voyage_documents")
-    .select("id, nom, mime_type, taille, created_at, reservation_id")
+    .select("id, nom, mime_type, taille, created_at, reservation_id, depense_id")
     .eq("voyage_id", voyageId)
     .order("created_at", { ascending: false });
   if (error) throw error;
