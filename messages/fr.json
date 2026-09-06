@@ -715,7 +715,15 @@
       "ticketAjouter": "Joindre un ticket",
       "ticketPhoto": "Photo",
       "ticketAucun": "Aucun ticket",
-      "ticketEchec": "Ticket non déposé"
+      "ticketEchec": "Ticket non déposé",
+      "devise": "Devise",
+      "deviseAide": "Devise du voyage ({devise}) · saisie possible en devise locale",
+      "tauxRecherche": "Recherche du taux…",
+      "tauxLigne": "1 {de} = {valeur} {vers}",
+      "tauxDu": "taux du {date}",
+      "tauxIndisponible": "Taux indisponible — saisissez-le",
+      "tauxCorriger": "Taux {de} → {vers}",
+      "converti": "≈ {montant} pour le voyage"
     },
     "planning": {
       "titre": "Planning",

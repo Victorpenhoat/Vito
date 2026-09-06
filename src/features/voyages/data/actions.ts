@@ -10,6 +10,7 @@ import {
 } from "../domain/schemas";
 import { centsFromEuros } from "@/features/depenses/domain/money";
 import { partsEgales, partsExactes } from "../domain/depensesVoyage";
+import { convertir, convertirParts } from "../domain/devises";
 import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
 import { champsDuType } from "../domain/reservationDetails";
 import { TYPES_HEBERGEMENT } from "../domain/reservationHebergement";
@@ -391,12 +392,34 @@ export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
     mode: formData.get("mode"),
     categorie: formData.get("categorie") || undefined,
     participants: formData.getAll("participants"),
+    deviseSaisie: formData.get("deviseSaisie") || undefined,
+    taux: formData.get("taux") || undefined,
+    tauxDate: formData.get("tauxDate") || undefined,
   });
   if (!parsed.success) return { error: "Dépense invalide" };
   const d = parsed.data;
   const supabase = await createServerSupabase();
   const uid = await userId(supabase);
   if (!uid) return { error: "Non authentifié" };
+
+  // La devise du voyage est la seule dans laquelle comptent les parts et les
+  // soldes. Une dépense saisie ailleurs est convertie ICI, une fois pour
+  // toutes : rien en aval n'a besoin de savoir d'où vient le montant.
+  const { data: voyage } = await supabase
+    .from("voyages").select("devise").eq("id", d.voyageId).maybeSingle();
+  const deviseVoyage = voyage?.devise ?? "EUR";
+  const etrangere = d.deviseSaisie != null && d.deviseSaisie !== deviseVoyage;
+  if (etrangere && d.taux == null) return { error: "Taux de change manquant" };
+  const conversion = etrangere && d.taux != null
+    ? {
+        montantSaisiCents: d.montantCents, deviseSaisie: d.deviseSaisie, taux: d.taux,
+        // Sans date annoncée, celle du jour : un taux figé se date, sans quoi on
+        // ne saurait plus de quand il vient.
+        tauxDate: d.tauxDate ?? new Date().toISOString().slice(0, 10),
+      }
+    : null;
+  const montantCents = conversion ? convertir(d.montantCents, conversion.taux) : d.montantCents;
+  if (montantCents <= 0) return { error: "Montant converti nul" };
 
   let parts;
   try {
@@ -408,9 +431,12 @@ export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
         if (!c.success) return { error: "Montant exact invalide" };
         exacts[pid] = c.data;
       }
-      parts = partsExactes(d.montantCents, exacts);
+      // Les parts exactes sont saisies dans la MÊME devise que le montant :
+      // c'est le ticket qu'on a sous les yeux. Elles se convertissent donc
+      // ensemble, en gardant la somme égale au total.
+      parts = partsExactes(montantCents, conversion ? convertirParts(exacts, conversion.taux, montantCents) : exacts);
     } else {
-      parts = partsEgales(d.montantCents, d.participants);
+      parts = partsEgales(montantCents, d.participants);
     }
   } catch {
     // computeParts lève quand la somme des exacts ne fait pas le total
@@ -421,8 +447,12 @@ export async function addDepenseVoyage(_prev: unknown, formData: FormData) {
     .from("voyage_depenses")
     .insert({
       voyage_id: d.voyageId, paye_par: d.payePar, libelle: d.libelle,
-      montant_cents: d.montantCents, date: d.date ?? null, mode: d.mode,
+      montant_cents: montantCents, date: d.date ?? null, mode: d.mode,
       categorie: d.categorie ?? null, created_by: uid,
+      devise_saisie: conversion?.deviseSaisie ?? null,
+      montant_saisi_cents: conversion?.montantSaisiCents ?? null,
+      taux: conversion?.taux ?? null,
+      taux_date: conversion?.tauxDate ?? null,
     })
     .select("id")
     .single();

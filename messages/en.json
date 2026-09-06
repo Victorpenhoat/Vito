@@ -715,7 +715,15 @@
       "ticketAjouter": "Attach a receipt",
       "ticketPhoto": "Photo",
       "ticketAucun": "No receipt",
-      "ticketEchec": "Receipt not uploaded"
+      "ticketEchec": "Receipt not uploaded",
+      "devise": "Currency",
+      "deviseAide": "Trip currency ({devise}) · you can enter a local amount",
+      "tauxRecherche": "Fetching the rate…",
+      "tauxLigne": "1 {de} = {valeur} {vers}",
+      "tauxDu": "rate of {date}",
+      "tauxIndisponible": "Rate unavailable — enter it",
+      "tauxCorriger": "Rate {de} → {vers}",
+      "converti": "≈ {montant} for the trip"
     },
     "planning": {
       "titre": "Planner",

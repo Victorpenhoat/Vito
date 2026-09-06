@@ -15,6 +15,8 @@ import { Button } from "@/features/shared/ui/Button";
 import { PiecesJointes } from "./PiecesJointes";
 import { FileField } from "@/features/shared/ui/FileField";
 import { ajouterDocument } from "../data/documents";
+import { tauxDeChange } from "../data/taux";
+import { DEVISES, conversionAffichable, convertir, tauxSaisi } from "../domain/devises";
 
 function Chiffre({ label, valeur, teinte, note }: {
   label: string; valeur: string; teinte?: string; note?: string;
@@ -28,13 +30,18 @@ function Chiffre({ label, valeur, teinte, note }: {
   );
 }
 
-type DepenseAffichee = DepenseVoyage & { libelle: string; date: string | null; categorie: string | null };
+type DepenseAffichee = DepenseVoyage & {
+  libelle: string; date: string | null; categorie: string | null;
+  /** D'où vient le montant quand il vient d'ailleurs (null sinon). */
+  deviseSaisie?: string | null; montantSaisiCents?: number | null;
+  taux?: number | null; tauxDate?: string | null;
+};
 
 // Dépenses du voyage (Lot D) : le partage entre VOYAGEURS, y compris ceux qui
 // n'ont pas de compte. Sans voyageur, il n'y a personne entre qui partager —
 // le bloc invite alors à en ajouter plutôt que d'afficher un formulaire mort.
 export function DepensesVoyageBlock({
-  voyageId, participants, depenses, remboursements, devise, monProfileId, tickets,
+  voyageId, participants, depenses, remboursements, devise, monProfileId, tickets, aujourdhui,
 }: {
   voyageId: string;
   participants: Participant[];
@@ -46,6 +53,8 @@ export function DepensesVoyageBlock({
   monProfileId: string | null;
   /** Tickets déjà déposés, par dépense (documents du voyage). */
   tickets: { id: string; nom: string; taille: number; depenseId: string | null }[];
+  /** « YYYY-MM-DD » daté par le SERVEUR : c'est la date du taux proposé. */
+  aujourdhui: string;
 }) {
   const t = useTranslations("voyages.depensesVoyage");
   const format = useFormatter();
@@ -58,11 +67,47 @@ export function DepensesVoyageBlock({
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
   const [supprimees, setSupprimees] = useState<string[]>([]);
+  // Saisie en devise locale (maquette : « 86,50 [EUR ▾] »). Par défaut celle du
+  // voyage, auquel cas il n'y a ni taux ni conversion à montrer.
+  const [deviseSaisie, setDeviseSaisie] = useState(devise);
+  const [taux, setTaux] = useState<number | null>(null);
+  const [tauxDate, setTauxDate] = useState<string | null>(null);
+  const [tauxCherche, setTauxCherche] = useState(false);
+  const [tauxCorrige, setTauxCorrige] = useState("");
 
   const visibles = depenses.filter((d) => !supprimees.includes(d.id));
   const nom = (id: string) => participants.find((p) => p.id === id)?.displayName ?? "—";
+  /** « 14/10 » : le jour du taux, dit court comme dans la maquette. */
+  const jourCourt = (iso: string) =>
+    format.dateTime(new Date(`${iso}T00:00:00Z`), { day: "numeric", month: "short", timeZone: "UTC" });
   const euros = (cents: number) =>
     format.number(cents / 100, { style: "currency", currency: devise, maximumFractionDigits: 2 });
+
+  /**
+   * Le taux du jour, proposé dès qu'on choisit une devise étrangère. On ne
+   * bloque pas la saisie s'il n'arrive pas : l'écran demande alors de le taper,
+   * ce qui reste préférable à un chiffre inventé.
+   */
+  async function choisirDevise(code: string) {
+    setDeviseSaisie(code);
+    setTauxCorrige("");
+    if (code === devise) { setTaux(null); setTauxDate(null); return; }
+    setTauxCherche(true);
+    const res = await tauxDeChange(code, devise, aujourdhui);
+    setTauxCherche(false);
+    setTaux(res?.taux ?? null);
+    setTauxDate(res?.date ?? aujourdhui);
+  }
+
+  const etrangere = deviseSaisie !== devise;
+  const montantCentsSaisis = (() => {
+    const cents = Math.round(Number(montantSaisi.replace(",", ".")) * 100);
+    return Number.isFinite(cents) && cents > 0 ? cents : null;
+  })();
+  /** Ce que la dépense pèse POUR LE VOYAGE : c'est là-dessus que tout se compte. */
+  const montantCentsVoyage = montantCentsSaisis == null ? null
+    : etrangere ? (taux != null ? convertir(montantCentsSaisis, taux) : null)
+    : montantCentsSaisis;
 
   const soldes = soldesParticipants(participants.map((p) => p.id), visibles, remboursements);
   const transferts = transfertsSimplifies(soldes);
@@ -190,6 +235,19 @@ export function DepensesVoyageBlock({
                     : t("pourN", { n: porteeDepense(d, participants.length).nb })}
                   {d.categorie ? ` · ${t(`categories.${d.categorie}`)}` : ""}
                 </span>
+                {(() => {
+                  // « 52 $ · taux du 14/10 » : le montant tel qu'il a été payé,
+                  // pour retrouver sa dépense sur un relevé bancaire.
+                  const conv = conversionAffichable(d, devise);
+                  return conv ? (
+                    <span data-testid="depense-origine" className="block truncate text-[11.5px] text-muted">
+                      {format.number(conv.montantSaisiCents / 100, {
+                        style: "currency", currency: conv.deviseSaisie, maximumFractionDigits: 2,
+                      })}
+                      {d.tauxDate ? ` · ${t("tauxDu", { date: jourCourt(d.tauxDate) })}` : ""}
+                    </span>
+                  ) : null;
+                })()}
               </span>
               <span className="shrink-0 text-[13px] tabular-nums text-ink">{euros(d.montantCents)}</span>
               <span className="order-last w-full">
@@ -268,12 +326,62 @@ export function DepensesVoyageBlock({
             <input name="montant" data-testid="depense-montant" inputMode="decimal" placeholder={t("montant")}
               aria-label={t("montant")} value={montantSaisi}
               onChange={(e) => setMontantSaisi(e.target.value)}
-              className="w-28 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
+              className="w-24 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
+            {/* « EUR ▾ » de la maquette : la devise du voyage par défaut, une
+                devise locale si on paie ailleurs. */}
+            <select name="deviseSaisie" data-testid="depense-devise" aria-label={t("devise")}
+              value={deviseSaisie} onChange={(e) => void choisirDevise(e.target.value)}
+              className="w-24 rounded-control border border-line bg-surface px-2 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
+              {DEVISES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
             <select name="payePar" data-testid="depense-paye-par" aria-label={t("payePar", { nom: "" })}
               className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
               {participants.map((p) => <option key={p.id} value={p.id}>{p.displayName}</option>)}
             </select>
           </div>
+          {/* « Devise du voyage · saisie possible en devise locale » */}
+          <p className="text-[11px] text-muted">{t("deviseAide", { devise })}</p>
+
+          {etrangere && (
+            <div data-testid="depense-taux" className="flex flex-col gap-1 rounded-control border border-line bg-surface-hover px-3 py-2">
+              {tauxCherche ? (
+                <span className="text-[11.5px] text-muted">{t("tauxRecherche")}</span>
+              ) : taux != null ? (
+                <span className="text-[11.5px] text-muted">
+                  {t("tauxLigne", {
+                    de: deviseSaisie, vers: devise,
+                    valeur: format.number(taux, { maximumFractionDigits: 4 }),
+                  })}
+                  {tauxDate ? ` · ${t("tauxDu", { date: jourCourt(tauxDate) })}` : ""}
+                </span>
+              ) : (
+                // Aucun taux connu : on le dit et on le demande, plutôt que
+                // d'en inventer un qui se propagerait dans tous les soldes.
+                <span role="status" className="text-[11.5px] text-kpi-amber">{t("tauxIndisponible")}</span>
+              )}
+              <label className="flex items-center gap-2 text-[11.5px] text-muted">
+                <span className="shrink-0">{t("tauxCorriger", { de: deviseSaisie, vers: devise })}</span>
+                <input data-testid="depense-taux-saisi" inputMode="decimal" value={tauxCorrige}
+                  onChange={(e) => {
+                    setTauxCorrige(e.target.value);
+                    const saisi = tauxSaisi(e.target.value);
+                    if (saisi != null) { setTaux(saisi); setTauxDate(aujourdhui); }
+                  }}
+                  placeholder={taux != null ? format.number(taux, { maximumFractionDigits: 4 }) : "0,00"}
+                  className="w-24 rounded-control border border-line bg-surface px-2 py-1 text-[12.5px] text-ink outline-none focus:outline-2 focus:outline-accent" />
+              </label>
+              {/* Ce que ça fera dans les comptes du voyage : la conversion se
+                  voit AVANT d'enregistrer, pas après. */}
+              {montantCentsVoyage != null && (
+                <span data-testid="depense-converti" className="text-[12.5px] font-semibold text-ink">
+                  {t("converti", { montant: euros(montantCentsVoyage) })}
+                </span>
+              )}
+              <input type="hidden" name="taux" value={taux ?? ""} />
+              <input type="hidden" name="tauxDate" value={tauxDate ?? ""} />
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-2">
             <select name="categorie" data-testid="depense-categorie" aria-label={t("categorie")} defaultValue=""
               className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:outline-2 focus:outline-accent">
@@ -318,9 +426,8 @@ export function DepensesVoyageBlock({
 
           {/* Aide à la saisie de la maquette : ce que ça fait par tête. */}
           {mode === "egal" && (() => {
-            const cents = Math.round(Number(montantSaisi.replace(",", ".")) * 100);
             const n = (partages ?? participants.map((p) => p.id)).length;
-            const part = Number.isFinite(cents) && cents > 0 ? parPersonne(cents, n) : null;
+            const part = montantCentsVoyage != null ? parPersonne(montantCentsVoyage, n) : null;
             return part != null ? (
               <p data-testid="depense-par-personne" className="text-[11.5px] text-muted">
                 {t("parPersonne", { montant: euros(part), n })}

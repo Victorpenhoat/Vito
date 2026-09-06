@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEVISES } from "./devises";
 import { centsFromEuros } from "@/features/depenses/domain/money";
 import { DEPENSE_MODES } from "@/features/depenses/domain/schemas";
 
@@ -111,7 +112,14 @@ export const depenseVoyageInputSchema = z.object({
   categorie: z.enum(CATEGORIES_DEPENSE).optional(),
   payePar: z.guid(),
   libelle: z.string().trim().min(1).max(200),
+  // Le montant est saisi dans `deviseSaisie` — la devise du voyage par défaut.
+  // La conversion se fait dans l'action, qui seule connaît la devise du voyage.
   montantCents: centsFromEuros,
+  deviseSaisie: z.enum(DEVISES).optional(),
+  // Un taux ne se transporte pas en centimes : c'est un facteur, pas un
+  // montant. Il vient du fournisseur ou de la main de l'utilisateur.
+  taux: z.coerce.number().positive().optional(),
+  tauxDate: z.string().date().optional(),
   date: z.string().date().optional(),
   mode: z.enum(DEPENSE_MODES),
   participants: z.array(z.guid()).min(1),
