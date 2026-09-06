@@ -9,12 +9,20 @@ import { FileField } from "@/features/shared/ui/FileField";
 
 type Doc = { id: string; nom: string; taille: number };
 
-// Vouchers d'une réservation (Lot C) : le billet se dépose et se relit là où on
-// le cherche — sous sa réservation. Le fichier reste un document du voyage
-// (chiffré en colonne, servi par la route protégée) : il survit d'ailleurs à la
-// suppression de la réservation.
-export function ReservationVouchers({ voyageId, reservationId, documents }: {
-  voyageId: string; reservationId: string; documents: Doc[];
+// Pièces jointes d'une ligne : le billet d'une réservation (lot C), le ticket
+// d'une dépense (maquette « Ajout d'une dépense »). Le geste est le même — on
+// dépose et on relit là où on cherche —, donc le composant l'est aussi : un
+// second formulaire d'envoi aurait dupliqué l'affichage optimiste et les
+// précautions de lecture de FormData.
+//
+// Le fichier reste un document du voyage (chiffré en colonne, servi par la
+// route protégée) : il survit d'ailleurs à la suppression de sa ligne.
+export function PiecesJointes({ voyageId, cible, documents, libelleAjout }: {
+  voyageId: string;
+  cible: { type: "reservation" | "depense"; id: string };
+  documents: Doc[];
+  /** « Joindre un billet » ou « Joindre un ticket » selon ce qu'on rattache. */
+  libelleAjout: string;
 }) {
   const t = useTranslations("voyages.documents");
   const router = useRouter();
@@ -31,7 +39,7 @@ export function ReservationVouchers({ voyageId, reservationId, documents }: {
     // transition : l'affichage optimiste prend le relais du rafraîchissement.
     const fd = new FormData(form);
     fd.set("voyageId", voyageId);
-    fd.set("reservationId", reservationId);
+    fd.set(cible.type === "reservation" ? "reservationId" : "depenseId", cible.id);
     const fichier = fd.get("file");
     if (!(fichier instanceof File) || fichier.size === 0) return;
 
@@ -50,7 +58,7 @@ export function ReservationVouchers({ voyageId, reservationId, documents }: {
   }
 
   return (
-    <span data-testid="reservation-vouchers" className="flex flex-col gap-1">
+    <span data-testid={`pieces-jointes-${cible.type}`} className="flex flex-col gap-1">
       {visibles.length > 0 && (
         <span className="flex flex-wrap gap-1.5">
           {visibles.map((d) => (
@@ -68,7 +76,7 @@ export function ReservationVouchers({ voyageId, reservationId, documents }: {
       {!ouvert ? (
         <button type="button" data-testid="voucher-ajouter" onClick={() => setOuvert(true)}
           className="self-start text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
-          + {t("voucherAjouter")}
+          + {libelleAjout}
         </button>
       ) : (
         <form data-testid="voucher-form" className="flex flex-col gap-2 rounded-card border border-line bg-surface p-2.5"

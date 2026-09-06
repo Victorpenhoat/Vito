@@ -232,6 +232,10 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
     const concerne = label === `Payeur ${marque}` || label === `Partageur ${marque}`;
     if (!concerne) await c.uncheck();
   }
+  // le ticket se photographie pendant la saisie, comme dans la maquette
+  const ticket = `ticket-${marque}.pdf`;
+  await form.getByTestId("depense-ticket")
+    .setInputFiles({ name: ticket, mimeType: "application/pdf", buffer: PDF_BILLET });
   await Promise.all([
     page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
     form.getByTestId("depense-valider").click(),
@@ -239,6 +243,9 @@ test("une dépense partagée entre voyageurs, son solde, puis le remboursement q
 
   const ligne = page.getByTestId("depense-row").filter({ hasText: `Taxi ${marque}` });
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  // et il reste accroché à SA dépense
+  await expectVisibleWithReload(page, ligne.getByTestId("voucher-lien").filter({ hasText: ticket }),
+    { timeout: 15_000 });
   // la portée est dite : ce taxi ne concerne pas tout le monde
   await expect(ligne).toContainText("2 voyageurs");
 

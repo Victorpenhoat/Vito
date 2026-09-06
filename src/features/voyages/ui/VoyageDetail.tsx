@@ -12,7 +12,7 @@ import { ShareVoyageButton } from "./ShareVoyageButton";
 import { ReservationForm } from "./ReservationForm";
 import { ParticipantsList } from "./ParticipantsList";
 import { ProgrammeBlock } from "./ProgrammeBlock";
-import { ReservationVouchers } from "./ReservationVouchers";
+import { PiecesJointes } from "./PiecesJointes";
 import { DepensesVoyageBlock } from "./DepensesVoyageBlock";
 import { getDepensesVoyage } from "../data/queries";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -211,7 +211,8 @@ export async function VoyageDetail({ id }: { id: string }) {
                     )}
                   </span>
                   {/* Le billet se dépose et se relit sous sa réservation (Lot C) */}
-                  <ReservationVouchers voyageId={voyage.id} reservationId={r.id}
+                  <PiecesJointes voyageId={voyage.id} cible={{ type: "reservation", id: r.id }}
+                    libelleAjout={t("documents.voucherAjouter")}
                     documents={documents.filter((d) => d.reservation_id === r.id)
                       .map((d) => ({ id: d.id, nom: d.nom, taille: d.taille }))} />
                 </li>
@@ -224,7 +225,8 @@ export async function VoyageDetail({ id }: { id: string }) {
             <SectionLabel>{t("depensesVoyage.titre")}</SectionLabel>
             <DepensesVoyageBlock voyageId={voyage.id} participants={participants}
               depenses={depenses} remboursements={remboursements} devise={voyage.devise}
-              monProfileId={auth.user?.id ?? null} />
+              monProfileId={auth.user?.id ?? null}
+              tickets={documents.map((d) => ({ id: d.id, nom: d.nom, taille: d.taille, depenseId: d.depense_id }))} />
           </section>
 
           <section id="documents" data-testid="documents-section" className="scroll-mt-4">
