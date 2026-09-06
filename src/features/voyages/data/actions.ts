@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { randomBytes } from "node:crypto";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import {
@@ -219,6 +220,7 @@ export async function addParticipant(_prev: unknown, formData: FormData) {
     displayName: formData.get("displayName"),
     email: formData.get("email") || undefined,
     role: formData.get("role") || undefined,
+    typeVoyageur: formData.get("typeVoyageur") || undefined,
   });
   if (!parsed.success) return { error: "Participant invalide" };
   const supabase = await createServerSupabase();
@@ -243,6 +245,7 @@ export async function addParticipant(_prev: unknown, formData: FormData) {
     display_name: d.displayName,
     email: d.email ?? null,
     role: d.role ?? "voyageur",
+    type_voyageur: d.typeVoyageur ?? "adulte",
     created_by: uid,
   }).select("id").single();
   if (error) {
@@ -252,6 +255,53 @@ export async function addParticipant(_prev: unknown, formData: FormData) {
   }
   revalidatePath(`/voyages/${d.voyageId}`);
   return { ok: true as const, id: cree?.id as string };
+}
+
+/**
+ * Convie un invité EXTERNE : il devient voyageur, et reçoit un lien qui lui
+ * ouvre ce voyage-là (invitation nominative, donc inutilisable par un tiers).
+ * La maquette le dit sous le formulaire — « ils créent un compte gratuit à
+ * l'ouverture du lien, et apparaissent ensuite dans les dépenses » — et c'est
+ * exactement ce que fait cette action.
+ */
+export async function inviterVoyageurExterne(_prev: unknown, formData: FormData) {
+  const parsed = participantInputSchema.safeParse({
+    voyageId: formData.get("voyageId"),
+    displayName: formData.get("displayName"),
+    email: formData.get("email"),
+  });
+  if (!parsed.success || !parsed.data.email) return { error: "Invité invalide" };
+  const supabase = await createServerSupabase();
+  const uid = await userId(supabase);
+  if (!uid) return { error: "Non authentifié" };
+  const d = parsed.data;
+
+  // Le voyage doit m'être accessible : la lecture sous RLS le vérifie avant
+  // qu'on écrive quoi que ce soit (une FK ne garantit aucun accès).
+  const { data: voyage } = await supabase
+    .from("voyages").select("id").eq("id", d.voyageId).maybeSingle();
+  if (!voyage) return { error: "Voyage inaccessible" };
+
+  const { data: cree, error } = await supabase.from("voyage_participants").insert({
+    voyage_id: d.voyageId, display_name: d.displayName, email: d.email,
+    type_voyageur: "adulte", created_by: uid,
+  }).select("id").single();
+  if (error || !cree) { logActionError("voyages.inviterExterne", error); return { error: "Invitation impossible" }; }
+
+  const token = randomBytes(32).toString("base64url");
+  const { error: invErr } = await supabase.from("invitations").insert({
+    token, email: d.email, role_vise: "invite", voyage_id: d.voyageId, cree_par: uid,
+  });
+  if (invErr) {
+    logActionError("voyages.inviterExterne", invErr);
+    // Un voyageur sans invitation resterait « en attente » pour toujours : on
+    // défait plutôt que de laisser une demi-écriture.
+    await supabase.from("voyage_participants").delete().eq("id", cree.id);
+    return { error: "Invitation impossible" };
+  }
+
+  revalidatePath(`/voyages/${d.voyageId}`);
+  return { ok: true as const, id: cree.id as string, token };
 }
 
 export async function removeParticipant(_prev: unknown, formData: FormData) {

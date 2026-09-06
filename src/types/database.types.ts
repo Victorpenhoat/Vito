@@ -1866,6 +1866,7 @@ export type Database = {
           id: string
           profile_id: string | null
           role: string
+          type_voyageur: string
           voyage_id: string
         }
         Insert: {
@@ -1877,6 +1878,7 @@ export type Database = {
           id?: string
           profile_id?: string | null
           role?: string
+          type_voyageur?: string
           voyage_id: string
         }
         Update: {
@@ -1888,6 +1890,7 @@ export type Database = {
           id?: string
           profile_id?: string | null
           role?: string
+          type_voyageur?: string
           voyage_id?: string
         }
         Relationships: [

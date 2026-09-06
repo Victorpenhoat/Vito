@@ -579,7 +579,7 @@
       "titre": "Voyageurs",
       "vide": "Personne n'est encore inscrit à ce voyage.",
       "ajouter": "Ajouter un voyageur",
-      "depuisCercle": "Dans mon Cercle",
+      "depuisCercle": "Depuis mon cercle",
       "depuisComptes": "Comptes partagés",
       "libre": "Quelqu'un d'autre",
       "nomPlaceholder": "Prénom et nom",
@@ -591,7 +591,18 @@
         "cercle": "Cercle",
         "libre": "invité"
       },
-      "echec": "Ajout impossible pour l'instant."
+      "echec": "Invitation impossible pour l'instant.",
+      "groupeExternes": "Invités externes",
+      "type": "Type",
+      "adulte": "Adulte",
+      "enfant": "Enfant",
+      "enfantAge": "Enfant · {age} ans",
+      "organisateur": "Organisateur",
+      "enAttente": "invitation envoyée · en attente",
+      "inviteExterne": "Inviter quelqu'un hors du Cercle",
+      "emailPlaceholder": "Adresse e-mail",
+      "inviter": "Inviter",
+      "aideExterne": "Il crée un compte Vito gratuit en ouvrant le lien, et apparaît ensuite dans les dépenses."
     },
     "programme": {
       "titre": "Programme",

@@ -53,7 +53,7 @@ test("l'agence voit le voyage partagé par le seed", async ({ page }) => {
 // septembre 2026 — quatre jours au programme.
 const VOYAGE_ROME = "11111111-2222-4333-8444-555555555555";
 
-test("les voyageurs : un proche du Cercle, un invité libre, et le retrait", async ({ page }) => {
+test("les voyageurs : deux groupes, un enfant avec son âge, et un invité externe", async ({ page }) => {
   await login(page, "client@vito.test");
   await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
 
@@ -70,12 +70,27 @@ test("les voyageurs : un proche du Cercle, un invité libre, et le retrait", asy
     await page.getByTestId("participant-ajouter").click();
   }
 
-  // quelqu'un qui n'a ni compte ni fiche : saisi librement
+  // quelqu'un qui n'a ni compte ni fiche, déclaré comme ENFANT
+  await page.getByTestId("type-enfant").click();
   await page.getByTestId("participant-nom").fill(invite);
   await page.getByTestId("participant-valider").click();
   const ligne = page.getByTestId("participant-row").filter({ hasText: invite });
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
-  await expect(ligne).toContainText("invité");
+  // sans date de naissance, on le dit enfant sans inventer d'âge
+  await expect(ligne).toContainText("Enfant");
+  // il vit avec le Cercle, pas avec les invités externes
+  await expect(page.getByTestId("groupe-cercle")).toContainText(invite);
+
+  // un invité EXTERNE, convié par e-mail : il attend d'ouvrir son lien
+  const externe = `Externe ${Date.now()}`;
+  await page.getByTestId("participant-ajouter").click();
+  await page.getByTestId("invite-nom").fill(externe);
+  await page.getByTestId("invite-email").fill(`externe${Date.now()}@vito.test`);
+  await page.getByTestId("invite-valider").click();
+  const ligneExterne = page.getByTestId("participant-row").filter({ hasText: externe });
+  await expectVisibleWithReload(page, ligneExterne, { timeout: 15_000 });
+  await expect(page.getByTestId("groupe-externes")).toContainText(externe);
+  await expect(ligneExterne).toContainText("en attente");
 
   // le retrait ne laisse rien derrière
   await ligne.getByTestId("participant-retirer").click();

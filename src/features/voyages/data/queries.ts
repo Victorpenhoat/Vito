@@ -29,7 +29,8 @@ export async function getVoyageDetail(id: string) {
     supabase.from("voyage_membres").select("profile_id, role, profile:profiles(display_name)").eq("voyage_id", id),
     // Lot B : qui part (participants) et quoi faire sur place (programme).
     supabase.from("voyage_participants")
-      .select("id, profile_id, family_member_id, display_name, email, role").eq("voyage_id", id),
+      .select("id, profile_id, family_member_id, display_name, email, role, type_voyageur, proche:family_members(birth_date)")
+      .eq("voyage_id", id),
     supabase.from("voyage_etapes")
       .select("id, jour, heure, titre, lieu, etablissement_id, notes, ordre, categorie, moment").eq("voyage_id", id),
   ]);
@@ -43,18 +44,35 @@ export async function getVoyageDetail(id: string) {
     const p = Array.isArray(m.profile) ? m.profile[0] : m.profile;
     return { profile_id: m.profile_id, role: m.role, display_name: p?.display_name ?? null };
   });
-  return {
-    voyage: voyageRes.data,
-    reservations: resRes.data ?? [],
-    membres,
-    participants: (partRes.data ?? []).map((p) => ({
+  // Invitations encore en attente : elles disent quels invités externes n'ont
+  // pas encore ouvert leur lien (« En attente » de la maquette).
+  const { data: invits } = await supabase
+    .from("invitations").select("email").eq("voyage_id", id).is("consomme_le", null);
+  const enAttente = new Set((invits ?? []).map((i) => (i.email ?? "").toLowerCase()).filter(Boolean));
+
+  const participants = (partRes.data ?? []).map((p) => {
+    const proche = Array.isArray(p.proche) ? p.proche[0] : p.proche;
+    return {
       id: p.id,
       profileId: p.profile_id,
       familyMemberId: p.family_member_id,
       displayName: p.display_name,
       email: p.email,
       role: p.role === "organisateur" ? ("organisateur" as const) : ("voyageur" as const),
-    })),
+      typeVoyageur: p.type_voyageur === "enfant" ? ("enfant" as const) : ("adulte" as const),
+      // L'âge se déduit de la fiche du proche — la RLS ne la montre qu'à son
+      // carnet, donc un co-membre ne verra pas cette date : c'est voulu.
+      dateNaissance: proche?.birth_date ?? null,
+      // « En attente » tant que l'invité n'a pas ouvert son lien.
+      invitationEnAttente: p.email != null && enAttente.has(p.email.toLowerCase()),
+    };
+  });
+
+  return {
+    voyage: voyageRes.data,
+    reservations: resRes.data ?? [],
+    membres,
+    participants,
     etapes: (etapesRes.data ?? []).map((e) => ({
       id: e.id,
       jour: e.jour,

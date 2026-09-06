@@ -67,8 +67,9 @@ export const participantInputSchema = z
     profileId: z.guid().optional(),
     familyMemberId: z.guid().optional(),
     displayName: z.string().trim().min(1).max(120),
-    email: z.string().email().max(200).optional(),
+    email: z.email().max(200).optional(),
     role: z.enum(["organisateur", "voyageur"]).optional(),
+    typeVoyageur: z.enum(["adulte", "enfant"]).optional(),
   })
   .refine((d) => !(d.profileId && d.familyMemberId), {
     message: "Un participant a au plus une source",
