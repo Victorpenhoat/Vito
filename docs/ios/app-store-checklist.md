@@ -40,6 +40,7 @@ faudra rouvrir.
 | Catégorie principale | Voyage | proposition |
 | Catégorie secondaire | Style de vie | proposition |
 | Classification | 4+ | — |
+| iOS minimum | 16.0 | ✅ arrêté |
 | Langue principale | Français | — |
 | URL de confidentialité | `https://<domaine>/fr/confidentialite` | ✅ page en ligne |
 | URL de support | *à créer* (une page ou une adresse e-mail suffit) | ⏳ |

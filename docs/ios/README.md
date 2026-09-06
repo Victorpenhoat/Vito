@@ -32,7 +32,8 @@ Trois raisons mesurées dans le code, pas des préférences :
 | `npm run ios:sync` | recopie la coque et met à jour les plugins natifs |
 | `npm run ios:open` | ouvre le projet dans Xcode |
 | `npm run ios:assets` | régénère icônes et écrans de lancement depuis `assets/` |
-| `npm run ios:regen` | **efface et régénère** `ios/` (au changement de bundle ID) |
+| `npm run ios:personnaliser` | réapplique permissions, domaines associés, cible iOS et manifeste de confidentialité |
+| `npm run ios:regen` | **efface et régénère** `ios/`, puis repersonnalise (au changement de bundle ID) |
 
 `ios:sync` ne construit pas le site : il est déployé par Vercel, et la WebView
 le charge. C'est la différence avec un projet Capacitor classique.
@@ -108,7 +109,10 @@ navigateur du système ne partage pas la session, il afficherait une erreur.
   2026-09-06 (`CAP_APP_ID`, `CAP_APP_NAME` permettent d'en changer pour une
   build de test). Le bundle ID devient **définitif à la création de l'app dans
   App Store Connect**.
-- **Cible iOS minimale** : 15.0 (valeur par défaut de Capacitor). Recommandation :
-  16.0, pour WebAuthn et les safe areas.
+- **Cible iOS minimale** : **16.0**, arrêtée par le PO le 2026-09-06. Capacitor
+  génère 15.0 ; `npm run ios:personnaliser` la remonte, donc un `ios:regen` ne
+  la reperd pas. Raison : WebAuthn y est mûr — les passkeys sont la voie de
+  connexion la plus soignée de Vito — et les safe areas s'y tiennent sans
+  contorsion. Un iPhone 8 ou X reste sur le web, qui ne change pas.
 - Signature, certificats, TestFlight et soumission : lots ultérieurs, et actions
   manuelles dans Xcode / App Store Connect.

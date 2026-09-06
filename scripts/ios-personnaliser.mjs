@@ -76,7 +76,17 @@ if (!pbx.includes("CODE_SIGN_ENTITLEMENTS")) {
   writeFileSync(PBXPROJ, pbx);
   console.log("project.pbxproj : CODE_SIGN_ENTITLEMENTS rattaché");
 }
-// 4. Manifeste de confidentialité — obligatoire à la soumission. Le fichier
+// 4. Cible iOS minimale. Capacitor génère 15.0 ; on vise 16.0 (décision PO du
+//    2026-09-06) : WebAuthn y est mûr — les passkeys sont la voie de connexion
+//    la plus soignée de Vito — et les safe areas s'y tiennent sans contorsion.
+const CIBLE = process.env.CAP_IOS_TARGET ?? "16.0";
+if (!pbx.includes(`IPHONEOS_DEPLOYMENT_TARGET = ${CIBLE};`)) {
+  pbx = pbx.replace(/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;/g, `IPHONEOS_DEPLOYMENT_TARGET = ${CIBLE};`);
+  writeFileSync(PBXPROJ, pbx);
+  console.log(`project.pbxproj : cible iOS ${CIBLE}`);
+}
+
+// 5. Manifeste de confidentialité — obligatoire à la soumission. Le fichier
 //    doit être RESSOURCE de la cible, sinon il ne part pas dans le bundle et
 //    App Store Connect le réclame après coup.
 const REF = "AA00PRIV0000000000000001";
