@@ -27,7 +27,15 @@ describe("vacances scolaires zone C", () => {
     }
   });
 
-  it("couvre l'année scolaire annoncée, de la Toussaint au printemps", () => {
-    expect(VACANCES_ZONE_C.map((p) => p.libelle)).toEqual(["Toussaint", "Noël", "Hiver", "Printemps"]);
+  it("couvre l'année scolaire annoncée, de la Toussaint à l'été", () => {
+    expect(VACANCES_ZONE_C.map((p) => p.libelle))
+      .toEqual(["Toussaint", "Noël", "Hiver", "Printemps", "Grandes vacances"]);
+  });
+
+  it("l'été est la plus longue fenêtre de l'année — c'est là qu'on part vraiment", () => {
+    const jours = (p: { debut: string; fin: string }) =>
+      (Date.parse(`${p.fin}T00:00:00Z`) - Date.parse(`${p.debut}T00:00:00Z`)) / 86_400_000;
+    const ete = VACANCES_ZONE_C.find((p) => p.id === "ete-2027")!;
+    expect(VACANCES_ZONE_C.every((p) => p.id === ete.id || jours(p) < jours(ete))).toBe(true);
   });
 });
