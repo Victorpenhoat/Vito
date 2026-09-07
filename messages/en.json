@@ -1171,7 +1171,8 @@
       "voyages": "Trips",
       "cercle": "Circle"
     },
-    "reception": "Recommendations"
+    "reception": "Recommendations",
+    "activites": "Activities"
   },
   "places": {
     "favoris": "Favourites",
@@ -1679,5 +1680,27 @@
     "envoyees": "What I recommended",
     "a": "to {nom}",
     "envoyeesAide": "You will not know whether it was added — it's their book."
+  },
+  "activites": {
+    "eyebrow": "My notebook",
+    "titre": "Activities",
+    "onglets": {
+      "en_cours": "Ongoing",
+      "semaine": "This week",
+      "tous": "All",
+      "carte": "Map"
+    },
+    "vide": {
+      "aucuneTitre": "No activities yet",
+      "aucuneTexte": "Add the family's classes and clubs to keep the address, the time and the codes at hand.",
+      "semaineTitre": "No classes this week",
+      "semaineTexte": "This week's sessions will show up here, along with school holidays and trips.",
+      "carteTitre": "Nothing to place yet",
+      "carteTexte": "Clubs appear on the map as soon as an activity has an address."
+    },
+    "erreur": {
+      "titre": "Activities could not be loaded.",
+      "reessayer": "Try again"
+    }
   }
 }

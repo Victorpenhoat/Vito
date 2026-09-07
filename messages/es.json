@@ -1171,7 +1171,8 @@
       "voyages": "Viajes",
       "cercle": "Círculo"
     },
-    "reception": "Recomendaciones"
+    "reception": "Recomendaciones",
+    "activites": "Actividades"
   },
   "places": {
     "favoris": "Favoritos",
@@ -1679,5 +1680,27 @@
     "envoyees": "Lo que he recomendado",
     "a": "a {nom}",
     "envoyeesAide": "No sabrás si la dirección fue añadida: es su cuaderno."
+  },
+  "activites": {
+    "eyebrow": "Mi cuaderno",
+    "titre": "Actividades",
+    "onglets": {
+      "en_cours": "En curso",
+      "semaine": "Esta semana",
+      "tous": "Todas",
+      "carte": "Mapa"
+    },
+    "vide": {
+      "aucuneTitre": "Todavía no hay actividades",
+      "aucuneTexte": "Añade las clases y clubes de la familia para tener a mano la dirección, la hora y los códigos.",
+      "semaineTitre": "Ninguna clase esta semana",
+      "semaineTexte": "Las sesiones de la semana aparecerán aquí, con las vacaciones escolares y los viajes.",
+      "carteTitre": "Nada que situar",
+      "carteTexte": "Los clubes aparecen en el mapa en cuanto una actividad tiene dirección."
+    },
+    "erreur": {
+      "titre": "No se han podido cargar las actividades.",
+      "reessayer": "Reintentar"
+    }
   }
 }

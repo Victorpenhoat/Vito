@@ -1171,7 +1171,8 @@
       "voyages": "Viaggi",
       "cercle": "Cerchia"
     },
-    "reception": "Consigli"
+    "reception": "Consigli",
+    "activites": "Attività"
   },
   "places": {
     "favoris": "Preferiti",
@@ -1679,5 +1680,27 @@
     "envoyees": "Ciò che ho consigliato",
     "a": "a {nom}",
     "envoyeesAide": "Non saprai se l'indirizzo è stato aggiunto: è il suo taccuino."
+  },
+  "activites": {
+    "eyebrow": "Il mio taccuino",
+    "titre": "Attività",
+    "onglets": {
+      "en_cours": "In corso",
+      "semaine": "Questa settimana",
+      "tous": "Tutte",
+      "carte": "Mappa"
+    },
+    "vide": {
+      "aucuneTitre": "Ancora nessuna attività",
+      "aucuneTexte": "Aggiungi i corsi e i club della famiglia per avere a portata di mano indirizzo, orario e codici.",
+      "semaineTitre": "Nessun corso questa settimana",
+      "semaineTexte": "Le lezioni della settimana appariranno qui, con le vacanze scolastiche e i viaggi.",
+      "carteTitre": "Niente da posizionare",
+      "carteTexte": "I club compaiono sulla mappa non appena un'attività ha un indirizzo."
+    },
+    "erreur": {
+      "titre": "Impossibile caricare le attività.",
+      "reessayer": "Riprova"
+    }
   }
 }
