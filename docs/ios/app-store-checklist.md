@@ -36,7 +36,7 @@ faudra rouvrir.
 |---|---|---|
 | Nom (30 car. max) | **Vito** | ✅ arrêté |
 | Sous-titre (30 car. max) | « Votre carnet de sorties » (25) | proposition |
-| Bundle ID | `com.badakan.vito` | ✅ arrêté — **définitif à la création de l'app** |
+| Bundle ID | `com.exemple.vito` | ⏳ **provisoire** — attend le domaine (OVH) |
 | Catégorie principale | Voyage | proposition |
 | Catégorie secondaire | Style de vie | proposition |
 | Classification | 4+ | — |
@@ -151,7 +151,7 @@ fait des choses qu'un site ne fait pas.
 ## Avant d'envoyer la première build
 
 - [x] L'abonnement est masqué dans la coque (voir tout en haut)
-- [x] Nom et bundle ID arrêtés (`Vito` / `com.badakan.vito`)
+- [ ] Bundle ID définitif, dérivé du domaine acheté, puis `CAP_APP_ID=… npm run ios:regen`
 - [ ] `APPLE_APP_ID` posé dans Vercel, et
       `/.well-known/apple-app-site-association` répond 200 en JSON
 - [ ] Équipe choisie dans Xcode (Signing & Capabilities), Associated Domains

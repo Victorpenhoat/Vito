@@ -17,10 +17,14 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // Ce que l'app apporte de natif — géolocalisation, partage, ouverture des liens
 // hors WebView, carnet hors ligne — arrive par les plugins, lot par lot.
 const config: CapacitorConfig = {
-  // Arrêtés par le PO le 2026-09-06. Le bundle ID devient DÉFINITIF à la
-  // création de l'app dans App Store Connect : après, il ne se change plus.
-  // Les variables restent, pour une build de test sous un autre identifiant.
-  appId: process.env.CAP_APP_ID ?? "com.badakan.vito",
+  // ⚠ IDENTIFIANT PROVISOIRE. Le bundle ID doit être le reverse-DNS d'un
+  // domaine qu'on possède ; celui de Vito est en cours d'achat. `com.exemple.`
+  // ne trompe personne, et c'est le but : il ne doit surtout pas partir dans
+  // App Store Connect, où le bundle ID devient DÉFINITIF.
+  //
+  // Le jour où le domaine est acheté :
+  //   CAP_APP_ID=<reverse-dns>.vito npm run ios:regen
+  appId: process.env.CAP_APP_ID ?? "com.exemple.vito",
   appName: process.env.CAP_APP_NAME ?? "Vito",
 
   // Dossier web embarqué. Avec `server.url`, la WebView ne l'affiche pas : il

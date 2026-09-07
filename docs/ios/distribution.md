@@ -20,7 +20,7 @@ production périmée montre l'ancienne app.
 
 ## 1. Créer l'app dans App Store Connect
 
-Une seule fois. `Vito` / `com.badakan.vito` — **le bundle ID ne se change plus
+Une seule fois. `Vito` / `com.exemple.vito` — **le bundle ID ne se change plus
 après**. Le reste de la fiche est dans `app-store-checklist.md`.
 
 ## 2. Préparer la build

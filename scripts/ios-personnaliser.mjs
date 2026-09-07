@@ -10,6 +10,102 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 const PLIST = "ios/App/App/Info.plist";
 const ENTITLEMENTS = "ios/App/App/App.entitlements";
 const PBXPROJ = "ios/App/App.xcodeproj/project.pbxproj";
+const PRIVACY = "ios/App/App/PrivacyInfo.xcprivacy";
+
+/** Manifeste de confidentialité — voir le commentaire de l'étape 5. */
+const MANIFESTE_CONFIDENTIALITE = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Vito ne suit personne : aucune régie, aucun identifiant publicitaire,
+	     aucune donnée recoupée avec un tiers à des fins de ciblage. -->
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<!-- Aucune « API à raison requise » n'est appelée par du code natif : l'app
+	     n'a pas de code Swift propre, et Capacitor déclare son propre manifeste
+	     (vide lui aussi). -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array/>
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
+		<!-- Adresse e-mail : c'est l'identifiant du compte, et la seule voie
+		     par laquelle un lien de connexion arrive. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeEmailAddress</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Nom affiché, facultatif : pour se reconnaître entre proches d'un
+		     même carnet. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeName</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Identifiant de compte, créé par Vito. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeUserID</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Position précise : lue au moment où l'on demande « autour de moi »,
+		     jamais enregistrée ni envoyée ailleurs. Non rattachée au compte,
+		     puisqu'elle n'est stockée nulle part. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePreciseLocation</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Le carnet lui-même : adresses, notes, photos, documents. C'est le
+		     contenu que l'utilisateur crée, et la raison d'être de l'app. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeOtherUserContent</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
+`;
 
 if (!existsSync(PLIST)) {
   console.error("Projet iOS absent — lancer `npx cap add ios --packagemanager SPM` d'abord.");
@@ -86,9 +182,16 @@ if (!pbx.includes(`IPHONEOS_DEPLOYMENT_TARGET = ${CIBLE};`)) {
   console.log(`project.pbxproj : cible iOS ${CIBLE}`);
 }
 
-// 5. Manifeste de confidentialité — obligatoire à la soumission. Le fichier
-//    doit être RESSOURCE de la cible, sinon il ne part pas dans le bundle et
-//    App Store Connect le réclame après coup.
+// 5. Manifeste de confidentialité — obligatoire à la soumission.
+//
+//    Il est ÉCRIT ici, pas seulement référencé : `ios:regen` fait `rm -rf ios`,
+//    et un projet qui pointe sur un fichier absent ne compile pas. C'est
+//    arrivé.
+//
+//    Le fichier doit aussi être RESSOURCE de la cible, sinon il ne part pas
+//    dans le bundle et App Store Connect le réclame après coup.
+writeFileSync(PRIVACY, MANIFESTE_CONFIDENTIALITE);
+console.log("PrivacyInfo.xcprivacy écrit");
 const REF = "AA00PRIV0000000000000001";
 const BUILD = "AA00PRIV0000000000000002";
 if (!pbx.includes("PrivacyInfo.xcprivacy")) {
@@ -116,3 +219,6 @@ if (!pbx.includes("PrivacyInfo.xcprivacy")) {
 }
 
 console.log("Personnalisation iOS appliquée.");
+
+// Le manifeste lui-même. Déclare ce que l'app collecte — et surtout qu'elle
+// ne suit personne. Toute évolution du produit doit passer par ici.
