@@ -5,6 +5,8 @@ import type { ActiviteDetail } from "../data/queries";
 import { resumePresence, ordonnerEcheances, etatEcheance, totalRegle } from "../domain/fiche";
 import { FormulaireCreneau } from "./FormulaireCreneau";
 import { StatutActivite } from "./StatutActivite";
+import { SectionAcces } from "./SectionAcces";
+import { SectionDocuments } from "./SectionDocuments";
 
 const TEINTE_ECHEANCE: Record<string, string> = {
   paye: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
@@ -32,8 +34,9 @@ function Section({ titre, children, action }: {
  * Rendue par le serveur et partagée par la route dédiée et le panneau droit du
  * desktop — un seul rendu, donc une seule vérité.
  *
- * Les sections Accès et Documents n'y sont pas : elles arrivent au prochain
- * incrément, avec la re-authentification et le journal qu'elles exigent.
+ * Les sections Accès et Documents exigent une re-authentification à chaque
+ * ouverture : la page ne porte ni les codes ni les fichiers, seulement de quoi
+ * les demander.
  */
 export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
   activite: ActiviteDetail;
@@ -184,6 +187,10 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
           </>
         )}
       </Section>
+
+      <SectionAcces activiteId={activite.id} codes={activite.codes} />
+
+      <SectionDocuments activiteId={activite.id} documents={activite.documents} aujourdhui={aujourdhui} />
 
       {activite.notes && (
         <Section titre={t("sections.notes")}>

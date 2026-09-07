@@ -1657,7 +1657,10 @@
       "verifier": "Verifica",
       "echec": "Verifica non riuscita."
     },
-    "afficherDocument": "Mostra il documento"
+    "afficherDocument": "Mostra il documento",
+    "masquer": "Nascondi",
+    "copier": "Copia",
+    "reveler": "Mostra"
   },
   "reception": {
     "eyebrow": "La Cerchia",
@@ -1741,7 +1744,9 @@
       "lieu": "Luogo e contatti",
       "cout": "Costo",
       "notes": "Note",
-      "consignes": "Istruzioni di accesso"
+      "consignes": "Istruzioni di accesso",
+      "acces": "Accesso",
+      "documents": "Documenti"
     },
     "horaires": {
       "aucun": "Ancora nessun orario.",
@@ -1797,6 +1802,35 @@
       "5": "venerdì",
       "6": "sabato",
       "7": "domenica"
+    },
+    "acces": {
+      "aucun": "Nessun codice salvato.",
+      "ajouter": "Aggiungi un codice",
+      "libelle": "Etichetta (cancello, spogliatoio…)",
+      "valeur": "Valore del codice",
+      "note": "Nota (facoltativa)",
+      "enregistrer": "Cifra e salva"
+    },
+    "documents": {
+      "aucun": "Nessun documento.",
+      "ajouter": "Aggiungi un documento",
+      "type": "Tipo di documento",
+      "expireLe": "Scade il (facoltativo)",
+      "choisir": "Scegli un file",
+      "aucunFichier": "Nessun file",
+      "enregistrer": "Cifra e salva",
+      "expire": "Scaduto il {date}",
+      "bientot": "Scade tra {n} giorni",
+      "valide": "Valido fino al {date}",
+      "types": {
+        "licence": "Licenza",
+        "certificat_medical": "Certificato medico",
+        "assurance": "Assicurazione",
+        "autorisation": "Autorizzazione dei genitori",
+        "reglement": "Regolamento",
+        "facture": "Fattura",
+        "autre": "Altro"
+      }
     }
   }
 }

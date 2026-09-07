@@ -118,6 +118,16 @@ export type ActiviteDetail = ActiviteListe & {
     id: string; libelle: string; montantCents: number; devise: string;
     echeance: string | null; statut: "du" | "paye"; periodicite: string | null; moyen: string | null;
   }[];
+  /**
+   * Codes d'accès SANS leur valeur : même chiffrée, elle n'a rien à faire dans
+   * une page. Le clair n'arrive que par `revelerCode`, après re-authentification.
+   */
+  codes: { id: string; libelle: string; note: string | null }[];
+  /** Documents sans leur contenu : seule la route protégée le délivre. */
+  documents: {
+    id: string; type: string; nom: string; sensible: boolean;
+    taille: number; expireLe: string | null;
+  }[];
 };
 
 /**
@@ -145,7 +155,9 @@ export const getActiviteDetail = cache(async (
                          intervenant, lieu_precision, depose:family_members(id, first_name)),
        activite_tags(tags(slug, label)),
        activite_seances(date, statut, motif),
-       activite_paiements(id, libelle, montant_cents, devise, echeance, statut, periodicite, moyen)`,
+       activite_paiements(id, libelle, montant_cents, devise, echeance, statut, periodicite, moyen),
+       activite_codes(id, libelle, note),
+       activite_documents(id, type, nom, sensible, taille, expire_le)`,
     )
     .eq("id", id)
     .maybeSingle();
@@ -211,6 +223,11 @@ export const getActiviteDetail = cache(async (
       statut: p.statut as "du" | "paye",
       periodicite: p.periodicite,
       moyen: p.moyen,
+    })),
+    codes: (data.activite_codes ?? []).map((c) => ({ id: c.id, libelle: c.libelle, note: c.note })),
+    documents: (data.activite_documents ?? []).map((d) => ({
+      id: d.id, type: d.type, nom: d.nom, sensible: d.sensible,
+      taille: d.taille, expireLe: d.expire_le,
     })),
   };
 });

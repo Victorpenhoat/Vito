@@ -1657,7 +1657,10 @@
       "verifier": "Vérifier",
       "echec": "Vérification impossible."
     },
-    "afficherDocument": "Afficher le document"
+    "afficherDocument": "Afficher le document",
+    "masquer": "Masquer",
+    "copier": "Copier",
+    "reveler": "Révéler"
   },
   "reception": {
     "eyebrow": "Le Cercle",
@@ -1741,7 +1744,9 @@
       "lieu": "Lieu et contacts",
       "cout": "Coût",
       "notes": "Notes",
-      "consignes": "Consignes d'accès"
+      "consignes": "Consignes d'accès",
+      "acces": "Accès",
+      "documents": "Documents"
     },
     "horaires": {
       "aucun": "Aucun créneau pour l'instant.",
@@ -1797,6 +1802,35 @@
       "5": "vendredi",
       "6": "samedi",
       "7": "dimanche"
+    },
+    "acces": {
+      "aucun": "Aucun code enregistré.",
+      "ajouter": "Ajouter un code",
+      "libelle": "Libellé (portail, vestiaire…)",
+      "valeur": "Valeur du code",
+      "note": "Note (facultative)",
+      "enregistrer": "Chiffrer et enregistrer"
+    },
+    "documents": {
+      "aucun": "Aucun document.",
+      "ajouter": "Ajouter un document",
+      "type": "Type de document",
+      "expireLe": "Expire le (facultatif)",
+      "choisir": "Choisir un fichier",
+      "aucunFichier": "Aucun fichier",
+      "enregistrer": "Chiffrer et enregistrer",
+      "expire": "Expiré le {date}",
+      "bientot": "Expire dans {n} jours",
+      "valide": "Valide jusqu'au {date}",
+      "types": {
+        "licence": "Licence",
+        "certificat_medical": "Certificat médical",
+        "assurance": "Attestation d'assurance",
+        "autorisation": "Autorisation parentale",
+        "reglement": "Règlement",
+        "facture": "Facture",
+        "autre": "Autre"
+      }
     }
   }
 }

@@ -1657,7 +1657,10 @@
       "verifier": "Verify",
       "echec": "Verification failed."
     },
-    "afficherDocument": "Show the document"
+    "afficherDocument": "Show the document",
+    "masquer": "Hide",
+    "copier": "Copy",
+    "reveler": "Reveal"
   },
   "reception": {
     "eyebrow": "The Circle",
@@ -1741,7 +1744,9 @@
       "lieu": "Place and contacts",
       "cout": "Cost",
       "notes": "Notes",
-      "consignes": "Access notes"
+      "consignes": "Access notes",
+      "acces": "Access",
+      "documents": "Documents"
     },
     "horaires": {
       "aucun": "No session yet.",
@@ -1797,6 +1802,35 @@
       "5": "Friday",
       "6": "Saturday",
       "7": "Sunday"
+    },
+    "acces": {
+      "aucun": "No code saved.",
+      "ajouter": "Add a code",
+      "libelle": "Label (gate, changing room…)",
+      "valeur": "Code value",
+      "note": "Note (optional)",
+      "enregistrer": "Encrypt and save"
+    },
+    "documents": {
+      "aucun": "No documents.",
+      "ajouter": "Add a document",
+      "type": "Document type",
+      "expireLe": "Expires on (optional)",
+      "choisir": "Choose a file",
+      "aucunFichier": "No file",
+      "enregistrer": "Encrypt and save",
+      "expire": "Expired on {date}",
+      "bientot": "Expires in {n} days",
+      "valide": "Valid until {date}",
+      "types": {
+        "licence": "Licence",
+        "certificat_medical": "Medical certificate",
+        "assurance": "Insurance certificate",
+        "autorisation": "Parental consent",
+        "reglement": "Rules",
+        "facture": "Invoice",
+        "autre": "Other"
+      }
     }
   }
 }
