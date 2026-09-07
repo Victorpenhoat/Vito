@@ -22,7 +22,8 @@
     "db:types": "supabase gen types typescript --local > src/types/database.types.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "ios:personnaliser": "node scripts/ios-personnaliser.mjs"
+    "ios:personnaliser": "node scripts/ios-personnaliser.mjs",
+    "ios:version": "node scripts/ios-version.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",

@@ -32,6 +32,7 @@ Trois raisons mesurées dans le code, pas des préférences :
 | `npm run ios:sync` | recopie la coque et met à jour les plugins natifs |
 | `npm run ios:open` | ouvre le projet dans Xcode |
 | `npm run ios:assets` | régénère icônes et écrans de lancement depuis `assets/` |
+| `npm run ios:version` | aligne la version sur `package.json` et incrémente le numéro de build |
 | `npm run ios:personnaliser` | réapplique permissions, domaines associés, cible iOS et manifeste de confidentialité |
 | `npm run ios:regen` | **efface et régénère** `ios/`, puis repersonnalise (au changement de bundle ID) |
 
@@ -98,6 +99,8 @@ navigateur du système ne partage pas la session, il afficherait une erreur.
 
 - `docs/ios/authentification.md` — liens profonds, Universal Links, redirect URLs
   à saisir dans Supabase, persistance de session.
+- `docs/ios/distribution.md` — archive, TestFlight, ce qu'il faut vérifier sur
+  l'appareil, soumission.
 - `docs/ios/app-store-checklist.md` — fiche, captures, compte de test, notes au
   reviewer, et le point d'arrêt sur l'abonnement (règle 3.1.1).
 - `docs/ios/cles-externes.md` — carte et Places dans la WebView (rien à
