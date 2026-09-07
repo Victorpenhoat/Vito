@@ -1696,11 +1696,43 @@
       "semaineTitre": "Aucun cours cette semaine",
       "semaineTexte": "Les créneaux de la semaine s'afficheront ici, avec les vacances scolaires et les voyages.",
       "carteTitre": "Aucun lieu à placer",
-      "carteTexte": "Les clubs apparaîtront sur la carte dès qu'une activité aura une adresse."
+      "carteTexte": "Les clubs apparaîtront sur la carte dès qu'une activité aura une adresse.",
+      "filtreTitre": "Aucune activité ne correspond",
+      "filtreTexte": "Retirez un filtre ou changez votre recherche."
     },
     "erreur": {
       "titre": "Les activités n'ont pas pu être chargées.",
       "reessayer": "Réessayer"
+    },
+    "compte": "{n, plural, one {# activité} other {# activités}}",
+    "sansMembre": "Sans membre",
+    "restantes": "{n, plural, one {# séance restante} other {# séances restantes}}",
+    "appeler": "Appeler le club",
+    "itineraire": "Itinéraire",
+    "aujourdhui": "aujourd'hui",
+    "demain": "demain",
+    "recherchePlaceholder": "Activité, club, intervenant…",
+    "statuts": {
+      "en_cours": "En cours",
+      "en_pause": "En pause",
+      "terminee": "Terminée"
+    },
+    "types": {
+      "equitation": "Équitation",
+      "danse": "Danse",
+      "football": "Football",
+      "musique": "Musique",
+      "tennis": "Tennis",
+      "natation": "Natation",
+      "theatre": "Théâtre",
+      "autre": "Autre"
+    },
+    "filtres": {
+      "membre": "Membre",
+      "statut": "Statut",
+      "type": "Type",
+      "tag": "Tags",
+      "effacer": "Effacer"
     }
   }
 }

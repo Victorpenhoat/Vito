@@ -1696,11 +1696,43 @@
       "semaineTitre": "No classes this week",
       "semaineTexte": "This week's sessions will show up here, along with school holidays and trips.",
       "carteTitre": "Nothing to place yet",
-      "carteTexte": "Clubs appear on the map as soon as an activity has an address."
+      "carteTexte": "Clubs appear on the map as soon as an activity has an address.",
+      "filtreTitre": "Nothing matches",
+      "filtreTexte": "Remove a filter or change your search."
     },
     "erreur": {
       "titre": "Activities could not be loaded.",
       "reessayer": "Try again"
+    },
+    "compte": "{n, plural, one {# activity} other {# activities}}",
+    "sansMembre": "No member",
+    "restantes": "{n, plural, one {# session left} other {# sessions left}}",
+    "appeler": "Call the club",
+    "itineraire": "Directions",
+    "aujourdhui": "today",
+    "demain": "tomorrow",
+    "recherchePlaceholder": "Activity, club, instructor…",
+    "statuts": {
+      "en_cours": "Ongoing",
+      "en_pause": "Paused",
+      "terminee": "Ended"
+    },
+    "types": {
+      "equitation": "Horse riding",
+      "danse": "Dance",
+      "football": "Football",
+      "musique": "Music",
+      "tennis": "Tennis",
+      "natation": "Swimming",
+      "theatre": "Theatre",
+      "autre": "Other"
+    },
+    "filtres": {
+      "membre": "Member",
+      "statut": "Status",
+      "type": "Type",
+      "tag": "Tags",
+      "effacer": "Clear"
     }
   }
 }

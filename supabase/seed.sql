@@ -265,6 +265,50 @@ values
 insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color) values
   ('f1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111', 'Camille', 'Durand', 'enfant', 'proche', '#6B7A8F');
 
+-- Un second enfant : sans lui, le groupement par membre de l'onglet Activités
+-- n'aurait rien à grouper.
+insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color) values
+  ('f1111111-1111-4111-8111-111111111112', '11111111-1111-1111-1111-111111111111', 'Tom', 'Durand', 'enfant', 'proche', '#B24C63');
+
+-- ── Activités (onglet Activités) ────────────────────────────────────────────
+-- Trois activités, trois statuts, deux membres : de quoi éprouver le
+-- groupement, les filtres cumulables et le décompte d'une formule.
+insert into public.activites (id, user_id, type, nom, statut, club_nom, adresse, lat, lng, telephone, formule_seances, saison_debut, saison_fin) values
+  ('a0000001-0000-4000-8000-000000000001', '11111111-1111-1111-1111-111111111111',
+   'equitation', 'Équitation', 'en_cours', 'Poney-club des Landes', '12 route du Cap, Le Teich',
+   44.6383, -1.0186, '05 56 22 41 08', 20, '2026-09-01', '2027-06-30'),
+  ('a0000001-0000-4000-8000-000000000002', '11111111-1111-1111-1111-111111111111',
+   'danse', 'Danse classique', 'en_cours', 'Conservatoire', '3 rue Buffon, Bordeaux',
+   44.8378, -0.5792, null, null, '2026-09-01', '2027-06-30'),
+  ('a0000001-0000-4000-8000-000000000003', '11111111-1111-1111-1111-111111111111',
+   'natation', 'Natation', 'terminee', 'Piscine Judaïque', '164 rue Judaïque, Bordeaux',
+   44.8412, -0.5934, null, null, '2024-09-01', '2025-06-30');
+
+insert into public.activite_membres (activite_id, membre_id) values
+  ('a0000001-0000-4000-8000-000000000001', 'f1111111-1111-4111-8111-111111111111'),
+  ('a0000001-0000-4000-8000-000000000002', 'f1111111-1111-4111-8111-111111111111'),
+  ('a0000001-0000-4000-8000-000000000003', 'f1111111-1111-4111-8111-111111111111'),
+  -- Le football est à Tom : deux membres, donc deux groupes.
+  ('a0000001-0000-4000-8000-000000000001', 'f1111111-1111-4111-8111-111111111112');
+
+insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut, heure_fin, lieu_precision, intervenant, depose_par) values
+  ('a0000002-0000-4000-8000-000000000001', 'a0000001-0000-4000-8000-000000000001',
+   6, '10:00', '11:00', 'Manège couvert', 'Claire Dubois', 'f1111111-1111-4111-8111-111111111111'),
+  ('a0000002-0000-4000-8000-000000000002', 'a0000001-0000-4000-8000-000000000002',
+   1, '17:30', '19:00', null, null, null);
+
+-- Douze séances faites et une manquée : « 13 / 20 · 7 restantes ».
+insert into public.activite_seances (activite_id, creneau_id, date, statut, motif)
+select 'a0000001-0000-4000-8000-000000000001', 'a0000002-0000-4000-8000-000000000001',
+       date '2026-06-06' + (n * 7), case when n = 12 then 'manquee' else 'faite' end,
+       case when n = 12 then 'voyage à Rome' end
+  from generate_series(0, 12) as n;
+
+insert into public.activite_tags (activite_id, tag_id)
+select 'a0000001-0000-4000-8000-000000000001', id from public.tags where slug = 'sport' and user_id is null;
+insert into public.activite_tags (activite_id, tag_id)
+select 'a0000001-0000-4000-8000-000000000002', id from public.tags where slug = 'musique' and user_id is null;
+
 insert into public.family_documents (id, user_id, member_id, doc_type, doc_number_chiffre, country, holder_name, issue_date, expiry_date, contenu_chiffre, mime_type, taille) values
   ('d1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111', 'f1111111-1111-4111-8111-111111111111',
    'passeport', 'Ere3qzdfUawtZ2Q+rwpxl+Ht0qeqIag5pjDPCiLOh/KEL0FpXg==', 'FR', 'Camille Durand', '2019-03-01', '2029-03-01',

@@ -354,6 +354,36 @@ export type Database = {
           },
         ]
       }
+      activite_tags: {
+        Row: {
+          activite_id: string
+          tag_id: string
+        }
+        Insert: {
+          activite_id: string
+          tag_id: string
+        }
+        Update: {
+          activite_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_tags_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activite_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activites: {
         Row: {
           adresse: string | null
