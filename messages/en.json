@@ -1733,6 +1733,70 @@
       "type": "Type",
       "tag": "Tags",
       "effacer": "Clear"
+    },
+    "annuler": "Cancel",
+    "sections": {
+      "horaires": "Schedule",
+      "presence": "Attendance",
+      "lieu": "Place and contacts",
+      "cout": "Cost",
+      "notes": "Notes",
+      "consignes": "Access notes"
+    },
+    "horaires": {
+      "aucun": "No session yet.",
+      "intervenant": "Instructor: {nom}",
+      "depose": "Drop-off: {nom}",
+      "deposeADefinir": "Drop-off to be decided",
+      "saison": "Valid from {debut} to {fin}",
+      "ajouter": "Add a session",
+      "jour": "Day",
+      "debut": "Start",
+      "fin": "End",
+      "lieuPrecision": "Place detail (arena, room…)",
+      "intervenantPlaceholder": "Instructor",
+      "deposeLabel": "Who drops off",
+      "enregistrer": "Save session"
+    },
+    "presence": {
+      "formule": "{n}-session pass",
+      "faites": "{n, plural, one {# attended} other {# attended}}",
+      "manquees": "{n, plural, one {# missed} other {# missed}}"
+    },
+    "lieu": {
+      "maps": "Maps",
+      "espaceFamille": "Family portal",
+      "ouvrir": "Open",
+      "aucun": "No address or phone yet."
+    },
+    "cout": {
+      "aucun": "No payment recorded.",
+      "regle": "Paid this season:",
+      "etats": {
+        "paye": "Paid",
+        "en_retard": "Late",
+        "a_venir": "Upcoming"
+      }
+    },
+    "nouvelle": {
+      "ouvrir": "New activity",
+      "titre": "New activity",
+      "nom": "Activity name",
+      "club": "Club",
+      "adresse": "Address",
+      "telephone": "Club phone",
+      "formule": "Number of sessions (optional)",
+      "membres": "Who attends",
+      "enregistrer": "Save"
+    },
+    "jours": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
     }
   }
 }

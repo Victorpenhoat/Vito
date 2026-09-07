@@ -1733,6 +1733,70 @@
       "type": "Tipo",
       "tag": "Tag",
       "effacer": "Cancella"
+    },
+    "annuler": "Annulla",
+    "sections": {
+      "horaires": "Orari",
+      "presence": "Presenze",
+      "lieu": "Luogo e contatti",
+      "cout": "Costo",
+      "notes": "Note",
+      "consignes": "Istruzioni di accesso"
+    },
+    "horaires": {
+      "aucun": "Ancora nessun orario.",
+      "intervenant": "Insegnante: {nom}",
+      "depose": "Accompagna: {nom}",
+      "deposeADefinir": "Accompagnatore da definire",
+      "saison": "Valido dal {debut} al {fin}",
+      "ajouter": "Aggiungi un orario",
+      "jour": "Giorno",
+      "debut": "Inizio",
+      "fin": "Fine",
+      "lieuPrecision": "Dettaglio del luogo (maneggio, sala…)",
+      "intervenantPlaceholder": "Insegnante",
+      "deposeLabel": "Chi accompagna",
+      "enregistrer": "Salva l'orario"
+    },
+    "presence": {
+      "formule": "Formula {n} lezioni",
+      "faites": "{n, plural, one {# fatta} other {# fatte}}",
+      "manquees": "{n, plural, one {# persa} other {# perse}}"
+    },
+    "lieu": {
+      "maps": "Mappe",
+      "espaceFamille": "Area famiglie",
+      "ouvrir": "Apri",
+      "aucun": "Nessun indirizzo né telefono."
+    },
+    "cout": {
+      "aucun": "Nessuna scadenza registrata.",
+      "regle": "Pagato questa stagione:",
+      "etats": {
+        "paye": "Pagato",
+        "en_retard": "In ritardo",
+        "a_venir": "In arrivo"
+      }
+    },
+    "nouvelle": {
+      "ouvrir": "Nuova attività",
+      "titre": "Nuova attività",
+      "nom": "Nome dell'attività",
+      "club": "Club",
+      "adresse": "Indirizzo",
+      "telephone": "Telefono del club",
+      "formule": "Numero di lezioni (facoltativo)",
+      "membres": "Chi la pratica",
+      "enregistrer": "Salva"
+    },
+    "jours": {
+      "1": "lunedì",
+      "2": "martedì",
+      "3": "mercoledì",
+      "4": "giovedì",
+      "5": "venerdì",
+      "6": "sabato",
+      "7": "domenica"
     }
   }
 }
