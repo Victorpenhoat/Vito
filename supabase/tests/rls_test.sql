@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(69);
+select plan(89);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -482,6 +482,127 @@ select throws_ok(
              'de110000-0000-4000-8000-000000000000', 'vin', 'place-x', 'Bandol', 'X') $$,
   '23514', null,
   'une recommandation ne peut pas viser à la fois une adresse et un vin');
+
+
+-- ═══ Activités (lot 1) ══════════════════════════════════════════════════════
+-- Deux catégories sensibles vivent ici : des codes d'accès physiques et des
+-- certificats médicaux. La RLS est la seule chose qui empêche un compte d'aller
+-- lire ceux d'un autre.
+
+insert into public.activites (id, user_id, type, nom, club_nom, formule_seances) values
+  ('ac000001-0000-4000-8000-000000000001', '11111111-1111-1111-1111-111111111111',
+   'equitation', 'Équitation', 'Poney-club des Landes', 20);
+insert into public.activite_membres (activite_id, membre_id) values
+  ('ac000001-0000-4000-8000-000000000001', 'f1111111-1111-4111-8111-111111111111');
+insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut, heure_fin, depose_par) values
+  ('ac000002-0000-4000-8000-000000000002', 'ac000001-0000-4000-8000-000000000001',
+   6, '10:00', '11:00', 'f1111111-1111-4111-8111-111111111111');
+insert into public.activite_codes (activite_id, libelle, valeur_chiffree) values
+  ('ac000001-0000-4000-8000-000000000001', 'Portail principal', 'YmxvYi1jaGlmZnJl');
+insert into public.activite_documents (activite_id, type, sensible, nom, contenu_chiffre, mime_type, taille, expire_le) values
+  ('ac000001-0000-4000-8000-000000000001', 'certificat_medical', true, 'certif.pdf',
+   'YmxvYi1jaGlmZnJl', 'application/pdf', 1024, '2027-06-30');
+insert into public.journal_acces (user_id, cible_type, cible_id, action) values
+  ('11111111-1111-1111-1111-111111111111', 'code_activite',
+   'ac000001-0000-4000-8000-000000000001', 'revelation');
+
+-- 70) anon ne voit rien, ni l'activité ni ce qu'elle protège
+select is(tests.count_as_anon('select count(*) from public.activites'),
+          0::bigint, 'anon ne voit aucune activité');
+select is(tests.count_as_anon('select count(*) from public.activite_codes'),
+          0::bigint, 'anon ne voit aucun code d''accès');
+select is(tests.count_as_anon('select count(*) from public.journal_acces'),
+          0::bigint, 'anon ne voit aucun accès journalisé');
+
+-- 71) le propriétaire voit son activité et ses tables filles
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.activites'),
+          1::bigint, 'le propriétaire voit son activité');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.activite_creneaux'),
+          1::bigint, 'le propriétaire voit ses créneaux');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.activite_codes'),
+          1::bigint, 'le propriétaire voit ses codes');
+
+-- 72) un compte étranger ne voit RIEN, à aucun niveau de la hiérarchie
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.activites'),
+          0::bigint, 'un tiers ne voit aucune activité');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.activite_creneaux'),
+          0::bigint, 'un tiers ne voit aucun créneau — les filles dérivent bien du parent');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.activite_codes'),
+          0::bigint, 'un tiers ne voit aucun code d''accès');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.activite_documents'),
+          0::bigint, 'un tiers ne voit aucun certificat médical');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.journal_acces'),
+          0::bigint, 'un tiers ne lit pas le journal d''un autre');
+
+-- 73) un tiers ne peut pas non plus ÉCRIRE dans mon activité
+select throws_ok(
+  $$ select tests.count_as('22222222-2222-2222-2222-222222222222',
+       'insert into public.activite_codes (activite_id, libelle, valeur_chiffree)
+        values (''ac000001-0000-4000-8000-000000000001'', ''Porte dérobée'', ''eA=='')') $$,
+  '42501', null, 'un tiers ne peut pas ajouter un code à mon activité');
+
+-- 74) et il ne peut pas se déclarer propriétaire d'une activité qu'il crée
+--     pour quelqu'un d'autre : le with check porte sur user_id.
+select throws_ok(
+  $$ select tests.count_as('22222222-2222-2222-2222-222222222222',
+       'insert into public.activites (user_id, type, nom)
+        values (''11111111-1111-1111-1111-111111111111'', ''danse'', ''Intruse'')') $$,
+  '42501', null, 'on ne crée pas une activité au nom d''un autre compte');
+
+-- 75) rattacher à MON activité le proche d'un autre compte est refusé : la
+--     policy compose les deux appartenances, sans quoi on découvrirait
+--     l'existence des proches d'autrui par essais successifs.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'insert into public.activite_membres (activite_id, membre_id)
+        values (''ac000001-0000-4000-8000-000000000001'',
+                ''fa000001-0000-4000-8000-000000000002'')') $$,
+  '42501', null, 'on ne rattache pas le proche d''un autre compte à son activité');
+
+-- 76) le journal ne se réécrit pas — même par son auteur. Un journal
+--     modifiable ne prouve rien.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (update public.journal_acces set action = ''ouverture'' returning 1) select count(*) from u') $$,
+  '42501', null,
+  'personne ne peut modifier le journal d''accès, pas même son propriétaire');
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (delete from public.journal_acces returning 1) select count(*) from u') $$,
+  '42501', null,
+  'personne ne peut effacer une trace du journal d''accès');
+
+-- 77) le journal se lit par son auteur, et s'écrit à son propre nom seulement
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.journal_acces'),
+          1::bigint, 'l''auteur lit ses propres accès');
+select throws_ok(
+  $$ select tests.count_as('22222222-2222-2222-2222-222222222222',
+       'insert into public.journal_acces (user_id, cible_type, cible_id, action)
+        values (''11111111-1111-1111-1111-111111111111'', ''code_activite'',
+                ''ac000001-0000-4000-8000-000000000001'', ''revelation'')') $$,
+  '42501', null, 'on n''écrit pas dans le journal d''un autre compte');
+
+-- 78) garde-fous de cohérence : un créneau à l'envers, une séance comptée deux
+--     fois — ce sont les deux fautes qui fausseraient la vue « Cette semaine »
+--     et le décompte de la formule.
+select throws_ok(
+  $$ insert into public.activite_creneaux (activite_id, jour_semaine, heure_debut, heure_fin)
+     values ('ac000001-0000-4000-8000-000000000001', 3, '15:00', '14:00') $$,
+  '23514', null, 'un créneau ne peut pas finir avant de commencer');
+select throws_ok(
+  $$ insert into public.activite_seances (activite_id, creneau_id, date, statut) values
+       ('ac000001-0000-4000-8000-000000000001', 'ac000002-0000-4000-8000-000000000002', '2026-09-12', 'faite'),
+       ('ac000001-0000-4000-8000-000000000001', 'ac000002-0000-4000-8000-000000000002', '2026-09-12', 'manquee') $$,
+  '23505', null, 'une séance ne se pointe pas deux fois le même jour');
 
 select finish();
 rollback;
