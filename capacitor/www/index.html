@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Vito</title>
+    <style>
+      /* Les tokens du thème clair (globals.css), copiés ici : cette page vit
+         dans l'app, hors du build web, et ne peut donc pas les importer. */
+      :root { --app: #FBF9F3; --ink: #211E1A; --muted: #7A736A; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        display: grid; place-content: center; gap: 8px; text-align: center;
+        padding: max(24px, env(safe-area-inset-top)) 24px;
+        background: var(--app); color: var(--ink);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+      p { font-family: -apple-system, system-ui, sans-serif; font-size: 14px; color: var(--muted); margin: 0; }
+      h1 { font-size: 28px; margin: 0; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <!-- Écran de repli : la WebView charge l'origine de production, cette page
+         n'apparaît que si le projet est construit sans `server.url`. -->
+    <h1>Vito</h1>
+    <p>Connexion au carnet…</p>
+  </body>
+</html>

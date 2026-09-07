@@ -16,6 +16,8 @@ export function AppShell({
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
   return (
+    // `env(safe-area-inset-*)` vaut zéro partout sauf sous une encoche : le
+    // rendu web et desktop est inchangé, seul l'iPhone y gagne.
     <div data-testid="app-shell" className="min-h-dvh">
       <Sidebar items={items} userName={userName} role={role} pathname={pathname} compteurs={compteurs} />
       <BottomNav items={items} pathname={pathname} onMore={() => setDrawer(true)} />
@@ -28,7 +30,11 @@ export function AppShell({
         pathname={pathname}
         compteurs={compteurs}
       />
-      <div className="pb-16 md:pb-0 md:pl-64">{children}</div>
+      {/* Le contenu s'arrête au-dessus de la barre du bas, elle-même repoussée
+          par la barre home : les deux retraits s'additionnent. */}
+      <div className="pt-[env(safe-area-inset-top)] pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0 md:pl-64">
+        {children}
+      </div>
     </div>
   );
 }

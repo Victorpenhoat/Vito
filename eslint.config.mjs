@@ -34,6 +34,9 @@ const eslintConfig = defineConfig([
     // Artefacts générés par `supabase start` en CI (bundle edge-runtime minifié, gitignoré) —
     // eslint flat config les capte via ses globs `**/*.ts` par défaut, ils cassaient le lint CI.
     "supabase/.temp/**",
+    // Projet Xcode généré par `cap add ios` : du Swift et un dossier `public`
+    // recopié depuis le web. Rien à linter, et le lint CI le voyait.
+    "ios/**",
   ]),
   ...storybook.configs["flat/recommended"]
 ]);

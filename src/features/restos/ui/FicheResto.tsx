@@ -23,6 +23,7 @@ import { Link } from "@/lib/i18n/routing";
 import { getMaFamille } from "@/features/famille/data/queries";
 import { AjouterFamilleButton } from "@/features/famille/ui/AjouterFamilleButton";
 import { RecommanderButton } from "@/features/reception/ui/RecommanderButton";
+import { LienExterne } from "@/features/shared/ui/LienExterne";
 
 /** Nuits entre deux dates ISO (séjour) — null si la plage est incomplète. */
 function nuitsEntre(debut: string | null, fin: string | null): number | null {
@@ -141,9 +142,9 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
             {etab.adresse && (
               <div className="flex items-center justify-between gap-3 px-3.5 py-3">
                 <span className="min-w-0 text-[13px] text-ink">{etab.adresse}</span>
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
+                <LienExterne href={mapsUrl} className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
                   {t("pratique.maps")} ↗
-                </a>
+                </LienExterne>
               </div>
             )}
             {etab.telephone && (
@@ -164,23 +165,22 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
             {etab.website && (
               <div className="flex items-center justify-between gap-3 px-3.5 py-3">
                 <span className="min-w-0 truncate text-[13px] text-ink">{etab.website.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                <a href={etab.website} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
+                <LienExterne href={etab.website} className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
                   {isResto ? t("pratique.reserver") : th("pratique.siteOfficiel")} ↗
-                </a>
+                </LienExterne>
               </div>
             )}
             {/* hôtel : lien de réservation plateforme (recherche pré-remplie) */}
             {!isResto && (
               <div className="flex items-center justify-between gap-3 px-3.5 py-3">
                 <span className="text-[13px] text-ink">{th("pratique.reserver")}</span>
-                <a
+                <LienExterne
                   href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent([etab.nom, etab.ville ?? ""].filter(Boolean).join(" "))}`}
-                  target="_blank" rel="noopener noreferrer"
                   data-testid="lien-booking"
                   className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline"
                 >
                   {th("pratique.booking")} ↗
-                </a>
+                </LienExterne>
               </div>
             )}
           </div>

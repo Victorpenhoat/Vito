@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { AppShell } from "@/features/shell/ui/AppShell";
 import { compterReception } from "@/features/reception/data/queries";
 import { NAV_ITEMS, filterNav, type Role } from "@/features/shell/nav-config";
+import { estDansLaCoque } from "@/lib/platform/coque";
 import { VerrouApp } from "@/features/compte/ui/VerrouApp";
 import { CompteSuspendu } from "@/features/compte/ui/CompteSuspendu";
 
@@ -33,7 +34,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const enAttente = await compterReception();
 
   return (
-    <AppShell items={filterNav(NAV_ITEMS, role)} role={role} userName={userName}
+    <AppShell items={filterNav(NAV_ITEMS, role, await estDansLaCoque())} role={role} userName={userName}
       compteurs={{ reception: enAttente }}>
       {/* Verrouillage de l'app (lot O-D) : masque le carnet après inactivité.
           Protection d'affichage — les gardes serveur restent indépendantes. */}

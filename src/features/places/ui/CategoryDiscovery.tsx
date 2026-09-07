@@ -16,6 +16,7 @@ import { useSejourContexte } from "./useSejourContexte";
 import { Button } from "@/features/shared/ui/Button";
 import { Input } from "@/features/shared/ui/Input";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
+import { positionActuelle } from "@/lib/platform/position";
 
 // Recherche externe priorisée (design Onglet_Resto_v2, écran 7) : « Déjà dans
 // Vito » d'abord (avec statut), puis résultats externes enrichis (photo, ouvert,
@@ -87,17 +88,14 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
     setAddError(null);
   };
 
-  function toggleRayon() {
+  async function toggleRayon() {
     if (rayon) { setRayon(false); if (searched) runSearch(q); return; }
-    navigator.geolocation?.getCurrentPosition(
-      (p) => {
-        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-        setPosition(pos);
-        setRayon(true);
-        if (searched) runSearch(q, pos);
-      },
-      () => { /* géoloc refusée : chip inactif */ },
-    );
+    const pos = await positionActuelle();
+    // Géoloc refusée ou indisponible : le chip reste inactif, sans message.
+    if (!pos) return;
+    setPosition(pos);
+    setRayon(true);
+    if (searched) runSearch(q, pos);
   }
 
   // owned = déjà dans Vito (par place_id), priorisés en tête

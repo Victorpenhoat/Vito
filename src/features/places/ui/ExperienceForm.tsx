@@ -10,6 +10,7 @@ import { useContexteRepris } from "./useSejourContexte";
 import { Button } from "@/features/shared/ui/Button";
 import { DateField } from "@/features/shared/ui/DateField";
 import { fieldClass } from "@/features/shared/ui/Input";
+import { toucher } from "@/lib/platform/haptique";
 
 type TagLite = { id: string; slug: string; label: string; color: string | null };
 
@@ -215,7 +216,11 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
 
         <label className="flex items-center justify-between gap-3">
           <span className="text-sm text-ink">{t("visite.passerFavoriQ")}</span>
-          <button type="button" role="switch" aria-checked={favori} onClick={() => setFavori((v) => !v)}
+          {/* Le seul retour haptique de l'app : un interrupteur qu'on bascule
+              du pouce, sans qu'aucun écran ne s'ouvre pour le confirmer. En
+              mettre partout ailleurs ferait du bruit. */}
+          <button type="button" role="switch" aria-checked={favori}
+            onClick={() => { setFavori((v) => !v); void toucher(); }}
             aria-label={t("visite.passerFavoriQ")}
             className={`relative h-7 w-[46px] shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-accent ${favori ? "bg-accent" : "bg-line"}`}>
             <span className={`absolute top-[3px] h-[22px] w-[22px] rounded-full bg-white shadow transition-[left] ${favori ? "left-[21px]" : "left-[3px]"}`} />

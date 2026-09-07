@@ -842,7 +842,8 @@
       "voyages": "Viajes y reservas",
       "conciergerie": "Conserjería ilimitada",
       "foyer": "Hogar compartido"
-    }
+    },
+    "horsApp": "La suscripción no se gestiona desde la aplicación."
   },
   "conciergerie": {
     "title": "Conserjería",

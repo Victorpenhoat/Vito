@@ -1,0 +1,121 @@
+# Vito sur iOS
+
+L'app iOS est une **coque Capacitor autour de l'origine HTTPS de production**.
+Elle n'embarque pas le site : elle le charge. Ce qu'elle apporte est natif —
+géolocalisation, partage, ouverture des liens hors WebView, carnet hors ligne.
+
+## Pourquoi pas un bundle statique embarqué
+
+Trois raisons mesurées dans le code, pas des préférences :
+
+- **les documents chiffrés** (Cercle, vouchers, tickets) sont déchiffrés par une
+  route serveur avec une clé qui ne doit jamais atteindre le client. En statique,
+  il faudrait la livrer — c'est-à-dire ne plus chiffrer ;
+- **les passkeys** : WebAuthn est lié à l'origine chargée. Sous
+  `capacitor://localhost`, `signInWithPasskey()` ne fonctionne pas ;
+- **l'ampleur** : 31 des 39 pages sont des composants serveur, 102 actions
+  serveur, 58 fichiers ouvrant un client Supabase serveur, plus le middleware
+  d'internationalisation. Et la clé Google Places, aujourd'hui serveur, devrait
+  passer côté client — donc l'export statique ne supprimerait même pas le serveur.
+
+## Prérequis
+
+- macOS avec **Xcode** (testé avec Xcode 26.6)
+- Node (voir `.nvmrc` si présent) et les dépendances du repo (`npm ci`)
+- **Pas de CocoaPods** : le projet utilise Swift Package Manager
+  (`cap add ios --packagemanager SPM`). Rien à installer côté Ruby.
+
+## Commandes
+
+| Commande | Ce qu'elle fait |
+|---|---|
+| `npm run ios:sync` | recopie la coque et met à jour les plugins natifs |
+| `npm run ios:open` | ouvre le projet dans Xcode |
+| `npm run ios:assets` | régénère icônes et écrans de lancement depuis `assets/` |
+| `npm run ios:version` | aligne la version sur `package.json` et incrémente le numéro de build |
+| `npm run ios:personnaliser` | réapplique permissions, domaines associés, cible iOS et manifeste de confidentialité |
+| `npm run ios:regen` | **efface et régénère** `ios/`, puis repersonnalise (au changement de bundle ID) |
+
+`ios:sync` ne construit pas le site : il est déployé par Vercel, et la WebView
+le charge. C'est la différence avec un projet Capacitor classique.
+
+## Icônes et écran de lancement
+
+Source unique : `assets/icon-only.png`, `assets/splash.png`,
+`assets/splash-dark.png`, produits par `node scripts/generer-icones.mjs` à partir
+des tokens du thème (papier `#FBF9F3`, encre `#211E1A`, or `#E9B949`). Le même
+script régénère `public/icon-192.png` et `public/icon-512.png` du manifeste PWA,
+qui étaient jusqu'ici des images de **1×1 pixel**.
+
+## Construire et lancer
+
+```sh
+npm run ios:sync
+npm run ios:open        # puis ⌘R dans Xcode, cible « iPhone 17 » ou un appareil
+```
+
+En ligne de commande, sans signature (simulateur) :
+
+```sh
+cd ios/App
+xcodebuild -scheme App -sdk iphonesimulator -configuration Debug \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+## Plugins natifs, un par un
+
+Aucun plugin n'est installé « au cas où » : chacun doit apporter quelque chose
+que le web ne fait pas.
+
+| Plugin | Ce qu'il apporte |
+|---|---|
+| `@capacitor/browser` | Ouvre les liens externes (Maps, site du lieu, marchand) dans le navigateur du système, PAR-DESSUS l'app. Sans lui, un lien remplace Vito par le site visité, sans barre d'adresse ni retour : l'utilisateur est piégé. |
+| `@capacitor/geolocation` | Autorisation iOS native et position plus précise pour « autour de moi », sans la bannière permanente de Safari. |
+| `@capacitor/share` | Feuille de partage iOS sur une fiche ou un voyage. |
+| `@capacitor/haptics` | Un seul point de contact : l'interrupteur « passer en favori », qu'on bascule du pouce sans qu'aucun écran ne le confirme. Partout ailleurs, ce serait du bruit. |
+
+`@capacitor/app` viendra avec les liens profonds (retour du lien magique dans
+l'app), pas avant : un plugin qui ne sert à rien ne s'installe pas.
+
+## Les helpers de plateforme
+
+`src/lib/platform/` — le seul endroit du code qui sait qu'une coque existe.
+
+- `natif.ts` — détecte le pont Capacitor **par le global injecté**, sans importer
+  `@capacitor/core` : le bundle web ne paie rien pour l'existence de l'app.
+- `liens.ts`, `partage.ts`, `position.ts`, `haptique.ts` — chacun essaie le
+  chemin natif, puis retombe sur le web. Les plugins sont chargés en **import
+  paresseux** : leur code n'est téléchargé que dans la coque.
+
+Si la détection échoue, tout retombe sur le comportement web. Une coque qui
+n'est pas reconnue dégrade, elle ne casse pas. 17 tests unitaires couvrent les
+deux chemins et les refus (`src/lib/platform/platform.test.ts`).
+
+Un document privé de Vito (un scan, un voucher) reste dans la WebView : le
+navigateur du système ne partage pas la session, il afficherait une erreur.
+
+## Documents voisins
+
+- `docs/ios/authentification.md` — liens profonds, Universal Links, redirect URLs
+  à saisir dans Supabase, persistance de session.
+- `docs/ios/distribution.md` — archive, TestFlight, ce qu'il faut vérifier sur
+  l'appareil, soumission.
+- `docs/ios/app-store-checklist.md` — fiche, captures, compte de test, notes au
+  reviewer, et le point d'arrêt sur l'abonnement (règle 3.1.1).
+- `docs/ios/cles-externes.md` — carte et Places dans la WebView (rien à
+  configurer), et les deux pièges rencontrés en le vérifiant.
+
+## Ce qui reste ouvert
+
+- **Bundle ID et nom** : `com.badakan.vito` / « Vito », arrêtés par le PO le
+  2026-09-06 (`CAP_APP_ID`, `CAP_APP_NAME` permettent d'en changer pour une
+  build de test). Le bundle ID devient **définitif à la création de l'app dans
+  App Store Connect**.
+- **Cible iOS minimale** : **16.0**, arrêtée par le PO le 2026-09-06. Capacitor
+  génère 15.0 ; `npm run ios:personnaliser` la remonte, donc un `ios:regen` ne
+  la reperd pas. Raison : WebAuthn y est mûr — les passkeys sont la voie de
+  connexion la plus soignée de Vito — et les safe areas s'y tiennent sans
+  contorsion. Un iPhone 8 ou X reste sur le web, qui ne change pas.
+- Signature, certificats, TestFlight et soumission : lots ultérieurs, et actions
+  manuelles dans Xcode / App Store Connect.

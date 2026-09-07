@@ -31,8 +31,18 @@ export const BOTTOM_KEYS: NavKey[] = ["accueil", "restos", "hotels", "voyages", 
 
 export const NAV_GROUPS: NavGroup[] = ["carnet", "voyages", "cercle"];
 
-export function filterNav(items: NavEntry[], role: Role): NavEntry[] {
-  return items.filter((i) => !i.roles || i.roles.includes(role));
+/**
+ * Entrées visibles pour ce rôle — et, dans la coque iOS, sans l'abonnement.
+ *
+ * La règle 3.1.1 d'Apple réserve aux achats intégrés tout ce qui débloque des
+ * fonctions dans l'app. Plutôt que d'implémenter StoreKit pour un carnet
+ * personnel, on ne propose pas l'abonnement dans l'app : il se prend sur le
+ * web, et l'app en tient compte. C'est ce que font Netflix ou Spotify.
+ */
+export function filterNav(items: NavEntry[], role: Role, dansLaCoque = false): NavEntry[] {
+  return items.filter(
+    (i) => (!i.roles || i.roles.includes(role)) && !(dansLaCoque && i.key === "abonnement"),
+  );
 }
 
 export function groupNav(items: NavEntry[]): { group: NavGroup; entries: NavEntry[] }[] {

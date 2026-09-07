@@ -842,7 +842,8 @@
       "voyages": "Voyages & réservations",
       "conciergerie": "Conciergerie illimitée",
       "foyer": "Foyer partagé"
-    }
+    },
+    "horsApp": "L'abonnement ne se gère pas depuis l'application."
   },
   "conciergerie": {
     "title": "Conciergerie",
