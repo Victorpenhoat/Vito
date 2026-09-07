@@ -135,10 +135,18 @@ une régression qui n'atteint jamais l'iPhone.
 
 ## Ce qui reste ouvert
 
-- **Bundle ID et nom** : `com.badakan.vito` / « Vito », arrêtés par le PO le
-  2026-09-06 (`CAP_APP_ID`, `CAP_APP_NAME` permettent d'en changer pour une
-  build de test). Le bundle ID devient **définitif à la création de l'app dans
-  App Store Connect**.
+- **Nom** : « Vito », arrêté.
+- **Bundle ID** : `com.exemple.vito` est **provisoire**. Un bundle ID est le
+  reverse-DNS d'un domaine qu'on possède ; celui de Vito est en cours d'achat.
+  Le jour venu : `CAP_APP_ID=<reverse-dns>.vito npm run ios:regen`.
+
+  ⚠ Ne rien créer dans App Store Connect avant : **le bundle ID y devient
+  définitif**. C'est aujourd'hui la seule chose encore libre.
+
+  Changer de domaine touche cinq endroits, tous connus : `CAP_APP_ID`,
+  `CAP_SERVER_URL`, le domaine associé dans `scripts/ios-personnaliser.mjs`
+  (`CAP_ASSOCIATED_DOMAIN`), `APPLE_APP_ID` dans Vercel, et le Site URL +
+  Redirect URLs de Supabase.
 - **Cible iOS minimale** : **16.0**, arrêtée par le PO le 2026-09-06. Capacitor
   génère 15.0 ; `npm run ios:personnaliser` la remonte, donc un `ios:regen` ne
   la reperd pas. Raison : WebAuthn y est mûr — les passkeys sont la voie de

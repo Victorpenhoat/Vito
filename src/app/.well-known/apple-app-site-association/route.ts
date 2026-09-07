@@ -14,7 +14,7 @@ import { appIdValide } from "@/lib/platform/appleAppId";
 // sans redirection de langue — ce qu'iOS exige.
 //
 // APPLE_APP_ID vaut « <TeamID>.<bundleId> », par exemple
-// « ABCDE12345.com.badakan.vito ». Tant qu'il n'est pas défini, on répond 404
+// « ABCDE12345.com.exemple.vito ». Tant qu'il n'est pas défini, on répond 404
 // plutôt qu'un fichier à moitié juste : iOS met en cache ce qu'il télécharge,
 // et un mauvais identifiant se paie en heures d'attente.
 export const dynamic = "force-dynamic";
