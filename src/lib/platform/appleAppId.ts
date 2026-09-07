@@ -1,7 +1,7 @@
 /**
  * Un identifiant d'app pour les Universal Links s'écrit
  * « <App ID Prefix>.<bundle ID> » — par exemple
- * « Q7UGNF4Q22.com.badakan.vito ». Le préfixe seul ne veut rien dire pour iOS.
+ * « Q7UGNF4Q22.com.exemple.vito ». Le préfixe seul ne veut rien dire pour iOS.
  *
  * On vérifie la FORME, pas la vérité : personne ici ne peut savoir si ce
  * préfixe est le bon. Mais servir un fichier auquel il manque le bundle ID est

@@ -25,7 +25,7 @@ fonctionnent plus.
 1. **`/.well-known/apple-app-site-association`** — route Next qui déclare les
    chemins appartenant à l'app. Servie seulement si `APPLE_APP_ID` a la **forme
    complète** « `<App ID Prefix>.<bundle ID>` », par exemple
-   `Q7UGNF4Q22.com.badakan.vito` ; sinon 404.
+   `Q7UGNF4Q22.com.exemple.vito` ; sinon 404.
 
    Le préfixe seul (`Q7UGNF4Q22`) produirait un fichier syntaxiquement valide et
    parfaitement inutile — l'erreur a été commise, la route la refuse désormais.
