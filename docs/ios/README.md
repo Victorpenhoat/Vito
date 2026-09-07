@@ -106,6 +106,33 @@ navigateur du système ne partage pas la session, il afficherait une erreur.
 - `docs/ios/cles-externes.md` — carte et Places dans la WebView (rien à
   configurer), et les deux pièges rencontrés en le vérifiant.
 
+## Pas de CI macOS — décision du PO (2026-09-07)
+
+La CI reste **Linux uniquement** : elle ne construit pas l'iOS.
+
+Un job `macos-latest` non bloquant aurait coûté cher en minutes Actions (les
+exécuteurs macOS sont facturés plusieurs fois le tarif Linux) pour n'attraper
+que ce qu'un `npm run ios:sync` local détecte déjà. Le natif ne bouge qu'aux
+rares lots qui le touchent, alors que la CI tourne à chaque poussée.
+
+En contrepartie, **avant toute archive**, en local :
+
+```sh
+npm run ios:sync
+cd ios/App && xcodebuild -scheme App -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -skipMacroValidation -skipPackagePluginValidation \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+Les deux `-skip…` ne sont pas décoratifs : sans eux, `xcodebuild` attend
+indéfiniment une validation de plugin qui ne peut pas s'afficher en ligne de
+commande.
+
+Ce que la CI Linux continue de garantir, et qui protège l'app autant que le
+web : la coque charge la production, donc une régression bloquée par la CI est
+une régression qui n'atteint jamais l'iPhone.
+
 ## Ce qui reste ouvert
 
 - **Bundle ID et nom** : `com.badakan.vito` / « Vito », arrêtés par le PO le
