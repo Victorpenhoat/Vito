@@ -14,6 +14,8 @@ const schema = z
     // Universal Links iOS : « <TeamID>.<bundleId> ». Absent : le fichier
     // apple-app-site-association n'est pas servi.
     APPLE_APP_ID: z.string().optional(),
+    // Adresse affichée sur la page publique /confidentialite (exigée par Apple).
+    CONTACT_EMAIL: z.string().email().optional(),
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
     STRIPE_PRICE_MONTHLY: z.string().optional(),
@@ -43,6 +45,7 @@ const parsed = schema.safeParse({
   MERCHANT_PARTNER_URL: process.env.MERCHANT_PARTNER_URL,
   TAUX_CHANGE_URL: process.env.TAUX_CHANGE_URL,
   APPLE_APP_ID: process.env.APPLE_APP_ID,
+  CONTACT_EMAIL: process.env.CONTACT_EMAIL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_PRICE_MONTHLY: process.env.STRIPE_PRICE_MONTHLY,

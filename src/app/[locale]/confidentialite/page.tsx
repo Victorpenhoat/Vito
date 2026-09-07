@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Link } from "@/lib/i18n/routing";
+import { env } from "@/lib/env";
 
 // Politique de confidentialité — page PUBLIQUE.
 //
@@ -16,7 +17,10 @@ export const metadata: Metadata = {
   description: "Ce que Vito enregistre, ce qu'il n'enregistre pas, et qui d'autre le voit.",
 };
 
-const CONTACT = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@vito.app";
+// Variable SERVEUR, sans préfixe public : cette page est un composant serveur.
+// L'adresse finit dans le HTML — c'est fait pour, elle est publique — mais elle
+// n'a aucune raison d'être aussi gravée dans les scripts envoyés au navigateur.
+const CONTACT = env.CONTACT_EMAIL ?? "contact@vito.app";
 
 function Section({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
