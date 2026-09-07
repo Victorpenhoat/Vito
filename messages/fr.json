@@ -1657,7 +1657,10 @@
       "verifier": "Vérifier",
       "echec": "Vérification impossible."
     },
-    "afficherDocument": "Afficher le document"
+    "afficherDocument": "Afficher le document",
+    "masquer": "Masquer",
+    "copier": "Copier",
+    "reveler": "Révéler"
   },
   "reception": {
     "eyebrow": "Le Cercle",
@@ -1733,6 +1736,101 @@
       "type": "Type",
       "tag": "Tags",
       "effacer": "Effacer"
+    },
+    "annuler": "Annuler",
+    "sections": {
+      "horaires": "Horaires",
+      "presence": "Présence",
+      "lieu": "Lieu et contacts",
+      "cout": "Coût",
+      "notes": "Notes",
+      "consignes": "Consignes d'accès",
+      "acces": "Accès",
+      "documents": "Documents"
+    },
+    "horaires": {
+      "aucun": "Aucun créneau pour l'instant.",
+      "intervenant": "Intervenant : {nom}",
+      "depose": "Dépose : {nom}",
+      "deposeADefinir": "Dépose à définir",
+      "saison": "Valide du {debut} au {fin}",
+      "ajouter": "Ajouter un créneau",
+      "jour": "Jour",
+      "debut": "Début",
+      "fin": "Fin",
+      "lieuPrecision": "Précision de lieu (manège, salle…)",
+      "intervenantPlaceholder": "Intervenant",
+      "deposeLabel": "Qui dépose",
+      "enregistrer": "Enregistrer le créneau"
+    },
+    "presence": {
+      "formule": "Formule {n} séances",
+      "faites": "{n, plural, one {# faite} other {# faites}}",
+      "manquees": "{n, plural, one {# manquée} other {# manquées}}"
+    },
+    "lieu": {
+      "maps": "Maps",
+      "espaceFamille": "Espace famille",
+      "ouvrir": "Ouvrir",
+      "aucun": "Ni adresse ni téléphone pour l'instant."
+    },
+    "cout": {
+      "aucun": "Aucune échéance enregistrée.",
+      "regle": "Réglé cette saison :",
+      "etats": {
+        "paye": "Payé",
+        "en_retard": "En retard",
+        "a_venir": "À venir"
+      }
+    },
+    "nouvelle": {
+      "ouvrir": "Nouvelle activité",
+      "titre": "Nouvelle activité",
+      "nom": "Nom de l'activité",
+      "club": "Club",
+      "adresse": "Adresse",
+      "telephone": "Téléphone du club",
+      "formule": "Nombre de séances (facultatif)",
+      "membres": "Qui la pratique",
+      "enregistrer": "Enregistrer"
+    },
+    "jours": {
+      "1": "lundi",
+      "2": "mardi",
+      "3": "mercredi",
+      "4": "jeudi",
+      "5": "vendredi",
+      "6": "samedi",
+      "7": "dimanche"
+    },
+    "acces": {
+      "aucun": "Aucun code enregistré.",
+      "ajouter": "Ajouter un code",
+      "libelle": "Libellé (portail, vestiaire…)",
+      "valeur": "Valeur du code",
+      "note": "Note (facultative)",
+      "enregistrer": "Chiffrer et enregistrer"
+    },
+    "documents": {
+      "aucun": "Aucun document.",
+      "ajouter": "Ajouter un document",
+      "type": "Type de document",
+      "expireLe": "Expire le (facultatif)",
+      "choisir": "Choisir un fichier",
+      "aucunFichier": "Aucun fichier",
+      "enregistrer": "Chiffrer et enregistrer",
+      "expire": "Expiré le {date}",
+      "bientot": "Expire dans {n} jours",
+      "valide": "Valide jusqu'au {date}",
+      "types": {
+        "licence": "Licence",
+        "certificat_medical": "Certificat médical",
+        "assurance": "Attestation d'assurance",
+        "autorisation": "Autorisation parentale",
+        "reglement": "Règlement",
+        "facture": "Facture",
+        "autre": "Autre"
+      }
     }
   }
 }

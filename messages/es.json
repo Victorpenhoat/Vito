@@ -1657,7 +1657,10 @@
       "verifier": "Verificar",
       "echec": "No se ha podido verificar."
     },
-    "afficherDocument": "Mostrar el documento"
+    "afficherDocument": "Mostrar el documento",
+    "masquer": "Ocultar",
+    "copier": "Copiar",
+    "reveler": "Revelar"
   },
   "reception": {
     "eyebrow": "El Círculo",
@@ -1733,6 +1736,101 @@
       "type": "Tipo",
       "tag": "Etiquetas",
       "effacer": "Borrar"
+    },
+    "annuler": "Cancelar",
+    "sections": {
+      "horaires": "Horarios",
+      "presence": "Asistencia",
+      "lieu": "Lugar y contactos",
+      "cout": "Coste",
+      "notes": "Notas",
+      "consignes": "Instrucciones de acceso",
+      "acces": "Acceso",
+      "documents": "Documentos"
+    },
+    "horaires": {
+      "aucun": "Todavía no hay horarios.",
+      "intervenant": "Profesor: {nom}",
+      "depose": "Lleva: {nom}",
+      "deposeADefinir": "Por definir quién lleva",
+      "saison": "Válido del {debut} al {fin}",
+      "ajouter": "Añadir un horario",
+      "jour": "Día",
+      "debut": "Inicio",
+      "fin": "Fin",
+      "lieuPrecision": "Detalle del lugar (pista, sala…)",
+      "intervenantPlaceholder": "Profesor",
+      "deposeLabel": "Quién lleva",
+      "enregistrer": "Guardar el horario"
+    },
+    "presence": {
+      "formule": "Bono de {n} sesiones",
+      "faites": "{n, plural, one {# hecha} other {# hechas}}",
+      "manquees": "{n, plural, one {# perdida} other {# perdidas}}"
+    },
+    "lieu": {
+      "maps": "Mapas",
+      "espaceFamille": "Espacio familias",
+      "ouvrir": "Abrir",
+      "aucun": "Sin dirección ni teléfono."
+    },
+    "cout": {
+      "aucun": "Ningún pago registrado.",
+      "regle": "Pagado esta temporada:",
+      "etats": {
+        "paye": "Pagado",
+        "en_retard": "Atrasado",
+        "a_venir": "Próximo"
+      }
+    },
+    "nouvelle": {
+      "ouvrir": "Nueva actividad",
+      "titre": "Nueva actividad",
+      "nom": "Nombre de la actividad",
+      "club": "Club",
+      "adresse": "Dirección",
+      "telephone": "Teléfono del club",
+      "formule": "Número de sesiones (opcional)",
+      "membres": "Quién la practica",
+      "enregistrer": "Guardar"
+    },
+    "jours": {
+      "1": "lunes",
+      "2": "martes",
+      "3": "miércoles",
+      "4": "jueves",
+      "5": "viernes",
+      "6": "sábado",
+      "7": "domingo"
+    },
+    "acces": {
+      "aucun": "Ningún código guardado.",
+      "ajouter": "Añadir un código",
+      "libelle": "Etiqueta (portal, vestuario…)",
+      "valeur": "Valor del código",
+      "note": "Nota (opcional)",
+      "enregistrer": "Cifrar y guardar"
+    },
+    "documents": {
+      "aucun": "Ningún documento.",
+      "ajouter": "Añadir un documento",
+      "type": "Tipo de documento",
+      "expireLe": "Caduca el (opcional)",
+      "choisir": "Elegir un archivo",
+      "aucunFichier": "Ningún archivo",
+      "enregistrer": "Cifrar y guardar",
+      "expire": "Caducado el {date}",
+      "bientot": "Caduca en {n} días",
+      "valide": "Válido hasta el {date}",
+      "types": {
+        "licence": "Licencia",
+        "certificat_medical": "Certificado médico",
+        "assurance": "Seguro",
+        "autorisation": "Autorización parental",
+        "reglement": "Reglamento",
+        "facture": "Factura",
+        "autre": "Otro"
+      }
     }
   }
 }

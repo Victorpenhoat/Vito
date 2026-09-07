@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login } from "./helpers";
+import { expectVisibleWithReload, login } from "./helpers";
 
 // Incrément 2 : l'onglet existe, ses quatre vues se partagent par l'URL, et un
 // carnet vide explique quoi y mettre plutôt que de constater le vide.
@@ -92,4 +92,189 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
   // Une recherche sans résultat explique quoi faire.
   await page.getByTestId("activites-recherche").fill("trompette");
   await expect(page.getByTestId("activites-vide")).toContainText("Aucune activité ne correspond");
+});
+
+// Incrément 4 : la fiche, et les deux formulaires qui la remplissent.
+test("créer une activité, lui ajouter un créneau, la mettre en pause", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+
+  const marque = String(Date.now()).slice(-6);
+  await page.getByTestId("activite-ajouter").click();
+  const form = page.getByTestId("activite-form");
+  await form.getByTestId("activite-nom").fill(`Judo ${marque}`);
+  await form.getByTestId("activite-type").selectOption("autre");
+  await form.getByTestId("activite-club").fill("Dojo du port");
+  await form.getByTestId("activite-telephone").fill("05 56 00 00 00");
+  await form.getByTestId("activite-formule").fill("10");
+  await form.locator('input[name="membres"]').first().check();
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("activite-valider").click(),
+  ]);
+
+  // On atterrit sur la fiche : c'est là qu'on remplit le reste.
+  await expect(page).toHaveURL(/\/fr\/activites\/[0-9a-f-]{36}$/, { timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: `Judo ${marque}` })).toBeVisible();
+  await expect(page.getByTestId("fiche-activite")).toContainText("Dojo du port");
+
+  // Une activité sans créneau le dit, plutôt que d'afficher une liste vide.
+  await expect(page.getByTestId("fiche-activite")).toContainText("Aucun créneau");
+
+  // Ajout d'un créneau, avec « qui dépose » laissé à définir.
+  await page.getByTestId("creneau-ajouter").click();
+  const creneau = page.getByTestId("creneau-form");
+  await creneau.getByTestId("creneau-jour").selectOption("3");
+  await creneau.getByTestId("creneau-debut").fill("18:00");
+  await creneau.getByTestId("creneau-fin").fill("19:30");
+  await creneau.getByTestId("creneau-intervenant").fill("Sensei Martin");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    creneau.getByTestId("creneau-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("fiche-creneau").filter({ hasText: "Sensei Martin" });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne).toContainText("mercredi");
+  await expect(ligne).toContainText("18h00");
+  // Null porte du sens : « à définir » est une réponse, pas un champ oublié.
+  await expect(ligne).toContainText("Dépose à définir");
+
+  // La formule se décompte dès qu'elle existe, sans aucune séance pointée.
+  await expect(page.getByTestId("fiche-presence")).toContainText("0 / 10");
+
+  // Le statut se change là où on le lit.
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    page.getByTestId("fiche-statut").selectOption("en_pause"),
+  ]);
+  await page.goto("/fr/activites");
+  await expect(page.getByTestId("activite-row").filter({ hasText: `Judo ${marque}` })).toHaveCount(0);
+  await page.getByTestId("onglet-tous").click();
+  await expect(page.getByTestId("activite-row").filter({ hasText: `Judo ${marque}` }).first())
+    .toContainText("En pause");
+});
+
+// La fiche du seed montre ce que la maquette décrit : horaires, dépose,
+// présence et échéances.
+test("la fiche dit où, quand, avec qui et combien", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+
+  await expect(page.getByTestId("fiche-activite")).toContainText("Poney-club des Landes");
+  await expect(page.getByTestId("fiche-membre").first()).toBeVisible();
+  const creneau = page.getByTestId("fiche-creneau").first();
+  await expect(creneau).toContainText("samedi");
+  await expect(creneau).toContainText("Manège couvert");
+  await expect(creneau).toContainText("Dépose : Camille");
+  // 12 faites + 1 manquée = 13 consommées sur 20.
+  await expect(page.getByTestId("fiche-presence")).toContainText("13 / 20");
+  await expect(page.getByTestId("fiche-activite")).toContainText("7 séances restantes");
+});
+
+// Sur grand écran, la fiche s'ouvre à côté de la liste — même composition que
+// le carnet des restos, pour passer d'une activité à l'autre sans aller-retour.
+test("desktop : la fiche s'ouvre à côté de la liste, et la ligne ouverte se voit", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Danse" }).first()
+    .getByRole("link").first().click();
+
+  await expect(page.getByTestId("activites-liste-detail")).toBeVisible();
+  await expect(page.getByTestId("activites-detail")).toContainText("Conservatoire");
+  // La liste reste là, et signale la ligne ouverte.
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()).toBeVisible();
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Danse" }).first())
+    .toHaveAttribute("aria-current", "true");
+
+  // On passe à une autre activité sans revenir en arrière.
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+  await expect(page.getByTestId("activites-detail")).toContainText("Poney-club des Landes");
+});
+
+// Incrément 5 : les sections protégées. Ce qui compte ici n'est pas qu'on
+// puisse voir un code, c'est qu'on ne le puisse PAS sans redonner son mot de
+// passe — et que la page ne le contienne jamais.
+test("un code d'accès ne se révèle qu'après vérification, et n'est jamais dans la page", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+  await expect(page.getByTestId("section-acces")).toBeVisible();
+
+  // Libellé marqué : les re-runs locaux accumulent les codes sur la même
+  // activité, et un filtre par libellé fixe finirait par en trouver quatre.
+  const marque = String(Date.now()).slice(-6);
+  const libelle = `Portail ${marque}`;
+  const secret = `4X7B${marque}`;
+  await page.getByTestId("code-ajouter").click();
+  const form = page.getByTestId("code-form");
+  await form.getByTestId("code-libelle").fill(libelle);
+  await form.getByTestId("code-valeur").fill(secret);
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("code-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("code-row").filter({ hasText: libelle });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+
+  // Le masque ne trahit rien, et le HTML de la page ne contient pas le code.
+  await expect(ligne.getByTestId("valeur-protegee")).toHaveText("••••");
+  expect(await page.content()).not.toContain(secret);
+
+  // Un mauvais mot de passe ne révèle rien, et ne dit pas pourquoi.
+  await ligne.getByTestId("reveler-valeur").click();
+  await page.getByTestId("reauth-mot-de-passe").fill("pas-le-bon");
+  await page.getByTestId("reauth-valider").click();
+  // Ciblé sur la fenêtre de vérification : la page peut porter d'autres alertes.
+  await expect(page.getByTestId("reauth-form").getByRole("alert")).toContainText("Vérification impossible");
+  expect(await page.content()).not.toContain(secret);
+
+  // Le bon mot de passe, lui, l'affiche.
+  await page.getByTestId("reauth-mot-de-passe").fill("password123");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    page.getByTestId("reauth-valider").click(),
+  ]);
+  await expect(ligne.getByTestId("valeur-protegee")).toHaveText(secret, { timeout: 15_000 });
+
+  // Et il se remasque : la valeur ne vit qu'en mémoire, le temps de la lire.
+  await ligne.getByTestId("masquer-valeur").click();
+  await expect(ligne.getByTestId("valeur-protegee")).toHaveText("••••");
+});
+
+test("un document d'activité ne s'ouvre pas sans ticket", async ({ page, request }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+
+  const nom = `certif-${String(Date.now()).slice(-6)}.pdf`;
+  await page.getByTestId("document-ajouter").click();
+  const form = page.getByTestId("document-form");
+  await form.getByTestId("document-type").selectOption("certificat_medical");
+  await form.getByTestId("document-expire").fill("2026-09-20");
+  await form.getByTestId("document-fichier").setInputFiles({
+    name: nom, mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF"),
+  });
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("document-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("document-activite").filter({ hasText: "Certificat médical" });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  // La validité se dit en jours, comme la maquette.
+  await expect(ligne.getByTestId("document-validite")).toContainText("Expire dans");
+
+  // La route refuse une session seule : il faut un ticket, à usage unique.
+  const url = await ligne.getByTestId("document-ouvrir").evaluate(() => window.location.pathname);
+  expect(url).toContain("/activites/");
+  const sansTicket = await request.get(`/api/activites/documents/00000000-0000-4000-8000-000000000000`);
+  expect(sansTicket.status()).toBe(401);
 });

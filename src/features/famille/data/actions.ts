@@ -13,6 +13,7 @@ import { verifierMotDePasse } from "@/lib/auth/motDePasse";
 import { randomBytes } from "node:crypto";
 import { getDocumentKey } from "@/lib/crypto/documentKey";
 import { avatarColor } from "../domain/avatarColor";
+import { journaliser } from "@/lib/audit/journal";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -448,6 +449,9 @@ export async function revelerNumero(_prev: unknown, formData: FormData) {
   if (error || !doc) return { error: "Vérification impossible" };
   const numero = dechiffrerChamp(doc.doc_number_chiffre);
   if (!numero) return { error: "Vérification impossible" };
+  // Le journal d'accès couvre aussi le Cercle : jusqu'ici, une révélation
+  // exigeait le mot de passe sans laisser la moindre trace.
+  await journaliser(supabase, auth.user.id, "numero_document", docId, "revelation");
   return { ok: true as const, numero };
 }
 
@@ -476,6 +480,7 @@ export async function ouvrirScanProtege(_prev: unknown, formData: FormData) {
     p_cible: `document:${docId}:${face}`,
   });
   if (error) { logActionError("famille.ouvrirScanProtege", error); return { error: "Vérification impossible" }; }
+  await journaliser(supabase, auth.user.id, "document_famille", docId, "ouverture");
   return { ok: true as const, ticket };
 }
 

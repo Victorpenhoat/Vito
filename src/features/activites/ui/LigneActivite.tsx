@@ -14,11 +14,13 @@ const TEINTE_STATUT: Record<string, string> = {
  * deux gestes du design (appeler le club, s'y rendre), qui n'ouvrent aucun
  * écran intermédiaire.
  */
-export async function LigneActivite({ activite, aujourdhui, montrerStatut = false }: {
+export async function LigneActivite({ activite, aujourdhui, montrerStatut = false, selectionnee = false }: {
   activite: ActiviteListe;
   aujourdhui: string;
   /** La vue « Tous » mêle les statuts et doit donc les dire. */
   montrerStatut?: boolean;
+  /** Mise en évidence de l'activité ouverte à côté, sur grand écran. */
+  selectionnee?: boolean;
 }) {
   const t = await getTranslations("activites");
   const format = await getFormatter();
@@ -32,7 +34,10 @@ export async function LigneActivite({ activite, aujourdhui, montrerStatut = fals
     : null;
 
   return (
-    <li data-testid="activite-row" className="flex items-center gap-3 border-b border-line-soft py-3 last:border-b-0">
+    <li data-testid="activite-row" aria-current={selectionnee ? "true" : undefined}
+      className={`flex items-center gap-3 border-b border-line-soft py-3 last:border-b-0 ${
+        selectionnee ? "-mx-3.5 border-l-2 border-l-accent bg-accent-50/40 px-3.5" : ""
+      }`}>
       <Link href={`/activites/${activite.id}`} className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-center gap-2">
           <span className="truncate text-[14px] font-medium text-ink">{activite.nom}</span>

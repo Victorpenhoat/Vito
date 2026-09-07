@@ -96,3 +96,138 @@ export const getActivites = cache(async (aujourdhui: string, heure = "00:00"): P
     };
   });
 });
+
+export type CreneauDetail = Creneau & {
+  lieuPrecision: string | null;
+  intervenant: string | null;
+  deposePar: { id: string; prenom: string } | null;
+};
+
+export type ActiviteDetail = ActiviteListe & {
+  email: string | null;
+  siteWeb: string | null;
+  espaceFamilleUrl: string | null;
+  consignesAcces: string | null;
+  notes: string | null;
+  formuleSeances: number | null;
+  saisonDebut: string | null;
+  saisonFin: string | null;
+  creneauxDetail: CreneauDetail[];
+  seances: { date: string; statut: "faite" | "manquee"; motif: string | null }[];
+  paiements: {
+    id: string; libelle: string; montantCents: number; devise: string;
+    echeance: string | null; statut: "du" | "paye"; periodicite: string | null; moyen: string | null;
+  }[];
+  /**
+   * Codes d'accès SANS leur valeur : même chiffrée, elle n'a rien à faire dans
+   * une page. Le clair n'arrive que par `revelerCode`, après re-authentification.
+   */
+  codes: { id: string; libelle: string; note: string | null }[];
+  /** Documents sans leur contenu : seule la route protégée le délivre. */
+  documents: {
+    id: string; type: string; nom: string; sensible: boolean;
+    taille: number; expireLe: string | null;
+  }[];
+};
+
+/**
+ * Une activité et tout ce que sa fiche montre — sauf les codes et les
+ * documents, qui ne se lisent pas par une requête ordinaire.
+ *
+ * `null` quand l'activité n'existe pas OU ne m'appartient pas : la RLS ne
+ * distingue pas les deux, et l'écran non plus. Répondre « elle existe mais
+ * pas pour vous » dirait déjà quelque chose.
+ */
+export const getActiviteDetail = cache(async (
+  id: string, aujourdhui: string, heure = "00:00",
+): Promise<ActiviteDetail | null> => {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+
+  const { data, error } = await supabase
+    .from("activites")
+    .select(
+      `id, type, nom, statut, club_nom, adresse, telephone, email, site_web, espace_famille_url,
+       consignes_acces, notes, lat, lng, formule_seances, saison_debut, saison_fin,
+       activite_membres(family_members(id, first_name, avatar_color, profile_id)),
+       activite_creneaux(id, jour_semaine, heure_debut, heure_fin, valide_du, valide_au,
+                         intervenant, lieu_precision, depose:family_members(id, first_name)),
+       activite_tags(tags(slug, label)),
+       activite_seances(date, statut, motif),
+       activite_paiements(id, libelle, montant_cents, devise, echeance, statut, periodicite, moyen),
+       activite_codes(id, libelle, note),
+       activite_documents(id, type, nom, sensible, taille, expire_le)`,
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+
+  const creneauxDetail: CreneauDetail[] = (data.activite_creneaux ?? []).map((c) => ({
+    id: c.id,
+    jourSemaine: c.jour_semaine,
+    heureDebut: c.heure_debut.slice(0, 5),
+    heureFin: c.heure_fin.slice(0, 5),
+    valideDu: c.valide_du,
+    valideAu: c.valide_au,
+    lieuPrecision: c.lieu_precision,
+    intervenant: c.intervenant,
+    deposePar: c.depose ? { id: c.depose.id, prenom: c.depose.first_name } : null,
+  }));
+
+  const seances = (data.activite_seances ?? []).map((s) => ({
+    date: s.date,
+    statut: s.statut as "faite" | "manquee",
+    motif: s.motif,
+  }));
+
+  return {
+    id: data.id,
+    type: data.type,
+    nom: data.nom,
+    statut: data.statut,
+    clubNom: data.club_nom,
+    adresse: data.adresse,
+    telephone: data.telephone,
+    lat: data.lat,
+    lng: data.lng,
+    email: data.email,
+    siteWeb: data.site_web,
+    espaceFamilleUrl: data.espace_famille_url,
+    consignesAcces: data.consignes_acces,
+    notes: data.notes,
+    formuleSeances: data.formule_seances,
+    saisonDebut: data.saison_debut,
+    saisonFin: data.saison_fin,
+    membres: (data.activite_membres ?? []).flatMap((am) => {
+      const m = am.family_members;
+      return m
+        ? [{ id: m.id, prenom: m.first_name, couleur: m.avatar_color, estMoi: m.profile_id === auth.user!.id }]
+        : [];
+    }),
+    creneaux: creneauxDetail,
+    creneauxDetail,
+    tags: (data.activite_tags ?? []).flatMap((at) =>
+      at.tags ? [{ slug: at.tags.slug, label: at.tags.label }] : []),
+    intervenants: creneauxDetail.flatMap((c) => (c.intervenant ? [c.intervenant] : [])),
+    prochaine: prochaineOccurrence(creneauxDetail, aujourdhui, heure),
+    restantes: seancesRestantes(data.formule_seances, seances.length),
+    seances,
+    paiements: (data.activite_paiements ?? []).map((p) => ({
+      id: p.id,
+      libelle: p.libelle,
+      montantCents: Number(p.montant_cents),
+      devise: p.devise,
+      echeance: p.echeance,
+      statut: p.statut as "du" | "paye",
+      periodicite: p.periodicite,
+      moyen: p.moyen,
+    })),
+    codes: (data.activite_codes ?? []).map((c) => ({ id: c.id, libelle: c.libelle, note: c.note })),
+    documents: (data.activite_documents ?? []).map((d) => ({
+      id: d.id, type: d.type, nom: d.nom, sensible: d.sensible,
+      taille: d.taille, expireLe: d.expire_le,
+    })),
+  };
+});

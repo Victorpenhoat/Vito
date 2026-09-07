@@ -1657,7 +1657,10 @@
       "verifier": "Verifica",
       "echec": "Verifica non riuscita."
     },
-    "afficherDocument": "Mostra il documento"
+    "afficherDocument": "Mostra il documento",
+    "masquer": "Nascondi",
+    "copier": "Copia",
+    "reveler": "Mostra"
   },
   "reception": {
     "eyebrow": "La Cerchia",
@@ -1733,6 +1736,101 @@
       "type": "Tipo",
       "tag": "Tag",
       "effacer": "Cancella"
+    },
+    "annuler": "Annulla",
+    "sections": {
+      "horaires": "Orari",
+      "presence": "Presenze",
+      "lieu": "Luogo e contatti",
+      "cout": "Costo",
+      "notes": "Note",
+      "consignes": "Istruzioni di accesso",
+      "acces": "Accesso",
+      "documents": "Documenti"
+    },
+    "horaires": {
+      "aucun": "Ancora nessun orario.",
+      "intervenant": "Insegnante: {nom}",
+      "depose": "Accompagna: {nom}",
+      "deposeADefinir": "Accompagnatore da definire",
+      "saison": "Valido dal {debut} al {fin}",
+      "ajouter": "Aggiungi un orario",
+      "jour": "Giorno",
+      "debut": "Inizio",
+      "fin": "Fine",
+      "lieuPrecision": "Dettaglio del luogo (maneggio, sala…)",
+      "intervenantPlaceholder": "Insegnante",
+      "deposeLabel": "Chi accompagna",
+      "enregistrer": "Salva l'orario"
+    },
+    "presence": {
+      "formule": "Formula {n} lezioni",
+      "faites": "{n, plural, one {# fatta} other {# fatte}}",
+      "manquees": "{n, plural, one {# persa} other {# perse}}"
+    },
+    "lieu": {
+      "maps": "Mappe",
+      "espaceFamille": "Area famiglie",
+      "ouvrir": "Apri",
+      "aucun": "Nessun indirizzo né telefono."
+    },
+    "cout": {
+      "aucun": "Nessuna scadenza registrata.",
+      "regle": "Pagato questa stagione:",
+      "etats": {
+        "paye": "Pagato",
+        "en_retard": "In ritardo",
+        "a_venir": "In arrivo"
+      }
+    },
+    "nouvelle": {
+      "ouvrir": "Nuova attività",
+      "titre": "Nuova attività",
+      "nom": "Nome dell'attività",
+      "club": "Club",
+      "adresse": "Indirizzo",
+      "telephone": "Telefono del club",
+      "formule": "Numero di lezioni (facoltativo)",
+      "membres": "Chi la pratica",
+      "enregistrer": "Salva"
+    },
+    "jours": {
+      "1": "lunedì",
+      "2": "martedì",
+      "3": "mercoledì",
+      "4": "giovedì",
+      "5": "venerdì",
+      "6": "sabato",
+      "7": "domenica"
+    },
+    "acces": {
+      "aucun": "Nessun codice salvato.",
+      "ajouter": "Aggiungi un codice",
+      "libelle": "Etichetta (cancello, spogliatoio…)",
+      "valeur": "Valore del codice",
+      "note": "Nota (facoltativa)",
+      "enregistrer": "Cifra e salva"
+    },
+    "documents": {
+      "aucun": "Nessun documento.",
+      "ajouter": "Aggiungi un documento",
+      "type": "Tipo di documento",
+      "expireLe": "Scade il (facoltativo)",
+      "choisir": "Scegli un file",
+      "aucunFichier": "Nessun file",
+      "enregistrer": "Cifra e salva",
+      "expire": "Scaduto il {date}",
+      "bientot": "Scade tra {n} giorni",
+      "valide": "Valido fino al {date}",
+      "types": {
+        "licence": "Licenza",
+        "certificat_medical": "Certificato medico",
+        "assurance": "Assicurazione",
+        "autorisation": "Autorizzazione dei genitori",
+        "reglement": "Regolamento",
+        "facture": "Fattura",
+        "autre": "Altro"
+      }
     }
   }
 }
