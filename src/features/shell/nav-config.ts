@@ -2,7 +2,8 @@ export type Role = "client" | "agence" | "admin";
 export type NavGroup = "carnet" | "voyages" | "cercle";
 export type NavKey =
   | "accueil" | "restos" | "hotels" | "vins" | "recherche" | "voyages" | "famille"
-  | "reception" | "depenses" | "conciergerie" | "abonnement" | "agence" | "admin";
+  | "reception" | "depenses" | "conciergerie" | "abonnement" | "agence" | "admin"
+  | "activites";
 
 export type NavEntry = { key: NavKey; href: string; group: NavGroup; roles?: Role[] };
 
@@ -14,6 +15,9 @@ export const NAV_ITEMS: NavEntry[] = [
   { key: "recherche", href: "/recherche", group: "carnet" },
   { key: "voyages", href: "/voyages", group: "voyages" },
   { key: "depenses", href: "/depenses", group: "voyages" },
+  // Les activités du foyer : dans le Cercle, parce que c'est de ses membres
+  // qu'elles parlent — et juste avant lui, comme le montre le design desktop.
+  { key: "activites", href: "/activites", group: "cercle" },
   { key: "famille", href: "/famille", group: "cercle" },
   // Boîte de réception : ce qu'un proche m'a recommandé (lot 2). Dans le Cercle,
   // parce que c'est de là que ça vient.
@@ -27,7 +31,11 @@ export const NAV_ITEMS: NavEntry[] = [
 // Décisions PO 2026-09 (designs Onglet Cercle puis Onglet Voyages) : la bottom nav
 // suit le design — Accueil / Restos / Hôtels / Voyages / Cercle + « Plus » ;
 // Recherche et le reste vivent dans le drawer et la sidebar.
-export const BOTTOM_KEYS: NavKey[] = ["accueil", "restos", "hotels", "voyages", "famille"];
+// Design Activités : la barre du bas devient Restos · Hôtels · Voyages ·
+// Activités · Cercle. Accueil en sort — cinq emplacements, et on ouvre l'app
+// pour une adresse ou un horaire, pas pour un tableau de bord. Il reste à un
+// doigt dans le tiroir « Plus » et dans la barre latérale.
+export const BOTTOM_KEYS: NavKey[] = ["restos", "hotels", "voyages", "activites", "famille"];
 
 export const NAV_GROUPS: NavGroup[] = ["carnet", "voyages", "cercle"];
 

@@ -1171,7 +1171,8 @@
       "voyages": "Voyages",
       "cercle": "Cercle"
     },
-    "reception": "Recommandations"
+    "reception": "Recommandations",
+    "activites": "Activités"
   },
   "places": {
     "favoris": "Favoris",
@@ -1679,5 +1680,27 @@
     "envoyees": "Ce que j'ai recommandé",
     "a": "à {nom}",
     "envoyeesAide": "Vous ne saurez pas si l'adresse a été ajoutée — c'est leur carnet."
+  },
+  "activites": {
+    "eyebrow": "Mon carnet",
+    "titre": "Activités",
+    "onglets": {
+      "en_cours": "En cours",
+      "semaine": "Cette semaine",
+      "tous": "Tous",
+      "carte": "Carte"
+    },
+    "vide": {
+      "aucuneTitre": "Aucune activité pour l'instant",
+      "aucuneTexte": "Ajoutez les cours et clubs de la famille pour avoir l'adresse, l'heure et les codes sous la main.",
+      "semaineTitre": "Aucun cours cette semaine",
+      "semaineTexte": "Les créneaux de la semaine s'afficheront ici, avec les vacances scolaires et les voyages.",
+      "carteTitre": "Aucun lieu à placer",
+      "carteTexte": "Les clubs apparaîtront sur la carte dès qu'une activité aura une adresse."
+    },
+    "erreur": {
+      "titre": "Les activités n'ont pas pu être chargées.",
+      "reessayer": "Réessayer"
+    }
   }
 }

@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import {
   Home, Utensils, Hotel, Wine, Search, Plane, Users, Wallet, ConciergeBell, CreditCard, Briefcase, Shield, Inbox,
+  CalendarClock,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavItem } from "@/features/shared/ui/NavItem";
@@ -11,6 +12,9 @@ export const NAV_ICONS: Record<NavKey, LucideIcon> = {
   accueil: Home, restos: Utensils, hotels: Hotel, vins: Wine, recherche: Search, voyages: Plane,
   famille: Users, reception: Inbox, depenses: Wallet, conciergerie: ConciergeBell, abonnement: CreditCard,
   agence: Briefcase, admin: Shield,
+  // Un cours, c'est une heure qui revient : ni un ballon ni une clé de sol,
+  // qui ne diraient qu'une partie des activités.
+  activites: CalendarClock,
 };
 
 export function NavGroups({ items, pathname, compteurs }: {
