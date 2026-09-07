@@ -1696,11 +1696,43 @@
       "semaineTitre": "Ninguna clase esta semana",
       "semaineTexte": "Las sesiones de la semana aparecerán aquí, con las vacaciones escolares y los viajes.",
       "carteTitre": "Nada que situar",
-      "carteTexte": "Los clubes aparecen en el mapa en cuanto una actividad tiene dirección."
+      "carteTexte": "Los clubes aparecen en el mapa en cuanto una actividad tiene dirección.",
+      "filtreTitre": "Nada coincide",
+      "filtreTexte": "Quita un filtro o cambia la búsqueda."
     },
     "erreur": {
       "titre": "No se han podido cargar las actividades.",
       "reessayer": "Reintentar"
+    },
+    "compte": "{n, plural, one {# actividad} other {# actividades}}",
+    "sansMembre": "Sin miembro",
+    "restantes": "{n, plural, one {# sesión restante} other {# sesiones restantes}}",
+    "appeler": "Llamar al club",
+    "itineraire": "Cómo llegar",
+    "aujourdhui": "hoy",
+    "demain": "mañana",
+    "recherchePlaceholder": "Actividad, club, profesor…",
+    "statuts": {
+      "en_cours": "En curso",
+      "en_pause": "En pausa",
+      "terminee": "Terminada"
+    },
+    "types": {
+      "equitation": "Equitación",
+      "danse": "Danza",
+      "football": "Fútbol",
+      "musique": "Música",
+      "tennis": "Tenis",
+      "natation": "Natación",
+      "theatre": "Teatro",
+      "autre": "Otra"
+    },
+    "filtres": {
+      "membre": "Miembro",
+      "statut": "Estado",
+      "type": "Tipo",
+      "tag": "Etiquetas",
+      "effacer": "Borrar"
     }
   }
 }

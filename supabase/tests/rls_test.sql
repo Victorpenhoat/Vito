@@ -514,15 +514,17 @@ select is(tests.count_as_anon('select count(*) from public.activite_codes'),
 select is(tests.count_as_anon('select count(*) from public.journal_acces'),
           0::bigint, 'anon ne voit aucun accès journalisé');
 
--- 71) le propriétaire voit son activité et ses tables filles
+-- 71) le propriétaire voit son activité et ses tables filles.
+--     On vise les lignes de CE test, pas un total : le seed grossit avec le
+--     produit, et un compteur absolu se serait périmé au premier ajout.
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'select count(*) from public.activites'),
+          'select count(*) from public.activites where id = ''ac000001-0000-4000-8000-000000000001'''),
           1::bigint, 'le propriétaire voit son activité');
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'select count(*) from public.activite_creneaux'),
+          'select count(*) from public.activite_creneaux where activite_id = ''ac000001-0000-4000-8000-000000000001'''),
           1::bigint, 'le propriétaire voit ses créneaux');
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'select count(*) from public.activite_codes'),
+          'select count(*) from public.activite_codes where activite_id = ''ac000001-0000-4000-8000-000000000001'''),
           1::bigint, 'le propriétaire voit ses codes');
 
 -- 72) un compte étranger ne voit RIEN, à aucun niveau de la hiérarchie
@@ -582,7 +584,7 @@ select throws_ok(
 
 -- 77) le journal se lit par son auteur, et s'écrit à son propre nom seulement
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'select count(*) from public.journal_acces'),
+          'select count(*) from public.journal_acces where cible_id = ''ac000001-0000-4000-8000-000000000001'''),
           1::bigint, 'l''auteur lit ses propres accès');
 select throws_ok(
   $$ select tests.count_as('22222222-2222-2222-2222-222222222222',
