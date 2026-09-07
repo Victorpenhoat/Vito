@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;}
+  .serif{font-family:'Newsreader',Georgia,serif;}
+  a{color:#2563EB;text-decoration:none;}
+  a:hover{color:#1D4ED8;}
+</style>
+</helmet>
+
+<div style="position:absolute;left:80px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Activités · Mobile</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">1 · En cours (groupé par membre)</div></div>
+  <div data-screen-label="M · En cours" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Activités</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">En cours</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Cette semaine</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="display:flex;gap:9px;padding:0 18px 10px;">
+      <div style="flex:1;display:flex;align-items:center;gap:9px;padding:10px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Activité, club, intervenant…</span></div>
+      <button style="display:grid;place-items:center;width:42px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 8px;overflow:hidden;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;white-space:nowrap;">Tous</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;white-space:nowrap;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span>Alexia</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;white-space:nowrap;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#2563EB;color:#fff;font-size:8px;font-weight:600;">T</span>Tom</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;white-space:nowrap;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#211E1A;color:#fff;font-size:8px;font-weight:600;">VP</span>Moi</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;">
+        <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#A65D57;color:#fff;font-size:10px;font-weight:600;">A</span>
+        <span style="font-size:13px;font-weight:600;color:#211E1A;">Alexia</span><span style="font-size:11px;color:#9A9081;">· 2 activités</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;border-left:2px solid #A65D57;padding-left:11px;margin-left:-11px;">
+        <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#F7ECEA;border:1px solid #EBD8D5;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></span></div>
+          <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Poney-club des Landes · <b style="color:#211E1A;font-weight:600;">demain 10h00</b></div>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+      <div style="position:relative;margin:0 -18px;">
+        <div style="position:absolute;right:0;top:0;height:63px;display:flex;">
+          <span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:74px;background:#5B7F5B;color:#fff;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1.1 1A16 16 0 0 1 4 5.1 1 1 0 0 1 5 4Z"/></svg><span style="font-size:10px;font-weight:600;">Appeler</span></span>
+          <span style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:74px;background:#2563EB;color:#fff;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 1 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span style="font-size:10px;font-weight:600;">Trajet</span></span>
+        </div>
+        <div style="position:relative;width:calc(100% - 148px);display:flex;gap:12px;align-items:center;padding:11px 14px 11px 18px;background:#FBF9F3;border-bottom:1px solid #EDE7DB;box-shadow:6px 0 14px rgba(33,30,26,.08);">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5M13 8l4 1"/></svg></span>
+          <div style="flex:1;min-width:0;">
+            <span style="font-size:14px;font-weight:600;color:#211E1A;">Danse classique</span>
+            <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Conservatoire · <b style="color:#211E1A;font-weight:600;">lundi 17h30</b></div>
+          </div>
+        </div>
+        <div style="text-align:right;padding:5px 18px 0;"><span style="font-size:10px;color:#9A9081;font-style:italic;">← swipe : appeler le club / itinéraire</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 0 6px;">
+        <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#2563EB;color:#fff;font-size:10px;font-weight:600;">T</span>
+        <span style="font-size:13px;font-weight:600;color:#211E1A;">Tom</span><span style="font-size:11px;color:#9A9081;">· 2 activités</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;border-left:2px solid #2563EB;padding-left:11px;margin-left:-11px;">
+        <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m12 7 3.5 2.5-1.3 4.2h-4.4L8.5 9.5 12 7Z"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;font-weight:600;color:#211E1A;">Football</span><span style="display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#FBF3E1;border:1px solid #F0E2C0;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></span></div>
+          <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">FC Bastide · <b style="color:#211E1A;font-weight:600;">mercredi 14h00</b></div>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <span style="font-size:14px;font-weight:600;color:#211E1A;">Guitare</span>
+          <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">École de musique · <b style="color:#211E1A;font-weight:600;">jeudi 18h00</b></div>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 0 6px;">
+        <span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#211E1A;color:#fff;font-size:10px;font-weight:600;">VP</span>
+        <span style="font-size:13px;font-weight:600;color:#211E1A;">Moi</span><span style="font-size:11px;color:#9A9081;">· 1 activité</span>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:11px 0;">
+        <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5 5c4 4 5 10 3 14M19 5c-4 4-5 10-3 14"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <span style="font-size:14px;font-weight:600;color:#211E1A;">Tennis</span>
+          <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">TC Chartrons · <b style="color:#211E1A;font-weight:600;">samedi 9h00</b> · <span style="color:#5B7F5B;font-weight:600;">7 séances restantes</span></div>
+        </div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14h3M8 17.5h6"/></svg><span style="font-size:10px;font-weight:600;">Activités</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2 · Cette semaine (conflit, vacances, voyage)</div></div>
+  <div data-screen-label="M · Cette semaine" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Activités</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">En cours</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Cette semaine</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0 8px;"><span style="font-size:12.5px;font-weight:600;color:#211E1A;">7 – 13 septembre</span><div style="display:flex;gap:6px;"><span style="display:grid;place-items:center;width:26px;height:26px;border-radius:999px;background:#fff;border:1px solid #E4DDD0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></span><span style="display:grid;place-items:center;width:26px;height:26px;border-radius:999px;background:#fff;border:1px solid #E4DDD0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></div></div>
+      <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0 5px;"><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Lundi 7</span><span style="height:1px;flex:1;background:#EDE7DB;"></span></div>
+      <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-left:3px solid #A65D57;border-radius:5px;padding:10px 12px;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:600;color:#211E1A;width:38px;">17h30</span>
+        <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#A65D57;color:#fff;font-size:9px;font-weight:600;flex-shrink:0;">A</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Danse classique</div><div style="font-size:10.5px;color:#9A9081;">Conservatoire · jusqu'à 19h00 · dépose : Claire</div></div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0 5px;"><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Mercredi 9</span><span style="height:1px;flex:1;background:#EDE7DB;"></span></div>
+      <div style="border:1.5px solid #C28A1B;border-radius:6px;padding:8px;background:#FBF3E1;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span style="font-size:11px;font-weight:600;color:#C28A1B;">Conflit — deux trajets à 14h00</span></div>
+        <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-left:3px solid #2563EB;border-radius:5px;padding:9px 11px;margin-bottom:5px;">
+          <span style="font-size:12px;font-weight:600;color:#211E1A;width:38px;">14h00</span>
+          <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#2563EB;color:#fff;font-size:9px;font-weight:600;flex-shrink:0;">T</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Football</div><div style="font-size:10.5px;color:#9A9081;">FC Bastide · dépose : moi</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-left:3px solid #A65D57;border-radius:5px;padding:9px 11px;">
+          <span style="font-size:12px;font-weight:600;color:#211E1A;width:38px;">14h00</span>
+          <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#A65D57;color:#fff;font-size:9px;font-weight:600;flex-shrink:0;">A</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Équitation</div><div style="font-size:10.5px;color:#9A9081;">Poney-club · <span style="color:#C28A1B;font-weight:600;">dépose à définir</span></div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0 5px;"><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Jeudi 10</span><span style="height:1px;flex:1;background:#EDE7DB;"></span></div>
+      <div style="display:flex;gap:10px;align-items:center;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:5px;padding:10px 12px;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:600;color:#7A736A;width:38px;text-decoration:line-through;">18h00</span>
+        <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#2563EB;color:#fff;font-size:9px;font-weight:600;flex-shrink:0;opacity:.55;">T</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#7A736A;">Guitare</div><div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#2563EB;margin-top:1px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg>Manqué — voyage à Rome</div></div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px;padding:8px 0 5px;"><span style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Samedi 12</span><span style="height:1px;flex:1;background:#EDE7DB;"></span></div>
+      <div style="background:#F8F4EA;border:1px solid #EFE7D2;border-radius:6px;padding:9px 12px;">
+        <div style="display:flex;align-items:center;gap:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><span style="font-size:11px;font-weight:600;color:#7A736A;">Vacances scolaires · zone C</span></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px;opacity:.5;">
+          <span style="font-size:12px;font-weight:600;color:#7A736A;width:38px;">9h00</span>
+          <span style="display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#211E1A;color:#fff;font-size:9px;font-weight:600;flex-shrink:0;">VP</span>
+          <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Tennis</div><div style="font-size:10.5px;color:#9A9081;">Interrompu pendant les vacances</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14h3M8 17.5h6"/></svg><span style="font-size:10px;font-weight:600;">Activités</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">3 · Tous (filtres cumulables)</div></div>
+  <div data-screen-label="M · Tous" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Activités</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">En cours</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Cette semaine</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="display:flex;gap:6px;padding:0 18px 8px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span>Alexia ✕</span><span style="font-size:11px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">En pause ✕</span><button style="background:none;border:none;color:#2563EB;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;margin-left:auto;">Effacer</button></div>
+    <div style="display:flex;gap:6px;padding:0 18px 8px;overflow:hidden;"><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Statut ▾</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Type ▾</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;white-space:nowrap;">Tags ▾</span></div>
+    <div style="padding:0 18px 6px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">3 activités</span></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="display:grid;place-items:center;width:38px;height:38px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13.5px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span></div>
+          <div style="font-size:11px;color:#9A9081;margin-top:2px;">Poney-club des Landes · <span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:1px 7px;">En cours</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #EDE7DB;">
+        <span style="display:grid;place-items:center;width:38px;height:38px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5M13 8l4 1"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13.5px;font-weight:600;color:#211E1A;">Danse classique</span><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span></div>
+          <div style="font-size:11px;color:#9A9081;margin-top:2px;">Conservatoire · <span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:1px 7px;">En pause</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:12px 0;opacity:.62;">
+        <span style="display:grid;place-items:center;width:38px;height:38px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c2-6 6-9 12-9M4 20h16"/><path d="M14 5h4v4"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13.5px;font-weight:600;color:#211E1A;">Natation</span><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span></div>
+          <div style="font-size:11px;color:#9A9081;margin-top:2px;">Piscine Judaïque · <span style="font-size:9.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:1px 7px;">Terminée</span> · saison 2024-25</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14h3M8 17.5h6"/></svg><span style="font-size:10px;font-weight:600;">Activités</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">4 · Carte (marqueurs par membre)</div></div>
+  <div data-screen-label="M · Carte" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="padding:12px 22px 0;"><div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2563EB;">Mon carnet</div><h1 class="serif" style="margin:4px 0 12px;font-size:30px;font-weight:500;color:#211E1A;letter-spacing:-.01em;">Activités</h1></div>
+    <div style="display:flex;gap:7px;padding:0 18px 12px;overflow:hidden;"><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">En cours</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Cette semaine</span><span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;white-space:nowrap;">Tous</span><span style="font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;white-space:nowrap;">Carte</span></div>
+    <div style="flex:1;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:#E8E4DA;">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 39%,transparent 39%),linear-gradient(0deg,transparent 0 62%,#DAD4C6 62% 63%,transparent 63%),linear-gradient(90deg,transparent 0 72%,#E0DACE 72% 72.6%,transparent 72.6%);"></div>
+        <div style="position:absolute;left:-10%;top:44%;width:130%;height:32px;background:#BFD6E8;transform:rotate(-6deg);opacity:.6;"></div>
+      </div>
+      <div style="position:absolute;left:14px;right:14px;top:12px;display:flex;gap:6px;overflow:hidden;">
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);white-space:nowrap;"><span style="width:8px;height:8px;border-radius:50%;background:#A65D57;"></span>Alexia</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);white-space:nowrap;"><span style="width:8px;height:8px;border-radius:50%;background:#2563EB;"></span>Tom</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);white-space:nowrap;"><span style="width:8px;height:8px;border-radius:50%;background:#211E1A;"></span>Moi</span>
+        <span style="font-size:11px;font-weight:600;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;white-space:nowrap;">Statut ▾</span>
+      </div>
+      <div style="position:absolute;left:28%;top:32%;transform:translate(-50%,-100%);"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#A65D57"/><circle cx="15" cy="13.5" r="4.5" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:64%;top:26%;transform:translate(-50%,-100%);"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#2563EB"/><circle cx="15" cy="13.5" r="4.5" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:73%;top:60%;transform:translate(-50%,-100%);opacity:.75;"><svg width="24" height="24" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px rgba(33,30,26,.3));"><rect x="3" y="3" width="18" height="18" rx="4" fill="#A65D57"/><circle cx="12" cy="12" r="3.6" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:44%;top:56%;transform:translate(-50%,-100%) scale(1.28);z-index:3;">
+        <svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 4px 7px rgba(33,30,26,.35));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#A65D57"/><circle cx="15" cy="13.5" r="4.5" fill="#fff"/></svg>
+      </div>
+      <div style="position:absolute;left:38%;top:74%;transform:translate(-50%,-100%);"><svg width="28" height="35" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#211E1A"/><circle cx="15" cy="13.5" r="4.5" fill="#fff"/></svg></div>
+      <div style="position:absolute;left:14px;right:14px;bottom:14px;background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 30px rgba(33,30,26,.22);padding:13px;">
+        <div style="display:flex;gap:11px;align-items:center;">
+          <span style="display:grid;place-items:center;width:38px;height:38px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;font-weight:600;">A</span></div>
+            <div style="font-size:11px;color:#9A9081;margin-top:2px;">Poney-club des Landes · demain 10h00</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:11px;">
+          <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1.1 1A16 16 0 0 1 4 5.1 1 1 0 0 1 5 4Z"/></svg>Appeler</button>
+          <button style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0;background:#fff;border:1px solid #E4DDD0;border-radius:3px;color:#211E1A;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Itinéraire ↗</button>
+          <button style="padding:10px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;color:#211E1A;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Fiche</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14h3M8 17.5h6"/></svg><span style="font-size:10px;font-weight:600;">Activités</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:0px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">5 · Fiche activité (scroll complet)</div></div>
+  <div data-screen-label="M · Fiche activité" style="position:relative;width:390px;min-height:1560px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 18px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Activités</button>
+      <button style="margin-left:auto;background:none;border:none;color:#2563EB;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Modifier</button>
+    </div>
+    <div style="padding:4px 18px 12px;">
+      <div style="display:flex;gap:13px;align-items:flex-start;">
+        <span style="display:grid;place-items:center;width:52px;height:52px;border-radius:10px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+        <div style="flex:1;min-width:0;">
+          <h1 class="serif" style="margin:0;font-size:24px;font-weight:500;color:#211E1A;">Équitation</h1>
+          <div style="font-size:12.5px;color:#9A9081;margin-top:2px;">Poney-club des Landes</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:8px;">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 10px 3px 3px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;">A</span>Alexia</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:4px 11px;">En cours ▾</span>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:7px;"><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Samedi</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Sport</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;overflow:hidden;border-bottom:1px solid #E4DDD0;"><span style="font-size:11.5px;font-weight:600;color:#211E1A;border-bottom:2px solid #211E1A;padding-bottom:8px;white-space:nowrap;">Horaires</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:10px;">Lieu</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:10px;">Accès</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:10px;">Coût</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:10px;">Documents</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:10px;">Notes</span></div>
+    <div style="flex:1;overflow:hidden;padding:14px 18px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Horaires</div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+        <div style="display:flex;gap:11px;align-items:flex-start;padding:12px 14px;">
+          <span style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;flex-shrink:0;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:5px;padding:5px 0;"><span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7A736A;">Sam</span><span style="font-size:14px;font-weight:600;color:#211E1A;">10h</span></span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#211E1A;">10h00 – 11h00</div>
+            <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Manège couvert · Monitrice : Claire Dubois</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h-2v-6l2-5h9l4 5h3v6h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span style="font-size:11px;color:#211E1A;">Dépose : <b>moi</b></span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-top:1px solid #F0EBE0;">
+          <span style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;flex-shrink:0;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:5px;padding:5px 0;"><span style="font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7A736A;">Mer</span><span style="font-size:14px;font-weight:600;color:#211E1A;">14h</span></span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;color:#211E1A;">14h00 – 15h00</div>
+            <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Carrière extérieure · Monitrice : Claire Dubois</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h-2v-6l2-5h9l4 5h3v6h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span style="font-size:11px;color:#C28A1B;font-weight:600;">Dépose à définir</span></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-top:1px solid #F0EBE0;background:#FBF9F3;"><span style="font-size:11.5px;color:#7A736A;">Valide de septembre à juin · 1 annulation le 24 déc.</span></div>
+        <button style="width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 0;background:#fff;border:none;border-top:1px dashed #E4DDD0;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M12 14v4M10 16h4"/></svg>Ajouter au calendrier</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding:9px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg><span style="flex:1;font-size:11.5px;color:#211E1A;">Créneaux visibles dans le <b>planning Voyages</b></span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Présence</span><span style="font-size:11px;color:#9A9081;">Formule 20 séances</span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:10px;"><div style="flex:1;height:7px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:65%;height:7px;border-radius:999px;background:#5B7F5B;"></span></div><span style="font-size:12.5px;font-weight:600;color:#211E1A;">13 / 20</span></div>
+        <div style="display:flex;gap:14px;margin-top:8px;"><span style="font-size:11px;color:#7A736A;">✓ 12 faites</span><span style="font-size:11px;color:#7A736A;">✗ 1 manquée</span><span style="font-size:11px;font-weight:600;color:#5B7F5B;">7 restantes</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin-top:16px;">Lieu et contacts</div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div><div style="font-size:12.5px;color:#211E1A;">12 route du Cap, Le Teich</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">22 min depuis chez nous</div></div><a style="font-size:11.5px;font-weight:600;">Maps ↗</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12.5px;color:#211E1A;">05 56 22 41 08 <span style="color:#9A9081;">· club</span></span><a style="font-size:11.5px;font-weight:600;">Appeler</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12.5px;color:#211E1A;">06 12 88 04 51 <span style="color:#9A9081;">· Claire, monitrice</span></span><a style="font-size:11.5px;font-weight:600;">Appeler</a></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;"><span style="font-size:12.5px;color:#211E1A;">Espace famille</span><a style="font-size:11.5px;font-weight:600;">Ouvrir ↗</a></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:16px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Accès</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;padding:2px 8px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Données protégées</span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:11px;color:#9A9081;">Portail principal</div><div style="font-size:15px;font-weight:600;letter-spacing:.22em;color:#211E1A;margin-top:1px;">••••</div></div><button style="display:flex;align-items:center;gap:5px;padding:7px 11px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:3px;font-size:11px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Révéler</button></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:11px;color:#9A9081;">Vestiaire filles</div><div style="font-size:15px;font-weight:600;letter-spacing:.22em;color:#211E1A;margin-top:1px;">••••</div></div><button style="display:flex;align-items:center;gap:5px;padding:7px 11px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:3px;font-size:11px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Révéler</button></div>
+        <div style="padding:11px 14px;background:#FBF9F3;"><div style="font-size:11px;color:#9A9081;">Consignes d'accès</div><div style="font-size:12.5px;color:#211E1A;margin-top:3px;line-height:1.5;">Se garer derrière le manège, entrer par la petite porte verte.</div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Coût</span><span style="font-size:11px;color:#9A9081;">Réglé cette saison : <b style="color:#211E1A;">620,00 €</b></span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Cotisation annuelle</div><div style="font-size:11px;color:#9A9081;margin-top:1px;">Prélèvement · 3 échéances</div></div><span class="serif" style="font-size:17px;color:#211E1A;">930,00 €</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F7F3EA;"><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Payé</span><span style="flex:1;font-size:12px;color:#211E1A;">15 sept. 2026</span><span style="font-size:12px;font-weight:600;color:#211E1A;">310,00 €</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #F7F3EA;"><span style="font-size:9.5px;font-weight:600;color:#A65D57;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 8px;">En retard</span><span style="flex:1;font-size:12px;color:#211E1A;">1ᵉʳ sept. 2026</span><span style="font-size:12px;font-weight:600;color:#A65D57;">310,00 €</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;"><span style="font-size:9.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">À venir</span><span style="flex:1;font-size:12px;color:#211E1A;">15 janv. 2027</span><span style="font-size:12px;font-weight:600;color:#211E1A;">310,00 €</span></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Documents</span><button style="background:none;border:none;color:#2563EB;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">+ Document</button></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:5px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Licence FFE 2026-27</div><div style="font-size:11px;color:#9A9081;">Expire le 31 août 2027</div></div><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Valide</span></div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F0EBE0;"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:5px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Certificat médical</div><div style="font-size:11px;color:#9A9081;">Expire le 28 sept. 2026</div></div><span style="font-size:9.5px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">Expire bientôt</span></div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 14px;"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:5px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Autorisation parentale</div><div style="font-size:11px;color:#9A9081;">Sans expiration</div></div><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Valide</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;margin-top:16px;">Notes</div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;margin-top:8px;font-size:12.5px;line-height:1.6;color:#211E1A;">Bombe taille 54, gilet à la sellerie. Poney habituel : Vanille. Allergie aux arachides signalée au club.</div>
+    </div>
+  </div>
+</div>
+
+
+<div style="position:absolute;left:80px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">6 · Ajout d'une activité</div></div>
+  <div data-screen-label="M · Ajout activité" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px 8px;"><button style="background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;">Annuler</button><span style="font-size:15px;font-weight:600;color:#211E1A;">Nouvelle activité</span><span style="width:56px;"></span></div>
+    <div style="flex:1;overflow:hidden;padding:6px 18px;">
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:7px;">Type d'activité</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:7px 13px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/></svg>Équitation</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Danse</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Football</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Musique</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Tennis</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Natation</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Théâtre</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:7px 13px;">Soutien scolaire</span>
+        <span style="font-size:12px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:7px 13px;">Autre…</span>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 5px;">Nom de l'activité</div>
+      <div style="padding:12px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px;font-size:13.5px;color:#211E1A;">Équitation<span style="display:inline-block;width:1.5px;height:15px;background:#2563EB;vertical-align:middle;margin-left:1px;"></span></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 5px;">Membre(s) concerné(s)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:5px 12px 5px 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#A65D57;color:#fff;font-size:9px;">A</span>Alexia ✓</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 12px 5px 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#2563EB;color:#fff;font-size:9px;">T</span>Tom</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 12px 5px 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#211E1A;color:#fff;font-size:9px;">VP</span>Moi</span>
+      </div>
+      <div style="font-size:10px;color:#b3a896;margin-top:5px;">Sélection depuis le Cercle — composant réutilisé</div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 5px;">Club / organisme</div>
+      <div style="padding:12px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:13.5px;color:#211E1A;">Poney-club des Landes</div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 5px;">Adresse</div>
+      <div style="display:flex;align-items:center;gap:9px;padding:12px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px 3px 0 0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211E1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13.5px;color:#211E1A;">12 route du Cap</span></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-top:none;border-radius:0 0 5px 5px;box-shadow:0 10px 24px rgba(33,30,26,.12);">
+        <div style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 1 1 14 0c0 5-7 11-7 11Z"/></svg><div><div style="font-size:12.5px;color:#211E1A;">12 route du Cap</div><div style="font-size:10.5px;color:#9A9081;">33470 Le Teich</div></div></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:10px 13px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 1 1 14 0c0 5-7 11-7 11Z"/></svg><div><div style="font-size:12.5px;color:#211E1A;">12 route du Cap-Ferret</div><div style="font-size:10.5px;color:#9A9081;">33950 Lège-Cap-Ferret</div></div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:16px 0 6px;">Statut</div>
+      <div style="display:flex;gap:4px;padding:3px;background:#EFEADF;border-radius:5px;"><span style="flex:1;text-align:center;padding:8px 0;border-radius:3px;font-size:12.5px;font-weight:600;background:#fff;color:#211E1A;box-shadow:0 1px 2px rgba(33,30,26,.12);">En cours</span><span style="flex:1;text-align:center;padding:8px 0;border-radius:3px;font-size:12.5px;font-weight:600;color:#7A736A;">En pause</span><span style="flex:1;text-align:center;padding:8px 0;border-radius:3px;font-size:12.5px;font-weight:600;color:#7A736A;">Terminée</span></div>
+    </div>
+    <div style="padding:12px 18px 26px;background:#FBF9F3;border-top:1px solid #E4DDD0;"><button style="width:100%;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Créer l'activité</button></div>
+  </div>
+</div>
+
+<div style="position:absolute;left:550px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">7 · Ajout d'un créneau</div></div>
+  <div data-screen-label="M · Ajout créneau" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="flex:1;position:relative;background:#E8E4DA;"><div style="position:absolute;inset:0;background:rgba(33,30,26,.35);"></div></div>
+    <div style="background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.2);padding:14px 18px 28px;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 14px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:19px;color:#211E1A;">Nouveau créneau</span><span style="font-size:11.5px;color:#9A9081;">Équitation · Alexia</span></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 6px;">Jour</div>
+      <div style="display:flex;gap:5px;">
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">L</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">M</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">M</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">J</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">V</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#fff;background:#211E1A;">S</span>
+        <span style="flex:1;text-align:center;padding:9px 0;border-radius:5px;font-size:12px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">D</span>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:13px;">
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Début</div><div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:14px;font-weight:600;color:#211E1A;text-align:center;">10:00</div></div>
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Fin</div><div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:14px;font-weight:600;color:#211E1A;text-align:center;">11:00</div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 5px;">Lieu <span style="font-weight:400;color:#9A9081;">(si différent du club)</span></div>
+      <div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">Manège couvert</div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 5px;">Intervenant</div>
+      <div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">Claire Dubois <span style="color:#9A9081;">· monitrice</span></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 5px;">Qui dépose</div>
+      <div style="display:flex;gap:7px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:5px 12px 5px 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#211E1A;color:#fff;font-size:9px;">VP</span>Moi ✓</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 12px 5px 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#7E3B4B;color:#fff;font-size:9px;">C</span>Claire</span>
+        <span style="font-size:12px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 12px;">Covoiturage</span>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:13px;">
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Valide de</div><div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">septembre</div></div>
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">à</div><div style="padding:11px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">juin</div></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:16px;">
+        <button style="flex:1;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer</button>
+        <button style="padding:14px 16px;background:#fff;border:1px solid #2563EB;border-radius:3px;color:#2563EB;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Un autre</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1020px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">8 · Ajout d'un code d'accès</div></div>
+  <div data-screen-label="M · Ajout code" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="flex:1;position:relative;background:#E8E4DA;"><div style="position:absolute;inset:0;background:rgba(33,30,26,.35);"></div></div>
+    <div style="background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.2);padding:14px 18px 28px;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 14px;"></div>
+      <span class="serif" style="font-size:19px;color:#211E1A;">Nouveau code d'accès</span>
+      <div style="font-size:11.5px;color:#9A9081;margin-top:2px;">Équitation · Poney-club des Landes</div>
+      <div style="display:flex;gap:10px;margin-top:14px;padding:12px 14px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:6px;">
+        <span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #D6E2FA;flex-shrink:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Donnée protégée</div><div style="font-size:11.5px;color:#7A736A;line-height:1.5;margin-top:2px;">Ce code sera chiffré, masqué par défaut et révélé uniquement après re-authentification. Il n'apparaîtra jamais dans une liste ni une notification.</div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 5px;">Libellé</div>
+      <div style="padding:12px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13.5px;color:#211E1A;">Portail principal</div>
+      <div style="display:flex;gap:6px;margin-top:7px;"><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Vestiaire</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Casier</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;">Espace famille</span></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 5px;">Valeur</div>
+      <div style="display:flex;align-items:center;gap:9px;padding:12px 13px;background:#FBF9F3;border:1.5px solid #2563EB;border-radius:3px;"><span style="flex:1;font-size:16px;font-weight:600;letter-spacing:.2em;color:#211E1A;">4•7•B</span><button style="display:grid;place-items:center;width:28px;height:28px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:14px 0 5px;">Note <span style="font-weight:400;color:#9A9081;">(optionnelle)</span></div>
+      <div style="padding:12px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#9A9081;min-height:62px;">Valable jusqu'au changement de saison…</div>
+      <button style="width:100%;margin-top:16px;padding:14px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">Chiffrer et enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1490px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">9 · Échéance de paiement · 10 · Document</div></div>
+  <div data-screen-label="M · Échéance + document" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px 8px;"><button style="background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;">Annuler</button><span style="font-size:15px;font-weight:600;color:#211E1A;">Nouvelle échéance</span><span style="width:56px;"></span></div>
+    <div style="padding:6px 18px 0;">
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Montant</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 13px;background:#fff;border:1.5px solid #2563EB;border-radius:3px;"><span class="serif" style="flex:1;font-size:22px;color:#211E1A;">310,00</span><span style="font-size:16px;color:#9A9081;">€</span></div>
+      <div style="display:flex;gap:9px;margin-top:13px;">
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">Date d'échéance</div><div style="padding:11px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">15 janv. 2027</div></div>
+        <div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#7A736A;margin-bottom:5px;">État</div><div style="padding:11px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:13px;color:#211E1A;">À venir ▾</div></div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 6px;">Périodicité</div>
+      <div style="display:flex;gap:4px;padding:3px;background:#EFEADF;border-radius:5px;"><span style="flex:1;text-align:center;padding:8px 0;border-radius:3px;font-size:12.5px;font-weight:600;color:#7A736A;">Ponctuel</span><span style="flex:1;text-align:center;padding:8px 0;border-radius:3px;font-size:12.5px;font-weight:600;background:#fff;color:#211E1A;box-shadow:0 1px 2px rgba(33,30,26,.12);">Récurrent</span></div>
+      <div style="display:flex;gap:6px;margin-top:8px;"><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Mensuel</span><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Trimestriel</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Annuel</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">À la séance</span></div>
+      <div style="font-size:11.5px;font-weight:600;color:#7A736A;margin:13px 0 6px;">Mode de règlement</div>
+      <div style="display:flex;gap:6px;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Prélèvement</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Carte</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Chèque</span><span style="font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;">Espèces</span></div>
+      <button style="width:100%;margin-top:13px;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 0;background:#fff;border:1px dashed #C2B7A4;border-radius:3px;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Justificatif (optionnel)</button>
+      <button style="width:100%;margin-top:12px;padding:13px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer l'échéance</button>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 30px rgba(33,30,26,.16);padding:14px 18px 26px;border-top:1px solid #E4DDD0;">
+      <div style="width:36px;height:4px;border-radius:2px;background:#E4DDD0;margin:0 auto 12px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;"><span class="serif" style="font-size:18px;color:#211E1A;">Nouveau document</span><span style="font-size:10px;color:#b3a896;">Même flux que le Cercle</span></div>
+      <div style="display:flex;gap:6px;margin-top:11px;overflow:hidden;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;white-space:nowrap;">Licence</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;white-space:nowrap;">Certificat médical</span><span style="font-size:11px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 11px;white-space:nowrap;">Assurance</span><span style="font-size:11px;color:#2563EB;background:#EAF0FD;border:1px dashed #A9C2F2;border-radius:999px;padding:5px 11px;white-space:nowrap;">Autre type</span></div>
+      <div style="display:flex;gap:8px;margin-top:11px;">
+        <button style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;background:#FBF9F3;border:1px dashed #C2B7A4;border-radius:6px;cursor:pointer;font-family:inherit;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="14" r="3.5"/></svg><span style="font-size:11.5px;font-weight:600;color:#211E1A;">Scanner</span></button>
+        <button style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;background:#FBF9F3;border:1px dashed #C2B7A4;border-radius:6px;cursor:pointer;font-family:inherit;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span style="font-size:11.5px;font-weight:600;color:#211E1A;">Importer</span></button>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 13px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;"><span style="flex:1;font-size:12.5px;color:#211E1A;">Expire le <b>31 août 2027</b></span><span style="font-size:9.5px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">Valide</span></div>
+      <button style="width:100%;margin-top:12px;padding:13px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer le document</button>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1960px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">12 · Alertes et échéances</div></div>
+  <div data-screen-label="M · Alertes" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 18px 6px;">
+      <button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Activités</button>
+    </div>
+    <div style="padding:4px 22px 12px;"><h1 class="serif" style="margin:0;font-size:27px;font-weight:500;color:#211E1A;">Alertes</h1><div style="font-size:12.5px;color:#9A9081;margin-top:3px;">4 actions à traiter, triées par urgence</div></div>
+    <div style="flex:1;overflow:hidden;padding:0 18px;">
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0 8px;"><span style="width:8px;height:8px;border-radius:50%;background:#A65D57;"></span><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#A65D57;">En retard</span></div>
+      <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #EBD8D5;border-left:3px solid #A65D57;border-radius:6px;padding:12px 14px;margin-bottom:8px;">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#F7ECEA;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Cotisation équitation · 310,00 €</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Alexia · échéance du 1ᵉʳ sept. dépassée</div></div>
+        <button style="padding:7px 12px;background:#A65D57;color:#fff;border:none;border-radius:3px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">Régler</button>
+      </div>
+      <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #EBD8D5;border-left:3px solid #A65D57;border-radius:6px;padding:12px 14px;">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#F7ECEA;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Attestation d'assurance</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Tom · football · expirée depuis le 31 août</div></div>
+        <button style="padding:7px 12px;background:#A65D57;color:#fff;border:none;border-radius:3px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">Ajouter</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 0 8px;"><span style="width:8px;height:8px;border-radius:50%;background:#C28A1B;"></span><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#C28A1B;">Dans les 30 jours</span></div>
+      <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #F0E2C0;border-left:3px solid #C28A1B;border-radius:6px;padding:12px 14px;margin-bottom:8px;">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#FBF3E1;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Certificat médical</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Alexia · équitation · expire dans 21 jours</div></div>
+        <button style="padding:7px 12px;background:#211E1A;color:#fff;border:none;border-radius:3px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">Renouveler</button>
+      </div>
+      <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #F0E2C0;border-left:3px solid #C28A1B;border-radius:6px;padding:12px 14px;">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#FBF3E1;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Inscription à renouveler</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Tom · guitare · avant le 30 septembre</div></div>
+        <button style="padding:7px 12px;background:#211E1A;color:#fff;border:none;border-radius:3px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">Ouvrir</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:16px 0 8px;"><span style="width:8px;height:8px;border-radius:50%;background:#9A9081;"></span><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Plus tard</span></div>
+      <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:12px 14px;opacity:.8;">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#F4F1E9;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Cotisation équitation · 310,00 €</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Alexia · prélèvement le 15 janv. 2027</div></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;padding:9px 4px 20px;border-top:1px solid #E4DDD0;background:#FBF9F3;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3M6 3v18"/><path d="M16 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v6"/></svg><span style="font-size:10px;">Restos</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/></svg><span style="font-size:10px;">Hôtels</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z"/></svg><span style="font-size:10px;">Voyages</span></div>
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;color:#2563EB;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M8 14h3M8 17.5h6"/></svg><span style="position:absolute;top:-3px;right:6px;display:grid;place-items:center;min-width:16px;height:16px;border-radius:999px;background:#A65D57;color:#fff;font-size:9px;font-weight:700;border:1.5px solid #FBF9F3;">4</span><span style="font-size:10px;font-weight:600;">Activités</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#9A9081;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.4c2.6.2 5 2 5 5.6"/></svg><span style="font-size:10px;">Cercle</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:2430px;top:1740px;width:390px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">11 · Bloc Activités dans la fiche membre · 13 · États vides</div></div>
+  <div data-screen-label="M · Fiche membre + vides" style="position:relative;width:390px;min-height:844px;display:flex;flex-direction:column;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:40px;overflow:hidden;box-shadow:0 12px 40px rgba(33,30,26,.14);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 26px 4px;color:#211E1A;"><span style="font-size:14px;font-weight:600;">9:41</span><div style="display:flex;align-items:center;gap:7px;"><svg width="17" height="12" viewBox="0 0 17 12" fill="#211E1A"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg><svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.5" stroke="#211E1A" stroke-width="1.2"/><rect x="3" y="3" width="14" height="6" rx="1" fill="#211E1A"/><rect x="22.5" y="4" width="1.5" height="4" rx=".75" fill="#211E1A"/></svg></div></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 18px 6px;"><button style="display:flex;align-items:center;gap:5px;background:none;border:none;color:#2563EB;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;padding:4px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Cercle</button></div>
+    <div style="padding:4px 18px 10px;display:flex;align-items:center;gap:13px;">
+      <span style="display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:#A65D57;color:#fff;font-size:19px;font-weight:600;">A</span>
+      <div><h1 class="serif" style="margin:0;font-size:24px;font-weight:500;color:#211E1A;">Alexia</h1><div style="font-size:12.5px;color:#9A9081;margin-top:2px;">Fille · 9 ans · foyer principal</div></div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 18px 12px;overflow:hidden;border-bottom:1px solid #E4DDD0;"><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;">Identité</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:12px;">Santé</span><span style="font-size:11.5px;color:#9A9081;padding-bottom:8px;white-space:nowrap;margin-left:12px;">Documents</span><span style="font-size:11.5px;font-weight:600;color:#211E1A;border-bottom:2px solid #211E1A;padding-bottom:8px;white-space:nowrap;margin-left:12px;">Activités</span></div>
+    <div style="padding:14px 18px 0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9A9081;">Activités en cours · 2</span><a style="font-size:11.5px;font-weight:600;">Tout voir →</a></div>
+      <div style="background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+        <div style="display:flex;gap:11px;align-items:center;padding:12px 14px;border-bottom:1px solid #F0EBE0;">
+          <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Équitation</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Poney-club · demain 10h00</div></div>
+          <span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#F7ECEA;border:1px solid #EBD8D5;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></span>
+        </div>
+        <div style="display:flex;gap:11px;align-items:center;padding:12px 14px;">
+          <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:8px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5M13 8l4 1"/></svg></span>
+          <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Danse classique</div><div style="font-size:11px;color:#9A9081;margin-top:2px;">Conservatoire · lundi 17h30</div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:9px;padding:10px 13px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span style="flex:1;font-size:11.5px;color:#211E1A;">1 paiement en retard · 1 certificat expire bientôt</span><a style="font-size:11px;font-weight:600;">Traiter</a></div>
+      <div style="font-size:10px;color:#b3a896;margin-top:6px;">Variante de la fiche membre du Cercle — onglet « Activités » ajouté</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:16px 18px 26px;">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 22px;border:1px dashed #D8CFBE;border-radius:8px;">
+        <span style="display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span>
+        <div class="serif" style="font-size:17px;color:#211E1A;margin-top:9px;">Aucune activité pour l'instant</div>
+        <div style="font-size:11.5px;color:#7A736A;margin-top:4px;line-height:1.5;">Ajoutez les cours et clubs de la famille pour avoir l'adresse, l'heure et les codes sous la main.</div>
+        <button style="margin-top:11px;padding:11px 18px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">Ajouter une activité</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#F8F4EA;border:1px solid #EFE7D2;border-radius:6px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Aucun cours cette semaine</div><div style="font-size:11px;color:#7A736A;margin-top:1px;">Vacances scolaires — reprise le lundi 21.</div></div></div>
+      <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#fff;border:1px dashed #C2B7A4;border-radius:6px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Aucun document</div><div style="font-size:11px;color:#7A736A;margin-top:1px;">Licence, certificat médical, assurance…</div></div><button style="padding:6px 11px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:11px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Ajouter</button></div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:2760px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#2563EB;">Activités · Desktop</div><div style="font-size:13px;color:#6b6b6b;margin-top:3px;">1+5 · En cours — liste + fiche activité</div></div>
+  <div data-screen-label="D · En cours + fiche" style="display:flex;min-height:880px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;display:flex;flex-direction:column;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;flex:1;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Activités<span style="margin-left:auto;display:grid;place-items:center;min-width:18px;height:18px;border-radius:999px;background:#A65D57;color:#fff;font-size:9.5px;font-weight:700;">4</span></a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:9px;padding-top:16px;border-top:1px solid #E4DDD0;"><span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#211E1A;color:#fff;font-size:11px;font-weight:600;">VP</span><div style="font-size:12.5px;font-weight:600;color:#211E1A;">Victor</div></div>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #E4DDD0;">
+        <div style="flex:1;display:flex;align-items:center;gap:9px;padding:9px 13px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;max-width:400px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b3a896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span style="font-size:13px;color:#b3a896;">Activité, club, intervenant…</span></div>
+        <button style="display:flex;align-items:center;gap:6px;padding:9px 15px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:3px;color:#2563EB;font-size:12.5px;font-weight:600;font-family:inherit;cursor:pointer;">+ Nouvelle activité</button>
+        <a style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;">Alertes<span style="display:grid;place-items:center;min-width:18px;height:18px;border-radius:999px;background:#A65D57;color:#fff;font-size:9.5px;font-weight:700;">4</span></a>
+      </div>
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:13px 0 11px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">En cours</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Cette semaine</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:13px 0 11px;color:#7A736A;">Carte</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:340px;flex-shrink:0;border-right:1px solid #E4DDD0;display:flex;flex-direction:column;">
+          <div style="display:flex;gap:6px;padding:14px 16px 10px;flex-wrap:wrap;"><span style="font-size:11px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 11px;">Tous</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;">A</span>Alexia</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#2563EB;color:#fff;font-size:8px;">T</span>Tom</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#211E1A;color:#fff;font-size:8px;">VP</span>Moi</span></div>
+          <div style="flex:1;overflow:hidden;padding:0 16px;">
+            <div style="display:flex;align-items:center;gap:7px;padding:8px 0 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#A65D57;color:#fff;font-size:9px;font-weight:600;">A</span><span style="font-size:12px;font-weight:600;color:#211E1A;">Alexia</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:10px 12px;margin:0 -12px;background:#fff;border-left:2px solid #A65D57;border-bottom:1px solid #EDE7DB;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#F7ECEA;border:1px solid #EBD8D5;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="2.8" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></span></div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Poney-club · demain 10h00</div></div>
+              <div style="display:flex;gap:4px;"><span style="display:grid;place-items:center;width:26px;height:26px;border-radius:3px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1.1 1A16 16 0 0 1 4 5.1 1 1 0 0 1 5 4Z"/></svg></span><span style="display:grid;place-items:center;width:26px;height:26px;border-radius:3px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 1 1 14 0c0 5-7 11-7 11Z"/></svg></span></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5M13 8l4 1"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Danse classique</div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Conservatoire · lundi 17h30</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;padding:12px 0 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#2563EB;color:#fff;font-size:9px;font-weight:600;">T</span><span style="font-size:12px;font-weight:600;color:#211E1A;">Tom</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m12 7 3.5 2.5-1.3 4.2h-4.4L8.5 9.5 12 7Z"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;font-weight:600;color:#211E1A;">Football</span><span style="display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#FBF3E1;border:1px solid #F0E2C0;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.8" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/></svg></span></div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">FC Bastide · mercredi 14h00</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #EDE7DB;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Guitare</div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">École de musique · jeudi 18h00</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:7px;padding:12px 0 5px;"><span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#211E1A;color:#fff;font-size:9px;font-weight:600;">VP</span><span style="font-size:12px;font-weight:600;color:#211E1A;">Moi</span></div>
+            <div style="display:flex;gap:10px;align-items:center;padding:10px 0;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5 5c4 4 5 10 3 14M19 5c-4 4-5 10-3 14"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#211E1A;">Tennis</div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">TC Chartrons · samedi 9h00 · 7 séances</div></div>
+            </div>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid #E4DDD0;font-size:11.5px;color:#9A9081;">5 activités en cours · 3 membres</div>
+        </div>
+        <div style="flex:1;overflow:hidden;background:#fff;">
+          <div style="display:flex;align-items:flex-start;gap:14px;padding:20px 26px 14px;border-bottom:1px solid #E4DDD0;">
+            <span style="display:grid;place-items:center;width:48px;height:48px;border-radius:10px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                <div><h2 class="serif" style="margin:0;font-size:24px;font-weight:500;color:#211E1A;">Équitation</h2><div style="font-size:12.5px;color:#9A9081;margin-top:2px;">Poney-club des Landes · Le Teich</div></div>
+                <div style="display:flex;gap:8px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:6px 12px;">En cours ▾</span><button style="padding:7px 14px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Modifier</button></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:9px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 10px 3px 3px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;">A</span>Alexia</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Samedi</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Sport</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:20px;padding:10px 26px;border-bottom:1px solid #E4DDD0;background:#FBF9F3;"><span style="font-size:11.5px;font-weight:600;color:#211E1A;">Horaires</span><span style="font-size:11.5px;color:#7A736A;">Lieu</span><span style="font-size:11.5px;color:#7A736A;">Accès</span><span style="font-size:11.5px;color:#7A736A;">Coût</span><span style="font-size:11.5px;color:#7A736A;">Documents</span><span style="font-size:11.5px;color:#7A736A;">Notes</span></div>
+          <div style="padding:18px 26px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div>
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Horaires</div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+                  <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 13px;">
+                    <span style="display:flex;flex-direction:column;align-items:center;width:42px;flex-shrink:0;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:4px;padding:4px 0;"><span style="font-size:9px;font-weight:600;text-transform:uppercase;color:#7A736A;">Sam</span><span style="font-size:13px;font-weight:600;color:#211E1A;">10h</span></span>
+                    <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">10h00 – 11h00</div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Manège couvert · Claire Dubois</div><div style="font-size:10.5px;color:#211E1A;margin-top:3px;">Dépose : <b>moi</b></div></div>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 13px;border-top:1px solid #F0EBE0;">
+                    <span style="display:flex;flex-direction:column;align-items:center;width:42px;flex-shrink:0;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:4px;padding:4px 0;"><span style="font-size:9px;font-weight:600;text-transform:uppercase;color:#7A736A;">Mer</span><span style="font-size:13px;font-weight:600;color:#211E1A;">14h</span></span>
+                    <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#211E1A;">14h00 – 15h00</div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Carrière extérieure · Claire Dubois</div><div style="font-size:10.5px;color:#C28A1B;font-weight:600;margin-top:3px;">Dépose à définir</div></div>
+                  </div>
+                  <div style="padding:9px 13px;border-top:1px solid #F0EBE0;background:#FBF9F3;font-size:11px;color:#7A736A;">Valide de septembre à juin · 1 annulation le 24 déc.</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg><span style="flex:1;font-size:11px;color:#211E1A;">Visibles dans le planning Voyages</span><a style="font-size:10.5px;font-weight:600;">Calendrier</a></div>
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;margin-top:16px;">Présence · formule 20 séances</div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:8px;">
+                  <div style="display:flex;align-items:center;gap:10px;"><div style="flex:1;height:6px;border-radius:999px;background:#EFEADF;"><span style="display:block;width:65%;height:6px;border-radius:999px;background:#5B7F5B;"></span></div><span style="font-size:12px;font-weight:600;color:#211E1A;">13 / 20</span></div>
+                  <div style="display:flex;gap:13px;margin-top:7px;"><span style="font-size:10.5px;color:#7A736A;">✓ 12 faites</span><span style="font-size:10.5px;color:#7A736A;">✗ 1 manquée</span><span style="font-size:10.5px;font-weight:600;color:#5B7F5B;">7 restantes</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:7px;margin-top:16px;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Accès</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;color:#2563EB;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:999px;padding:2px 7px;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Protégées</span></div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:10.5px;color:#9A9081;">Portail principal</div><div style="font-size:14px;font-weight:600;letter-spacing:.2em;color:#211E1A;">••••</div></div><button style="padding:6px 11px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:3px;font-size:10.5px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Révéler</button></div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:10.5px;color:#9A9081;">Vestiaire filles</div><div style="font-size:14px;font-weight:600;letter-spacing:.2em;color:#211E1A;">••••</div></div><button style="padding:6px 11px;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:3px;font-size:10.5px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Révéler</button></div>
+                  <div style="padding:10px 13px;background:#FBF9F3;"><div style="font-size:10.5px;color:#9A9081;">Consignes</div><div style="font-size:11.5px;color:#211E1A;margin-top:2px;">Se garer derrière le manège, petite porte verte.</div></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Lieu et contacts</div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><div><div style="font-size:12px;color:#211E1A;">12 route du Cap, Le Teich</div><div style="font-size:10.5px;color:#9A9081;">22 min depuis chez nous</div></div><a style="font-size:10.5px;font-weight:600;">Maps ↗</a></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12px;color:#211E1A;">05 56 22 41 08 <span style="color:#9A9081;">· club</span></span><a style="font-size:10.5px;font-weight:600;">Appeler</a></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="font-size:12px;color:#211E1A;">06 12 88 04 51 <span style="color:#9A9081;">· Claire</span></span><a style="font-size:10.5px;font-weight:600;">Appeler</a></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;"><span style="font-size:12px;color:#211E1A;">Espace famille</span><a style="font-size:10.5px;font-weight:600;">Ouvrir ↗</a></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Coût</span><span style="font-size:10.5px;color:#9A9081;">Réglé : <b style="color:#211E1A;">620,00 €</b></span></div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Cotisation annuelle</div><div style="font-size:10.5px;color:#9A9081;">Prélèvement · 3 échéances</div></div><span class="serif" style="font-size:16px;color:#211E1A;">930,00 €</span></div>
+                  <div style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid #F7F3EA;"><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Payé</span><span style="flex:1;font-size:11.5px;color:#211E1A;">15 sept. 2026</span><span style="font-size:11.5px;font-weight:600;color:#211E1A;">310,00 €</span></div>
+                  <div style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid #F7F3EA;"><span style="font-size:9px;font-weight:600;color:#A65D57;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:999px;padding:2px 7px;">En retard</span><span style="flex:1;font-size:11.5px;color:#211E1A;">1ᵉʳ sept. 2026</span><span style="font-size:11.5px;font-weight:600;color:#A65D57;">310,00 €</span></div>
+                  <div style="display:flex;align-items:center;gap:9px;padding:9px 13px;"><span style="font-size:9px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 7px;">À venir</span><span style="flex:1;font-size:11.5px;color:#211E1A;">15 janv. 2027</span><span style="font-size:11.5px;font-weight:600;color:#211E1A;">310,00 €</span></div>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Documents</span><a style="font-size:10.5px;font-weight:600;">+ Document</a></div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;margin-top:8px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:4px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Licence FFE 2026-27</div><div style="font-size:10px;color:#9A9081;">Expire le 31 août 2027</div></div><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Valide</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #F0EBE0;"><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:4px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Certificat médical</div><div style="font-size:10px;color:#9A9081;">Expire le 28 sept. 2026</div></div><span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 7px;">Expire bientôt</span></div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;"><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:4px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span><div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Autorisation parentale</div><div style="font-size:10px;color:#9A9081;">Sans expiration</div></div><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Valide</span></div>
+                </div>
+                <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;margin-top:16px;">Notes</div>
+                <div style="border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;margin-top:8px;font-size:11.5px;line-height:1.6;color:#211E1A;">Bombe taille 54, gilet à la sellerie. Poney habituel : Vanille. Allergie aux arachides signalée au club.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:2760px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">2 · Cette semaine (7 colonnes, conflit, vacances)</div></div>
+  <div data-screen-label="D · Cette semaine" style="display:flex;min-height:880px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Activités</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">En cours</span><span style="font-size:13px;padding:15px 0 13px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">Cette semaine</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Carte</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px 10px;">
+        <div style="display:flex;align-items:center;gap:10px;"><button style="display:grid;place-items:center;width:30px;height:30px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button><span class="serif" style="font-size:20px;color:#211E1A;">7 – 13 septembre 2026</span><button style="display:grid;place-items:center;width:30px;height:30px;background:#fff;border:1px solid #E4DDD0;border-radius:999px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div style="display:flex;gap:6px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;"><span style="width:8px;height:8px;border-radius:50%;background:#A65D57;"></span>Alexia</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;"><span style="width:8px;height:8px;border-radius:50%;background:#2563EB;"></span>Tom</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 11px;"><span style="width:8px;height:8px;border-radius:50%;background:#211E1A;"></span>Moi</span></div>
+      </div>
+      <div style="padding:0 24px 16px;">
+        <div style="display:grid;grid-template-columns:46px repeat(7,1fr);background:#fff;border:1px solid #E4DDD0;border-radius:6px;overflow:hidden;">
+          <div style="border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;"></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Lun. 7</div></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Mar. 8</div></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;background:#FBF3E1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Mer. 9</div><div style="font-size:9.5px;font-weight:600;color:#C28A1B;">Conflit</div></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;background:#EAF0FD;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Jeu. 10</div><div style="font-size:9.5px;font-weight:600;color:#2563EB;">Voyage Rome</div></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;background:#EAF0FD;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Ven. 11</div><div style="font-size:9.5px;font-weight:600;color:#2563EB;">Voyage Rome</div></div>
+          <div style="padding:9px 0;text-align:center;border-right:1px solid #F0EBE0;border-bottom:1px solid #E4DDD0;background:#F8F4EA;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Sam. 12</div><div style="font-size:9.5px;color:#9A9081;">Vacances</div></div>
+          <div style="padding:9px 0;text-align:center;border-bottom:1px solid #E4DDD0;background:#F8F4EA;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Dim. 13</div><div style="font-size:9.5px;color:#9A9081;">Vacances</div></div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;">
+            <span style="position:absolute;right:7px;top:-5px;font-size:9.5px;color:#9A9081;">8h</span>
+            <span style="position:absolute;right:7px;top:70px;font-size:9.5px;color:#9A9081;">10h</span>
+            <span style="position:absolute;right:7px;top:145px;font-size:9.5px;color:#9A9081;">12h</span>
+            <span style="position:absolute;right:7px;top:220px;font-size:9.5px;color:#9A9081;">14h</span>
+            <span style="position:absolute;right:7px;top:295px;font-size:9.5px;color:#9A9081;">16h</span>
+            <span style="position:absolute;right:7px;top:370px;font-size:9.5px;color:#9A9081;">18h</span>
+            <span style="position:absolute;right:7px;top:445px;font-size:9.5px;color:#9A9081;">20h</span>
+          </div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:repeating-linear-gradient(180deg,transparent 0 74px,#F7F3EA 74px 75px);">
+            <div style="position:absolute;left:4px;right:4px;top:365px;height:56px;border-radius:5px;background:#F7ECEA;border-left:3px solid #A65D57;padding:6px 8px;"><div style="display:flex;align-items:center;gap:4px;"><span style="display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#A65D57;color:#fff;font-size:7.5px;font-weight:600;">A</span><span style="font-size:9.5px;font-weight:600;color:#A65D57;">17h30</span></div><div style="font-size:10.5px;font-weight:600;color:#211E1A;margin-top:2px;">Danse</div><div style="font-size:9px;color:#7A736A;">Claire dépose</div></div>
+          </div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:repeating-linear-gradient(180deg,transparent 0 74px,#F7F3EA 74px 75px);"></div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:repeating-linear-gradient(180deg,transparent 0 74px,#F7F3EA 74px 75px);">
+            <div style="position:absolute;left:2px;right:2px;top:216px;height:82px;border:1.5px solid #C28A1B;border-radius:6px;background:#FBF3E1;padding:4px;">
+              <div style="display:flex;align-items:center;gap:3px;margin-bottom:3px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span style="font-size:8.5px;font-weight:600;color:#C28A1B;">2 trajets</span></div>
+              <div style="display:flex;gap:2px;">
+                <div style="flex:1;border-radius:4px;background:#fff;border-left:2px solid #2563EB;padding:4px 5px;"><span style="display:grid;place-items:center;width:14px;height:14px;border-radius:50%;background:#2563EB;color:#fff;font-size:7px;font-weight:600;">T</span><div style="font-size:9.5px;font-weight:600;color:#211E1A;margin-top:2px;">Foot</div><div style="font-size:8px;color:#7A736A;">14h · moi</div></div>
+                <div style="flex:1;border-radius:4px;background:#fff;border-left:2px solid #A65D57;padding:4px 5px;"><span style="display:grid;place-items:center;width:14px;height:14px;border-radius:50%;background:#A65D57;color:#fff;font-size:7px;font-weight:600;">A</span><div style="font-size:9.5px;font-weight:600;color:#211E1A;margin-top:2px;">Équit.</div><div style="font-size:8px;color:#C28A1B;font-weight:600;">14h · ?</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:#F7FAFE;">
+            <div style="position:absolute;left:4px;right:4px;top:365px;height:52px;border-radius:5px;background:#EAF0FD;border:1px dashed #A9C2F2;padding:6px 8px;"><div style="font-size:9.5px;font-weight:600;color:#7A736A;text-decoration:line-through;">18h00</div><div style="font-size:10.5px;font-weight:600;color:#7A736A;">Guitare</div><div style="font-size:8.5px;color:#2563EB;font-weight:600;">Manqué · voyage</div></div>
+          </div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:#F7FAFE;"></div>
+          <div style="position:relative;height:520px;border-right:1px solid #F0EBE0;background:#F8F4EA;">
+            <div style="position:absolute;left:4px;right:4px;top:35px;height:52px;border-radius:5px;background:#fff;border:1px solid #EFE7D2;padding:6px 8px;opacity:.55;"><div style="font-size:9.5px;font-weight:600;color:#7A736A;">9h00</div><div style="font-size:10.5px;font-weight:600;color:#211E1A;">Tennis</div><div style="font-size:8.5px;color:#9A9081;">Vacances scolaires</div></div>
+          </div>
+          <div style="position:relative;height:520px;background:#F8F4EA;"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;"><span style="width:14px;height:11px;border-radius:2px;background:#F7ECEA;border-left:3px solid #A65D57;"></span>Alexia</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;"><span style="width:14px;height:11px;border-radius:2px;background:#EAF0FD;border-left:3px solid #2563EB;"></span>Tom</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;"><span style="width:14px;height:11px;border-radius:2px;border:1.5px solid #C28A1B;background:#FBF3E1;"></span>Conflit d'horaires</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;"><span style="width:14px;height:11px;border-radius:2px;background:#F7FAFE;border:1px solid #D6E2FA;"></span>Voyage — cours manqué</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;"><span style="width:14px;height:11px;border-radius:2px;background:#F8F4EA;border:1px solid #EFE7D2;"></span>Vacances scolaires (zone C)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:80px;top:3760px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">3+4 · Tous (volet filtres) + Carte</div></div>
+  <div data-screen-label="D · Tous + carte" style="display:flex;min-height:800px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Activités</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <div style="display:flex;gap:22px;padding:0 24px;border-bottom:1px solid #E4DDD0;"><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">En cours</span><span style="font-size:13px;padding:15px 0 13px;color:#7A736A;">Cette semaine</span><span style="font-size:13px;padding:15px 0 13px;color:#211E1A;font-weight:600;border-bottom:2px solid #211E1A;">Tous</span><span style="font-size:13px;padding:15px 0 13px;color:#2563EB;font-weight:600;">Carte ⤢</span></div>
+      <div style="flex:1;display:flex;min-height:0;">
+        <div style="width:220px;flex-shrink:0;border-right:1px solid #E4DDD0;padding:16px;background:#FBF9F3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Filtres</span><a style="font-size:10.5px;font-weight:600;">Effacer</a></div>
+          <div style="font-size:11px;font-weight:600;color:#7A736A;margin:13px 0 6px;">Membre</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#A65D57;color:#fff;font-size:8px;">A</span>Alexia ✓</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#2563EB;color:#fff;font-size:8px;">T</span>Tom</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 11px 4px 4px;"><span style="display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#211E1A;color:#fff;font-size:8px;">VP</span>Moi</span>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#7A736A;margin:14px 0 6px;">Statut</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;"><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">En cours</span><span style="font-size:10.5px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:4px 10px;">En pause ✓</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Terminée</span></div>
+          <div style="font-size:11px;font-weight:600;color:#7A736A;margin:14px 0 6px;">Type</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;"><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Équitation</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Danse</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Natation</span></div>
+          <div style="font-size:11px;font-weight:600;color:#7A736A;margin:14px 0 6px;">Tags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;"><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Sport</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Samedi</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px;">Musique</span></div>
+        </div>
+        <div style="width:390px;flex-shrink:0;border-right:1px solid #E4DDD0;padding:16px;">
+          <div style="font-size:11.5px;color:#9A9081;margin-bottom:10px;"><b style="color:#211E1A;">3 activités</b> · Alexia · En pause</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/><path d="M8 18v3M15 15v6"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#A65D57;color:#fff;font-size:7.5px;font-weight:600;">A</span></div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Poney-club des Landes</div></div>
+              <span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 8px;">En cours</span>
+            </div>
+            <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5M13 8l4 1"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;font-weight:600;color:#211E1A;">Danse classique</span><span style="display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#A65D57;color:#fff;font-size:7.5px;font-weight:600;">A</span></div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Conservatoire</div></div>
+              <span style="font-size:9px;font-weight:600;color:#C28A1B;background:#FBF3E1;border:1px solid #F0E2C0;border-radius:999px;padding:2px 8px;">En pause</span>
+            </div>
+            <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid #E4DDD0;border-radius:6px;padding:11px 13px;opacity:.62;">
+              <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:7px;background:#F4F1E9;border:1px solid #E9E2D4;flex-shrink:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c2-6 6-9 12-9M4 20h16"/><path d="M14 5h4v4"/></svg></span>
+              <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;font-weight:600;color:#211E1A;">Natation</span><span style="display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#A65D57;color:#fff;font-size:7.5px;font-weight:600;">A</span></div><div style="font-size:10.5px;color:#9A9081;margin-top:1px;">Piscine Judaïque · saison 2024-25</div></div>
+              <span style="font-size:9px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:2px 8px;">Terminée</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;position:relative;background:#E8E4DA;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 38%,#DAD4C6 38% 38.6%,transparent 38.6%),linear-gradient(0deg,transparent 0 58%,#DAD4C6 58% 58.6%,transparent 58.6%);"></div>
+          <div style="position:absolute;left:-10%;top:48%;width:130%;height:38px;background:#BFD6E8;transform:rotate(-5deg);opacity:.6;"></div>
+          <div style="position:absolute;left:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 28px);"><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#A65D57;"></span>Alexia</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#211E1A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:6px 11px;box-shadow:0 2px 6px rgba(33,30,26,.1);"><span style="width:8px;height:8px;border-radius:50%;background:#2563EB;"></span>Tom</span></div>
+          <div style="position:absolute;left:26%;top:34%;transform:translate(-50%,-100%);"><svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#A65D57"/><circle cx="15" cy="13.5" r="4.2" fill="#fff"/></svg></div>
+          <div style="position:absolute;left:62%;top:26%;transform:translate(-50%,-100%);"><svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(33,30,26,.3));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#2563EB"/><circle cx="15" cy="13.5" r="4.2" fill="#fff"/></svg></div>
+          <div style="position:absolute;left:70%;top:62%;transform:translate(-50%,-100%);opacity:.7;"><svg width="22" height="22" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px rgba(33,30,26,.3));"><rect x="3" y="3" width="18" height="18" rx="4" fill="#A65D57"/><circle cx="12" cy="12" r="3.4" fill="#fff"/></svg></div>
+          <div style="position:absolute;left:42%;top:56%;transform:translate(-50%,-100%) scale(1.25);z-index:3;">
+            <svg width="26" height="33" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 4px 7px rgba(33,30,26,.35));"><path d="M15 1C7.8 1 2 6.8 2 14c0 9 13 23 13 23s13-14 13-23C28 6.8 22.2 1 15 1Z" fill="#A65D57"/><circle cx="15" cy="13.5" r="4.2" fill="#fff"/></svg>
+            <div style="position:absolute;left:50%;bottom:38px;transform:translateX(-50%);background:#fff;border:1px solid #E4DDD0;border-radius:6px;box-shadow:0 8px 24px rgba(33,30,26,.22);padding:9px 11px;width:180px;">
+              <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:12.5px;font-weight:600;color:#211E1A;">Équitation</span><span style="display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#A65D57;color:#fff;font-size:7px;font-weight:600;">A</span></div>
+              <div style="font-size:10px;color:#9A9081;margin-top:2px;">Poney-club · demain 10h00</div>
+              <div style="display:flex;gap:9px;margin-top:6px;"><a style="font-size:10px;font-weight:600;">Appeler</a><a style="font-size:10px;font-weight:600;">Itinéraire ↗</a><a style="font-size:10px;font-weight:600;">Fiche</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="position:absolute;left:1440px;top:3760px;width:1280px;">
+  <div data-drags-parent="1" style="margin-bottom:14px;"><div style="font-size:13px;color:#6b6b6b;">6-10+12+11+13 · Formulaires, alertes, fiche membre, vides</div></div>
+  <div data-screen-label="D · Formulaires + alertes" style="display:flex;min-height:800px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:4px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <aside style="width:200px;flex-shrink:0;background:#F4F1E9;border-right:1px solid #E4DDD0;padding:26px 18px;">
+      <div style="margin-bottom:24px;"><div style="font-size:17px;font-weight:700;letter-spacing:.28em;color:#211E1A;">VITO</div><div class="serif" style="font-style:italic;font-size:13px;color:#9a9081;">le carnet</div></div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Restaurants</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Hôtels</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Voyages</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#211E1A;font-weight:600;border-radius:3px;background:#fff;border-left:2px solid #2563EB;">Activités</a>
+        <a style="padding:8px 10px;font-size:13.5px;color:#7A736A;border-radius:3px;">Cercle</a>
+      </nav>
+    </aside>
+    <div style="flex:1;display:flex;min-width:0;">
+      <div style="width:420px;flex-shrink:0;border-right:1px solid #E4DDD0;padding:20px;">
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Écran 12 · Alertes et échéances</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+          <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #EBD8D5;border-left:3px solid #A65D57;border-radius:6px;padding:11px 13px;">
+            <span style="display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#F7ECEA;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Cotisation équitation · 310,00 €</div><div style="font-size:10.5px;color:#9A9081;">Alexia · échéance dépassée</div></div>
+            <button style="padding:6px 11px;background:#A65D57;color:#fff;border:none;border-radius:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Régler</button>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #EBD8D5;border-left:3px solid #A65D57;border-radius:6px;padding:11px 13px;">
+            <span style="display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#F7ECEA;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Attestation d'assurance</div><div style="font-size:10.5px;color:#9A9081;">Tom · football · expirée</div></div>
+            <button style="padding:6px 11px;background:#A65D57;color:#fff;border:none;border-radius:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Ajouter</button>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #F0E2C0;border-left:3px solid #C28A1B;border-radius:6px;padding:11px 13px;">
+            <span style="display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#FBF3E1;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Certificat médical</div><div style="font-size:10.5px;color:#9A9081;">Alexia · expire dans 21 jours</div></div>
+            <button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Renouveler</button>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #F0E2C0;border-left:3px solid #C28A1B;border-radius:6px;padding:11px 13px;">
+            <span style="display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#FBF3E1;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C28A1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Inscription à renouveler</div><div style="font-size:10.5px;color:#9A9081;">Tom · guitare · avant le 30 sept.</div></div>
+            <button style="padding:6px 11px;background:#211E1A;color:#fff;border:none;border-radius:3px;font-size:10.5px;font-weight:600;font-family:inherit;cursor:pointer;">Ouvrir</button>
+          </div>
+        </div>
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;margin-top:20px;">Écran 11 · Bloc Activités — fiche membre du Cercle</div>
+        <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;padding:14px 16px;margin-top:10px;">
+          <div style="display:flex;align-items:center;gap:11px;padding-bottom:11px;border-bottom:1px solid #F0EBE0;"><span style="display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#A65D57;color:#fff;font-size:14px;font-weight:600;">A</span><div><div class="serif" style="font-size:17px;color:#211E1A;">Alexia</div><div style="font-size:11px;color:#9A9081;">Fille · 9 ans</div></div><span style="margin-left:auto;font-size:10px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:3px 9px;">Onglet Activités</span></div>
+          <div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #F7F3EA;"><span style="display:grid;place-items:center;width:30px;height:30px;border-radius:6px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c1-5 4-8 8-8 2 0 3-1 3-3l3 2-1 3 2 2-4 1c-1 3-4 3-6 3H4Z"/></svg></span><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Équitation</div><div style="font-size:10px;color:#9A9081;">demain 10h00</div></div><a style="font-size:10px;font-weight:600;">Fiche →</a></div>
+          <div style="display:flex;gap:10px;align-items:center;padding:10px 0;"><span style="display:grid;place-items:center;width:30px;height:30px;border-radius:6px;background:#F4F1E9;border:1px solid #E9E2D4;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="4.5" r="2"/><path d="M9 6.5v5l4 3 1 6M9 11.5l-3 3 1 5"/></svg></span><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#211E1A;">Danse classique</div><div style="font-size:10px;color:#9A9081;">lundi 17h30</div></div><a style="font-size:10px;font-weight:600;">Fiche →</a></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding:9px 12px;background:#F7ECEA;border:1px solid #EBD8D5;border-radius:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A65D57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><span style="flex:1;font-size:11px;color:#211E1A;">1 paiement en retard · 1 certificat expire bientôt</span><a style="font-size:10px;font-weight:600;">Traiter</a></div>
+        </div>
+      </div>
+      <div style="flex:1;padding:20px;min-width:0;">
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;">Écrans 6-10 · Formulaires (modales)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 26px rgba(33,30,26,.1);padding:14px 16px;">
+            <span class="serif" style="font-size:16px;color:#211E1A;">Nouvelle activité</span>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;"><span style="font-size:10.5px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:5px 10px;">Équitation</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 10px;">Danse</span><span style="font-size:10.5px;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;border-radius:999px;padding:5px 10px;">Football</span><span style="font-size:10.5px;color:#2563EB;border:1px dashed #A9C2F2;border-radius:999px;padding:5px 10px;">Autre…</span></div>
+            <div style="padding:9px 11px;background:#FBF9F3;border:1.5px solid #2563EB;border-radius:3px;font-size:12.5px;color:#211E1A;margin-top:9px;">Équitation</div>
+            <div style="display:flex;gap:6px;margin-top:9px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:4px 10px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#A65D57;color:#fff;font-size:7.5px;">A</span>Alexia ✓</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 10px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#2563EB;color:#fff;font-size:7.5px;">T</span>Tom</span></div>
+            <div style="font-size:9.5px;color:#b3a896;margin-top:4px;">Sélection depuis le Cercle — réutilisée</div>
+            <button style="width:100%;margin-top:11px;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Créer l'activité</button>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 26px rgba(33,30,26,.1);padding:14px 16px;">
+            <span class="serif" style="font-size:16px;color:#211E1A;">Nouveau créneau</span>
+            <div style="display:flex;gap:3px;margin-top:9px;"><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">L</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">M</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">M</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">J</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">V</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#fff;background:#211E1A;">S</span><span style="flex:1;text-align:center;padding:7px 0;border-radius:4px;font-size:10.5px;font-weight:600;color:#7A736A;background:#F4F1E9;border:1px solid #E9E2D4;">D</span></div>
+            <div style="display:flex;gap:7px;margin-top:9px;"><div style="flex:1;padding:9px 0;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:12.5px;font-weight:600;color:#211E1A;text-align:center;">10:00</div><div style="flex:1;padding:9px 0;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:12.5px;font-weight:600;color:#211E1A;text-align:center;">11:00</div></div>
+            <div style="padding:9px 11px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;color:#211E1A;margin-top:7px;">Claire Dubois · monitrice</div>
+            <div style="display:flex;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:#211E1A;background:#F4F1E9;border:1.5px solid #211E1A;border-radius:999px;padding:4px 10px 4px 4px;"><span style="display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#211E1A;color:#fff;font-size:7px;">VP</span>Dépose : moi ✓</span><span style="font-size:10.5px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:5px 10px;">Covoiturage</span></div>
+            <div style="display:flex;gap:7px;margin-top:11px;"><button style="flex:1;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Enregistrer</button><button style="padding:10px 13px;background:#fff;border:1px solid #2563EB;border-radius:3px;color:#2563EB;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">+ Un autre</button></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 26px rgba(33,30,26,.1);padding:14px 16px;">
+            <span class="serif" style="font-size:16px;color:#211E1A;">Nouveau code d'accès</span>
+            <div style="display:flex;gap:9px;margin-top:9px;padding:10px 12px;background:#EAF0FD;border:1px solid #D6E2FA;border-radius:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Donnée protégée</div><div style="font-size:10.5px;color:#7A736A;line-height:1.45;margin-top:1px;">Chiffrée, masquée par défaut, révélée après re-authentification.</div></div></div>
+            <div style="padding:9px 11px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;font-size:12px;color:#211E1A;margin-top:9px;">Portail principal</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:#FBF9F3;border:1.5px solid #2563EB;border-radius:3px;margin-top:7px;"><span style="flex:1;font-size:14px;font-weight:600;letter-spacing:.18em;color:#211E1A;">4•7•B</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A736A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+            <button style="width:100%;margin-top:11px;padding:10px 0;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">Chiffrer et enregistrer</button>
+          </div>
+          <div style="background:#fff;border:1px solid #E4DDD0;border-radius:8px;box-shadow:0 10px 26px rgba(33,30,26,.1);padding:14px 16px;">
+            <span class="serif" style="font-size:16px;color:#211E1A;">Échéance &amp; document</span>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:#FBF9F3;border:1.5px solid #2563EB;border-radius:3px;margin-top:9px;"><span class="serif" style="flex:1;font-size:18px;color:#211E1A;">310,00</span><span style="font-size:13px;color:#9A9081;">€</span></div>
+            <div style="display:flex;gap:5px;margin-top:8px;"><span style="font-size:10px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 9px;">Mensuel</span><span style="font-size:10px;font-weight:600;color:#fff;background:#211E1A;border-radius:999px;padding:4px 9px;">Trimestriel</span><span style="font-size:10px;color:#7A736A;background:#fff;border:1px solid #E4DDD0;border-radius:999px;padding:4px 9px;">À la séance</span></div>
+            <div style="display:flex;gap:6px;margin-top:9px;"><button style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0;background:#FBF9F3;border:1px dashed #C2B7A4;border-radius:5px;cursor:pointer;font-family:inherit;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="14" r="3.5"/></svg><span style="font-size:10.5px;font-weight:600;color:#211E1A;">Scanner</span></button><button style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0;background:#FBF9F3;border:1px dashed #C2B7A4;border-radius:5px;cursor:pointer;font-family:inherit;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span style="font-size:10.5px;font-weight:600;color:#211E1A;">Importer</span></button></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 11px;background:#FBF9F3;border:1px solid #E4DDD0;border-radius:3px;"><span style="flex:1;font-size:11.5px;color:#211E1A;">Expire le <b>31 août 2027</b></span><span style="font-size:9px;font-weight:600;color:#5B7F5B;background:#EDF3EC;border:1px solid #DCE8DB;border-radius:999px;padding:2px 7px;">Valide</span></div>
+            <div style="font-size:9.5px;color:#b3a896;margin-top:5px;">Même flux que le Cercle — composants réutilisés</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9081;margin-top:18px;">Écran 13 · États vides</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 18px;border:1px dashed #D8CFBE;border-radius:8px;">
+            <span style="display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#F4F1E9;border:1px solid #E4DDD0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2B7A4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span>
+            <div class="serif" style="font-size:16px;color:#211E1A;margin-top:8px;">Aucune activité</div>
+            <div style="font-size:11px;color:#7A736A;margin-top:4px;line-height:1.5;">Ajoutez les cours et clubs de la famille.</div>
+            <button style="margin-top:10px;padding:9px 16px;background:#2563EB;color:#fff;border:none;border-radius:3px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;">Ajouter une activité</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#F8F4EA;border:1px solid #EFE7D2;border-radius:6px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Aucun cours cette semaine</div><div style="font-size:10.5px;color:#7A736A;">Vacances scolaires — reprise le 21.</div></div></div>
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#fff;border:1px dashed #C2B7A4;border-radius:6px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A9081" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8l5 5Z"/></svg><div style="flex:1;"><div style="font-size:11.5px;font-weight:600;color:#211E1A;">Aucun document</div><div style="font-size:10.5px;color:#7A736A;">Licence, certificat médical…</div></div><button style="padding:6px 11px;background:#fff;border:1px solid #E4DDD0;border-radius:3px;font-size:10.5px;font-weight:600;color:#211E1A;font-family:inherit;cursor:pointer;">Ajouter</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

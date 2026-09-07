@@ -34,6 +34,406 @@ export type Database = {
   }
   public: {
     Tables: {
+      activite_codes: {
+        Row: {
+          activite_id: string
+          created_at: string
+          id: string
+          key_version: number
+          libelle: string
+          note: string | null
+          updated_at: string
+          valeur_chiffree: string
+        }
+        Insert: {
+          activite_id: string
+          created_at?: string
+          id?: string
+          key_version?: number
+          libelle: string
+          note?: string | null
+          updated_at?: string
+          valeur_chiffree: string
+        }
+        Update: {
+          activite_id?: string
+          created_at?: string
+          id?: string
+          key_version?: number
+          libelle?: string
+          note?: string | null
+          updated_at?: string
+          valeur_chiffree?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_codes_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_creneau_exceptions: {
+        Row: {
+          created_at: string
+          creneau_id: string
+          date: string
+          heure_debut: string | null
+          heure_fin: string | null
+          id: string
+          motif: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          creneau_id: string
+          date: string
+          heure_debut?: string | null
+          heure_fin?: string | null
+          id?: string
+          motif?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          creneau_id?: string
+          date?: string
+          heure_debut?: string | null
+          heure_fin?: string | null
+          id?: string
+          motif?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_creneau_exceptions_creneau_id_fkey"
+            columns: ["creneau_id"]
+            isOneToOne: false
+            referencedRelation: "activite_creneaux"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_creneaux: {
+        Row: {
+          activite_id: string
+          created_at: string
+          depose_par: string | null
+          heure_debut: string
+          heure_fin: string
+          id: string
+          intervenant: string | null
+          jour_semaine: number
+          lieu_precision: string | null
+          valide_au: string | null
+          valide_du: string | null
+        }
+        Insert: {
+          activite_id: string
+          created_at?: string
+          depose_par?: string | null
+          heure_debut: string
+          heure_fin: string
+          id?: string
+          intervenant?: string | null
+          jour_semaine: number
+          lieu_precision?: string | null
+          valide_au?: string | null
+          valide_du?: string | null
+        }
+        Update: {
+          activite_id?: string
+          created_at?: string
+          depose_par?: string | null
+          heure_debut?: string
+          heure_fin?: string
+          id?: string
+          intervenant?: string | null
+          jour_semaine?: number
+          lieu_precision?: string | null
+          valide_au?: string | null
+          valide_du?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_creneaux_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activite_creneaux_depose_par_fkey"
+            columns: ["depose_par"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_documents: {
+        Row: {
+          activite_id: string
+          contenu_chiffre: string
+          created_at: string
+          delivre_le: string | null
+          expire_le: string | null
+          id: string
+          mime_type: string
+          nom: string
+          sensible: boolean
+          taille: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          activite_id: string
+          contenu_chiffre: string
+          created_at?: string
+          delivre_le?: string | null
+          expire_le?: string | null
+          id?: string
+          mime_type: string
+          nom: string
+          sensible?: boolean
+          taille: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          activite_id?: string
+          contenu_chiffre?: string
+          created_at?: string
+          delivre_le?: string | null
+          expire_le?: string | null
+          id?: string
+          mime_type?: string
+          nom?: string
+          sensible?: boolean
+          taille?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_documents_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_membres: {
+        Row: {
+          activite_id: string
+          membre_id: string
+        }
+        Insert: {
+          activite_id: string
+          membre_id: string
+        }
+        Update: {
+          activite_id?: string
+          membre_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_membres_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activite_membres_membre_id_fkey"
+            columns: ["membre_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_paiements: {
+        Row: {
+          activite_id: string
+          created_at: string
+          devise: string
+          echeance: string | null
+          id: string
+          libelle: string
+          montant_cents: number
+          moyen: string | null
+          paye_le: string | null
+          periodicite: string | null
+          statut: string
+          updated_at: string
+        }
+        Insert: {
+          activite_id: string
+          created_at?: string
+          devise?: string
+          echeance?: string | null
+          id?: string
+          libelle: string
+          montant_cents: number
+          moyen?: string | null
+          paye_le?: string | null
+          periodicite?: string | null
+          statut?: string
+          updated_at?: string
+        }
+        Update: {
+          activite_id?: string
+          created_at?: string
+          devise?: string
+          echeance?: string | null
+          id?: string
+          libelle?: string
+          montant_cents?: number
+          moyen?: string | null
+          paye_le?: string | null
+          periodicite?: string | null
+          statut?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_paiements_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activite_seances: {
+        Row: {
+          activite_id: string
+          created_at: string
+          creneau_id: string | null
+          date: string
+          id: string
+          motif: string | null
+          statut: string
+        }
+        Insert: {
+          activite_id: string
+          created_at?: string
+          creneau_id?: string | null
+          date: string
+          id?: string
+          motif?: string | null
+          statut: string
+        }
+        Update: {
+          activite_id?: string
+          created_at?: string
+          creneau_id?: string | null
+          date?: string
+          id?: string
+          motif?: string | null
+          statut?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activite_seances_activite_id_fkey"
+            columns: ["activite_id"]
+            isOneToOne: false
+            referencedRelation: "activites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activite_seances_creneau_id_fkey"
+            columns: ["creneau_id"]
+            isOneToOne: false
+            referencedRelation: "activite_creneaux"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activites: {
+        Row: {
+          adresse: string | null
+          club_nom: string | null
+          consignes_acces: string | null
+          created_at: string
+          email: string | null
+          espace_famille_url: string | null
+          formule_seances: number | null
+          id: string
+          lat: number | null
+          lng: number | null
+          nom: string
+          notes: string | null
+          place_id: string | null
+          saison_debut: string | null
+          saison_fin: string | null
+          site_web: string | null
+          statut: string
+          telephone: string | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adresse?: string | null
+          club_nom?: string | null
+          consignes_acces?: string | null
+          created_at?: string
+          email?: string | null
+          espace_famille_url?: string | null
+          formule_seances?: number | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          nom: string
+          notes?: string | null
+          place_id?: string | null
+          saison_debut?: string | null
+          saison_fin?: string | null
+          site_web?: string | null
+          statut?: string
+          telephone?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adresse?: string | null
+          club_nom?: string | null
+          consignes_acces?: string | null
+          created_at?: string
+          email?: string | null
+          espace_famille_url?: string | null
+          formule_seances?: number | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          nom?: string
+          notes?: string | null
+          place_id?: string | null
+          saison_debut?: string | null
+          saison_fin?: string | null
+          site_web?: string | null
+          statut?: string
+          telephone?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agence_clients: {
         Row: {
           added_at: string
@@ -919,6 +1319,41 @@ export type Database = {
             columns: ["voyage_id"]
             isOneToOne: false
             referencedRelation: "voyages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_acces: {
+        Row: {
+          action: string
+          cible_id: string
+          cible_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          cible_id: string
+          cible_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          cible_id?: string
+          cible_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_acces_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2119,6 +2554,7 @@ export type Database = {
         Args: { p_cible: string; p_hash: string }
         Returns: undefined
       }
+      est_mon_activite: { Args: { a_id: string }; Returns: boolean }
       find_or_create_vin: { Args: { p: Json }; Returns: string }
       fusionner_tags: {
         Args: { p_cible: string; p_source: string }
