@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
+import { appIdValide } from "@/lib/platform/appleAppId";
 
 // Universal Links : le fichier qu'iOS va chercher pour savoir quelles URL de ce
 // domaine appartiennent à l'app.
@@ -19,8 +20,11 @@ import { env } from "@/lib/env";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  // Absent OU mal formé : on ne sert rien. Un « Q7UGNF4Q22 » sans bundle ID
+  // produirait un fichier syntaxiquement valide mais inutile, qu'iOS garderait
+  // en cache sans jamais reconnaître l'app — et sans rien expliquer.
   const appId = env.APPLE_APP_ID;
-  if (!appId) return new NextResponse("Not found", { status: 404 });
+  if (!appIdValide(appId)) return new NextResponse("Not found", { status: 404 });
 
   return NextResponse.json(
     {
