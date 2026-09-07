@@ -23,9 +23,14 @@ fonctionnent plus.
 ## Les trois pièces
 
 1. **`/.well-known/apple-app-site-association`** — route Next qui déclare les
-   chemins appartenant à l'app. Servie seulement si `APPLE_APP_ID` est défini
-   (« `<TeamID>.<bundleId>` »), sinon 404 : iOS met en cache ce qu'il télécharge,
-   un fichier à moitié juste se paie en heures d'attente.
+   chemins appartenant à l'app. Servie seulement si `APPLE_APP_ID` a la **forme
+   complète** « `<App ID Prefix>.<bundle ID>` », par exemple
+   `Q7UGNF4Q22.com.badakan.vito` ; sinon 404.
+
+   Le préfixe seul (`Q7UGNF4Q22`) produirait un fichier syntaxiquement valide et
+   parfaitement inutile — l'erreur a été commise, la route la refuse désormais.
+   iOS met en cache ce qu'il télécharge : un fichier à moitié juste se paie en
+   heures d'attente.
 2. **`App.entitlements`** — `applinks:vito-theta.vercel.app`. Écrit par
    `npm run ios:personnaliser`, donc réappliqué après un `ios:regen`.
 3. **`LiensProfonds`** — écoute `appUrlOpen` et joue le chemin reçu dans la
