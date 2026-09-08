@@ -41,6 +41,12 @@ export async function VueSemaine({ semaine, aujourdhui }: {
     signaux: signauxDuJour(jour, VACANCES_ZONE_C, periodes),
   }));
   const vide = contenu.every((c) => c.occurrences.length === 0);
+  // « Vacances scolaires — reprise le lundi 21 » : une semaine vide pendant les
+  // vacances n'est pas un carnet vide, et le dire évite de chercher une panne.
+  const vacancesDeLaSemaine = contenu.find((c) => c.signaux.vacances)?.signaux.vacances ?? null;
+  const reprise = vacancesDeLaSemaine
+    ? new Date(Date.parse(`${vacancesDeLaSemaine.fin}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10)
+    : null;
 
   return (
     <div data-testid="vue-semaine" className="flex flex-col gap-3">
@@ -57,7 +63,13 @@ export async function VueSemaine({ semaine, aujourdhui }: {
       </div>
 
       {vide ? (
-        <EtatVide titre={t("vide.semaineTitre")} explication={t("vide.semaineTexte")} />
+        <EtatVide
+          titre={t("vide.semaineTitre")}
+          explication={reprise
+            ? t("vide.semaineVacances", {
+                date: format.dateTime(new Date(`${reprise}T00:00:00Z`), { weekday: "long", day: "numeric", timeZone: "UTC" }),
+              })
+            : t("vide.semaineTexte")} />
       ) : (
         contenu.map(({ jour, occurrences, signaux }) => {
           if (occurrences.length === 0) return null;
@@ -105,17 +117,25 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                       <Link href={`/activites/${o.activiteId}`} className="truncate text-[13.5px] text-ink hover:underline">
                         {o.activiteNom}
                       </Link>
+                      {/* Deux lignes courtes plutôt qu'une longue tronquée :
+                          le lieu d'un côté, l'heure de fin et le trajet de
+                          l'autre. */}
                       <span className="truncate text-[11.5px] text-muted">
-                        {[o.clubNom, o.lieuPrecision, t("semaine.jusqua", { heure: o.heureFin.replace(":", "h") })]
-                          .filter(Boolean).join(" · ")}
+                        {[o.clubNom, o.lieuPrecision].filter(Boolean).join(" · ")}
                       </span>
                       <span className="truncate text-[11.5px] text-muted">
-                        {o.deposePar
-                          ? t("horaires.depose", { nom: o.deposePar.prenom })
-                          : t("horaires.deposeADefinir")}
+                        {[
+                          t("semaine.jusqua", { heure: o.heureFin.replace(":", "h") }),
+                          o.deposePar
+                            ? t("horaires.depose", { nom: o.deposePar.prenom })
+                            : t("horaires.deposeADefinir"),
+                        ].join(" · ")}
                       </span>
                     </span>
-                    <span className="flex shrink-0 flex-wrap items-center gap-1.5">
+                    {/* Sur un téléphone, les pastilles passent SOUS la ligne :
+                        partagées avec le texte, elles le réduisaient à
+                        « Équita… · Poney-… », c'est-à-dire à rien. */}
+                    <span className="flex basis-full flex-wrap items-center gap-1.5 pl-14 sm:basis-auto sm:shrink-0 sm:pl-0">
                       {o.membres.map((m) => (
                         <span key={m.id} aria-hidden
                           className="grid h-6 w-6 place-items-center rounded-full text-[10px] font-semibold text-white"

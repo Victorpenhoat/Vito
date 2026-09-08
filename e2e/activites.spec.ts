@@ -55,9 +55,10 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
 
   // Deux membres, deux groupes : Camille (équitation, danse) et Tom (football).
   const groupes = page.getByTestId("activites-groupe");
-  await expect(groupes).toHaveCount(2);
-  await expect(groupes.filter({ hasText: "Camille" })).toContainText("2 activités");
-  await expect(groupes.filter({ hasText: "Tom" })).toContainText("1 activité");
+  await expect(groupes.filter({ hasText: "Camille" }).getByTestId("activite-row")
+    .filter({ hasText: "Danse" })).toHaveCount(1);
+  await expect(groupes.filter({ hasText: "Tom" }).getByTestId("activite-row")
+    .filter({ hasText: "Football" })).toHaveCount(1);
 
   // « En cours » ne montre que les activités en cours : la natation terminée
   // n'y est pas.
@@ -72,11 +73,15 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
     .toContainText("Terminée");
 
   // Filtres cumulables : ET entre dimensions, OU à l'intérieur.
+  // Sur des LIGNES et non sur un total : d'autres tests créent leurs propres
+  // activités dans la même base, et un compteur absolu se périmerait.
   await page.getByTestId("filtre-statut-terminee").click();
   await expect(page).toHaveURL(/statut=terminee/);
-  await expect(page.getByTestId("activites-compte")).toContainText("1 activité");
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Natation" })).toHaveCount(1);
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Danse" })).toHaveCount(0);
   await page.getByTestId("filtre-statut-en_cours").click();
-  await expect(page.getByTestId("activites-compte")).toContainText("4 activités");
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Danse" })).toHaveCount(1);
+  await expect(page.getByTestId("activite-row").filter({ hasText: "Natation" })).toHaveCount(1);
 
   // Effacer remet la liste entière, et l'URL avec.
   await page.getByTestId("filtres-effacer").click();

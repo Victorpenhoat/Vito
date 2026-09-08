@@ -1701,7 +1701,9 @@
       "carteTitre": "Nada que situar",
       "carteTexte": "Los clubes aparecen en el mapa en cuanto una actividad tiene dirección.",
       "filtreTitre": "Nada coincide",
-      "filtreTexte": "Quita un filtro o cambia la búsqueda."
+      "filtreTexte": "Quita un filtro o cambia la búsqueda.",
+      "semaineVacances": "Vacaciones escolares — vuelta el {date}.",
+      "ajouterActivite": "Añadir una actividad"
     },
     "erreur": {
       "titre": "No se han podido cargar las actividades.",
@@ -1814,7 +1816,7 @@
       "enregistrer": "Cifrar y guardar"
     },
     "documents": {
-      "aucun": "Ningún documento.",
+      "aucun": "Licencia, certificado médico, seguro…",
       "ajouter": "Añadir un documento",
       "type": "Tipo de documento",
       "expireLe": "Caduca el (opcional)",
@@ -1832,7 +1834,8 @@
         "reglement": "Reglamento",
         "facture": "Factura",
         "autre": "Otro"
-      }
+      },
+      "aucunTitre": "Ningún documento"
     },
     "semaine": {
       "du": "{debut} – {fin}",
@@ -1841,7 +1844,7 @@
       "vacances": "Vacaciones escolares · zona {zone}",
       "conflit": "Conflicto — dos trayectos a las {heure}",
       "jusqua": "hasta las {heure}",
-      "manquee": "Perdida — viaje a {voyage}",
+      "manquee": "Perdida · {voyage}",
       "interrompue": "Interrumpido en vacaciones",
       "enConflit": "Coincide con otra sesión"
     },

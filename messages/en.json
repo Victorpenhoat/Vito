@@ -1701,7 +1701,9 @@
       "carteTitre": "Nothing to place yet",
       "carteTexte": "Clubs appear on the map as soon as an activity has an address.",
       "filtreTitre": "Nothing matches",
-      "filtreTexte": "Remove a filter or change your search."
+      "filtreTexte": "Remove a filter or change your search.",
+      "semaineVacances": "School holidays — back on {date}.",
+      "ajouterActivite": "Add an activity"
     },
     "erreur": {
       "titre": "Activities could not be loaded.",
@@ -1814,7 +1816,7 @@
       "enregistrer": "Encrypt and save"
     },
     "documents": {
-      "aucun": "No documents.",
+      "aucun": "Licence, medical certificate, insurance…",
       "ajouter": "Add a document",
       "type": "Document type",
       "expireLe": "Expires on (optional)",
@@ -1832,7 +1834,8 @@
         "reglement": "Rules",
         "facture": "Invoice",
         "autre": "Other"
-      }
+      },
+      "aucunTitre": "No documents"
     },
     "semaine": {
       "du": "{debut} – {fin}",
@@ -1841,7 +1844,7 @@
       "vacances": "School holidays · zone {zone}",
       "conflit": "Clash — two trips at {heure}",
       "jusqua": "until {heure}",
-      "manquee": "Missed — trip to {voyage}",
+      "manquee": "Missed · {voyage}",
       "interrompue": "Paused during the holidays",
       "enConflit": "Clashes with another session"
     },

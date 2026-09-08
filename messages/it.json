@@ -1701,7 +1701,9 @@
       "carteTitre": "Niente da posizionare",
       "carteTexte": "I club compaiono sulla mappa non appena un'attività ha un indirizzo.",
       "filtreTitre": "Nessuna corrispondenza",
-      "filtreTexte": "Togli un filtro o cambia la ricerca."
+      "filtreTexte": "Togli un filtro o cambia la ricerca.",
+      "semaineVacances": "Vacanze scolastiche — si riprende {date}.",
+      "ajouterActivite": "Aggiungi un'attività"
     },
     "erreur": {
       "titre": "Impossibile caricare le attività.",
@@ -1814,7 +1816,7 @@
       "enregistrer": "Cifra e salva"
     },
     "documents": {
-      "aucun": "Nessun documento.",
+      "aucun": "Licenza, certificato medico, assicurazione…",
       "ajouter": "Aggiungi un documento",
       "type": "Tipo di documento",
       "expireLe": "Scade il (facoltativo)",
@@ -1832,7 +1834,8 @@
         "reglement": "Regolamento",
         "facture": "Fattura",
         "autre": "Altro"
-      }
+      },
+      "aucunTitre": "Nessun documento"
     },
     "semaine": {
       "du": "{debut} – {fin}",
@@ -1841,7 +1844,7 @@
       "vacances": "Vacanze scolastiche · zona {zone}",
       "conflit": "Conflitto — due tragitti alle {heure}",
       "jusqua": "fino alle {heure}",
-      "manquee": "Persa — viaggio a {voyage}",
+      "manquee": "Persa · {voyage}",
       "interrompue": "Sospeso durante le vacanze",
       "enConflit": "In conflitto con un'altra lezione"
     },

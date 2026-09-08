@@ -1,4 +1,4 @@
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Clock } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { getTranslations, getFormatter } from "next-intl/server";
 import type { ActiviteListe } from "../data/queries";
@@ -48,11 +48,25 @@ export async function LigneActivite({ activite, aujourdhui, montrerStatut = fals
             </span>
           )}
         </span>
-        <span className="truncate text-[12.5px] text-muted">
-          {activite.clubNom}
-          {quand ? ` · ${quand}` : ""}
-          {activite.restantes != null ? ` · ${t("restantes", { n: activite.restantes })}` : ""}
-        </span>
+        {/* Le club sur sa ligne, l'heure sur la sienne. Tout mettre bout à bout
+            faisait tronquer « samedi 10h00 » — c'est-à-dire l'information qu'on
+            vient chercher. */}
+        {activite.clubNom && (
+          <span className="truncate text-[12.5px] text-muted">{activite.clubNom}</span>
+        )}
+        {(quand || activite.restantes != null) && (
+          <span className="flex flex-wrap items-center gap-1.5 text-[11.5px]">
+            {quand && (
+              <span className="inline-flex items-center gap-1 font-semibold text-accent">
+                <Clock size={10} aria-hidden />
+                {quand}
+              </span>
+            )}
+            {activite.restantes != null && (
+              <span className="text-muted">{t("restantes", { n: activite.restantes })}</span>
+            )}
+          </span>
+        )}
       </Link>
 
       {activite.telephone && (

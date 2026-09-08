@@ -9,6 +9,8 @@ export function EtatVide({ titre, explication, action }: {
     <div data-testid="activites-vide" className="flex flex-col items-center gap-2 rounded-card border border-dashed border-line bg-surface px-6 py-10 text-center">
       <p className="font-serif text-lg text-ink">{titre}</p>
       <p className="max-w-[34ch] text-[13px] leading-relaxed text-muted">{explication}</p>
+      {/* Une action dans l'état vide : le design ne constate pas le vide, il
+          propose de le remplir. */}
       {action}
     </div>
   );

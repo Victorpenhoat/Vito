@@ -1701,7 +1701,9 @@
       "carteTitre": "Aucun lieu à placer",
       "carteTexte": "Les clubs apparaîtront sur la carte dès qu'une activité aura une adresse.",
       "filtreTitre": "Aucune activité ne correspond",
-      "filtreTexte": "Retirez un filtre ou changez votre recherche."
+      "filtreTexte": "Retirez un filtre ou changez votre recherche.",
+      "semaineVacances": "Vacances scolaires — reprise le {date}.",
+      "ajouterActivite": "Ajouter une activité"
     },
     "erreur": {
       "titre": "Les activités n'ont pas pu être chargées.",
@@ -1814,7 +1816,7 @@
       "enregistrer": "Chiffrer et enregistrer"
     },
     "documents": {
-      "aucun": "Aucun document.",
+      "aucun": "Licence, certificat médical, assurance…",
       "ajouter": "Ajouter un document",
       "type": "Type de document",
       "expireLe": "Expire le (facultatif)",
@@ -1832,7 +1834,8 @@
         "reglement": "Règlement",
         "facture": "Facture",
         "autre": "Autre"
-      }
+      },
+      "aucunTitre": "Aucun document"
     },
     "semaine": {
       "du": "{debut} – {fin}",
@@ -1841,7 +1844,7 @@
       "vacances": "Vacances scolaires · zone {zone}",
       "conflit": "Conflit — deux trajets à {heure}",
       "jusqua": "jusqu'à {heure}",
-      "manquee": "Manqué — voyage à {voyage}",
+      "manquee": "Manqué · {voyage}",
       "interrompue": "Interrompu pendant les vacances",
       "enConflit": "En conflit avec une autre séance"
     },
