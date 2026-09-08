@@ -2,8 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
 import { ListeActivites } from "@/features/activites/ui/ListeActivites";
 import { SousOnglets, ongletValide } from "@/features/activites/ui/SousOnglets";
-import { EtatVide } from "@/features/activites/ui/EtatVide";
 import { VueSemaine } from "@/features/activites/ui/VueSemaine";
+import { VueCarte } from "@/features/activites/ui/VueCarte";
 
 // Onglet Activités (design docs/design/Onglet_Activites.dc.html).
 export default async function ActivitesPage({
@@ -36,9 +36,7 @@ export default async function ActivitesPage({
               aujourdhui={aujourdhui}
             />
           )}
-          {actif === "carte" && (
-            <EtatVide titre={t("vide.carteTitre")} explication={t("vide.carteTexte")} />
-          )}
+          {actif === "carte" && <VueCarte params={params} aujourdhui={aujourdhui} />}
         </>
       )}
     </main>

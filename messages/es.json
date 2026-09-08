@@ -1842,6 +1842,11 @@
       "manquee": "Perdida — viaje a {voyage}",
       "interrompue": "Interrumpido en vacaciones",
       "enConflit": "Coincide con otra sesión"
+    },
+    "carte": {
+      "autourDeMoi": "A mi alrededor",
+      "ouvrirFiche": "Abrir la ficha",
+      "sansAdresse": "{n, plural, one {# actividad sin dirección no aparece} other {# actividades sin dirección no aparecen}}"
     }
   }
 }

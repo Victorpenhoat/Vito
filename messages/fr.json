@@ -1842,6 +1842,11 @@
       "manquee": "Manqué — voyage à {voyage}",
       "interrompue": "Interrompu pendant les vacances",
       "enConflit": "En conflit avec une autre séance"
+    },
+    "carte": {
+      "autourDeMoi": "Autour de moi",
+      "ouvrirFiche": "Ouvrir la fiche",
+      "sansAdresse": "{n, plural, one {# activité sans adresse n'apparaît pas} other {# activités sans adresse n'apparaissent pas}}"
     }
   }
 }

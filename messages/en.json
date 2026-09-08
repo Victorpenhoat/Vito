@@ -1842,6 +1842,11 @@
       "manquee": "Missed — trip to {voyage}",
       "interrompue": "Paused during the holidays",
       "enConflit": "Clashes with another session"
+    },
+    "carte": {
+      "autourDeMoi": "Around me",
+      "ouvrirFiche": "Open",
+      "sansAdresse": "{n, plural, one {# activity without an address isn't shown} other {# activities without an address aren't shown}}"
     }
   }
 }
