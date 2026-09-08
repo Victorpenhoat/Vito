@@ -2,17 +2,12 @@ import { getTranslations, getFormatter } from "next-intl/server";
 import { Phone, MapPin, Globe, Clock, User } from "lucide-react";
 import { LienExterne } from "@/features/shared/ui/LienExterne";
 import type { ActiviteDetail } from "../data/queries";
-import { resumePresence, ordonnerEcheances, etatEcheance, totalRegle } from "../domain/fiche";
+import { resumePresence } from "../domain/fiche";
 import { FormulaireCreneau } from "./FormulaireCreneau";
 import { StatutActivite } from "./StatutActivite";
 import { SectionAcces } from "./SectionAcces";
+import { SectionCout } from "./SectionCout";
 import { SectionDocuments } from "./SectionDocuments";
-
-const TEINTE_ECHEANCE: Record<string, string> = {
-  paye: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
-  en_retard: "border-danger/30 bg-danger-bg text-danger",
-  a_venir: "border-line bg-surface-hover text-muted",
-};
 
 function Section({ titre, children, action }: {
   titre: string; children: React.ReactNode; action?: React.ReactNode;
@@ -46,8 +41,6 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
   const t = await getTranslations("activites");
   const format = await getFormatter();
   const presence = resumePresence(activite.seances, activite.formuleSeances);
-  const euros = (cents: number, devise: string) =>
-    format.number(cents / 100, { style: "currency", currency: devise, maximumFractionDigits: 2 });
   const jour = (n: number) => t(`jours.${n}`);
   const dateCourte = (iso: string) =>
     format.dateTime(new Date(`${iso}T00:00:00Z`), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -170,34 +163,7 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
         )}
       </Section>
 
-      <Section titre={t("sections.cout")}>
-        {activite.paiements.length === 0 ? (
-          <p className="text-[12.5px] text-muted">{t("cout.aucun")}</p>
-        ) : (
-          <>
-            <p className="text-[13px] text-muted">
-              {t("cout.regle")} <span className="font-serif text-lg text-ink">
-                {euros(totalRegle(activite.paiements), activite.paiements[0]!.devise)}
-              </span>
-            </p>
-            <ul className="flex flex-col">
-              {ordonnerEcheances(activite.paiements, aujourdhui).map((p) => {
-                const etat = etatEcheance(p, aujourdhui);
-                return (
-                  <li key={p.id} data-testid="fiche-echeance" className="flex items-center gap-2 border-b border-line-soft py-2 last:border-b-0">
-                    <span className="min-w-0 flex-1 truncate text-[13px] text-ink">{p.libelle}</span>
-                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10.5px] font-semibold ${TEINTE_ECHEANCE[etat]}`}>
-                      {t(`cout.etats.${etat}`)}
-                    </span>
-                    {p.echeance && <span className="shrink-0 text-[11.5px] text-muted">{dateCourte(p.echeance)}</span>}
-                    <span className="shrink-0 text-[13px] tabular-nums text-ink">{euros(p.montantCents, p.devise)}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
-      </Section>
+      <SectionCout activiteId={activite.id} paiements={activite.paiements} aujourdhui={aujourdhui} />
 
       <SectionAcces activiteId={activite.id} codes={activite.codes} />
 

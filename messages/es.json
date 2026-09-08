@@ -1785,7 +1785,22 @@
         "paye": "Pagado",
         "en_retard": "Atrasado",
         "a_venir": "Próximo"
-      }
+      },
+      "ajouter": "Añadir un vencimiento",
+      "libelle": "Etiqueta (cuota, campamento…)",
+      "montant": "Importe",
+      "echeance": "Vencimiento",
+      "periodicite": "Periodicidad",
+      "sansPeriodicite": "Sin periodicidad",
+      "periodicites": {
+        "unique": "Una vez",
+        "mensuelle": "Mensual",
+        "trimestrielle": "Trimestral",
+        "annuelle": "Anual"
+      },
+      "enregistrer": "Guardar",
+      "marquerRegle": "Marcar pagado",
+      "defaire": "Deshacer el pago"
     },
     "nouvelle": {
       "ouvrir": "Nueva actividad",

@@ -1785,7 +1785,22 @@
         "paye": "Paid",
         "en_retard": "Late",
         "a_venir": "Upcoming"
-      }
+      },
+      "ajouter": "Add a payment",
+      "libelle": "Label (membership, camp…)",
+      "montant": "Amount",
+      "echeance": "Due date",
+      "periodicite": "Frequency",
+      "sansPeriodicite": "No frequency",
+      "periodicites": {
+        "unique": "One-off",
+        "mensuelle": "Monthly",
+        "trimestrielle": "Quarterly",
+        "annuelle": "Yearly"
+      },
+      "enregistrer": "Save",
+      "marquerRegle": "Mark as paid",
+      "defaire": "Undo payment"
     },
     "nouvelle": {
       "ouvrir": "New activity",

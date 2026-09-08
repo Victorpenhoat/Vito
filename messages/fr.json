@@ -1785,7 +1785,22 @@
         "paye": "Payé",
         "en_retard": "En retard",
         "a_venir": "À venir"
-      }
+      },
+      "ajouter": "Ajouter une échéance",
+      "libelle": "Libellé (cotisation, stage…)",
+      "montant": "Montant",
+      "echeance": "Échéance",
+      "periodicite": "Périodicité",
+      "sansPeriodicite": "Sans périodicité",
+      "periodicites": {
+        "unique": "Une fois",
+        "mensuelle": "Mensuelle",
+        "trimestrielle": "Trimestrielle",
+        "annuelle": "Annuelle"
+      },
+      "enregistrer": "Enregistrer",
+      "marquerRegle": "Marquer réglé",
+      "defaire": "Annuler le règlement"
     },
     "nouvelle": {
       "ouvrir": "Nouvelle activité",
