@@ -314,3 +314,33 @@ test("les vacances scolaires et les voyages se superposent à la semaine", async
   // Les vacances suspendent, elles n'annulent pas : on signale sans affirmer.
   await expect(jours.first().getByTestId("seance-vacances")).toContainText("Interrompu");
 });
+
+// Incrément 7 : la carte. Elle ne se charge qu'en l'ouvrant — Leaflet ne doit
+// pas peser sur les autres vues.
+test("la carte place les clubs, les filtre par membre et dit ce qu'elle ne montre pas", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites?onglet=carte");
+
+  await expect(page.getByTestId("carte-activites")).toBeVisible({ timeout: 15_000 });
+  // Les tuiles viennent d'OpenStreetMap, sans clé — même fournisseur que le carnet.
+  await expect(page.locator('img[src*="tile.openstreetmap.org"]').first()).toBeVisible({ timeout: 15_000 });
+
+  // Une épingle par club situé ; le seed en place quatre.
+  const epingles = page.locator(".leaflet-marker-icon");
+  await expect(epingles.first()).toBeVisible();
+  const total = await epingles.count();
+  expect(total).toBeGreaterThanOrEqual(3);
+
+  // Le filtre par membre est le MÊME composant que la liste : les paramètres
+  // d'URL sont partagés, donc les filtres survivent au changement de vue.
+  const filtreTom = page.getByTestId("activites-filtres").getByRole("button", { name: "Tom" });
+  await filtreTom.click();
+  await expect(page).toHaveURL(/membre=/);
+  await expect(epingles).toHaveCount(1);
+
+  // Un clic sur l'épingle ouvre la fiche compacte, qui mène à la fiche entière.
+  await epingles.first().click();
+  await expect(page.getByTestId("carte-fiche")).toContainText("Football");
+  await page.getByTestId("carte-fiche").getByRole("link", { name: "Ouvrir la fiche" }).click();
+  await expect(page).toHaveURL(/\/fr\/activites\/[0-9a-f-]{36}/);
+});

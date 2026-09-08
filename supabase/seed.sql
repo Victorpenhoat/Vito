@@ -298,9 +298,10 @@ insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut
 -- Douze séances faites et une manquée : « 13 / 20 · 7 restantes ».
 -- Le football de Tom, samedi 10h : même heure que l'équitation de Camille.
 -- C'est le conflit de trajets que la vue « Cette semaine » doit signaler.
-insert into public.activites (id, user_id, type, nom, statut, club_nom, adresse, telephone) values
+insert into public.activites (id, user_id, type, nom, statut, club_nom, adresse, lat, lng, telephone) values
   ('a0000001-0000-4000-8000-000000000004', '11111111-1111-1111-1111-111111111111',
-   'football', 'Football', 'en_cours', 'FC Bastide', '5 quai des Queyries, Bordeaux', '05 56 11 22 33');
+   'football', 'Football', 'en_cours', 'FC Bastide', '5 quai des Queyries, Bordeaux',
+   44.8489, -0.5545, '05 56 11 22 33');
 insert into public.activite_membres (activite_id, membre_id) values
   ('a0000001-0000-4000-8000-000000000004', 'f1111111-1111-4111-8111-111111111112');
 insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut, heure_fin, depose_par) values

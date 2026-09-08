@@ -1842,6 +1842,11 @@
       "manquee": "Persa — viaggio a {voyage}",
       "interrompue": "Sospeso durante le vacanze",
       "enConflit": "In conflitto con un'altra lezione"
+    },
+    "carte": {
+      "autourDeMoi": "Intorno a me",
+      "ouvrirFiche": "Apri la scheda",
+      "sansAdresse": "{n, plural, one {# attività senza indirizzo non compare} other {# attività senza indirizzo non compaiono}}"
     }
   }
 }
