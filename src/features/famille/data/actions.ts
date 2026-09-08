@@ -427,7 +427,9 @@ export async function toggleReminder(_prev: unknown, formData: FormData) {
  * (décision PO : pas de fenêtre de validité).
  */
 export async function revelerNumero(_prev: unknown, formData: FormData) {
-  const docId = formData.get("docId");
+  // `id` et non `docId` : c'est le contrat de ValeurProtegee, le composant
+  // partagé avec les codes d'accès des activités.
+  const docId = formData.get("id");
   const motDePasse = formData.get("motDePasse");
   if (typeof docId !== "string" || typeof motDePasse !== "string" || motDePasse === "") {
     return { error: "Vérification impossible" };
@@ -452,7 +454,9 @@ export async function revelerNumero(_prev: unknown, formData: FormData) {
   // Le journal d'accès couvre aussi le Cercle : jusqu'ici, une révélation
   // exigeait le mot de passe sans laisser la moindre trace.
   await journaliser(supabase, auth.user.id, "numero_document", docId, "revelation");
-  return { ok: true as const, numero };
+  // `valeur` et non `numero` : c'est le contrat du composant générique
+  // ValeurProtegee, partagé avec les codes d'accès des activités.
+  return { ok: true as const, valeur: numero };
 }
 
 /**

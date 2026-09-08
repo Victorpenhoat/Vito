@@ -70,16 +70,16 @@ test("le numéro n'est pas dans la page, et se révèle après vérification", a
 
   // le numéro seedé n'apparaît nulle part dans le HTML servi
   expect(await page.content()).not.toContain("19FR99892");
-  await expect(page.getByTestId("numero-protege")).toContainText("•");
+  await expect(page.getByTestId("valeur-protegee")).toContainText("•");
 
-  await page.getByTestId("reveler-numero").click();
+  await page.getByTestId("reveler-valeur").click();
   await page.getByTestId("reauth-mot-de-passe").fill("password123");
   await page.getByTestId("reauth-form").getByRole("button", { name: "Vérifier" }).click();
 
-  await expect(page.getByTestId("numero-protege")).toHaveText("19FR99892", { timeout: 15_000 });
+  await expect(page.getByTestId("valeur-protegee")).toHaveText("19FR99892", { timeout: 15_000 });
   // on peut le masquer à nouveau
-  await page.getByTestId("masquer-numero").click();
-  await expect(page.getByTestId("numero-protege")).toContainText("•");
+  await page.getByTestId("masquer-valeur").click();
+  await expect(page.getByTestId("valeur-protegee")).toContainText("•");
 });
 
 test("vérifier son mot de passe ne déconnecte pas les autres appareils", async ({ page, browser }) => {
@@ -96,10 +96,10 @@ test("vérifier son mot de passe ne déconnecte pas les autres appareils", async
 
   // révélation d'un numéro : elle vérifie le mot de passe
   await page.goto(`/fr/famille/proches/${PROCHE_ID}/documents/${DOC_ID}`);
-  await page.getByTestId("reveler-numero").click();
+  await page.getByTestId("reveler-valeur").click();
   await page.getByTestId("reauth-mot-de-passe").fill("password123");
   await page.getByTestId("reauth-form").getByRole("button", { name: "Vérifier" }).click();
-  await expect(page.getByTestId("numero-protege")).toHaveText("19FR99892", { timeout: 15_000 });
+  await expect(page.getByTestId("valeur-protegee")).toHaveText("19FR99892", { timeout: 15_000 });
 
   // l'autre appareil est toujours connecté : sa session n'a pas été révoquée
   await autrePage.goto("/fr/reglages");

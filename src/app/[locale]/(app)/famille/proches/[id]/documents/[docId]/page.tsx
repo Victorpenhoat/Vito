@@ -4,7 +4,8 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import { getProche } from "@/features/famille/data/queries";
 import { ExpiryBadge } from "@/features/famille/ui/ExpiryBadge";
-import { MaskedNumber } from "@/features/famille/ui/MaskedNumber";
+import { ValeurProtegee } from "@/features/shared/ui/ValeurProtegee";
+import { revelerNumero } from "@/features/famille/data/actions";
 import { ScanProtege } from "@/features/famille/ui/ScanProtege";
 import { ReminderToggle } from "@/features/famille/ui/ReminderToggle";
 import { ShareScanButton } from "@/features/famille/ui/ShareScanButton";
@@ -63,7 +64,10 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
           <div className="flex items-center justify-between gap-3 border-b border-line-soft px-3.5 py-3">
             <div className="min-w-0 flex-1">
               <div className="text-[11px] text-faint">{t("doc.numero")}</div>
-              <div className="mt-0.5"><MaskedNumber docId={doc.id} masque={doc.doc_number_masque} /></div>
+              <div className="mt-0.5">
+                <ValeurProtegee id={doc.id} masque={doc.doc_number_masque}
+                  reveler={revelerNumero} libelle={t("doc.numero")} />
+              </div>
             </div>
           </div>
         )}
