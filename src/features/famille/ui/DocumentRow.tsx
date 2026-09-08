@@ -3,7 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import type { DocMeta } from "../data/queries";
 import { ExpiryBadge } from "./ExpiryBadge";
-import { MaskedNumber } from "./MaskedNumber";
+import { ValeurProtegee } from "@/features/shared/ui/ValeurProtegee";
+import { revelerNumero } from "../data/actions";
 import { expiryStatus, monthsUntil } from "../domain/expiry";
 
 // Ligne document de la fiche (design Onglet_Cercle, écran 2) : type + chip de
@@ -29,7 +30,10 @@ export async function DocumentRow({ doc, memberId }: { doc: DocMeta; memberId: s
           )}
         </Link>
         {doc.doc_number_masque && (
-          <div className="mt-1"><MaskedNumber docId={doc.id} masque={doc.doc_number_masque} /></div>
+          <div className="mt-1">
+            <ValeurProtegee id={doc.id} masque={doc.doc_number_masque}
+              reveler={revelerNumero} libelle={label} />
+          </div>
         )}
       </div>
       {!doc.doc_number_masque && (
