@@ -55,7 +55,9 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
     <div className={`flex flex-col gap-3.5 ${detail ? "hidden lg:flex" : "flex"}`}>
       <SousOnglets actif={actif} />
       <div className="flex flex-wrap items-center gap-2">
-        <FormulaireActivite membres={proches.map((p) => ({ id: p.id, prenom: p.first_name }))} />
+        {toutes.length > 0 && (
+          <FormulaireActivite membres={proches.map((p) => ({ id: p.id, prenom: p.first_name }))} />
+        )}
         <Link href="/activites/alertes" data-testid="lien-alertes"
           className="text-[11.5px] font-semibold text-accent hover:underline">
           {t("alertes.ouvrir")} →
@@ -82,7 +84,9 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
 
       {filtrees.length === 0 ? (
         toutes.length === 0
-          ? <EtatVide titre={t("vide.aucuneTitre")} explication={t("vide.aucuneTexte")} />
+          ? <EtatVide titre={t("vide.aucuneTitre")} explication={t("vide.aucuneTexte")}
+              action={<FormulaireActivite membres={proches.map((p) => ({ id: p.id, prenom: p.first_name }))}
+                        libelle={t("vide.ajouterActivite")} />} />
           : <EtatVide titre={t("vide.filtreTitre")} explication={t("vide.filtreTexte")} />
       ) : (
         <>

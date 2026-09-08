@@ -7,7 +7,11 @@ import { TYPES_ACTIVITE } from "../domain/activite";
 import { Button } from "@/features/shared/ui/Button";
 
 /** « + Nouvelle activité » : le strict nécessaire, le reste s'ajoute sur la fiche. */
-export function FormulaireActivite({ membres }: { membres: { id: string; prenom: string }[] }) {
+export function FormulaireActivite({ membres, libelle }: {
+  membres: { id: string; prenom: string }[];
+  /** L'état vide dit « Ajouter une activité » là où l'en-tête dit « Nouvelle ». */
+  libelle?: string;
+}) {
   const t = useTranslations("activites");
   const router = useRouter();
   const [ouvert, setOuvert] = useState(false);
@@ -25,7 +29,7 @@ export function FormulaireActivite({ membres }: { membres: { id: string; prenom:
     return (
       <button type="button" data-testid="activite-ajouter" onClick={() => setOuvert(true)}
         className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-accent-50 px-3.5 py-1.5 text-[12px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
-        + {t("nouvelle.ouvrir")}
+        + {libelle ?? t("nouvelle.ouvrir")}
       </button>
     );
   }

@@ -74,7 +74,11 @@ export function SectionDocuments({ activiteId, documents, aujourdhui }: {
       </header>
 
       {documents.length === 0 ? (
-        <p className="text-[12.5px] text-muted">{t("documents.aucun")}</p>
+        <div className="flex flex-col gap-0.5 py-1">
+          <p className="text-[13px] text-ink">{t("documents.aucunTitre")}</p>
+          {/* Ce qu'on y met, plutôt que le constat d'un vide. */}
+          <p className="text-[12px] text-muted">{t("documents.aucun")}</p>
+        </div>
       ) : (
         <ul className="flex flex-col">
           {documents.map((d) => {
