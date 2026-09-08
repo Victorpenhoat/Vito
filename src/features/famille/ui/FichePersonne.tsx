@@ -11,6 +11,7 @@ import { DocumentRow } from "./DocumentRow";
 import { IDENTITY_DOC_TYPES } from "../domain/schemas";
 import { ageYears } from "../domain/age";
 import { formatDay } from "@/lib/format/date";
+import { BlocActivitesMembre } from "@/features/activites/ui/BlocActivitesMembre";
 
 // Fiche membre (design Onglet_Cercle, écrans 2 & 7b) : en-tête centré, actions
 // rapides, sections Contact / Identité / Documents complémentaires.
@@ -148,6 +149,10 @@ export async function FichePersonne({
                   <p className="text-sm text-muted">{t("fiche.aucunDocument")}</p>
                 )}
               </section>
+
+              {/* Activités du proche (onglet Activités) : une section de plus
+                  sur la fiche, pas un écran de plus. */}
+              <BlocActivitesMembre membreId={proche.id} />
             </>
           )}
         </div>

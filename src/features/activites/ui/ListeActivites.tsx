@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "@/lib/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { getActivites } from "../data/queries";
 import { getProches } from "@/features/famille/data/queries";
@@ -53,7 +54,13 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
   const colonneListe = (
     <div className={`flex flex-col gap-3.5 ${detail ? "hidden lg:flex" : "flex"}`}>
       <SousOnglets actif={actif} />
-      <FormulaireActivite membres={proches.map((p) => ({ id: p.id, prenom: p.first_name }))} />
+      <div className="flex flex-wrap items-center gap-2">
+        <FormulaireActivite membres={proches.map((p) => ({ id: p.id, prenom: p.first_name }))} />
+        <Link href="/activites/alertes" data-testid="lien-alertes"
+          className="text-[11.5px] font-semibold text-accent hover:underline">
+          {t("alertes.ouvrir")} →
+        </Link>
+      </div>
       {toutes.length > 0 && <RechercheActivites />}
 
       {actif === "tous" && toutes.length > 0 && (

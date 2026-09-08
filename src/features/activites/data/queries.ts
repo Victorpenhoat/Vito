@@ -296,3 +296,52 @@ export const getActivitesSemaine = cache(async (du: string, au: string) => {
 
   return { activites, exceptions };
 });
+
+/**
+ * Tout ce qui demande une action, en UNE requête.
+ *
+ * Le compteur de la barre de navigation s'en sert aussi : agréger côté client,
+ * ou interroger une table par type d'alerte, ferait autant d'allers-retours que
+ * de familles d'échéances.
+ */
+export const getAlertesActivites = cache(async () => {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return { activites: [] };
+
+  const { data, error } = await supabase
+    .from("activites")
+    .select(
+      `id, nom,
+       activite_membres(family_members(first_name)),
+       activite_paiements(id, montant_cents, devise, echeance, statut),
+       activite_documents(id, type, expire_le)`,
+    )
+    .neq("statut", "terminee");
+  if (error) throw error;
+
+  return {
+    activites: (data ?? []).map((a) => ({
+      id: a.id,
+      nom: a.nom,
+      membres: (a.activite_membres ?? []).flatMap((am) =>
+        am.family_members ? [{ prenom: am.family_members.first_name }] : []),
+      paiements: (a.activite_paiements ?? []).map((p) => ({
+        id: p.id,
+        montantCents: Number(p.montant_cents),
+        devise: p.devise,
+        echeance: p.echeance,
+        statut: p.statut as "du" | "paye",
+      })),
+      documents: (a.activite_documents ?? []).map((d) => ({
+        id: d.id, type: d.type, expireLe: d.expire_le,
+      })),
+    })),
+  };
+});
+
+/** Les activités d'un membre — bloc « Activités » de sa fiche dans le Cercle. */
+export const getActivitesDuMembre = cache(async (membreId: string, aujourdhui: string) => {
+  const toutes = await getActivites(aujourdhui);
+  return toutes.filter((a) => a.membres.some((m) => m.id === membreId));
+});

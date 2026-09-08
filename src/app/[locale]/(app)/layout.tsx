@@ -2,6 +2,8 @@ import { requireRole, getSessionRole } from "@/lib/rbac/guards";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { AppShell } from "@/features/shell/ui/AppShell";
 import { compterReception } from "@/features/reception/data/queries";
+import { getAlertesActivites } from "@/features/activites/data/queries";
+import { construireAlertes, nombreAlertesUrgentes } from "@/features/activites/domain/alertes";
 import { NAV_ITEMS, filterNav, type Role } from "@/features/shell/nav-config";
 import { estDansLaCoque } from "@/lib/platform/coque";
 import { VerrouApp } from "@/features/compte/ui/VerrouApp";
@@ -32,10 +34,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // Compteur de la boîte : une seule requête de comptage, sans charger les
   // cartes — le menu n'a besoin que du nombre.
   const enAttente = await compterReception();
+  // Pastille des Activités : ce qui presse seulement — retard et trente jours.
+  // Une pastille perpétuellement allumée cesse d'être regardée.
+  const source = await getAlertesActivites();
+  const urgentes = nombreAlertesUrgentes(
+    construireAlertes(source, new Date().toISOString().slice(0, 10)),
+  );
 
   return (
     <AppShell items={filterNav(NAV_ITEMS, role, await estDansLaCoque())} role={role} userName={userName}
-      compteurs={{ reception: enAttente }}>
+      compteurs={{ reception: enAttente, activites: urgentes }}>
       {/* Verrouillage de l'app (lot O-D) : masque le carnet après inactivité.
           Protection d'affichage — les gardes serveur restent indépendantes. */}
       <VerrouApp delaiMinutes={delaiVerrou} />

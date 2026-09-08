@@ -1761,7 +1761,9 @@
       "lieuPrecision": "Dettaglio del luogo (maneggio, sala…)",
       "intervenantPlaceholder": "Insegnante",
       "deposeLabel": "Chi accompagna",
-      "enregistrer": "Salva l'orario"
+      "enregistrer": "Salva l'orario",
+      "calendrier": "Aggiungi al calendario",
+      "dansPlanning": "Questi orari compaiono anche nel planning dei viaggi."
     },
     "presence": {
       "formule": "Formula {n} lezioni",
@@ -1847,6 +1849,28 @@
       "autourDeMoi": "Intorno a me",
       "ouvrirFiche": "Apri la scheda",
       "sansAdresse": "{n, plural, one {# attività senza indirizzo non compare} other {# attività senza indirizzo non compaiono}}"
+    },
+    "alertes": {
+      "titre": "Avvisi",
+      "sousTitre": "{n, plural, one {# azione da gestire, per urgenza} other {# azioni da gestire, per urgenza}}",
+      "groupes": {
+        "en_retard": "In ritardo",
+        "proche": "Entro 30 giorni",
+        "plus_tard": "Più tardi"
+      },
+      "paiement": "Pagamento",
+      "depuis": "scaduto il {date}",
+      "pour": "scadenza il {date}",
+      "sansDate": "senza data",
+      "traiter": "Gestisci",
+      "rienTitre": "Niente da gestire",
+      "rienTexte": "Nessun pagamento in ritardo né documento in scadenza.",
+      "ouvrir": "Avvisi"
+    },
+    "membre": {
+      "enCours": "{n, plural, one {# attività in corso} other {# attività in corso}}",
+      "toutVoir": "Vedi tutto",
+      "aTraiter": "{n, plural, one {# azione da gestire} other {# azioni da gestire}}"
     }
   }
 }
