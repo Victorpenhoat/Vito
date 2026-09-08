@@ -1761,7 +1761,9 @@
       "lieuPrecision": "Detalle del lugar (pista, sala…)",
       "intervenantPlaceholder": "Profesor",
       "deposeLabel": "Quién lleva",
-      "enregistrer": "Guardar el horario"
+      "enregistrer": "Guardar el horario",
+      "calendrier": "Añadir al calendario",
+      "dansPlanning": "Estos horarios también aparecen en la agenda de viajes."
     },
     "presence": {
       "formule": "Bono de {n} sesiones",
@@ -1847,6 +1849,28 @@
       "autourDeMoi": "A mi alrededor",
       "ouvrirFiche": "Abrir la ficha",
       "sansAdresse": "{n, plural, one {# actividad sin dirección no aparece} other {# actividades sin dirección no aparecen}}"
+    },
+    "alertes": {
+      "titre": "Alertas",
+      "sousTitre": "{n, plural, one {# acción pendiente, por urgencia} other {# acciones pendientes, por urgencia}}",
+      "groupes": {
+        "en_retard": "Atrasado",
+        "proche": "En 30 días",
+        "plus_tard": "Más tarde"
+      },
+      "paiement": "Pago",
+      "depuis": "vencía el {date}",
+      "pour": "vence el {date}",
+      "sansDate": "sin fecha",
+      "traiter": "Tratar",
+      "rienTitre": "Nada pendiente",
+      "rienTexte": "Ningún pago atrasado ni documento a punto de caducar.",
+      "ouvrir": "Alertas"
+    },
+    "membre": {
+      "enCours": "{n, plural, one {# actividad en curso} other {# actividades en curso}}",
+      "toutVoir": "Ver todo",
+      "aTraiter": "{n, plural, one {# acción pendiente} other {# acciones pendientes}}"
     }
   }
 }

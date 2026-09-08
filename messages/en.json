@@ -1761,7 +1761,9 @@
       "lieuPrecision": "Place detail (arena, room…)",
       "intervenantPlaceholder": "Instructor",
       "deposeLabel": "Who drops off",
-      "enregistrer": "Save session"
+      "enregistrer": "Save session",
+      "calendrier": "Add to calendar",
+      "dansPlanning": "These sessions also appear in the trips planner."
     },
     "presence": {
       "formule": "{n}-session pass",
@@ -1847,6 +1849,28 @@
       "autourDeMoi": "Around me",
       "ouvrirFiche": "Open",
       "sansAdresse": "{n, plural, one {# activity without an address isn't shown} other {# activities without an address aren't shown}}"
+    },
+    "alertes": {
+      "titre": "Alerts",
+      "sousTitre": "{n, plural, one {# action to handle, by urgency} other {# actions to handle, by urgency}}",
+      "groupes": {
+        "en_retard": "Late",
+        "proche": "Within 30 days",
+        "plus_tard": "Later"
+      },
+      "paiement": "Payment",
+      "depuis": "was due on {date}",
+      "pour": "due on {date}",
+      "sansDate": "no date",
+      "traiter": "Handle",
+      "rienTitre": "Nothing to handle",
+      "rienTexte": "No late payment, no document about to expire.",
+      "ouvrir": "Alerts"
+    },
+    "membre": {
+      "enCours": "{n, plural, one {# ongoing activity} other {# ongoing activities}}",
+      "toutVoir": "See all",
+      "aTraiter": "{n, plural, one {# action to handle} other {# actions to handle}}"
     }
   }
 }

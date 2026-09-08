@@ -266,7 +266,10 @@ test("un document d'activité ne s'ouvre pas sans ticket", async ({ page, reques
     form.getByTestId("document-valider").click(),
   ]);
 
-  const ligne = page.getByTestId("document-activite").filter({ hasText: "Certificat médical" });
+  // Filtré sur la validité, pas sur le seul type : les re-runs et le test des
+  // alertes déposent d'autres certificats sur la même activité.
+  const ligne = page.getByTestId("document-activite")
+    .filter({ hasText: "Certificat médical" }).filter({ hasText: "Expire dans" }).first();
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
   // La validité se dit en jours, comme la maquette.
   await expect(ligne.getByTestId("document-validite")).toContainText("Expire dans");
@@ -343,4 +346,75 @@ test("la carte place les clubs, les filtre par membre et dit ce qu'elle ne montr
   await expect(page.getByTestId("carte-fiche")).toContainText("Football");
   await page.getByTestId("carte-fiche").getByRole("link", { name: "Ouvrir la fiche" }).click();
   await expect(page).toHaveURL(/\/fr\/activites\/[0-9a-f-]{36}/);
+});
+
+// Incrément 8 : les alertes, le bloc dans la fiche membre, le calendrier et le
+// planning. Ce qui compte : ce qui presse doit se voir sans être cherché.
+test("les alertes trient par urgence et se retrouvent partout où elles comptent", async ({ page }) => {
+  await login(page, "client@vito.test");
+  // Pas d'assertion sur l'écran VIDE : les tests précédents déposent leurs
+  // propres documents, et « rien à traiter » ne serait vrai qu'en premier.
+  // On vérifie ce que CE test crée.
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+  // Un document expiré suffit à peupler les alertes, et il passe par l'écran.
+  await page.getByTestId("document-ajouter").click();
+  const form = page.getByTestId("document-form");
+  await form.getByTestId("document-type").selectOption("certificat_medical");
+  await form.getByTestId("document-expire").fill("2020-01-01");
+  await form.getByTestId("document-fichier").setInputFiles({
+    name: "vieux.pdf", mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF"),
+  });
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("document-valider").click(),
+  ]);
+
+  await page.goto("/fr/activites/alertes");
+  const enRetard = page.getByTestId("alertes-en_retard");
+  await expect(enRetard).toBeVisible({ timeout: 15_000 });
+  await expect(enRetard.getByTestId("alerte-row").filter({ hasText: "Certificat médical" }).first())
+    .toBeVisible();
+  // Chaque alerte mène à l'activité qui la porte.
+  await enRetard.getByTestId("alerte-traiter").first().click();
+  await expect(page).toHaveURL(/\/fr\/activites\/[0-9a-f-]{36}/);
+});
+
+test("le calendrier d'une activité s'exporte, avec une répétition hebdomadaire", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+
+  const lien = page.getByTestId("fiche-ics");
+  await expect(lien).toBeVisible();
+  const href = await lien.getAttribute("href");
+  // `page.request` et non le contexte isolé : la route est authentifiée, elle a
+  // besoin des cookies de la session ouverte.
+  const res = await page.request.get(href!);
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toContain("text/calendar");
+  const ics = await res.text();
+  expect(ics).toContain("BEGIN:VCALENDAR");
+  expect(ics).toContain("RRULE:FREQ=WEEKLY;BYDAY=SA");
+  // Heures flottantes : ni « Z » ni fuseau, pour ne pas glisser au changement d'heure.
+  expect(ics).not.toMatch(/DTSTART:\d{8}T\d{6}Z/);
+});
+
+test("la fiche d'un proche montre ses activités, et le planning ses créneaux", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/famille");
+  await page.getByTestId("proche-row").filter({ hasText: "Camille" }).first().click();
+
+  const bloc = page.getByTestId("membre-activites");
+  await expect(bloc).toBeVisible({ timeout: 15_000 });
+  await expect(bloc).toContainText("2 activités en cours");
+  await expect(bloc.getByTestId("membre-activite-row").first()).toContainText("Danse");
+
+  // Les créneaux se voient aussi dans le planning des voyages : « où serons-nous »
+  // et « qui a cours » sont la même question quand on prépare un départ.
+  await page.goto("/fr/voyages/planning");
+  await expect(page.getByTestId("jour-activite").first()).toBeVisible();
 });

@@ -109,7 +109,18 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
             })}
           </p>
         )}
-        <FormulaireCreneau activiteId={activite.id} membres={membresDuFoyer} />
+        <div className="flex flex-wrap items-center gap-3">
+          <FormulaireCreneau activiteId={activite.id} membres={membresDuFoyer} />
+          {activite.creneauxDetail.length > 0 && (
+            // Un lien ordinaire : le fichier se télécharge, l'agenda du système
+            // s'en occupe. Rien de protégé là-dedans — des horaires, un lieu.
+            <a href={`/api/activites/${activite.id}/ics`} data-testid="fiche-ics"
+              className="text-[11.5px] font-semibold text-accent hover:underline">
+              {t("horaires.calendrier")} ↓
+            </a>
+          )}
+        </div>
+        <p className="text-[11px] text-faint">{t("horaires.dansPlanning")}</p>
       </Section>
 
       {presence.formule != null && (

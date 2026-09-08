@@ -39,6 +39,9 @@ export type Paiement = {
   montantCents: number;
   echeance: string | null;
   statut: "du" | "paye";
+  /** Optionnelle : les calculs d'état et de total n'en ont pas besoin, mais
+   *  l'affichage d'une alerte, si. */
+  devise?: string;
 };
 export type EtatEcheance = "paye" | "en_retard" | "a_venir";
 

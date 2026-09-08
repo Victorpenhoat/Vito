@@ -19,7 +19,7 @@ type Voyage = VoyagePlanning & { participants: number };
 // panneau d'année scolaire qui dit ce qui est prévu — ou qu'une période est
 // libre. C'est cette dernière idée qui fait le sel de l'écran : on y vient
 // autant pour voir ce qui reste à remplir que ce qui est déjà pris.
-export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnnee }: {
+export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnnee, creneaux = [] }: {
   voyages: Voyage[];
   vacances: Periode[];
   /** « YYYY-MM-DD » calculé au rendu serveur : le domaine ne lit pas l'horloge. */
@@ -29,6 +29,10 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
   /** La frise de douze mois, rendue par le SERVEUR et passée en nœud : un
    *  composant serveur ne s'invoque pas depuis un composant client. */
   vueAnnee: React.ReactNode;
+  /** Créneaux d'activités : un repère sous les jours où la famille a cours.
+   *  Leur règle est récurrente et PURE, donc calculable ici sans requête à
+   *  chaque changement de mois. */
+  creneaux?: { jourSemaine: number; valideDu: string | null; valideAu: string | null }[];
 }) {
   const t = useTranslations("voyages.planning");
   const format = useFormatter();
@@ -46,6 +50,15 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
 
   const dansVacances = (jour: string) =>
     vacances.some((p) => chevauche({ debut: jour, fin: jour }, p));
+
+  /** Y a-t-il cours ce jour-là ? Un point sous la date suffit à le dire. */
+  const aCours = (jour: string) => {
+    const j = ((new Date(`${jour}T00:00:00Z`).getUTCDay() + 6) % 7) + 1;
+    return creneaux.some((c) =>
+      c.jourSemaine === j
+      && !(c.valideDu && jour < c.valideDu)
+      && !(c.valideAu && jour > c.valideAu));
+  };
 
   const titreMois = format.dateTime(new Date(Date.UTC(curseur.annee, curseur.mois - 1, 1)), {
     month: "long", year: "numeric", timeZone: "UTC",
@@ -117,6 +130,10 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
                       : "text-ink"
                     }`}>
                     {j.numero}
+                    {!j.horsMois && aCours(j.jour) && (
+                      <span data-testid="jour-activite" aria-hidden
+                        className="mx-auto mt-0.5 block h-1 w-1 rounded-full bg-accent" />
+                    )}
                   </span>
                 ))}
               </div>

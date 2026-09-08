@@ -1761,7 +1761,9 @@
       "lieuPrecision": "Précision de lieu (manège, salle…)",
       "intervenantPlaceholder": "Intervenant",
       "deposeLabel": "Qui dépose",
-      "enregistrer": "Enregistrer le créneau"
+      "enregistrer": "Enregistrer le créneau",
+      "calendrier": "Ajouter au calendrier",
+      "dansPlanning": "Ces créneaux apparaissent aussi dans le planning des voyages."
     },
     "presence": {
       "formule": "Formule {n} séances",
@@ -1847,6 +1849,28 @@
       "autourDeMoi": "Autour de moi",
       "ouvrirFiche": "Ouvrir la fiche",
       "sansAdresse": "{n, plural, one {# activité sans adresse n'apparaît pas} other {# activités sans adresse n'apparaissent pas}}"
+    },
+    "alertes": {
+      "titre": "Alertes",
+      "sousTitre": "{n, plural, one {# action à traiter, triée par urgence} other {# actions à traiter, triées par urgence}}",
+      "groupes": {
+        "en_retard": "En retard",
+        "proche": "Dans les 30 jours",
+        "plus_tard": "Plus tard"
+      },
+      "paiement": "Paiement",
+      "depuis": "échéance du {date} dépassée",
+      "pour": "échéance du {date}",
+      "sansDate": "sans date",
+      "traiter": "Traiter",
+      "rienTitre": "Rien à traiter",
+      "rienTexte": "Ni paiement en retard, ni document sur le point d'expirer.",
+      "ouvrir": "Alertes"
+    },
+    "membre": {
+      "enCours": "{n, plural, one {# activité en cours} other {# activités en cours}}",
+      "toutVoir": "Tout voir",
+      "aTraiter": "{n, plural, one {# action à traiter} other {# actions à traiter}}"
     }
   }
 }
