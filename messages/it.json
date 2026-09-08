@@ -1785,7 +1785,22 @@
         "paye": "Pagato",
         "en_retard": "In ritardo",
         "a_venir": "In arrivo"
-      }
+      },
+      "ajouter": "Aggiungi una scadenza",
+      "libelle": "Etichetta (quota, camp…)",
+      "montant": "Importo",
+      "echeance": "Scadenza",
+      "periodicite": "Periodicità",
+      "sansPeriodicite": "Senza periodicità",
+      "periodicites": {
+        "unique": "Una volta",
+        "mensuelle": "Mensile",
+        "trimestrielle": "Trimestrale",
+        "annuelle": "Annuale"
+      },
+      "enregistrer": "Salva",
+      "marquerRegle": "Segna pagato",
+      "defaire": "Annulla il pagamento"
     },
     "nouvelle": {
       "ouvrir": "Nuova attività",

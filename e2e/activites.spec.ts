@@ -423,3 +423,52 @@ test("la fiche d'un proche montre ses activités, et le planning ses créneaux",
   await page.goto("/fr/voyages/planning");
   await expect(page.getByTestId("jour-activite").first()).toBeVisible();
 });
+
+// Passe finale : le parcours d'argent, de la saisie au règlement, et son effet
+// sur les alertes.
+test("une échéance se saisit, se règle, et disparaît des alertes", async ({ page }) => {
+  // Parcours long : saisie, alerte, règlement, alerte éteinte. Les 30 s par
+  // défaut suffisent aux gestes isolés, pas à un aller-retour complet.
+  test.setTimeout(75_000);
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Danse" }).first()
+    .getByRole("link").first().click();
+
+  const marque = String(Date.now()).slice(-6);
+  const libelle = `Cotisation ${marque}`;
+  await page.getByTestId("paiement-ajouter").click();
+  const form = page.getByTestId("paiement-form");
+  await form.getByTestId("paiement-libelle").fill(libelle);
+  await form.getByTestId("paiement-montant").fill("310");
+  // Échéance dépassée : elle doit apparaître « En retard », et dans les alertes.
+  await form.getByTestId("paiement-echeance").fill("2026-01-15");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("paiement-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("fiche-echeance").filter({ hasText: libelle });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne).toContainText("En retard");
+  await expect(ligne).toContainText("310,00");
+
+  // Elle remonte dans les alertes, du bon côté.
+  await page.goto("/fr/activites/alertes");
+  await expect(page.getByTestId("alertes-en_retard").getByTestId("alerte-row")
+    .filter({ hasText: "Danse" }).first()).toBeVisible({ timeout: 15_000 });
+
+  // On la règle depuis la fiche : l'état suit, et l'alerte s'éteint.
+  await page.goBack();
+  await expect(ligne).toBeVisible({ timeout: 15_000 });
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    ligne.getByTestId("echeance-regler").click(),
+  ]);
+  await expectVisibleWithReload(page, ligne.filter({ hasText: "Payé" }), { timeout: 15_000 });
+  // Pas d'assertion sur le TOTAL réglé : les re-runs l'additionnent. Ce qui
+  // compte est l'état de la ligne, et l'alerte qui s'éteint.
+
+  await page.goto("/fr/activites/alertes");
+  await expect(page.getByTestId("alerte-row").filter({ hasText: libelle })).toHaveCount(0);
+});

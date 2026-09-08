@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { TYPES_ACTIVITE, STATUTS_ACTIVITE } from "./activite";
+import { centsFromEuros } from "@/features/depenses/domain/money";
 
 // `z.guid()` et non `z.uuid()` : Zod v4 vérifie la variante RFC, et rejetait
 // des identifiants pourtant valides (piège rencontré sur les voyageurs).
@@ -38,6 +39,23 @@ export const creneauInputSchema = z
     path: ["heureFin"],
   });
 export type CreneauInput = z.infer<typeof creneauInputSchema>;
+
+export const paiementInputSchema = z.object({
+  activiteId: id,
+  libelle: texte(200),
+  // Réutilise le parseur d'euros du carnet : « 310 », « 310,50 » ou « 310.50 ».
+  montantCents: centsFromEuros,
+  echeance: z.string().date().optional(),
+  periodicite: z.enum(["unique", "mensuelle", "trimestrielle", "annuelle"]).optional(),
+  moyen: z.enum(["prelevement", "carte", "virement", "cheque", "especes", "autre"]).optional(),
+});
+
+export const reglerPaiementSchema = z.object({
+  paiementId: id,
+  activiteId: id,
+  /** Un règlement se défait : on a pu cocher trop vite. */
+  paye: z.enum(["oui", "non"]),
+});
 
 export const statutActiviteSchema = z.object({
   activiteId: id,

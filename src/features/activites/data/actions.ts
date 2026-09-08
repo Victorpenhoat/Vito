@@ -2,7 +2,10 @@
 import { revalidatePath } from "next/cache";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { activiteInputSchema, creneauInputSchema, statutActiviteSchema } from "../domain/schemas";
+import {
+  activiteInputSchema, creneauInputSchema, statutActiviteSchema,
+  paiementInputSchema, reglerPaiementSchema,
+} from "../domain/schemas";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -110,5 +113,73 @@ export async function changerStatutActivite(_prev: unknown, formData: FormData) 
 
   revalidatePath(`/activites/${parsed.data.activiteId}`);
   revalidatePath("/activites");
+  return { ok: true as const };
+}
+
+export async function ajouterPaiement(_prev: unknown, formData: FormData) {
+  const parsed = paiementInputSchema.safeParse({
+    activiteId: formData.get("activiteId"),
+    libelle: formData.get("libelle"),
+    montantCents: formData.get("montant"),
+    echeance: formData.get("echeance") || undefined,
+    periodicite: formData.get("periodicite") || undefined,
+    moyen: formData.get("moyen") || undefined,
+  });
+  if (!parsed.success) return { error: "Échéance invalide" };
+  const d = parsed.data;
+
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+
+  const { data: cree, error } = await supabase.from("activite_paiements").insert({
+    activite_id: d.activiteId,
+    libelle: d.libelle,
+    montant_cents: d.montantCents,
+    echeance: d.echeance ?? null,
+    periodicite: d.periodicite ?? null,
+    moyen: d.moyen ?? null,
+  }).select("id").single();
+  if (error || !cree) { logActionError("activites.ajouterPaiement", error); return { error: "Ajout échoué" }; }
+
+  revalidatePath(`/activites/${d.activiteId}`);
+  // Les alertes et la pastille se recalculent depuis la base : rien à
+  // invalider de plus, mais la barre vit dans la mise en page.
+  revalidatePath("/activites/alertes");
+  return { ok: true as const, id: cree.id };
+}
+
+/**
+ * Marque une échéance réglée — ou la remet due, parce qu'on a pu cocher trop
+ * vite. La date de règlement suit l'état : un paiement défait ne garde pas la
+ * date d'un règlement qui n'a pas eu lieu.
+ */
+export async function reglerPaiement(_prev: unknown, formData: FormData) {
+  const parsed = reglerPaiementSchema.safeParse({
+    paiementId: formData.get("paiementId"),
+    activiteId: formData.get("activiteId"),
+    paye: formData.get("paye"),
+  });
+  if (!parsed.success) return { error: "Entrée invalide" };
+  const { paiementId, activiteId, paye } = parsed.data;
+
+  const supabase = await createServerSupabase();
+  if (!(await userId(supabase))) return { error: "Non authentifié" };
+
+  const { data, error } = await supabase
+    .from("activite_paiements")
+    .update(
+      paye === "oui"
+        ? { statut: "paye" as const, paye_le: new Date().toISOString().slice(0, 10) }
+        : { statut: "du" as const, paye_le: null },
+    )
+    .eq("id", paiementId)
+    .select("id")
+    .maybeSingle();
+  if (error) { logActionError("activites.reglerPaiement", error); return { error: "Mise à jour échouée" }; }
+  // Aucune ligne : la RLS a filtré. On ne dit pas si l'échéance existe.
+  if (!data) return { error: "Mise à jour échouée" };
+
+  revalidatePath(`/activites/${activiteId}`);
+  revalidatePath("/activites/alertes");
   return { ok: true as const };
 }
