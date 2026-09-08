@@ -3,6 +3,7 @@ import { PageHeader } from "@/features/shared/ui/PageHeader";
 import { ListeActivites } from "@/features/activites/ui/ListeActivites";
 import { SousOnglets, ongletValide } from "@/features/activites/ui/SousOnglets";
 import { EtatVide } from "@/features/activites/ui/EtatVide";
+import { VueSemaine } from "@/features/activites/ui/VueSemaine";
 
 // Onglet Activités (design docs/design/Onglet_Activites.dc.html).
 export default async function ActivitesPage({
@@ -30,7 +31,10 @@ export default async function ActivitesPage({
         <>
           <SousOnglets actif={actif} />
           {actif === "semaine" && (
-            <EtatVide titre={t("vide.semaineTitre")} explication={t("vide.semaineTexte")} />
+            <VueSemaine
+              semaine={typeof params.semaine === "string" ? params.semaine : aujourdhui}
+              aujourdhui={aujourdhui}
+            />
           )}
           {actif === "carte" && (
             <EtatVide titre={t("vide.carteTitre")} explication={t("vide.carteTexte")} />

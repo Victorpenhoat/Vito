@@ -1831,6 +1831,17 @@
         "facture": "Invoice",
         "autre": "Other"
       }
+    },
+    "semaine": {
+      "du": "{debut} – {fin}",
+      "precedente": "Previous week",
+      "suivante": "Next week",
+      "vacances": "School holidays · zone {zone}",
+      "conflit": "Clash — two trips at {heure}",
+      "jusqua": "until {heure}",
+      "manquee": "Missed — trip to {voyage}",
+      "interrompue": "Paused during the holidays",
+      "enConflit": "Clashes with another session"
     }
   }
 }

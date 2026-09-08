@@ -22,7 +22,7 @@ test("l'onglet Activités s'ouvre, et ses vues vivent dans l'URL", async ({ page
   await expect(page).toHaveURL(/onglet=semaine/);
   await page.reload();
   await expect(page.getByTestId("onglet-semaine")).toHaveAttribute("aria-current", "page");
-  await expect(page.getByTestId("activites-vide")).toContainText("Aucun cours cette semaine");
+  await expect(page.getByTestId("vue-semaine")).toBeVisible();
 
   // Une valeur d'onglet inventée retombe sur la vue par défaut plutôt que sur
   // un écran vide sans explication.
@@ -53,8 +53,7 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
   await login(page, "client@vito.test");
   await page.goto("/fr/activites");
 
-  // Le seed donne l'équitation à Camille ET à Tom : elle doit apparaître dans
-  // les deux groupes, sans quoi le compte de chacun mentirait.
+  // Deux membres, deux groupes : Camille (équitation, danse) et Tom (football).
   const groupes = page.getByTestId("activites-groupe");
   await expect(groupes).toHaveCount(2);
   await expect(groupes.filter({ hasText: "Camille" })).toContainText("2 activités");
@@ -77,7 +76,7 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
   await expect(page).toHaveURL(/statut=terminee/);
   await expect(page.getByTestId("activites-compte")).toContainText("1 activité");
   await page.getByTestId("filtre-statut-en_cours").click();
-  await expect(page.getByTestId("activites-compte")).toContainText("3 activités");
+  await expect(page.getByTestId("activites-compte")).toContainText("4 activités");
 
   // Effacer remet la liste entière, et l'URL avec.
   await page.getByTestId("filtres-effacer").click();
@@ -277,4 +276,41 @@ test("un document d'activité ne s'ouvre pas sans ticket", async ({ page, reques
   expect(url).toContain("/activites/");
   const sansTicket = await request.get(`/api/activites/documents/00000000-0000-4000-8000-000000000000`);
   expect(sansTicket.status()).toBe(401);
+});
+
+// Incrément 6 : la semaine. Ce qu'on vient y chercher, c'est moins ce qui a
+// lieu que ce qui se télescope.
+test("« Cette semaine » montre les séances, et signale les trajets impossibles", async ({ page }) => {
+  await login(page, "client@vito.test");
+  // Un samedi de référence : le seed y place l'équitation de Camille (10h) et
+  // le football de Tom (10h30), au même moment et à deux endroits.
+  await page.goto("/fr/activites?onglet=semaine&semaine=2026-09-12");
+
+  await expect(page.getByTestId("semaine-titre")).toContainText("septembre");
+  const samedi = page.getByTestId("semaine-jour").filter({ hasText: "samedi" });
+  await expect(samedi).toBeVisible();
+  await expect(samedi.getByTestId("semaine-seance")).toHaveCount(2);
+  await expect(samedi.getByTestId("semaine-conflit")).toContainText("Conflit");
+
+  // La séance dit son horaire de fin et qui dépose.
+  await expect(samedi.getByTestId("semaine-seance").first()).toContainText("jusqu'à 11h00");
+  await expect(samedi.getByTestId("semaine-seance").first()).toContainText("Dépose : Camille");
+  await expect(samedi.getByTestId("semaine-seance").nth(1)).toContainText("Dépose à définir");
+
+  // On navigue de semaine en semaine, et la vue vit dans l'URL.
+  await page.getByTestId("semaine-suivante").click();
+  await expect(page).toHaveURL(/semaine=2026-09-19/);
+  await expect(page.getByTestId("semaine-jour").filter({ hasText: "samedi" })).toBeVisible();
+});
+
+test("les vacances scolaires et les voyages se superposent à la semaine", async ({ page }) => {
+  await login(page, "client@vito.test");
+  // Toussaint zone C : du 17 octobre au 2 novembre, source partagée avec le
+  // planning des Voyages.
+  await page.goto("/fr/activites?onglet=semaine&semaine=2026-10-24");
+
+  const jours = page.getByTestId("semaine-jour");
+  await expect(jours.first().getByTestId("jour-vacances")).toContainText("zone C");
+  // Les vacances suspendent, elles n'annulent pas : on signale sans affirmer.
+  await expect(jours.first().getByTestId("seance-vacances")).toContainText("Interrompu");
 });

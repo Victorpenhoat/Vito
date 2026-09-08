@@ -1831,6 +1831,17 @@
         "facture": "Facture",
         "autre": "Autre"
       }
+    },
+    "semaine": {
+      "du": "{debut} – {fin}",
+      "precedente": "Semaine précédente",
+      "suivante": "Semaine suivante",
+      "vacances": "Vacances scolaires · zone {zone}",
+      "conflit": "Conflit — deux trajets à {heure}",
+      "jusqua": "jusqu'à {heure}",
+      "manquee": "Manqué — voyage à {voyage}",
+      "interrompue": "Interrompu pendant les vacances",
+      "enConflit": "En conflit avec une autre séance"
     }
   }
 }
