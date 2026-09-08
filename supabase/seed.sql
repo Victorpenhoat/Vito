@@ -287,9 +287,7 @@ insert into public.activites (id, user_id, type, nom, statut, club_nom, adresse,
 insert into public.activite_membres (activite_id, membre_id) values
   ('a0000001-0000-4000-8000-000000000001', 'f1111111-1111-4111-8111-111111111111'),
   ('a0000001-0000-4000-8000-000000000002', 'f1111111-1111-4111-8111-111111111111'),
-  ('a0000001-0000-4000-8000-000000000003', 'f1111111-1111-4111-8111-111111111111'),
-  -- Le football est à Tom : deux membres, donc deux groupes.
-  ('a0000001-0000-4000-8000-000000000001', 'f1111111-1111-4111-8111-111111111112');
+  ('a0000001-0000-4000-8000-000000000003', 'f1111111-1111-4111-8111-111111111111');
 
 insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut, heure_fin, lieu_precision, intervenant, depose_par) values
   ('a0000002-0000-4000-8000-000000000001', 'a0000001-0000-4000-8000-000000000001',
@@ -298,6 +296,17 @@ insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut
    1, '17:30', '19:00', null, null, null);
 
 -- Douze séances faites et une manquée : « 13 / 20 · 7 restantes ».
+-- Le football de Tom, samedi 10h : même heure que l'équitation de Camille.
+-- C'est le conflit de trajets que la vue « Cette semaine » doit signaler.
+insert into public.activites (id, user_id, type, nom, statut, club_nom, adresse, telephone) values
+  ('a0000001-0000-4000-8000-000000000004', '11111111-1111-1111-1111-111111111111',
+   'football', 'Football', 'en_cours', 'FC Bastide', '5 quai des Queyries, Bordeaux', '05 56 11 22 33');
+insert into public.activite_membres (activite_id, membre_id) values
+  ('a0000001-0000-4000-8000-000000000004', 'f1111111-1111-4111-8111-111111111112');
+insert into public.activite_creneaux (id, activite_id, jour_semaine, heure_debut, heure_fin, depose_par) values
+  ('a0000002-0000-4000-8000-000000000004', 'a0000001-0000-4000-8000-000000000004',
+   6, '10:30', '12:00', null);
+
 insert into public.activite_seances (activite_id, creneau_id, date, statut, motif)
 select 'a0000001-0000-4000-8000-000000000001', 'a0000002-0000-4000-8000-000000000001',
        date '2026-06-06' + (n * 7), case when n = 12 then 'manquee' else 'faite' end,

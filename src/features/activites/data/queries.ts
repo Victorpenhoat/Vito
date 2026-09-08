@@ -231,3 +231,68 @@ export const getActiviteDetail = cache(async (
     })),
   };
 });
+
+/**
+ * Ce qu'il faut pour bâtir la semaine : les activités avec leurs créneaux
+ * détaillés et les exceptions de la période.
+ *
+ * Requête distincte de la liste : celle-ci a besoin du « qui dépose » et des
+ * annulations, dont la liste n'a que faire. Les charger partout aurait alourdi
+ * l'écran le plus consulté pour servir le second.
+ */
+export const getActivitesSemaine = cache(async (du: string, au: string) => {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return { activites: [], exceptions: [] };
+
+  const { data, error } = await supabase
+    .from("activites")
+    .select(
+      `id, nom, club_nom, statut,
+       activite_membres(family_members(id, first_name, avatar_color)),
+       activite_creneaux(id, jour_semaine, heure_debut, heure_fin, valide_du, valide_au,
+                         lieu_precision, depose:family_members(id, first_name),
+                         activite_creneau_exceptions(creneau_id, date, type, heure_debut, heure_fin))`,
+    )
+    .eq("statut", "en_cours");
+  if (error) throw error;
+
+  const activites = (data ?? []).map((a) => ({
+    id: a.id,
+    nom: a.nom,
+    clubNom: a.club_nom,
+    statut: a.statut,
+    membres: (a.activite_membres ?? []).flatMap((am) =>
+      am.family_members
+        ? [{ id: am.family_members.id, prenom: am.family_members.first_name, couleur: am.family_members.avatar_color }]
+        : []),
+    creneaux: (a.activite_creneaux ?? []).map((c) => ({
+      id: c.id,
+      jourSemaine: c.jour_semaine,
+      heureDebut: c.heure_debut.slice(0, 5),
+      heureFin: c.heure_fin.slice(0, 5),
+      valideDu: c.valide_du,
+      valideAu: c.valide_au,
+      lieuPrecision: c.lieu_precision,
+      deposePar: c.depose ? { id: c.depose.id, prenom: c.depose.first_name } : null,
+    })),
+  }));
+
+  // Les exceptions de la seule semaine affichée : les charger toutes ferait
+  // grossir la requête à mesure que le carnet vieillit.
+  const exceptions = (data ?? []).flatMap((a) =>
+    (a.activite_creneaux ?? []).flatMap((c) =>
+      (c.activite_creneau_exceptions ?? [])
+        .filter((e) => e.date >= du && e.date <= au)
+        .map((e) => ({
+          creneauId: e.creneau_id,
+          date: e.date,
+          type: e.type as "annulation" | "ponctuelle",
+          heureDebut: e.heure_debut ? e.heure_debut.slice(0, 5) : null,
+          heureFin: e.heure_fin ? e.heure_fin.slice(0, 5) : null,
+        })),
+    ),
+  );
+
+  return { activites, exceptions };
+});

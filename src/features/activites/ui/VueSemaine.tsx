@@ -1,0 +1,152 @@
+import { getTranslations, getFormatter } from "next-intl/server";
+import { AlertTriangle, Plane, Sun } from "lucide-react";
+import { Link } from "@/lib/i18n/routing";
+import { getActivitesSemaine } from "../data/queries";
+import { getMesVoyages } from "@/features/voyages/data/queries";
+import { VACANCES_ZONE_C, ZONE_SCOLAIRE } from "@/features/voyages/data/vacancesScolaires";
+import {
+  joursDeLaSemaine, semaineVoisine, occurrencesDuJour, conflitsDuJour, signauxDuJour,
+} from "../domain/semaine";
+import { EtatVide } from "./EtatVide";
+
+/**
+ * « Cette semaine » : l'écran du quotidien.
+ *
+ * Il dit où il faut être — et surtout où il faut être DEUX FOIS en même temps.
+ * Les vacances scolaires viennent de la MÊME source que le planning des
+ * voyages : deux calendriers finiraient par se contredire.
+ */
+export async function VueSemaine({ semaine, aujourdhui }: {
+  /** Date de référence : n'importe quel jour de la semaine à afficher. */
+  semaine: string;
+  aujourdhui: string;
+}) {
+  const t = await getTranslations("activites");
+  const format = await getFormatter();
+  const jours = joursDeLaSemaine(semaine);
+  const [{ activites, exceptions }, voyages] = await Promise.all([
+    getActivitesSemaine(jours[0]!, jours[6]!),
+    getMesVoyages(),
+  ]);
+
+  const periodes = voyages.map((v) => ({ id: v.id, titre: v.titre, debut: v.date_debut, fin: v.date_fin }));
+  const jourLong = (j: string) =>
+    format.dateTime(new Date(`${j}T00:00:00Z`), { weekday: "long", day: "numeric", timeZone: "UTC" });
+  const borne = (j: string) =>
+    format.dateTime(new Date(`${j}T00:00:00Z`), { day: "numeric", month: "long", timeZone: "UTC" });
+
+  const contenu = jours.map((jour) => ({
+    jour,
+    occurrences: occurrencesDuJour(activites, jour, exceptions),
+    signaux: signauxDuJour(jour, VACANCES_ZONE_C, periodes),
+  }));
+  const vide = contenu.every((c) => c.occurrences.length === 0);
+
+  return (
+    <div data-testid="vue-semaine" className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <Link href={`/activites?onglet=semaine&semaine=${semaineVoisine(semaine, -1)}`}
+          data-testid="semaine-precedente" aria-label={t("semaine.precedente")}
+          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">←</Link>
+        <span data-testid="semaine-titre" className="font-serif text-lg text-ink">
+          {t("semaine.du", { debut: borne(jours[0]!), fin: borne(jours[6]!) })}
+        </span>
+        <Link href={`/activites?onglet=semaine&semaine=${semaineVoisine(semaine, 1)}`}
+          data-testid="semaine-suivante" aria-label={t("semaine.suivante")}
+          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">→</Link>
+      </div>
+
+      {vide ? (
+        <EtatVide titre={t("vide.semaineTitre")} explication={t("vide.semaineTexte")} />
+      ) : (
+        contenu.map(({ jour, occurrences, signaux }) => {
+          if (occurrences.length === 0) return null;
+          const conflits = conflitsDuJour(occurrences);
+          const enConflit = new Set(conflits.flat().map((o) => o.creneauId));
+          return (
+            <section key={jour} data-testid="semaine-jour"
+              className={`flex flex-col gap-1.5 rounded-card border px-3.5 py-2.5 ${
+                jour === aujourdhui ? "border-accent/40 bg-accent-50/30" : "border-line bg-surface"
+              }`}>
+              <header className="flex flex-wrap items-center gap-2">
+                <h3 className="text-[13px] font-semibold text-ink first-letter:uppercase">{jourLong(jour)}</h3>
+                {signaux.vacances && (
+                  <span data-testid="jour-vacances"
+                    className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
+                    <Sun size={10} aria-hidden />
+                    {t("semaine.vacances", { zone: ZONE_SCOLAIRE })}
+                  </span>
+                )}
+                {signaux.voyage && (
+                  <span data-testid="jour-voyage"
+                    className="inline-flex items-center gap-1 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-accent">
+                    <Plane size={10} aria-hidden />
+                    {signaux.voyage.titre}
+                  </span>
+                )}
+              </header>
+
+              {conflits.map((groupe, i) => (
+                <p key={i} data-testid="semaine-conflit"
+                  className="inline-flex items-center gap-1.5 rounded-control border border-danger/30 bg-danger-bg px-2.5 py-1 text-[11.5px] font-semibold text-danger">
+                  <AlertTriangle size={11} aria-hidden />
+                  {t("semaine.conflit", { heure: groupe[0]!.heureDebut.replace(":", "h") })}
+                </p>
+              ))}
+
+              <ul className="flex flex-col">
+                {occurrences.map((o) => (
+                  <li key={o.creneauId} data-testid="semaine-seance"
+                    className="flex flex-wrap items-center gap-2 border-b border-line-soft py-2 last:border-b-0">
+                    <span className="w-12 shrink-0 text-[12.5px] font-semibold tabular-nums text-ink">
+                      {o.heureDebut.replace(":", "h")}
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <Link href={`/activites/${o.activiteId}`} className="truncate text-[13.5px] text-ink hover:underline">
+                        {o.activiteNom}
+                      </Link>
+                      <span className="truncate text-[11.5px] text-muted">
+                        {[o.clubNom, o.lieuPrecision, t("semaine.jusqua", { heure: o.heureFin.replace(":", "h") })]
+                          .filter(Boolean).join(" · ")}
+                      </span>
+                      <span className="truncate text-[11.5px] text-muted">
+                        {o.deposePar
+                          ? t("horaires.depose", { nom: o.deposePar.prenom })
+                          : t("horaires.deposeADefinir")}
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 flex-wrap items-center gap-1.5">
+                      {o.membres.map((m) => (
+                        <span key={m.id} aria-hidden
+                          className="grid h-6 w-6 place-items-center rounded-full text-[10px] font-semibold text-white"
+                          style={{ background: m.couleur ?? "var(--line)" }}>
+                          {m.prenom.slice(0, 1).toUpperCase()}
+                        </span>
+                      ))}
+                      {/* Un voyage fait MANQUER la séance ; les vacances la
+                          suspendent seulement — un club ferme souvent, mais pas
+                          toujours. On signale, on n'affirme pas. */}
+                      {signaux.voyage && (
+                        <span data-testid="seance-manquee" className="rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-accent">
+                          {t("semaine.manquee", { voyage: signaux.voyage.titre })}
+                        </span>
+                      )}
+                      {!signaux.voyage && signaux.vacances && (
+                        <span data-testid="seance-vacances" className="rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
+                          {t("semaine.interrompue")}
+                        </span>
+                      )}
+                      {enConflit.has(o.creneauId) && (
+                        <AlertTriangle size={13} className="text-danger" aria-label={t("semaine.enConflit")} />
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })
+      )}
+    </div>
+  );
+}
