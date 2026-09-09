@@ -401,7 +401,8 @@
         "common": "Común",
         "restaurant": "Restaurante",
         "hotel": "Hotel",
-        "vin": "Vino"
+        "vin": "Vino",
+        "activite": "Actividades"
       },
       "usages": "{n, plural, =0 {ninguna dirección} one {# dirección} other {# direcciones}}",
       "systeme": "sistema",
@@ -1730,14 +1731,16 @@
       "tennis": "Tenis",
       "natation": "Natación",
       "theatre": "Teatro",
-      "autre": "Otra"
+      "autre": "Otra",
+      "soutien_scolaire": "Clases de apoyo"
     },
     "filtres": {
       "membre": "Miembro",
       "statut": "Estado",
       "type": "Tipo",
       "tag": "Etiquetas",
-      "effacer": "Borrar"
+      "effacer": "Borrar",
+      "retirer": "Quitar el filtro {libelle}"
     },
     "annuler": "Cancelar",
     "sections": {
@@ -1797,11 +1800,22 @@
         "unique": "Una vez",
         "mensuelle": "Mensual",
         "trimestrielle": "Trimestral",
-        "annuelle": "Anual"
+        "annuelle": "Anual",
+        "seance": "Por sesión"
       },
       "enregistrer": "Guardar",
       "marquerRegle": "Marcar pagado",
-      "defaire": "Deshacer el pago"
+      "defaire": "Deshacer el pago",
+      "moyen": "Forma de pago",
+      "sansMoyen": "Forma sin indicar",
+      "moyens": {
+        "prelevement": "Domiciliación",
+        "carte": "Tarjeta",
+        "virement": "Transferencia",
+        "cheque": "Cheque",
+        "especes": "Efectivo",
+        "autre": "Otra"
+      }
     },
     "nouvelle": {
       "ouvrir": "Nueva actividad",
@@ -1812,7 +1826,9 @@
       "telephone": "Teléfono del club",
       "formule": "Número de sesiones (opcional)",
       "membres": "Quién la practica",
-      "enregistrer": "Guardar"
+      "enregistrer": "Guardar",
+      "contactNom": "Contacto (nombre, rol)",
+      "contactTel": "Su teléfono"
     },
     "jours": {
       "1": "lunes",
@@ -1884,7 +1900,12 @@
       "traiter": "Tratar",
       "rienTitre": "Nada pendiente",
       "rienTexte": "Ningún pago atrasado ni documento a punto de caducar.",
-      "ouvrir": "Alertas"
+      "ouvrir": "Alertas",
+      "verbes": {
+        "regler": "Pagar",
+        "renouveler": "Renovar",
+        "ouvrir": "Abrir"
+      }
     },
     "membre": {
       "enCours": "{n, plural, one {# actividad en curso} other {# actividades en curso}}",

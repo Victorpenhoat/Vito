@@ -32,7 +32,7 @@ export async function VueCarte({ params, aujourdhui }: {
   return (
     <div className="flex flex-col gap-3">
       {membresConnus.length > 0 && (
-        <FiltresActivites dimensions={[{
+        <FiltresActivites params={params} dimensions={[{
           cle: "membre", libelle: t("filtres.membre"),
           options: membresConnus.map((m) => ({ valeur: m.id, libelle: m.prenom, couleur: m.couleur })),
         }]} />

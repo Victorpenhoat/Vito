@@ -401,7 +401,8 @@
         "common": "Commun",
         "restaurant": "Restaurant",
         "hotel": "Hôtel",
-        "vin": "Vin"
+        "vin": "Vin",
+        "activite": "Activités"
       },
       "usages": "{n, plural, =0 {aucune adresse} one {# adresse} other {# adresses}}",
       "systeme": "système",
@@ -1730,14 +1731,16 @@
       "tennis": "Tennis",
       "natation": "Natation",
       "theatre": "Théâtre",
-      "autre": "Autre"
+      "autre": "Autre",
+      "soutien_scolaire": "Soutien scolaire"
     },
     "filtres": {
       "membre": "Membre",
       "statut": "Statut",
       "type": "Type",
       "tag": "Tags",
-      "effacer": "Effacer"
+      "effacer": "Effacer",
+      "retirer": "Retirer le filtre {libelle}"
     },
     "annuler": "Annuler",
     "sections": {
@@ -1797,11 +1800,22 @@
         "unique": "Une fois",
         "mensuelle": "Mensuelle",
         "trimestrielle": "Trimestrielle",
-        "annuelle": "Annuelle"
+        "annuelle": "Annuelle",
+        "seance": "À la séance"
       },
       "enregistrer": "Enregistrer",
       "marquerRegle": "Marquer réglé",
-      "defaire": "Annuler le règlement"
+      "defaire": "Annuler le règlement",
+      "moyen": "Mode de règlement",
+      "sansMoyen": "Mode non précisé",
+      "moyens": {
+        "prelevement": "Prélèvement",
+        "carte": "Carte",
+        "virement": "Virement",
+        "cheque": "Chèque",
+        "especes": "Espèces",
+        "autre": "Autre"
+      }
     },
     "nouvelle": {
       "ouvrir": "Nouvelle activité",
@@ -1812,7 +1826,9 @@
       "telephone": "Téléphone du club",
       "formule": "Nombre de séances (facultatif)",
       "membres": "Qui la pratique",
-      "enregistrer": "Enregistrer"
+      "enregistrer": "Enregistrer",
+      "contactNom": "Contact (nom, rôle)",
+      "contactTel": "Son téléphone"
     },
     "jours": {
       "1": "lundi",
@@ -1884,7 +1900,12 @@
       "traiter": "Traiter",
       "rienTitre": "Rien à traiter",
       "rienTexte": "Ni paiement en retard, ni document sur le point d'expirer.",
-      "ouvrir": "Alertes"
+      "ouvrir": "Alertes",
+      "verbes": {
+        "regler": "Régler",
+        "renouveler": "Renouveler",
+        "ouvrir": "Ouvrir"
+      }
     },
     "membre": {
       "enCours": "{n, plural, one {# activité en cours} other {# activités en cours}}",

@@ -102,6 +102,19 @@ export function construireAlertes(source: SourceAlertes, aujourdhui: string): Al
   });
 }
 
+/**
+ * Le verbe de l'action, pas un « Traiter » générique.
+ *
+ * L'écran des alertes est celui qu'on ouvre POUR AGIR : « Régler » et
+ * « Renouveler » disent quoi faire, « Traiter » ne dit rien.
+ */
+export function verbeAlerte(alerte: Alerte): "regler" | "renouveler" | "ouvrir" {
+  if (alerte.genre === "paiement") return "regler";
+  // Un document expiré se renouvelle ; celui qui approche s'ouvre pour voir
+  // s'il faut le refaire.
+  return alerte.urgence === "en_retard" ? "renouveler" : "ouvrir";
+}
+
 /** Les trois sections de la maquette, dans l'ordre. Les vides sont omises. */
 export function grouperAlertes(alertes: Alerte[]): { urgence: Urgence; alertes: Alerte[] }[] {
   return (["en_retard", "proche", "plus_tard"] as const)

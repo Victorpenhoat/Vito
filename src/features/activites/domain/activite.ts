@@ -5,7 +5,8 @@
 // en base — un compteur se désynchronise, une prochaine date se périme.
 
 export const TYPES_ACTIVITE = [
-  "equitation", "danse", "football", "musique", "tennis", "natation", "theatre", "autre",
+  "equitation", "danse", "football", "musique", "tennis", "natation", "theatre",
+  "soutien_scolaire", "autre",
 ] as const;
 export type TypeActivite = (typeof TYPES_ACTIVITE)[number];
 

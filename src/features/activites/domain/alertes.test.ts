@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { construireAlertes, grouperAlertes, nombreAlertesUrgentes, type SourceAlertes } from "./alertes";
+import {
+  construireAlertes, grouperAlertes, nombreAlertesUrgentes, verbeAlerte, type SourceAlertes,
+} from "./alertes";
 
 const AUJ = "2026-09-07";
 
@@ -74,6 +76,25 @@ describe("construireAlertes", () => {
     expect(a.map((x) => x.cle)).toEqual([
       "paiement:retard", "paiement:proche1", "paiement:proche2", "paiement:loin",
     ]);
+  });
+});
+
+describe("verbeAlerte", () => {
+  it("dit quoi faire plutôt que « traiter »", () => {
+    const paiement = construireAlertes(source({
+      paiements: [{ id: "p", montantCents: 1, echeance: "2026-09-01", statut: "du" }],
+    }), AUJ)[0]!;
+    expect(verbeAlerte(paiement)).toBe("regler");
+
+    const expire = construireAlertes(source({
+      documents: [{ id: "d", type: "certificat_medical", expireLe: "2026-08-01" }],
+    }), AUJ)[0]!;
+    expect(verbeAlerte(expire)).toBe("renouveler");
+
+    const bientot = construireAlertes(source({
+      documents: [{ id: "d", type: "licence", expireLe: "2026-09-20" }],
+    }), AUJ)[0]!;
+    expect(verbeAlerte(bientot)).toBe("ouvrir");
   });
 });
 

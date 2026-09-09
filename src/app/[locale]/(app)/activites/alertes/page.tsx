@@ -3,7 +3,7 @@ import { AlertTriangle, Clock, CalendarClock } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
 import { getAlertesActivites } from "@/features/activites/data/queries";
-import { construireAlertes, grouperAlertes } from "@/features/activites/domain/alertes";
+import { construireAlertes, grouperAlertes, verbeAlerte } from "@/features/activites/domain/alertes";
 import { EtatVide } from "@/features/activites/ui/EtatVide";
 
 const ICONE = { en_retard: AlertTriangle, proche: Clock, plus_tard: CalendarClock };
@@ -72,7 +72,7 @@ export default async function AlertesPage() {
                     )}
                     <Link href={`/activites/${a.activiteId}`} data-testid="alerte-traiter"
                       className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
-                      {t("alertes.traiter")}
+                      {t(`alertes.verbes.${verbeAlerte(a)}`)}
                     </Link>
                   </li>
                 ))}

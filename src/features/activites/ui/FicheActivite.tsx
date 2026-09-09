@@ -165,6 +165,20 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer, poin
             </a>
           </p>
         )}
+        {activite.contactTelephone && (
+          <p className="flex items-center gap-2 text-[13.5px] text-ink">
+            <Phone size={13} className="shrink-0 text-accent" aria-hidden />
+            <span className="min-w-0 flex-1">
+              {activite.contactTelephone}
+              {/* Le rôle, pas seulement le numéro : c'est lui qu'on appelle
+                  quand l'enfant est en retard. */}
+              <span className="block text-[11.5px] text-muted">{activite.contactNom}</span>
+            </span>
+            <a href={`tel:${activite.contactTelephone}`} className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
+              {t("appeler")}
+            </a>
+          </p>
+        )}
         {activite.espaceFamilleUrl && (
           <p className="flex items-center gap-2 text-[13.5px] text-ink">
             <Globe size={13} className="shrink-0 text-accent" aria-hidden />

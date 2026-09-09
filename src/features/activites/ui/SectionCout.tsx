@@ -12,7 +12,10 @@ const TEINTE: Record<string, string> = {
   a_venir: "border-line bg-surface-hover text-muted",
 };
 
-type PaiementAffiche = Paiement & { libelle: string; devise: string };
+type PaiementAffiche = Paiement & {
+  libelle: string; devise: string;
+  periodicite: string | null; moyen: string | null;
+};
 
 /**
  * Le coût : ce qui est réglé, ce qui est dû, et le geste d'un clic pour dire
@@ -71,7 +74,15 @@ export function SectionCout({ activiteId, paiements, aujourdhui }: {
               const etat = etatEcheance(p, aujourdhui);
               return (
                 <li key={p.id} data-testid="fiche-echeance" className="flex flex-wrap items-center gap-2 border-b border-line-soft py-2 last:border-b-0">
-                  <span className="min-w-0 flex-1 truncate text-[13px] text-ink">{p.libelle}</span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[13px] text-ink">{p.libelle}</span>
+                    {(p.periodicite || p.moyen) && (
+                      <span className="truncate text-[11px] text-faint">
+                        {[p.periodicite && t(`cout.periodicites.${p.periodicite}`),
+                          p.moyen && t(`cout.moyens.${p.moyen}`)].filter(Boolean).join(" · ")}
+                      </span>
+                    )}
+                  </span>
                   <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10.5px] font-semibold ${TEINTE[etat]}`}>
                     {t(`cout.etats.${etat}`)}
                   </span>
@@ -112,12 +123,26 @@ export function SectionCout({ activiteId, paiements, aujourdhui }: {
             <input type="date" name="echeance" data-testid="paiement-echeance"
               aria-label={t("cout.echeance")} className={`${champ} min-w-0 flex-1`} />
           </div>
-          <select name="periodicite" data-testid="paiement-periodicite" aria-label={t("cout.periodicite")} defaultValue="" className={champ}>
-            <option value="">{t("cout.sansPeriodicite")}</option>
-            {(["unique", "mensuelle", "trimestrielle", "annuelle"] as const).map((p) => (
-              <option key={p} value={p}>{t(`cout.periodicites.${p}`)}</option>
-            ))}
-          </select>
+          <div className="flex flex-wrap gap-2">
+            <select name="periodicite" data-testid="paiement-periodicite" aria-label={t("cout.periodicite")}
+              defaultValue="" className={`${champ} min-w-0 flex-1`}>
+              <option value="">{t("cout.sansPeriodicite")}</option>
+              {(["seance", "unique", "mensuelle", "trimestrielle", "annuelle"] as const).map((p) => (
+                <option key={p} value={p}>{t(`cout.periodicites.${p}`)}</option>
+              ))}
+            </select>
+            {/* Le mode de règlement était accepté par l'action et lu par les
+                requêtes, mais AUCUN formulaire ne le postait : une colonne que
+                seul ce champ pouvait remplir restait vide sans que rien ne
+                lève. */}
+            <select name="moyen" data-testid="paiement-moyen" aria-label={t("cout.moyen")}
+              defaultValue="" className={`${champ} min-w-0 flex-1`}>
+              <option value="">{t("cout.sansMoyen")}</option>
+              {(["prelevement", "carte", "virement", "cheque", "especes", "autre"] as const).map((m) => (
+                <option key={m} value={m}>{t(`cout.moyens.${m}`)}</option>
+              ))}
+            </select>
+          </div>
           {ajout && "error" in ajout && ajout.error && (
             <p role="alert" className="text-[12px] text-danger">{ajout.error}</p>
           )}

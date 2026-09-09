@@ -401,7 +401,8 @@
         "common": "Shared",
         "restaurant": "Restaurant",
         "hotel": "Hotel",
-        "vin": "Wine"
+        "vin": "Wine",
+        "activite": "Activities"
       },
       "usages": "{n, plural, =0 {no places} one {# place} other {# places}}",
       "systeme": "system",
@@ -1730,14 +1731,16 @@
       "tennis": "Tennis",
       "natation": "Swimming",
       "theatre": "Theatre",
-      "autre": "Other"
+      "autre": "Other",
+      "soutien_scolaire": "Tutoring"
     },
     "filtres": {
       "membre": "Member",
       "statut": "Status",
       "type": "Type",
       "tag": "Tags",
-      "effacer": "Clear"
+      "effacer": "Clear",
+      "retirer": "Remove the {libelle} filter"
     },
     "annuler": "Cancel",
     "sections": {
@@ -1797,11 +1800,22 @@
         "unique": "One-off",
         "mensuelle": "Monthly",
         "trimestrielle": "Quarterly",
-        "annuelle": "Yearly"
+        "annuelle": "Yearly",
+        "seance": "Per session"
       },
       "enregistrer": "Save",
       "marquerRegle": "Mark as paid",
-      "defaire": "Undo payment"
+      "defaire": "Undo payment",
+      "moyen": "Payment method",
+      "sansMoyen": "Method not set",
+      "moyens": {
+        "prelevement": "Direct debit",
+        "carte": "Card",
+        "virement": "Transfer",
+        "cheque": "Cheque",
+        "especes": "Cash",
+        "autre": "Other"
+      }
     },
     "nouvelle": {
       "ouvrir": "New activity",
@@ -1812,7 +1826,9 @@
       "telephone": "Club phone",
       "formule": "Number of sessions (optional)",
       "membres": "Who attends",
-      "enregistrer": "Save"
+      "enregistrer": "Save",
+      "contactNom": "Contact (name, role)",
+      "contactTel": "Their phone"
     },
     "jours": {
       "1": "Monday",
@@ -1884,7 +1900,12 @@
       "traiter": "Handle",
       "rienTitre": "Nothing to handle",
       "rienTexte": "No late payment, no document about to expire.",
-      "ouvrir": "Alerts"
+      "ouvrir": "Alerts",
+      "verbes": {
+        "regler": "Pay",
+        "renouveler": "Renew",
+        "ouvrir": "Open"
+      }
     },
     "membre": {
       "enCours": "{n, plural, one {# ongoing activity} other {# ongoing activities}}",

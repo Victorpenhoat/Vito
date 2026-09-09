@@ -33,10 +33,12 @@ export function RechercheActivites() {
       router.replace(cible, { scroll: false });
     }, 250);
     return () => clearTimeout(pause);
-    // `params` change à chaque navigation ; le relire ici relancerait la
-    // recherche en boucle. Seule la saisie doit la déclencher.
+    // `dansLUrl` est dans les dépendances À DESSEIN : si une navigation était
+    // en vol au moment du report, celle-ci a pu se perdre. En réagissant au
+    // retour de l'URL, l'effet se rattrape — et il ne boucle pas, puisque la
+    // garde ci-dessus le fait sortir une fois les deux alignés.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saisie]);
+  }, [saisie, dansLUrl]);
 
   return (
     <label className="flex items-center gap-2 rounded-control border border-line bg-surface px-3 py-2">

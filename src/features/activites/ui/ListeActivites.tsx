@@ -45,6 +45,14 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
   });
   const groupes = grouperParMembre(filtrees);
 
+  const nomsDesFiltres = [
+    ...liste(params.membre).map((id) => toutes.flatMap((a) => a.membres).find((m) => m.id === id)?.prenom),
+    ...(actif === "tous" ? liste(params.statut).map((s) => t(`statuts.${s}`)) : []),
+    ...liste(params.type).map((ty) => t(`types.${ty}`)),
+    ...liste(params.tag).map((slug) => toutes.flatMap((a) => a.tags).find((tg) => tg.slug === slug)?.label),
+    ...(recherche ? [`« ${recherche} »`] : []),
+  ].filter(Boolean) as string[];
+
   // Les options viennent de ce que le carnet contient : proposer un type
   // qu'aucune activité ne porte donnerait un filtre qui ne filtre rien.
   const membresConnus = [...new Map(toutes.flatMap((a) => a.membres).map((m) => [m.id, m])).values()];
@@ -67,6 +75,7 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
 
       {actif === "tous" && toutes.length > 0 && (
         <FiltresActivites
+          params={params}
           dimensions={[
             { cle: "membre", libelle: t("filtres.membre"),
               options: membresConnus.map((m) => ({ valeur: m.id, libelle: m.prenom, couleur: m.couleur })) },
@@ -91,7 +100,9 @@ export async function ListeActivites({ params, actif, aujourdhui, heure, detail,
       ) : (
         <>
           <p data-testid="activites-compte" className="text-[11.5px] text-muted">
-            {t("compte", { n: filtrees.length })}
+            {/* Le compte SEUL laisse la question « 3 sur combien, et pourquoi
+                ceux-là ? ». Nommer les filtres y répond sans les rouvrir. */}
+            {[t("compte", { n: filtrees.length }), ...nomsDesFiltres].join(" · ")}
           </p>
           <div className="flex flex-col gap-4">
             {groupes.map((g) => (

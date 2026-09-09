@@ -1,47 +1,84 @@
-"use client";
 import { X } from "lucide-react";
-import { useRouter, usePathname } from "@/lib/i18n/routing";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/lib/i18n/routing";
 
 export type OptionFiltre = { valeur: string; libelle: string; couleur?: string | null };
+export type DimensionFiltre = { cle: string; libelle: string; options: OptionFiltre[] };
 
 /**
- * Filtres cumulables de la vue « Tous ».
+ * Filtres cumulables, rendus par le SERVEUR : ce sont des liens, pas des
+ * boutons.
  *
- * Ils vivent dans l'URL, comme les sous-onglets : un carnet filtré se partage,
- * se recharge et se retrouve dans l'historique. Un état local aurait tout perdu
- * au premier retour arrière.
+ * Comme les sous-onglets, ils vivent dans l'URL — un carnet filtré se partage
+ * et survit au retour arrière. Et puisqu'ils ne dépendent d'aucun script, ils
+ * répondent avant même l'hydratation : un clic rapide n'est jamais perdu.
  */
-export function FiltresActivites({ dimensions }: {
-  dimensions: { cle: string; libelle: string; options: OptionFiltre[] }[];
+export async function FiltresActivites({ params, dimensions }: {
+  params: Record<string, string | string[] | undefined>;
+  dimensions: DimensionFiltre[];
 }) {
-  const t = useTranslations("activites.filtres");
-  const router = useRouter();
-  const pathname = usePathname();
-  const params = useSearchParams();
+  const t = await getTranslations("activites.filtres");
 
-  const actifs = (cle: string) => params.getAll(cle);
-  const actifsTotal = dimensions.reduce((n, d) => n + actifs(d.cle).length, 0);
+  const actifs = (cle: string): string[] => {
+    const v = params[cle];
+    return v === undefined ? [] : Array.isArray(v) ? v : [v];
+  };
 
-  function basculer(cle: string, valeur: string) {
-    const suivants = new URLSearchParams(params);
-    const deja = params.getAll(cle);
-    suivants.delete(cle);
-    for (const v of deja.includes(valeur) ? deja.filter((x) => x !== valeur) : [...deja, valeur]) {
-      suivants.append(cle, v);
+  /** L'URL qu'obtient un clic : la valeur bascule, le reste ne bouge pas. */
+  const lien = (cle: string, valeur: string) => {
+    const suivants = new URLSearchParams();
+    for (const [k, v] of Object.entries(params)) {
+      if (k === cle || v === undefined) continue;
+      for (const x of Array.isArray(v) ? v : [v]) suivants.append(k, x);
     }
-    router.replace(`${pathname}?${suivants.toString()}`, { scroll: false });
-  }
+    const deja = actifs(cle);
+    for (const x of deja.includes(valeur) ? deja.filter((y) => y !== valeur) : [...deja, valeur]) {
+      suivants.append(cle, x);
+    }
+    const qs = suivants.toString();
+    return qs ? `/activites?${qs}` : "/activites";
+  };
 
-  function effacer() {
-    const suivants = new URLSearchParams(params);
-    for (const d of dimensions) suivants.delete(d.cle);
-    router.replace(suivants.size ? `${pathname}?${suivants.toString()}` : pathname, { scroll: false });
-  }
+  const sansFiltres = () => {
+    const suivants = new URLSearchParams();
+    for (const [k, v] of Object.entries(params)) {
+      if (dimensions.some((d) => d.cle === k) || v === undefined) continue;
+      for (const x of Array.isArray(v) ? v : [v]) suivants.append(k, x);
+    }
+    const qs = suivants.toString();
+    return qs ? `/activites?${qs}` : "/activites";
+  };
+
+  // Ce qui filtre, dit en toutes lettres et retirable une par une : les cases
+  // cochées le montrent déjà, mais éparpillées dans quatre dimensions. Cette
+  // ligne rassemble la réponse à « pourquoi je ne vois que ça ? ».
+  const posees = dimensions.flatMap((d) =>
+    actifs(d.cle).flatMap((v) => {
+      const o = d.options.find((x) => x.valeur === v);
+      return o ? [{ cle: d.cle, ...o }] : [];
+    }),
+  );
 
   return (
     <div data-testid="activites-filtres" className="flex flex-col gap-2">
+      {posees.length > 0 && (
+        <div data-testid="filtres-poses" className="flex flex-wrap items-center gap-1.5">
+          {posees.map((o) => (
+            <Link key={`${o.cle}-${o.valeur}`} href={lien(o.cle, o.valeur)}
+              data-testid={`filtre-pose-${o.valeur}`} aria-label={t("retirer", { libelle: o.libelle })}
+              className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-ink px-3 py-1 text-[12px] font-medium text-white">
+              {o.couleur && <span className="h-2 w-2 rounded-full" style={{ background: o.couleur }} aria-hidden />}
+              {o.libelle}
+              <X size={11} aria-hidden />
+            </Link>
+          ))}
+          <Link href={sansFiltres()} data-testid="filtres-effacer"
+            className="text-[11.5px] font-semibold text-accent hover:underline">
+            {t("effacer")}
+          </Link>
+        </div>
+      )}
+
       {dimensions.map((d) => (
         <div key={d.cle} className="flex flex-wrap items-center gap-1.5">
           <span className="w-[62px] shrink-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-faint">
@@ -50,9 +87,8 @@ export function FiltresActivites({ dimensions }: {
           {d.options.map((o) => {
             const choisi = actifs(d.cle).includes(o.valeur);
             return (
-              <button key={o.valeur} type="button" aria-pressed={choisi}
+              <Link key={o.valeur} href={lien(d.cle, o.valeur)} aria-pressed={choisi}
                 data-testid={`filtre-${d.cle}-${o.valeur}`}
-                onClick={() => basculer(d.cle, o.valeur)}
                 className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] font-medium transition-colors ${
                   choisi ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:border-accent/30 hover:text-ink"
                 }`}>
@@ -61,17 +97,11 @@ export function FiltresActivites({ dimensions }: {
                 )}
                 {o.libelle}
                 {choisi && <X size={11} aria-hidden />}
-              </button>
+              </Link>
             );
           })}
         </div>
       ))}
-      {actifsTotal > 0 && (
-        <button type="button" data-testid="filtres-effacer" onClick={effacer}
-          className="self-start text-[11.5px] font-semibold text-accent hover:underline">
-          {t("effacer")}
-        </button>
-      )}
     </div>
   );
 }

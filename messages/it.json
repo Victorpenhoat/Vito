@@ -401,7 +401,8 @@
         "common": "Comune",
         "restaurant": "Ristorante",
         "hotel": "Hotel",
-        "vin": "Vino"
+        "vin": "Vino",
+        "activite": "Attività"
       },
       "usages": "{n, plural, =0 {nessun indirizzo} one {# indirizzo} other {# indirizzi}}",
       "systeme": "sistema",
@@ -1730,14 +1731,16 @@
       "tennis": "Tennis",
       "natation": "Nuoto",
       "theatre": "Teatro",
-      "autre": "Altro"
+      "autre": "Altro",
+      "soutien_scolaire": "Ripetizioni"
     },
     "filtres": {
       "membre": "Membro",
       "statut": "Stato",
       "type": "Tipo",
       "tag": "Tag",
-      "effacer": "Cancella"
+      "effacer": "Cancella",
+      "retirer": "Togli il filtro {libelle}"
     },
     "annuler": "Annulla",
     "sections": {
@@ -1797,11 +1800,22 @@
         "unique": "Una volta",
         "mensuelle": "Mensile",
         "trimestrielle": "Trimestrale",
-        "annuelle": "Annuale"
+        "annuelle": "Annuale",
+        "seance": "A lezione"
       },
       "enregistrer": "Salva",
       "marquerRegle": "Segna pagato",
-      "defaire": "Annulla il pagamento"
+      "defaire": "Annulla il pagamento",
+      "moyen": "Modalità di pagamento",
+      "sansMoyen": "Modalità non indicata",
+      "moyens": {
+        "prelevement": "Addebito",
+        "carte": "Carta",
+        "virement": "Bonifico",
+        "cheque": "Assegno",
+        "especes": "Contanti",
+        "autre": "Altro"
+      }
     },
     "nouvelle": {
       "ouvrir": "Nuova attività",
@@ -1812,7 +1826,9 @@
       "telephone": "Telefono del club",
       "formule": "Numero di lezioni (facoltativo)",
       "membres": "Chi la pratica",
-      "enregistrer": "Salva"
+      "enregistrer": "Salva",
+      "contactNom": "Contatto (nome, ruolo)",
+      "contactTel": "Il suo telefono"
     },
     "jours": {
       "1": "lunedì",
@@ -1884,7 +1900,12 @@
       "traiter": "Gestisci",
       "rienTitre": "Niente da gestire",
       "rienTexte": "Nessun pagamento in ritardo né documento in scadenza.",
-      "ouvrir": "Avvisi"
+      "ouvrir": "Avvisi",
+      "verbes": {
+        "regler": "Paga",
+        "renouveler": "Rinnova",
+        "ouvrir": "Apri"
+      }
     },
     "membre": {
       "enCours": "{n, plural, one {# attività in corso} other {# attività in corso}}",
