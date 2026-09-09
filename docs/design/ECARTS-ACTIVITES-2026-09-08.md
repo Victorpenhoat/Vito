@@ -9,6 +9,21 @@ la maquette **au mot près**.
 
 Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
 
+> **État au 9 septembre, après #179.** Sept des onze écarts sont comblés, un
+> l'est en partie, trois restent ouverts. Le détail est marqué **au fil du
+> document** : chaque écart garde son constat d'origine lisible, avec la PR qui
+> l'a comblé. Un document d'écarts qui se vide de son contenu perd sa valeur
+> d'archive — dans six mois, savoir *pourquoi* le mode de règlement avait été
+> oublié vaut mieux que constater qu'il est là.
+>
+> · **Comblés (#179)** : mode de règlement · « à la séance » · « soutien
+>   scolaire » · puces de filtre retirables · en-tête nommant les filtres ·
+>   second contact avec son rôle. **Comblé (#177)** : temps de trajet.
+> · **En partie (#179)** : verbes d'alerte — trois au lieu de quatre, et
+>   l'affectation diffère.
+> · **Ouverts** : semaine desktop en 7 colonnes · covoiturage · autocomplétion
+>   de l'adresse du club · swipe.
+
 ⚠️ **CET AUDIT A ENJAMBÉ DU TRAVAIL EN VOL — depuis résolu (mise à jour du
 9 septembre).** À l'écriture, l'arbre portait 11 fichiers modifiés et 4 non
 suivis, datés du 8 septembre 18h09–18h11, que `git log` ne montrait pas. Ce lot
@@ -31,9 +46,17 @@ degré.
 
 ---
 
-## 1. Le mode de règlement est un champ mort
+## 1. Le mode de règlement est un champ mort — ✅ COMBLÉ (#179)
 
-C'est l'écart le plus grave, et le seul qui touche la donnée.
+C'était l'écart le plus grave, et le seul qui touchait la donnée.
+
+> **Comblé le 9 septembre** : `SectionCout.tsx` poste désormais `moyen`, et les
+> libellés existent (`cout.moyen` = « Mode de règlement », les six valeurs, plus
+> `cout.sansMoyen` = « Mode non précisé » — cet état vide était nécessaire, les
+> échéances déjà saisies n'ayant aucun moyen).
+> ⚠️ Le constat qui suit est **conservé parce qu'il explique comment ça arrive** :
+> un chemin d'écriture complet de bout en bout sauf son premier maillon, sans
+> qu'aucune erreur ne se lève.
 
 | | |
 |---|---|
@@ -52,7 +75,7 @@ câblé, et qui reste donc vide sans que personne le sache.
 Coût de reprise : un sélecteur dans `SectionCout`, six libellés i18n, un
 affichage sur la fiche. Tout le reste est déjà là.
 
-## 2. La semaine desktop n'a pas la forme dessinée
+## 2. La semaine desktop n'a pas la forme dessinée — ⬜ OUVERT
 
 | | |
 |---|---|
@@ -67,31 +90,33 @@ affichage sur la fiche. Tout le reste est déjà là.
 La composition desktop **1+5** (liste + fiche côte à côte), elle, est conforme
 (`ListeActivites.tsx`, grille `lg:grid-cols-[1fr_460px]`).
 
-## 3. Trois absences franches
+## 3. Trois absences franches — ✅ deux comblées (#179), ⬜ une ouverte
 
 | Maquette | État |
 |---|---|
-| **Covoiturage**, à côté de « Qui dépose » (écran 7) | **Zéro occurrence** dans `src`, `messages` et les migrations |
-| Périodicité **« À la séance »** (écran 9) | L'énumération s'arrête à `annuelle` : `["unique","mensuelle","trimestrielle","annuelle"]` |
-| Type d'activité **« Soutien scolaire »** (écran 6) | Zéro occurrence. Les 8 autres types de la maquette sont là |
+| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ⬜ **Toujours zéro occurrence** dans `src`, `messages` et les migrations |
+| Périodicité **« À la séance »** (écran 9) | ✅ Ajoutée (#179) : `check` élargi à `'seance'`, clé « À la séance » |
+| Type d'activité **« Soutien scolaire »** (écran 6) | ✅ Ajouté (#179) : `soutien_scolaire` en base, dans le schéma et au formulaire |
 
 ⚠️ Le covoiturage n'est pas un libellé manquant : il n'y a ni colonne, ni
 champ, ni notion. C'est le plus coûteux des trois.
 
-## 4. Trois appauvrissements
+## 4. Trois appauvrissements — ✅ deux comblés, 🟨 un en partie (#179)
 
 | Maquette | Construit |
 |---|---|
-| Chaque alerte porte **son verbe** : « Régler » (paiement), « Ajouter » (assurance manquante), « Renouveler » (certificat), « Ouvrir » (inscription) | Une seule action générique — seuls `alertes.traiter` et `alertes.ouvrir` existent |
-| Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | Aucun ✕ dans `FiltresActivites.tsx`. Le rail desktop par sections (Membre / Statut / Type / Tags) est en revanche conforme |
-| En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | `t("compte", { n })` → « 3 activités » |
+| Chaque alerte porte **son verbe** : « Régler » (paiement), « Ajouter » (assurance expirée), « Renouveler » (certificat qui expire), « Ouvrir » (inscription) | 🟨 **En partie** (#179) : `verbeAlerte` rend **trois** verbes — `regler`, `renouveler`, `ouvrir` — au lieu de quatre, et leur **affectation est décalée d'un cran** : la maquette met « Ajouter » sur le document *expiré* et « Renouveler » sur celui qui *expire bientôt* ; le code met « Renouveler » sur l'expiré et « Ouvrir » sur l'imminent. Le progrès est réel — trois verbes plutôt qu'un « Traiter » muet — la correspondance ne l'est pas |
+| Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | ✅ Comblé (#179) : clé `filtres.retirer` = « Retirer le filtre {libelle} » |
+| En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | ✅ Comblé (#179) : `ListeActivites` joint le compte et `nomsDesFiltres` — *« le compte SEUL laisse la question 3 sur combien, et pourquoi ceux-là »* |
 
-## 5. Deux détails
+## 5. Deux détails — ✅ un comblé (#179), ⬜ deux ouverts
 
-- **Un seul téléphone.** La migration porte `telephone text` (ligne 31) ; la
-  maquette montre **deux contacts avec leur rôle** : « 05 56 22 41 08 · club »
-  et « 06 12 88 04 51 · Claire, monitrice ».
-- **Pas d'autocomplétion d'adresse au formulaire d'activité.** La maquette
+- ✅ **Un seul téléphone — comblé (#179).** La migration `00058` ajoute
+  `contact_nom` et `contact_telephone`, sous une contrainte que le constat
+  d'origine ne demandait pas et qui vaut mieux que lui :
+  `num_nonnulls(contact_nom, contact_telephone) in (0, 2)` — *un numéro sans nom
+  ne dit pas qui décroche ; un nom sans numéro n'appelle personne*.
+- ⬜ **Pas d'autocomplétion d'adresse au formulaire d'activité.** La maquette
   montre deux suggestions départageant « 12 route du Cap, 33470 Le Teich » de
   « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » — c'est-à-dire exactement
   le cas où la saisie libre se trompe.
@@ -100,8 +125,8 @@ champ, ni notion. C'est le plus coûteux des trois.
   l'adresse **du foyer** (`famille/data/actions.ts`), pas sur celle du club.
   La brique est donc là ; c'est son emploi sur ce formulaire qui manque — un
   rebranchement, pas un choix de service.
-- Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club / itinéraire »)
-  n'existe pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
+- ⬜ Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club /
+  itinéraire ») n'existe toujours pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
   pas la capacité.
 
 ---
@@ -133,6 +158,10 @@ précision qu'on n'a pas.
 ---
 
 ## Ordre suggéré
+
+> ⚠️ **Cet ordre est celui du 8 septembre.** #179 a traité ses points 1 à 4. Il
+> reste : l'**affectation** des verbes d'alerte (reliquat du point 2), puis les
+> points 5 (semaine desktop), 6 (covoiturage) et 7 (contact, adresse).
 
 1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.
    Peu coûteux, et plus il attend, plus les échéances déjà saisies seront
