@@ -8,5 +8,5 @@ export function getOcrProvider(): OcrProvider {
   return new MockOcrProvider();
 }
 
-export type { OcrProvider, OcrResult, OcrFields } from "./types";
+export type { OcrFields } from "./types";
 export { EMPTY_FIELDS } from "./types";

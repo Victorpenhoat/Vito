@@ -8,7 +8,6 @@ import type { LabelAnalyse } from "@/lib/services/vin-label/types";
 // reconnu disparaît au lieu de casser la fiche.
 
 export const AXES_PROFIL = ["corps", "tanins", "acidite", "sucre"] as const;
-export type AxeProfil = (typeof AXES_PROFIL)[number];
 
 /** Trois crans par axe : le design affiche un mot, pas un chiffre. */
 export type Niveau = "bas" | "moyen" | "haut";

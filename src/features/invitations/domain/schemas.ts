@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Inscription sur invitation (Onboarding lot O-C).
-export const INVITATION_ROLES = ["membre", "invite", "cercle"] as const;
+const INVITATION_ROLES = ["membre", "invite", "cercle"] as const;
 
 export const creerCompteSchema = z.object({
   token: z.string().min(24).max(128),

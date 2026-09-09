@@ -11,7 +11,6 @@ export const groupeInputSchema = z.object({
   devise: z.string().length(3).optional(),
   voyageId: z.guid().optional(),
 });
-export type GroupeInput = z.infer<typeof groupeInputSchema>;
 
 export const depenseInputSchema = z.object({
   groupeId: z.guid(),
@@ -22,7 +21,6 @@ export const depenseInputSchema = z.object({
   mode: z.enum(DEPENSE_MODES),
   participants: z.array(z.guid()).min(1),
 });
-export type DepenseInput = z.infer<typeof depenseInputSchema>;
 
 export const remboursementInputSchema = z
   .object({
@@ -33,10 +31,8 @@ export const remboursementInputSchema = z
     date: z.string().date().optional(),
   })
   .refine((d) => d.deProfileId !== d.versProfileId, { message: "de et vers doivent différer", path: ["versProfileId"] });
-export type RemboursementInput = z.infer<typeof remboursementInputSchema>;
 
 export const shareGroupeSchema = z.object({
   groupeId: z.guid(),
   email: z.email(),
 });
-export type ShareGroupeInput = z.infer<typeof shareGroupeSchema>;

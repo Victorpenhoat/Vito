@@ -8,10 +8,8 @@ export const TYPES_ACTIVITE = [
   "equitation", "danse", "football", "musique", "tennis", "natation", "theatre",
   "soutien_scolaire", "autre",
 ] as const;
-export type TypeActivite = (typeof TYPES_ACTIVITE)[number];
 
 export const STATUTS_ACTIVITE = ["en_cours", "en_pause", "terminee"] as const;
-export type StatutActivite = (typeof STATUTS_ACTIVITE)[number];
 
 /** Créneau récurrent : 1 = lundi … 7 = dimanche (ISO), heures « HH:MM ». */
 export type Creneau = {

@@ -6,7 +6,6 @@ export const goutsInputSchema = z.object({
   typesPreferes: z.array(z.string().max(100)).default([]),
   zones: z.array(z.string().max(100)).default([]),
 });
-export type GoutsInput = z.infer<typeof goutsInputSchema>;
 
 export const rechercheCriteriaSchema = z.object({
   zone: z.string().max(100).optional(),

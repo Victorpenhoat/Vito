@@ -2,8 +2,7 @@
 // couleur / région / cépage / note / prix, appliqués en mémoire sur les vins
 // consolidés (même approche que filterPlaces côté adresses).
 
-export type CaveOnglet = "tous" | "coups_de_coeur" | "a_retrouver" | "carte";
-export const CAVE_ONGLETS: readonly CaveOnglet[] = ["tous", "coups_de_coeur", "a_retrouver", "carte"];
+type CaveOnglet = "tous" | "coups_de_coeur" | "a_retrouver" | "carte";
 
 export type VinCave = {
   id: string;

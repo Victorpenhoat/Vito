@@ -14,18 +14,6 @@ function parseCepages(raw: FormDataEntryValue | null): string[] {
   return raw.split(",").map((c) => c.trim()).filter((c) => c.length > 0);
 }
 
-export async function deleteDegustation(_prev: unknown, formData: FormData): Promise<{ error?: string; ok?: true }> {
-  const id = formData.get("degustationId");
-  if (typeof id !== "string") return { error: "Entrée invalide" };
-  const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Non authentifié" };
-  const { data: deleted, error } = await supabase.from("degustations").delete().eq("id", id).select("id").maybeSingle();
-  if (error) { logActionError("vins.deleteDegustation", error); return { error: "Suppression échouée" }; }
-  if (!deleted) return { error: "Dégustation introuvable" };
-  revalidatePath("/vins");
-  return { ok: true as const };
-}
 
 // ── Vins & Cave (Lot V-B) : création d'un vin depuis une étiquette ───────────
 

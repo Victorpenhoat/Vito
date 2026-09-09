@@ -11,4 +11,3 @@ export function getMerchantProvider(): MerchantProvider {
   return new MockMerchantProvider();
 }
 
-export type { MerchantProvider, VinAchat } from "./types";

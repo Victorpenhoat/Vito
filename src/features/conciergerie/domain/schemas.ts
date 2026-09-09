@@ -15,7 +15,6 @@ export const demandeRestoSchema = z.object({
   occasion: z.enum(OCCASIONS),
   commentaire: z.string().max(2000).optional(),
 });
-export type DemandeRestoInput = z.infer<typeof demandeRestoSchema>;
 
 export const demandeHotelSchema = z.object({
   placeId: z.string().min(1),
@@ -27,11 +26,9 @@ export const demandeHotelSchema = z.object({
   enfantsAges: z.array(z.coerce.number().int().min(0)).optional(),
   commentaire: z.string().max(2000).optional(),
 });
-export type DemandeHotelInput = z.infer<typeof demandeHotelSchema>;
 
 export const reponseSchema = z.object({
   demandeId: z.string().uuid(),
   statut: z.enum(CONCIERGERIE_STATUTS),
   reponse: z.string().max(2000).optional(),
 });
-export type ReponseInput = z.infer<typeof reponseSchema>;

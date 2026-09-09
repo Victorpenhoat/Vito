@@ -1,10 +1,8 @@
 import { z } from "zod";
 
 export const familleInputSchema = z.object({ nom: z.string().min(1).max(120) });
-export type FamilleInput = z.infer<typeof familleInputSchema>;
 
 export const inviteSchema = z.object({ email: z.string().email() });
-export type InviteInput = z.infer<typeof inviteSchema>;
 
 // Relations : les 6 valeurs historiques restent valides (données existantes) ;
 // la refonte Cercle ajoute les relations gendrées du design + « moi » (fiche
@@ -13,8 +11,6 @@ export const RELATIONS = [
   "moi", "conjoint", "fille", "fils", "pere", "mere",
   "enfant", "parent", "beau_parent", "ami", "autre",
 ] as const;
-// Conservé pour la colonne circle (défaut DB 'proche') — plus exposé au formulaire.
-export const CIRCLES = ["proche", "elargie", "amis"] as const;
 
 export const procheInputSchema = z.object({
   first_name: z.string().min(1).max(120),
@@ -45,4 +41,3 @@ export const documentInputSchema = z.object({
   expiry_date: z.string().optional().or(z.literal("")),
   issue_place: z.string().max(240).optional().or(z.literal("")),
 });
-export type DocumentInput = z.infer<typeof documentInputSchema>;

@@ -80,3 +80,28 @@ activité le proche d'un autre compte.
 - [ ] `supabase test db` au vert
 - [ ] aucune valeur protégée dans les journaux applicatifs (les actions ne
       renvoient qu'un message unique : « Vérification impossible »)
+
+## Garde-fous automatiques (9 septembre 2026)
+
+Le job `securite` de la CI tourne à côté de `quality`, sans rejouer ni les
+tests ni le build. Il regarde ce que le code **traîne**, et non ce qu'il fait :
+
+| Outil | Ce qu'il refuse | Réglage |
+|---|---|---|
+| `knip` | fichier, export ou dépendance que personne n'utilise | `knip.json` |
+| `npm audit --omit=dev` | faille connue de niveau `high` dans l'arbre **de production** | — |
+| `gitleaks` | secret dans l'historique complet (371 commits) | `.gitleaks.toml` |
+
+**Pourquoi l'audit ignore les dépendances de développement.** Capacitor CLI,
+Storybook et Trapeze traînent des failles que personne ne sert à un
+utilisateur. Les inclure rendrait le garde-fou rouge en permanence — donc
+illisible, donc inutile. L'arbre de production, lui, est à **zéro
+vulnérabilité**, transitives comprises.
+
+**Pourquoi gitleaks a besoin de `fetch-depth: 0`.** Un secret retiré du dernier
+commit vit toujours dans l'historique. Un scan superficiel ne prouverait rien.
+
+**Les exceptions sont des VALEURS, jamais des chemins** (`.gitleaks.toml`) : la
+clé de chiffrement de démonstration et les jetons de la pile Supabase locale,
+tous deux publics par construction. Une vraie clé posée dans `.env.example` ou
+dans un test serait toujours attrapée.

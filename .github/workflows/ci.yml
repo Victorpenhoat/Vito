@@ -35,3 +35,30 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  # Second garde-fou, indépendant du premier : il ne rejoue ni les tests ni le
+  # build, il regarde ce que le code TRAÎNE — du mort, une fuite, une faille
+  # connue. Séparé de `quality` pour que son échec se lise d'un coup d'œil, et
+  # pour qu'il tourne en parallèle sans allonger le chemin critique.
+  securite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gitleaks scanne l'HISTORIQUE : sans profondeur complète, il ne
+          # verrait que le dernier commit et ne prouverait rien.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with: { node-version: "24", cache: "npm" }
+      - run: npm ci
+      - name: Code mort et dépendances inutilisées (knip)
+        run: npm run knip
+      - name: Failles connues, arbre de production uniquement
+        # Les dépendances de développement (Capacitor CLI, Storybook) ne sont
+        # pas servies aux utilisateurs : les inclure rendrait ce garde-fou
+        # rouge en permanence, donc illisible.
+        run: npm run audit:prod
+      - name: Secrets dans l'historique (gitleaks)
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo zricethezav/gitleaks:latest \
+            detect --source=/repo --config=/repo/.gitleaks.toml --redact --no-banner

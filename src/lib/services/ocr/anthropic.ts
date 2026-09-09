@@ -7,7 +7,7 @@ import type { OcrProvider, OcrResult, OcrFields } from "./types";
 import { EMPTY_FIELDS } from "./types";
 
 // Modèle courant (aligné avec services/vin-label lors du chantier Vins & Cave).
-export const OCR_MODEL = "claude-sonnet-5";
+const OCR_MODEL = "claude-sonnet-5";
 
 const PROMPT =
   "Tu es un moteur d'extraction de pièces d'identité. À partir de l'image/PDF fourni, renvoie " +

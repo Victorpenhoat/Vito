@@ -23,7 +23,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "ios:personnaliser": "node scripts/ios-personnaliser.mjs",
-    "ios:version": "node scripts/ios-version.mjs"
+    "ios:version": "node scripts/ios-version.mjs",
+    "knip": "knip",
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "check:all": "npm run typecheck && npm run lint && npm run knip && npm run audit:prod && npm run test && npm run test:e2e"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
@@ -68,6 +71,7 @@
     "eslint-config-next": "16.2.9",
     "eslint-plugin-storybook": "^10.4.6",
     "jsdom": "^29.1.1",
+    "knip": "^6.35.1",
     "playwright": "^1.61.1",
     "server-only": "^0.0.1",
     "storybook": "^10.4.6",

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
-import { filtrerCave, facettesCave, trierParDerniereDegustation, SEUIL_COUP_DE_COEUR, type CaveFiltres, type VinCave } from "../domain/caveFilters";
+import { filtrerCave, facettesCave, trierParDerniereDegustation, type CaveFiltres, type VinCave } from "../domain/caveFilters";
 import type { LieuAilleurs, LieuCarte } from "../domain/caveCarte";
 import { VerresLecture } from "./NoteVerres";
 import { AjouterVinButton } from "./AjouterVinButton";
@@ -217,4 +217,3 @@ function Facette({ label, value, options, onChange, testId }: {
   );
 }
 
-export { SEUIL_COUP_DE_COEUR };

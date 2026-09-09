@@ -6,30 +6,7 @@ import type { DegustationStat, VinStat } from "../domain/caveStats";
 import { moyenneVerres } from "../domain/verres";
 import { lireAnalyse } from "../domain/analyse";
 
-export async function getVinsCount(): Promise<number> {
-  const supabase = await createServerSupabase();
-  const { count } = await supabase.from("vins").select("id", { count: "exact", head: true });
-  return count ?? 0;
-}
 
-export async function getVinDetail(id: string) {
-  const supabase = await createServerSupabase();
-  // Fail-safe anon (cf. #61/#63) : sans session, les tables renvoient 42501 et
-  // crashent le RSC. On retourne null ; le consommateur (VinDetail) fait notFound().
-  const auth = await getCachedUser();
-  if (!auth.user) return null;
-  const [vinRes, degRes] = await Promise.all([
-    supabase.from("vins").select("*").eq("id", id).single(),
-    supabase
-      .from("degustations")
-      .select("id, deguste_le, note, prix_paye, commentaire, etablissement_id")
-      .eq("vin_id", id)
-      .order("deguste_le", { ascending: false }),
-  ]);
-  if (vinRes.error) throw vinRes.error;
-  if (degRes.error) throw degRes.error;
-  return { vin: vinRes.data, degustations: degRes.data ?? [] };
-}
 
 /**
  * Vins déjà en cave, avec leur clé de dédoublonnage, leur nombre de dégustations

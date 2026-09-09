@@ -2,7 +2,6 @@
 // classifyFallback côté restos). Valeurs = check de etablissements.type_hebergement.
 export type TypeHebergement = "hotel" | "maison" | "appartement" | "chambre_hotes" | "autre";
 
-export const TYPES_HEBERGEMENT: readonly TypeHebergement[] = ["hotel", "maison", "appartement", "chambre_hotes", "autre"];
 
 export function classifyHebergement(types: string[]): TypeHebergement {
   const t = types.map((x) => x.toLowerCase());

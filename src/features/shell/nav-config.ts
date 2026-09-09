@@ -37,7 +37,7 @@ export const NAV_ITEMS: NavEntry[] = [
 // doigt dans le tiroir « Plus » et dans la barre latérale.
 export const BOTTOM_KEYS: NavKey[] = ["restos", "hotels", "voyages", "activites", "famille"];
 
-export const NAV_GROUPS: NavGroup[] = ["carnet", "voyages", "cercle"];
+const NAV_GROUPS: NavGroup[] = ["carnet", "voyages", "cercle"];
 
 /**
  * Entrées visibles pour ce rôle — et, dans la coque iOS, sans l'abonnement.

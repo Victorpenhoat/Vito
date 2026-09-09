@@ -14,7 +14,6 @@ export const CHAMPS_PAR_TYPE = {
   autre: [],
 } as const satisfies Record<string, readonly string[]>;
 
-export type TypeReservation = keyof typeof CHAMPS_PAR_TYPE;
 export type DetailsReservation = Record<string, string>;
 
 /** Les champs de ce type ; rien pour un type inconnu — on ne devine pas. */

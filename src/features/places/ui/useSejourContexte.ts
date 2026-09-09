@@ -11,7 +11,7 @@ import {
 // Lecture après hydratation (le serveur ne connaît pas le localStorage) : même
 // mécanique que les recherches récentes de CategoryDiscovery.
 
-export const CLE_CONTEXTE_SEJOUR = "vito.sejour.contexte";
+const CLE_CONTEXTE_SEJOUR = "vito.sejour.contexte";
 
 function lireStockage(): SejourContexte {
   try {

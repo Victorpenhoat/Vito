@@ -82,19 +82,6 @@ export async function quitterFamille(_prev: unknown, _formData: FormData) {
   return { ok: true as const };
 }
 
-export async function supprimerFamille(_prev: unknown, _formData: FormData) {
-  const supabase = await createServerSupabase();
-  const uid = await userId(supabase);
-  if (!uid) return { error: "Non authentifié" };
-  const fam = await maFamilleId(supabase);
-  if (!fam) return { error: "Aucune famille" };
-  // RLS delete = owner-only ; .select() détecte 0 ligne (non owner)
-  const { data, error } = await supabase.from("familles").delete().eq("id", fam.id).select("id").maybeSingle();
-  if (error) { logActionError("famille.supprimerFamille", error); return { error: "Suppression échouée" }; }
-  if (!data) return { error: "Suppression non autorisée" };
-  revalidatePath("/famille");
-  return { ok: true as const };
-}
 
 export async function ajouterRestoFiche(_prev: unknown, formData: FormData) {
   const etablissementId = formData.get("etablissementId");

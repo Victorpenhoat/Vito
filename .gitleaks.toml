@@ -1,0 +1,25 @@
+# Configuration gitleaks de Vito.
+#
+# Le scan de l'historique complet (371 commits) remonte six correspondances.
+# Toutes portent sur des valeurs de DÉMONSTRATION, publiques par construction :
+# les exclure ici n'affaiblit rien, et rend le compte « zéro fuite » exigible en
+# CI — un compteur qui ne descend jamais à zéro n'est plus lu.
+#
+# On exclut des VALEURS, jamais des chemins : une vraie clé posée dans
+# .env.example ou dans un test serait toujours attrapée.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Valeurs de démonstration locales, publiques et sans pouvoir"
+regexes = [
+  # Clé de chiffrement des documents utilisée par la CI et les tests locaux.
+  # Elle ne protège aucune donnée réelle ; la vraie clé vit dans Vercel.
+  # Présente dans .env.example, .github/workflows/ci.yml et un plan de chantier.
+  '''0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef''',
+  # Jetons de la pile Supabase LOCALE (issuer « supabase-demo ») : identiques
+  # sur tous les postes du monde, documentés par Supabase, sans valeur hors
+  # de 127.0.0.1. Utilisés par e2e/depenses.spec.ts pour semer via PostgREST.
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1vI[A-Za-z0-9_\-\.]+''',
+]

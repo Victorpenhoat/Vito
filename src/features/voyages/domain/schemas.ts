@@ -25,7 +25,6 @@ export const voyageInputSchema = z
     coverUrl: z.string().url().startsWith("https://").max(1000).optional(),
   })
   .refine(datesOk, { message: "dateFin doit être >= dateDebut", path: ["dateFin"] });
-export type VoyageInput = z.infer<typeof voyageInputSchema>;
 
 export const reservationInputSchema = z
   .object({
@@ -45,13 +44,11 @@ export const reservationInputSchema = z
     notes: z.string().max(2000).optional(),
   })
   .refine(datesOk, { message: "dateFin doit être >= dateDebut", path: ["dateFin"] });
-export type ReservationInput = z.infer<typeof reservationInputSchema>;
 
 export const shareInputSchema = z.object({
   voyageId: z.guid(),
   email: z.string().email(),
 });
-export type ShareInput = z.infer<typeof shareInputSchema>;
 
 // ── Lot B : participants et programme ───────────────────────────────────────
 
@@ -76,7 +73,6 @@ export const participantInputSchema = z
     message: "Un participant a au plus une source",
     path: ["familyMemberId"],
   });
-export type ParticipantInput = z.infer<typeof participantInputSchema>;
 
 /** Catégories d'étape de la maquette « Programme ». */
 export const CATEGORIES_ETAPE = ["trajet", "hebergement", "restaurant", "activite", "note", "autre"] as const;
@@ -98,7 +94,6 @@ export const etapeInputSchema = z.object({
   message: "Une étape porte une heure OU un moment, pas les deux",
   path: ["moment"],
 });
-export type EtapeInput = z.infer<typeof etapeInputSchema>;
 
 // ── Lot D : dépenses du voyage (entre VOYAGEURS, pas entre comptes) ─────────
 // `centsFromEuros` et les modes viennent du domaine Dépenses : le partage est
@@ -124,7 +119,6 @@ export const depenseVoyageInputSchema = z.object({
   mode: z.enum(DEPENSE_MODES),
   participants: z.array(z.guid()).min(1),
 });
-export type DepenseVoyageInput = z.infer<typeof depenseVoyageInputSchema>;
 
 export const remboursementVoyageInputSchema = z
   .object({
@@ -138,4 +132,3 @@ export const remboursementVoyageInputSchema = z
     message: "Se rembourser soi-même ne veut rien dire",
     path: ["versParticipantId"],
   });
-export type RemboursementVoyageInput = z.infer<typeof remboursementVoyageInputSchema>;

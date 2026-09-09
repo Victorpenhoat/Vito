@@ -105,15 +105,6 @@ export async function getVoyageDocuments(voyageId: string) {
   return data ?? [];
 }
 
-export async function getVoyageMeta(id: string): Promise<{ reservations: number; documents: number; voyageurs: number }> {
-  const supabase = await createServerSupabase();
-  const [r, d, m] = await Promise.all([
-    supabase.from("reservations").select("id", { count: "exact", head: true }).eq("voyage_id", id),
-    supabase.from("voyage_documents").select("id", { count: "exact", head: true }).eq("voyage_id", id),
-    supabase.from("voyage_membres").select("profile_id", { count: "exact", head: true }).eq("voyage_id", id),
-  ]);
-  return { reservations: r.count ?? 0, documents: d.count ?? 0, voyageurs: m.count ?? 0 };
-}
 
 // ── Lot D : dépenses du voyage ──────────────────────────────────────────────
 

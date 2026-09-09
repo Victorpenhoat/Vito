@@ -59,5 +59,3 @@ export const tableInsert = (calls: RecordedCall[], table: string) =>
     | (RecordedCall & { kind: "table"; payload: unknown }) | undefined;
 export const tableOp = (calls: RecordedCall[], table: string, op: string) =>
   calls.find((c) => c.kind === "table" && c.table === table && c.op === op);
-export const rpcCall = (calls: RecordedCall[], name: string) =>
-  calls.find((c) => c.kind === "rpc" && c.name === name);
