@@ -6,21 +6,25 @@ import { construireCsp, origine } from "@/lib/securite/entetes";
 
 const intlProxy = createMiddleware(routing);
 
-// La CSP est encore en Report-Only : elle ne bloque rien, elle rapporte. Le
-// passage en vigueur se fera une fois /api/csp-report resté muet sur un
-// parcours complet. Poser une CSP stricte d'emblée sur une app qui rend
-// Leaflet, un service worker et quatre locales, c'est casser en prod ce qu'on
-// n'a pas mesuré.
-const ENTETE_CSP = "content-security-policy-report-only";
+// La CSP est EN VIGUEUR : ce qui n'est pas prévu est bloqué. Elle a d'abord
+// vécu en Report-Only le temps de mesurer (ADR 0001) ; `report-uri` reste posé,
+// car une violation renseigne autant quand elle bloque que quand elle rapporte.
+//
+// Conséquence à connaître avant de toucher au rendu : `script-src` porte
+// 'strict-dynamic', qui fait IGNORER 'self' par le navigateur. Seuls les
+// scripts portant la nonce se chargent — donc toute page rendue statiquement,
+// dont le HTML est bâti sans requête et sans nonce, serait muette. Le test e2e
+// « aucune page servie sans nonce » tient cette contrainte.
+const ENTETE_CSP = "content-security-policy";
 
 export default async function proxy(request: NextRequest) {
   // 1) Session d'abord : un éventuel refresh de JWT est écrit sur request.cookies.
   const refreshed = await updateSession(request);
 
   // 2) Nonce, puis CSP. Next relit l'en-tête sur la REQUÊTE pour poser la nonce
-  //    sur ses propres scripts (app-render.js la cherche aussi en Report-Only) :
-  //    sans ce passage par la requête, la mesure serait fausse — on rapporterait
-  //    des violations que la politique appliquée n'aurait pas.
+  //    sur ses propres scripts : sans ce passage par la requête, aucun script
+  //    n'en porterait, et 'strict-dynamic' les bloquerait tous. La page se
+  //    servirait, muette.
   const nonce = crypto.randomUUID().replaceAll("-", "");
   const csp = construireCsp({
     nonce,

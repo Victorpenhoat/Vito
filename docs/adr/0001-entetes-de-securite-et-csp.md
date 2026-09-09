@@ -1,6 +1,7 @@
 # 0001 — En-têtes de sécurité et CSP
 
-**Date** : 9 septembre 2026 · **Statut** : accepté, CSP en Report-Only
+**Date** : 9 septembre 2026 · **Statut** : accepté · **CSP en vigueur depuis le
+10 septembre 2026** (voir « Passage en vigueur »)
 
 ## Constat
 
@@ -62,8 +63,38 @@ remonte — `script-src` bloquant `eval`, **76 fois**. Elle vient de
 l'instrumentation Playwright, pas de l'app : les 89 chunks client ne
 contiennent ni `eval(` ni `new Function(`, et React n'évalue pas en production.
 
+## Passage en vigueur (10 septembre 2026)
+
+L'en-tête est désormais `Content-Security-Policy`. `report-uri` reste posé : une
+violation renseigne autant quand elle bloque que quand elle rapportait.
+
+**Ce qu'il fallait vérifier n'était pas la liste des violations, mais la nonce.**
+`script-src` porte `'strict-dynamic'`, qui fait **ignorer `'self'`** : seuls les
+scripts portant la nonce se chargent. Une page rendue **statiquement** — bâtie
+au build, sans requête, donc sans nonce — n'exécute alors plus une ligne. Elle
+répond 200 et ne fait rien : la panne la plus silencieuse qui soit.
+
+Le build le dit route par route (`○ Static` / `ƒ Dynamic`). Les 44 routes de
+l'app sont dynamiques, et le HTML servi le confirme : `/fr` compte 15 balises
+`<script>` et 17 `nonce=`, aucune balise sans nonce sur `/fr`, `/en`,
+`/fr/login` ni `/fr/confidentialite`. Un test e2e tient cet invariant par
+lecture du HTML servi — c'est le seul endroit où le basculement se verrait,
+puisque rien dans le typage ne le signale.
+
+**L'exception connue : `/_not-found`.** C'est la seule route prérendue en
+statique, et c'est la page 404 par défaut de Next — dix balises `<script>`,
+aucune nonce, plus un `<style>` inline. Sous la politique en vigueur, tout y est
+bloqué : le 404 s'affiche en texte anglais non stylé, et chaque visite émet une
+dizaine de rapports. Rien de fonctionnel ne s'y perd (cette page n'a aucune
+interaction), mais le bruit peut noyer un vrai signal.
+
+La sortie serait de servir un 404 **dynamique** — un `not-found.tsx` sous
+`[locale]`, qui hériterait de la nonce et, au passage, parlerait les quatre
+langues. Ce n'est pas fait : l'app n'a jamais eu de 404 à elle, et en écrire une
+est une décision de produit, pas une conséquence de la CSP.
+
 ## Ce qui reste
 
-Le passage en vigueur (`Content-Security-Policy` au lieu de
-`…-Report-Only`) doit être validé sur un vrai navigateur, sur l'URL de preview,
-et non sous Playwright dont l'instrumentation fausse la mesure de `script-src`.
+Un parcours cliqué sur un **vrai navigateur**, sur l'URL de preview : Playwright
+ne rend pas les mêmes choses qu'un Safari iOS, et `/api/csp-report` est là pour
+recueillir ce que la suite n'aura pas vu.
