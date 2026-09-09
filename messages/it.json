@@ -1768,7 +1768,8 @@
       "deposeLabel": "Chi accompagna",
       "enregistrer": "Salva l'orario",
       "calendrier": "Aggiungi al calendario",
-      "dansPlanning": "Questi orari compaiono anche nel planning dei viaggi."
+      "dansPlanning": "Questi orari compaiono anche nel planning dei viaggi.",
+      "covoiturage": "Car pooling"
     },
     "presence": {
       "formule": "Formula {n} lezioni",

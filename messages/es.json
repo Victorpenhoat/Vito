@@ -1768,7 +1768,8 @@
       "deposeLabel": "Quién lleva",
       "enregistrer": "Guardar el horario",
       "calendrier": "Añadir al calendario",
-      "dansPlanning": "Estos horarios también aparecen en la agenda de viajes."
+      "dansPlanning": "Estos horarios también aparecen en la agenda de viajes.",
+      "covoiturage": "Coche compartido"
     },
     "presence": {
       "formule": "Bono de {n} sesiones",

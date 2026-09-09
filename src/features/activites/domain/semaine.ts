@@ -30,7 +30,11 @@ export type ActiviteSemaine = {
   clubNom: string | null;
   statut: string;
   membres: { id: string; prenom: string; couleur: string | null }[];
-  creneaux: (Creneau & { lieuPrecision?: string | null; deposePar?: { id: string; prenom: string } | null })[];
+  creneaux: (Creneau & {
+    lieuPrecision?: string | null;
+    deposePar?: { id: string; prenom: string } | null;
+    covoiturage?: boolean | null;
+  })[];
 };
 
 export type Occurrence = {
@@ -43,6 +47,7 @@ export type Occurrence = {
   heureFin: string;
   membres: { id: string; prenom: string; couleur: string | null }[];
   deposePar: { id: string; prenom: string } | null;
+  covoiturage: boolean;
   lieuPrecision: string | null;
 };
 
@@ -84,6 +89,7 @@ export function occurrencesDuJour(
         heureFin: ponctuelle?.heureFin ?? c.heureFin,
         membres: a.membres,
         deposePar: c.deposePar ?? null,
+        covoiturage: c.covoiturage ?? false,
         lieuPrecision: c.lieuPrecision ?? null,
       });
     }

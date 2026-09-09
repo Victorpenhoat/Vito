@@ -11,16 +11,18 @@ Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rie
 
 > ## Clôture — 9 septembre, fin de journée
 >
-> Sur les **onze** écarts : **huit comblés**, **un abandonné** (décision PO),
-> **un en partie**, **un ouvert**. Ce document est clos ; il reste comme
+> Sur les **onze** écarts : **neuf comblés**, **un en partie**, **un ouvert**.
+> L'abandon du covoiturage a été **rouvert le 9 septembre au soir**, quelques
+> minutes après cette clôture, sur demande du PO — l'arbitrage est levé, la
+> fonction est livrée en #183, et son raisonnement d'origine reste lisible au
+> §3. Ce document est clos ; il reste comme
 > archive. Chaque écart garde son constat d'origine lisible, avec la PR qui l'a
 > comblé — savoir *pourquoi* le mode de règlement avait été oublié vaut mieux,
 > dans six mois, que constater qu'il est là.
 >
 > | | |
 > |---|---|
-> | ✅ **Comblés (8)** | mode de règlement · « à la séance » · « soutien scolaire » · puces de filtre retirables · en-tête nommant les filtres · second contact avec son rôle *(#179)* · autocomplétion de l'adresse du club *(#180)* · **semaine desktop en 7 colonnes** *(#181)* |
-> | ⛔ **Abandonné (1)** | **covoiturage** — arbitrage PO du 9 septembre, cf. §3 |
+> | ✅ **Comblés (9)** | mode de règlement · « à la séance » · « soutien scolaire » · puces de filtre retirables · en-tête nommant les filtres · second contact avec son rôle *(#179)* · autocomplétion de l'adresse du club *(#180)* · **semaine desktop en 7 colonnes** *(#181)* · **covoiturage** *(#183)* |
 > | 🟨 **En partie (1)** | verbes d'alerte : trois au lieu de quatre, affectation décalée, cf. §4 |
 > | ⬜ **Ouvert (1)** | **swipe** sur la liste — non tranché, cf. §5 |
 >
@@ -111,9 +113,22 @@ affichage sur la fiche. Tout le reste est déjà là.
 La composition desktop **1+5** (liste + fiche côte à côte), elle, est conforme
 (`ListeActivites.tsx`, grille `lg:grid-cols-[1fr_460px]`).
 
-## 3. Trois absences franches — ✅ deux comblées (#179), ⛔ une abandonnée
+## 3. Trois absences franches — ✅ toutes comblées (#179, #183)
 
-> ⛔ **Le covoiturage est ABANDONNÉ — arbitrage PO du 9 septembre**, et non une
+> ↩️ **Arbitrage LEVÉ le 9 septembre au soir, et le covoiturage est livré
+> (#183).** Le paragraphe ci-dessous demandait qu'on ne rouvre pas sans revenir
+> sur la décision : c'est fait, explicitement, par le PO, une heure après
+> l'avoir prise. La forme retenue ménage l'objection de fond — Vito ne
+> **négocie** aucun covoiturage, il note seulement que la dépose se fait ainsi :
+> `depose_covoiturage` est un booléen sur le créneau, exclusif de `depose_par`
+> par un `check`, qui donne au « qui dépose » sa troisième réponse à côté des
+> deux parents. Aucun échange, aucun tiers, aucune coordination.
+>
+> Le constat d'origine, et la raison qui a valu l'abandon, suivent — ils
+> expliquent mieux que ce bandeau pourquoi cette notion a coûté plus que les
+> dix autres.
+
+> ⛔ **Le covoiturage était ABANDONNÉ — arbitrage PO du 9 septembre**, et non une
 > dette qui traîne. C'était le seul des onze écarts à demander une **notion
 > nouvelle** (colonne, champ, affichage), là où tous les autres n'étaient que du
 > câblage manquant sur des données déjà présentes. Et c'est le seul dont
@@ -123,12 +138,13 @@ La composition desktop **1+5** (liste + fiche côte à côte), elle, est conform
 
 | Maquette | État |
 |---|---|
-| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ⛔ **Abandonné** (arbitrage PO, 9 sept.) — zéro occurrence, et il n'en aura pas |
+| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ✅ **Comblé** (#183) après un abandon levé le soir même — `depose_covoiturage` sur le créneau |
 | Périodicité **« À la séance »** (écran 9) | ✅ Ajoutée (#179) : `check` élargi à `'seance'`, clé « À la séance » |
 | Type d'activité **« Soutien scolaire »** (écran 6) | ✅ Ajouté (#179) : `soutien_scolaire` en base, dans le schéma et au formulaire |
 
-⚠️ Le covoiturage n'est pas un libellé manquant : il n'y a ni colonne, ni
-champ, ni notion. C'est le plus coûteux des trois.
+⚠️ Le covoiturage n'était pas un libellé manquant : il n'y avait ni colonne, ni
+champ, ni notion. C'était le plus coûteux des trois — et il a bien coûté une
+migration (`00059`), un domaine, une colonne de grille et ses tests.
 
 ## 4. Trois appauvrissements — ✅ deux comblés, 🟨 un en partie (#179)
 
@@ -192,8 +208,9 @@ précision qu'on n'a pas.
 ## Ordre suggéré
 
 > ⚠️ **Cet ordre est celui du 8 septembre, et il est SOLDÉ.** #179 a traité ses
-> points 1 à 4, #180 le point 7, #181 le point 5. Le point 6 (covoiturage) est
-> abandonné. Il ne reste, hors de cette liste, que deux choses :
+> points 1 à 4, #180 le point 7, #181 le point 5, #183 le point 6
+> (covoiturage, d'abord abandonné puis rouvert le soir même).
+> Il ne reste, hors de cette liste, que deux choses :
 > l'**affectation** des verbes d'alerte (§4) et le **swipe** (§5).
 
 1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.

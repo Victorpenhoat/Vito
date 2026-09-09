@@ -1,6 +1,5 @@
 import { X } from "lucide-react";
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/routing";
+import { getTranslations, getLocale } from "next-intl/server";
 
 export type OptionFiltre = { valeur: string; libelle: string; couleur?: string | null };
 export type DimensionFiltre = { cle: string; libelle: string; options: OptionFiltre[] };
@@ -18,6 +17,12 @@ export async function FiltresActivites({ params, dimensions }: {
   dimensions: DimensionFiltre[];
 }) {
   const t = await getTranslations("activites.filtres");
+  const locale = await getLocale();
+  // Des ancres ORDINAIRES, pas le routeur client : deux clics rapprochés
+  // déclenchaient deux navigations douces, dont la seconde annulait la
+  // première — un filtre coché qui ne s'appliquait pas. Une navigation
+  // complète coûte un aller-retour, mais elle arrive TOUJOURS.
+  const url = (chemin: string) => `/${locale}${chemin}`;
 
   const actifs = (cle: string): string[] => {
     const v = params[cle];
@@ -64,18 +69,18 @@ export async function FiltresActivites({ params, dimensions }: {
       {posees.length > 0 && (
         <div data-testid="filtres-poses" className="flex flex-wrap items-center gap-1.5">
           {posees.map((o) => (
-            <Link key={`${o.cle}-${o.valeur}`} href={lien(o.cle, o.valeur)}
+            <a key={`${o.cle}-${o.valeur}`} href={url(lien(o.cle, o.valeur))}
               data-testid={`filtre-pose-${o.valeur}`} aria-label={t("retirer", { libelle: o.libelle })}
               className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-ink px-3 py-1 text-[12px] font-medium text-white">
               {o.couleur && <span className="h-2 w-2 rounded-full" style={{ background: o.couleur }} aria-hidden />}
               {o.libelle}
               <X size={11} aria-hidden />
-            </Link>
+            </a>
           ))}
-          <Link href={sansFiltres()} data-testid="filtres-effacer"
+          <a href={url(sansFiltres())} data-testid="filtres-effacer"
             className="text-[11.5px] font-semibold text-accent hover:underline">
             {t("effacer")}
-          </Link>
+          </a>
         </div>
       )}
 
@@ -87,7 +92,7 @@ export async function FiltresActivites({ params, dimensions }: {
           {d.options.map((o) => {
             const choisi = actifs(d.cle).includes(o.valeur);
             return (
-              <Link key={o.valeur} href={lien(d.cle, o.valeur)} aria-pressed={choisi}
+              <a key={o.valeur} href={url(lien(d.cle, o.valeur))} aria-current={choisi ? "true" : undefined}
                 data-testid={`filtre-${d.cle}-${o.valeur}`}
                 className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] font-medium transition-colors ${
                   choisi ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:border-accent/30 hover:text-ink"
@@ -97,7 +102,7 @@ export async function FiltresActivites({ params, dimensions }: {
                 )}
                 {o.libelle}
                 {choisi && <X size={11} aria-hidden />}
-              </Link>
+              </a>
             );
           })}
         </div>

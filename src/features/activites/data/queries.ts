@@ -101,6 +101,8 @@ export type CreneauDetail = Creneau & {
   lieuPrecision: string | null;
   intervenant: string | null;
   deposePar: { id: string; prenom: string } | null;
+  /** Troisième état du « qui dépose » : un arrangement hors du foyer. */
+  covoiturage: boolean;
 };
 
 export type ActiviteDetail = ActiviteListe & {
@@ -155,7 +157,8 @@ export const getActiviteDetail = cache(async (
        consignes_acces, notes, lat, lng, formule_seances, saison_debut, saison_fin,
        activite_membres(family_members(id, first_name, avatar_color, profile_id)),
        activite_creneaux(id, jour_semaine, heure_debut, heure_fin, valide_du, valide_au,
-                         intervenant, lieu_precision, depose:family_members(id, first_name)),
+                         intervenant, lieu_precision, depose_covoiturage,
+                         depose:family_members(id, first_name)),
        activite_tags(tags(slug, label)),
        activite_seances(date, statut, motif),
        activite_paiements(id, libelle, montant_cents, devise, echeance, statut, periodicite, moyen),
@@ -177,6 +180,7 @@ export const getActiviteDetail = cache(async (
     lieuPrecision: c.lieu_precision,
     intervenant: c.intervenant,
     deposePar: c.depose ? { id: c.depose.id, prenom: c.depose.first_name } : null,
+    covoiturage: c.depose_covoiturage,
   }));
 
   const seances = (data.activite_seances ?? []).map((s) => ({
@@ -256,7 +260,7 @@ export const getActivitesSemaine = cache(async (du: string, au: string) => {
       `id, nom, club_nom, statut,
        activite_membres(family_members(id, first_name, avatar_color)),
        activite_creneaux(id, jour_semaine, heure_debut, heure_fin, valide_du, valide_au,
-                         lieu_precision, depose:family_members(id, first_name),
+                         lieu_precision, depose_covoiturage, depose:family_members(id, first_name),
                          activite_creneau_exceptions(creneau_id, date, type, heure_debut, heure_fin))`,
     )
     .eq("statut", "en_cours");
@@ -280,6 +284,7 @@ export const getActivitesSemaine = cache(async (du: string, au: string) => {
       valideAu: c.valide_au,
       lieuPrecision: c.lieu_precision,
       deposePar: c.depose ? { id: c.depose.id, prenom: c.depose.first_name } : null,
+      covoiturage: c.depose_covoiturage,
     })),
   }));
 

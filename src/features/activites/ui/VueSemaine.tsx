@@ -1,4 +1,4 @@
-import { getTranslations, getFormatter } from "next-intl/server";
+import { getTranslations, getFormatter, getLocale } from "next-intl/server";
 import { AlertTriangle, Plane, Sun } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { getActivitesSemaine } from "../data/queries";
@@ -8,6 +8,8 @@ import {
   joursDeLaSemaine, semaineVoisine, occurrencesDuJour, conflitsDuJour, signauxDuJour,
 } from "../domain/semaine";
 import { EtatVide } from "./EtatVide";
+import { deposeDuCreneau } from "../domain/depose";
+import { libelleDepose } from "./libelleDepose";
 import { GrilleSemaine } from "./GrilleSemaine";
 
 /**
@@ -24,6 +26,10 @@ export async function VueSemaine({ semaine, aujourdhui }: {
 }) {
   const t = await getTranslations("activites");
   const format = await getFormatter();
+  const locale = await getLocale();
+  // Ancres ordinaires pour changer de semaine, comme pour les filtres : deux
+  // clics rapprochés perdaient la seconde navigation douce.
+  const versSemaine = (jour: string) => `/${locale}/activites?onglet=semaine&semaine=${jour}`;
   const jours = joursDeLaSemaine(semaine);
   const [{ activites, exceptions }, voyages] = await Promise.all([
     getActivitesSemaine(jours[0]!, jours[6]!),
@@ -57,15 +63,15 @@ export async function VueSemaine({ semaine, aujourdhui }: {
   return (
     <div data-testid="vue-semaine" className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <Link href={`/activites?onglet=semaine&semaine=${semaineVoisine(semaine, -1)}`}
+        <a href={versSemaine(semaineVoisine(semaine, -1))}
           data-testid="semaine-precedente" aria-label={t("semaine.precedente")}
-          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">←</Link>
+          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">←</a>
         <span data-testid="semaine-titre" className="font-serif text-lg text-ink">
           {t("semaine.du", { debut: borne(jours[0]!), fin: borne(jours[6]!) })}
         </span>
-        <Link href={`/activites?onglet=semaine&semaine=${semaineVoisine(semaine, 1)}`}
+        <a href={versSemaine(semaineVoisine(semaine, 1))}
           data-testid="semaine-suivante" aria-label={t("semaine.suivante")}
-          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">→</Link>
+          className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">→</a>
       </div>
 
       {/* Sur grand écran, la SEMAINE ENTIÈRE d'un coup d'œil : sept colonnes
@@ -138,9 +144,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                       <span className="truncate text-[11.5px] text-muted">
                         {[
                           t("semaine.jusqua", { heure: o.heureFin.replace(":", "h") }),
-                          o.deposePar
-                            ? t("horaires.depose", { nom: o.deposePar.prenom })
-                            : t("horaires.deposeADefinir"),
+                          libelleDepose(deposeDuCreneau(o), t),
                         ].join(" · ")}
                       </span>
                     </span>
