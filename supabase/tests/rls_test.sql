@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(89);
+select plan(101);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -39,6 +39,28 @@ end $$;
 -- free = 44444444… (aucun partage) ; client & agence co-membres du groupe dépenses de demo.
 
 -- 1) anon ne voit AUCUN liste_item (RLS ; la fenêtre anon historique #61)
+-- Helper de la limitation de débit : consommer_quota tire l'identité du jeton,
+-- il faut donc l'appeler SOUS cette identité et non en la passant en argument.
+create function tests.bool_as_anon(p_sql text) returns boolean language plpgsql as $$
+declare b boolean;
+begin
+  perform set_config('request.jwt.claims', null, true);
+  set local role anon;
+  execute p_sql into b;
+  reset role;
+  return b;
+end $$;
+
+create function tests.bool_as(p_uid uuid, p_sql text) returns boolean language plpgsql as $$
+declare b boolean;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into b;
+  reset role;
+  return b;
+end $$;
+
 select is(tests.count_as_anon('select count(*) from public.liste_items'), 0::bigint, 'anon ne voit aucun liste_item');
 
 -- 2) anon ne voit AUCUN profil_gouts (#63)
@@ -605,6 +627,55 @@ select throws_ok(
        ('ac000001-0000-4000-8000-000000000001', 'ac000002-0000-4000-8000-000000000002', '2026-09-12', 'faite'),
        ('ac000001-0000-4000-8000-000000000001', 'ac000002-0000-4000-8000-000000000002', '2026-09-12', 'manquee') $$,
   '23505', null, 'une séance ne se pointe pas deux fois le même jour');
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- 79) Limitation de débit (migration 00060). Ce qui doit tenir : le compteur
+--     compte, la limite refuse, chaque compte a le sien, personne ne lit ni
+--     n'efface la table, et l'action est bien une dimension du compteur.
+-- ─────────────────────────────────────────────────────────────────────────
+select has_table('public', 'quotas', 'la table des quotas existe');
+
+-- Sous la limite : les trois premiers appels d'une limite de 3 passent.
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+  $$ select public.consommer_quota('pgtap_a', 3, 60) $$), 'premier appel permis');
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+  $$ select public.consommer_quota('pgtap_a', 3, 60) $$), 'deuxième appel permis');
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+  $$ select public.consommer_quota('pgtap_a', 3, 60) $$), 'troisième appel permis');
+-- Le quatrième franchit la limite : c'est tout l'objet.
+select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111',
+  $$ select public.consommer_quota('pgtap_a', 3, 60) $$), 'le quatrième appel est refusé');
+
+-- Une AUTRE action garde son propre compteur : saturer la recherche ne doit
+-- pas fermer la lecture d'étiquette.
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+  $$ select public.consommer_quota('pgtap_b', 3, 60) $$), 'une autre action a son propre compteur');
+
+-- Un AUTRE compte aussi : sinon un utilisateur bruyant fermerait l'app aux autres.
+select ok(tests.bool_as('22222222-2222-2222-2222-222222222222',
+  $$ select public.consommer_quota('pgtap_a', 3, 60) $$), 'un autre compte a son propre compteur');
+
+-- L'identité vient du jeton : sans jeton, on refuse plutôt que de compter
+-- tout le monde ensemble sur une clé partagée.
+select ok(not tests.bool_as_anon($$ select public.consommer_quota('pgtap_a', 3, 60) $$),
+  'anon est refusé, il n''a pas de compteur à lui');
+
+-- Barèmes absurdes : on lève, on ne laisse pas passer silencieusement.
+select throws_ok(
+  $$ select tests.bool_as('11111111-1111-1111-1111-111111111111',
+       'select public.consommer_quota(''pgtap_c'', 0, 60)') $$,
+  null, 'quota invalide', 'une limite nulle est une faute, pas un passe-droit');
+
+-- La table est fermée : personne ne lit son compteur, personne ne l'efface.
+-- Effacer sa ligne reviendrait à s'accorder un quota neuf.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', 'select count(*) from public.quotas'),
+  0::bigint, 'on ne lit pas la table des quotas');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+  'with d as (delete from public.quotas returning 1) select count(*) from d'),
+  0::bigint, 'on n''efface pas son compteur');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+  'with u as (update public.quotas set compteur = 0 returning 1) select count(*) from u'),
+  0::bigint, 'on ne remet pas son compteur à zéro');
 
 select finish();
 rollback;

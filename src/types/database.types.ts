@@ -1598,6 +1598,24 @@ export type Database = {
         }
         Relationships: []
       }
+      quotas: {
+        Row: {
+          cle: string
+          compteur: number
+          fenetre: string
+        }
+        Insert: {
+          cle: string
+          compteur?: number
+          fenetre: string
+        }
+        Update: {
+          cle?: string
+          compteur?: number
+          fenetre?: string
+        }
+        Relationships: []
+      }
       reauth_tickets: {
         Row: {
           cible: string
@@ -2575,6 +2593,10 @@ export type Database = {
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
       consommer_invitation: { Args: { p_token: string }; Returns: Json }
+      consommer_quota: {
+        Args: { p_action: string; p_fenetre_secondes: number; p_limite: number }
+        Returns: boolean
+      }
       consommer_reauth_ticket: {
         Args: { p_cible: string; p_hash: string }
         Returns: boolean

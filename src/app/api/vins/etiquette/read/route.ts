@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getVinLabelProvider } from "@/lib/services/vin-label";
+import { consommerQuota } from "@/lib/securite/quota";
 
 // Lecture d'une étiquette (design Vins & Cave écran 2) : analyse à la volée,
 // RIEN n'est persisté ici — la photo n'est stockée (chiffrée) qu'à la création
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({ error: "non_authentifie" }, { status: 401 });
+
+  // Même barème que la lecture de pièce : même fournisseur, même facture.
+  if (!(await consommerQuota(supabase, "lecture_etiquette"))) {
+    return NextResponse.json({ error: "trop_de_demandes" }, { status: 429 });
+  }
 
   const form = await req.formData();
   const file = form.get("file");
