@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getOcrProvider } from "@/lib/services/ocr";
+import { consommerQuota } from "@/lib/securite/quota";
 
 const ALLOWED = ["image/jpeg", "image/png", "application/pdf"];
 const MAX = 10 * 1024 * 1024;
@@ -9,6 +10,12 @@ export async function POST(req: NextRequest) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({ error: "non_authentifie" }, { status: 401 });
+
+  // Lecture facturée à l'appel : on se reprend quelques fois sur une photo
+  // floue, on ne la relance pas cent fois.
+  if (!(await consommerQuota(supabase, "lecture_document"))) {
+    return NextResponse.json({ error: "trop_de_demandes" }, { status: 429 });
+  }
 
   const form = await req.formData();
   const file = form.get("file");

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getPlacesProvider } from "@/lib/services/places";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSafeUpstream } from "./safeUrl";
+import { consommerQuota } from "@/lib/securite/quota";
 
 export async function GET(request: NextRequest) {
   // Garde d'auth : le carnet est privé, ses vignettes n'ont pas à être servies à l'anonyme
@@ -9,6 +10,13 @@ export async function GET(request: NextRequest) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+
+  // Une grille de résultats demande une vignette par carte : la limite est
+  // large exprès. Elle n'existe pas pour rationner l'usage normal, mais pour
+  // qu'une boucle ne fasse pas tourner le compteur du fournisseur toute la nuit.
+  if (!(await consommerQuota(supabase, "photo_lieu"))) {
+    return NextResponse.json({ error: "trop_de_demandes" }, { status: 429 });
+  }
 
   const ref = request.nextUrl.searchParams.get("ref");
   if (!ref) return NextResponse.json({ error: "ref manquant" }, { status: 400 });

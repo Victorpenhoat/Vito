@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getPlacesProvider } from "@/lib/services/places";
 import { mapPlaceToEtablissement } from "@/features/restos/domain/mapPlaceToEtablissement";
+import { consommerQuota } from "@/lib/securite/quota";
 
 // Entrée d'un établissement dans le carnet, partagée par la recherche externe
 // (addResto / addHotel) et par les réservations de voyage (lot H6). Ce module
@@ -40,6 +41,10 @@ export async function ajouterAuCarnet(
 
   let etablissementId = connu?.id as string | undefined;
   if (!etablissementId) {
+    // Ici seulement le fournisseur est appelé, donc ici seulement on consomme
+    // un jeton : rattacher un établissement DÉJÀ connu ne coûte rien et n'a
+    // pas à être rationné.
+    if (!(await consommerQuota(supabase, "ajout_lieu"))) return { error: "Trop de demandes, réessaie dans une minute" };
     // Le mask équipements n'est demandé que pour les hôtels (coût SKU).
     const place = await getPlacesProvider().details(placeId, { hotel: categorie === "hotel" });
     if (!place) return { error: "Établissement introuvable" };

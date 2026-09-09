@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { logActionError } from "@/lib/actionError";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getPlacesProvider } from "@/lib/services/places";
+import { consommerQuota } from "@/lib/securite/quota";
 import type { SearchOpts } from "@/lib/services/places/types";
 import { ajouterAuCarnet } from "@/features/places/data/ajouterAuCarnet";
 import {
@@ -17,6 +18,10 @@ export async function searchPlaces(query: string, opts?: SearchOpts) {
   const supabase = await createServerSupabase();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return [];
+  // Chaque frappe retenue coûte un appel facturé : la garde d'auth empêchait
+  // l'abus anonyme, pas l'abus d'un compte. Rendre [] plutôt qu'une erreur —
+  // l'autocomplétion se tait, elle ne se casse pas.
+  if (!(await consommerQuota(supabase, "recherche_lieu"))) return [];
   return getPlacesProvider().search(query, opts);
 }
 
