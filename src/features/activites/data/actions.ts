@@ -19,6 +19,9 @@ export async function ajouterActivite(_prev: unknown, formData: FormData) {
     statut: formData.get("statut") || undefined,
     clubNom: formData.get("clubNom") ?? undefined,
     adresse: formData.get("adresse") ?? undefined,
+    lat: formData.get("lat") || undefined,
+    lng: formData.get("lng") || undefined,
+    placeId: formData.get("placeId") || undefined,
     telephone: formData.get("telephone") ?? undefined,
     formuleSeances: formData.get("formuleSeances") || undefined,
     contactNom: formData.get("contactNom") ?? undefined,
@@ -37,6 +40,11 @@ export async function ajouterActivite(_prev: unknown, formData: FormData) {
     .insert({
       user_id: uid, type: d.type, nom: d.nom, statut: d.statut,
       club_nom: d.clubNom ?? null, adresse: d.adresse ?? null,
+      // Les deux ou aucune : une adresse tapée à la main reste sans point, et
+      // la carte le dit en ne l'affichant pas.
+      lat: d.lat != null && d.lng != null ? d.lat : null,
+      lng: d.lat != null && d.lng != null ? d.lng : null,
+      place_id: d.placeId ?? null,
       telephone: d.telephone ?? null, formule_seances: d.formuleSeances ?? null,
       // La contrainte exige les deux ou aucun : un demi-contact serait refusé
       // par la base, autant ne pas le proposer.
