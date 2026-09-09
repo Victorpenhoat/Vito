@@ -1,0 +1,147 @@
+# Écarts entre l'application et la maquette — Activités, 8 septembre 2026
+
+Contrairement à Voyages, Resto v2 et Cercle (cf. `ECARTS-2026-09-05.md`), ce
+chantier a été construit **avec la maquette en main** : `Onglet_Activites.dc.html`
+est entré dans le dépôt le 7 septembre à 20h58 (#165), et les lots #166 à #174
+ont suivi le 8 septembre. Cela s'entend dans le résultat : `semaine.conflit`,
+`alertes.sousTitre`, `recherchePlaceholder` et `vide.semaineVacances` reprennent
+la maquette **au mot près**.
+
+Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
+
+⚠️⚠️ **CET AUDIT ENJAMBE DU TRAVAIL NON COMMITÉ.** Au moment de l'écrire, l'arbre
+de travail portait 11 fichiers modifiés et 4 fichiers non suivis, datés du
+**8 septembre 18h09–18h11** — soit deux heures après le dernier commit (#174,
+16h05). Ce travail ajoute le **temps de trajet** (`domain/trajet.ts`, clé
+`lieu.duree` = « ~{n} min depuis chez nous »), les **coordonnées du foyer**
+(migration `00057_foyer_coordonnees.sql`) et le **géocodage** de l'adresse du
+foyer (`features/famille/data/geocodage.ts`). Les constats ci-dessous en
+tiennent compte et le disent là où c'est déterminant. Un lecteur qui se
+fierait à `git log` ne verrait rien de tout cela.
+
+⚠️ **Portée de l'audit** : il compare la maquette au **code et aux 159 clés
+i18n**. Il n'a **pas** été mené en pilotant l'application. Il attrape donc les
+absences, pas les comportements faux : un écran peut exister, porter la bonne
+chaîne, et mal se comporter. Les onze écarts ci-dessous sont vérifiés dans le
+code ; la réciproque — « tout le reste est conforme » — ne l'est pas au même
+degré.
+
+---
+
+## 1. Le mode de règlement est un champ mort
+
+C'est l'écart le plus grave, et le seul qui touche la donnée.
+
+| | |
+|---|---|
+| **Maquette** (écran 9) | « Mode de règlement : Prélèvement · Carte · Chèque · Espèces », et la fiche affiche « Cotisation annuelle — **Prélèvement** · 3 échéances » |
+| **Construit** | La colonne `moyen` existe (migration `00055_activites.sql:145`, `check in ('prelevement','carte','virement','cheque','especes','autre')`), `queries.ts` la lit, `actions.ts:126` l'accepte depuis le `formData` — et **rien ne la remplit, rien ne l'affiche** |
+
+Vérifié : aucun `name="moyen"` dans les composants, aucun `.moyen` rendu. Le
+formulaire d'échéance (`SectionCout.tsx`) poste `activiteId`, `echeance`,
+`libelle`, `montant`, `paiementId`, `paye`, `periodicite` — jamais `moyen`.
+
+⚠️ **Rien ne lève d'erreur.** Le chemin d'écriture est complet de bout en bout,
+sauf son premier maillon. C'est le même défaut que `nb_contrats_cddu` sur
+l'autre projet : une colonne dont le seul rédacteur possible n'a jamais été
+câblé, et qui reste donc vide sans que personne le sache.
+
+Coût de reprise : un sélecteur dans `SectionCout`, six libellés i18n, un
+affichage sur la fiche. Tout le reste est déjà là.
+
+## 2. La semaine desktop n'a pas la forme dessinée
+
+| | |
+|---|---|
+| **Maquette** (« 2 · Cette semaine — **7 colonnes**, conflit, vacances ») | Grille de 7 colonnes datées (Lun. 7 → Dim. 13), **rail horaire 8h → 20h**, séances positionnées dans la grille, en-têtes de colonne portant leur signal (« Conflit », « Voyage Rome », « Vacances »), et une **légende** en pied : Conflit d'horaires / Voyage — cours manqué / Vacances scolaires (zone C) |
+| **Construit** | `VueSemaine.tsx` est une **liste par jour**, servie telle quelle aux deux tailles d'écran. Aucun `grid-cols-7`, aucun rail horaire. Seul `legende.vacances` existe côté i18n |
+
+⚠️ C'est le même écart que le Planning Voyages relevé le 5 septembre :
+*l'intention est juste, la forme ne l'est pas*. Les signaux sont bien présents
+(icônes conflit / voyage / soleil dans la liste), mais la lecture « qui est où,
+à quelle heure, sur toute la semaine » que donne une grille n'existe pas.
+
+La composition desktop **1+5** (liste + fiche côte à côte), elle, est conforme
+(`ListeActivites.tsx`, grille `lg:grid-cols-[1fr_460px]`).
+
+## 3. Trois absences franches
+
+| Maquette | État |
+|---|---|
+| **Covoiturage**, à côté de « Qui dépose » (écran 7) | **Zéro occurrence** dans `src`, `messages` et les migrations |
+| Périodicité **« À la séance »** (écran 9) | L'énumération s'arrête à `annuelle` : `["unique","mensuelle","trimestrielle","annuelle"]` |
+| Type d'activité **« Soutien scolaire »** (écran 6) | Zéro occurrence. Les 8 autres types de la maquette sont là |
+
+⚠️ Le covoiturage n'est pas un libellé manquant : il n'y a ni colonne, ni
+champ, ni notion. C'est le plus coûteux des trois.
+
+## 4. Trois appauvrissements
+
+| Maquette | Construit |
+|---|---|
+| Chaque alerte porte **son verbe** : « Régler » (paiement), « Ajouter » (assurance manquante), « Renouveler » (certificat), « Ouvrir » (inscription) | Une seule action générique — seuls `alertes.traiter` et `alertes.ouvrir` existent |
+| Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | Aucun ✕ dans `FiltresActivites.tsx`. Le rail desktop par sections (Membre / Statut / Type / Tags) est en revanche conforme |
+| En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | `t("compte", { n })` → « 3 activités » |
+
+## 5. Deux détails
+
+- **Un seul téléphone.** La migration porte `telephone text` (ligne 31) ; la
+  maquette montre **deux contacts avec leur rôle** : « 05 56 22 41 08 · club »
+  et « 06 12 88 04 51 · Claire, monitrice ».
+- **Pas d'autocomplétion d'adresse au formulaire d'activité.** La maquette
+  montre deux suggestions départageant « 12 route du Cap, 33470 Le Teich » de
+  « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » — c'est-à-dire exactement
+  le cas où la saisie libre se trompe.
+  ⚠️ **Nuance importante** : un géocodeur existe désormais
+  (`features/famille/data/geocodage.ts`, non commité), mais il est branché sur
+  l'adresse **du foyer** (`famille/data/actions.ts`), pas sur celle du club.
+  La brique est donc là ; c'est son emploi sur ce formulaire qui manque.
+- Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club / itinéraire »)
+  n'existe pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
+  pas la capacité.
+
+---
+
+## Ce qui est tenu, et qui n'était pas facile
+
+À ne pas re-vérifier : le **conflit de trajets** au mot près ; les **vacances
+scolaires puisées à la MÊME source** que le planning Voyages (le commentaire de
+`VueSemaine` le dit : *deux calendriers finiraient par se contredire*) ; le
+**cours manqué pour cause de voyage** ; la
+**présence sur forfait** (13/20, faites / manquées / restantes) ; les **codes
+chiffrés révélés après ré-authentification** ; l'**export ICS** et sa route
+d'API ; les **annulations de créneau** (tables `exceptions`) ; le **scan par
+appareil photo** (`capture="environment"`) ; le **badge de compte** sur l'onglet
+(`nombreAlertesUrgentes`) ; les **tags** (affichage et filtre) ; la **saison** ;
+les **états vides**, y compris « reprise le 21 » pendant les vacances.
+
+⚠️ **Le temps de trajet est à part** : il est fait — `domain/trajet.ts`,
+`dureeEstimeeMinutes`, employé par `FicheActivite`, clé `lieu.duree`
+« ~{n} min depuis chez nous », alimenté par les coordonnées du foyer de la
+migration `00057` — mais **rien de tout cela n'est commité**. Le mot
+« estimation » est d'ailleurs assumé dans le code (distance à vol d'oiseau,
+vitesse moyenne de 22 km/h), là où la maquette écrit « 22 min » sans nuance.
+Tant que ce lot n'est pas commité, cette ligne n'existe pour personne d'autre.
+
+---
+
+## Ordre suggéré
+
+1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.
+   Peu coûteux, et plus il attend, plus les échéances déjà saisies seront
+   à reprendre à la main.
+2. **Verbes d'alerte contextuels** — fort usage, coût faible : l'écran Alertes
+   est celui qu'on ouvre pour agir, et « Traiter » ne dit pas quoi faire.
+3. **Puces de filtre retirables + en-tête nommant les filtres** — les deux vont
+   ensemble : savoir ce qui filtre, et pouvoir en retirer un seul.
+4. **« À la séance » et « Soutien scolaire »** — deux valeurs à ajouter.
+5. **Semaine desktop en 7 colonnes** — la seule forme entièrement différente,
+   donc le plus visible ; à traiter comme un lot à part.
+6. **Covoiturage** — nouvelle notion (colonne, champ, affichage) : un chantier,
+   pas une finition.
+7. **Deuxième contact avec rôle**, puis **autocomplétion d'adresse du club** —
+   le géocodeur existe déjà (il sert l'adresse du foyer) : il s'agit de
+   l'employer sur un second formulaire, pas de choisir un service.
+8. **Committer le lot « temps de trajet »** — hors périmètre de cet audit, mais
+   c'est la première chose à faire : ce travail n'existe aujourd'hui que sur
+   une seule machine.
