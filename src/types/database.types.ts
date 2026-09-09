@@ -389,6 +389,8 @@ export type Database = {
           adresse: string | null
           club_nom: string | null
           consignes_acces: string | null
+          contact_nom: string | null
+          contact_telephone: string | null
           created_at: string
           email: string | null
           espace_famille_url: string | null
@@ -412,6 +414,8 @@ export type Database = {
           adresse?: string | null
           club_nom?: string | null
           consignes_acces?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
           created_at?: string
           email?: string | null
           espace_famille_url?: string | null
@@ -435,6 +439,8 @@ export type Database = {
           adresse?: string | null
           club_nom?: string | null
           consignes_acces?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
           created_at?: string
           email?: string | null
           espace_famille_url?: string | null

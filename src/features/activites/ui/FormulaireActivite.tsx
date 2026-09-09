@@ -49,6 +49,12 @@ export function FormulaireActivite({ membres, libelle }: {
       <input name="clubNom" data-testid="activite-club" placeholder={t("nouvelle.club")} aria-label={t("nouvelle.club")} className={champ} />
       <input name="adresse" data-testid="activite-adresse" placeholder={t("nouvelle.adresse")} aria-label={t("nouvelle.adresse")} className={champ} />
       <input name="telephone" data-testid="activite-telephone" placeholder={t("nouvelle.telephone")} aria-label={t("nouvelle.telephone")} className={champ} />
+      <div className="flex flex-wrap gap-2">
+        <input name="contactNom" data-testid="activite-contact-nom" placeholder={t("nouvelle.contactNom")}
+          aria-label={t("nouvelle.contactNom")} className={`${champ} min-w-0 flex-1`} />
+        <input name="contactTelephone" data-testid="activite-contact-tel" placeholder={t("nouvelle.contactTel")}
+          aria-label={t("nouvelle.contactTel")} className={`${champ} min-w-0 flex-1`} />
+      </div>
 
       {membres.length > 0 && (
         <>

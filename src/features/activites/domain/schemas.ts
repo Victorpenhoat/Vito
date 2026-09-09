@@ -20,6 +20,10 @@ export const activiteInputSchema = z.object({
   telephone: optionnel(40),
   // Formule à la carte : vide = abonnement illimité, pas zéro séance.
   formuleSeances: z.coerce.number().int().positive().optional(),
+  // Le second contact — « Claire, monitrice » — va par paire : un numéro sans
+  // nom ne dit pas qui décroche.
+  contactNom: optionnel(120),
+  contactTelephone: optionnel(40),
   membres: z.array(id).default([]),
 });
 export type ActiviteInput = z.infer<typeof activiteInputSchema>;
@@ -46,7 +50,7 @@ export const paiementInputSchema = z.object({
   // Réutilise le parseur d'euros du carnet : « 310 », « 310,50 » ou « 310.50 ».
   montantCents: centsFromEuros,
   echeance: z.string().date().optional(),
-  periodicite: z.enum(["unique", "mensuelle", "trimestrielle", "annuelle"]).optional(),
+  periodicite: z.enum(["seance", "unique", "mensuelle", "trimestrielle", "annuelle"]).optional(),
   moyen: z.enum(["prelevement", "carte", "virement", "cheque", "especes", "autre"]).optional(),
 });
 

@@ -75,11 +75,16 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
   // Filtres cumulables : ET entre dimensions, OU à l'intérieur.
   // Sur des LIGNES et non sur un total : d'autres tests créent leurs propres
   // activités dans la même base, et un compteur absolu se périmerait.
+  // Les filtres sont des LIENS rendus par le serveur : ils répondent avant
+  // l'hydratation, et un clic rapide n'est jamais perdu.
   await page.getByTestId("filtre-statut-terminee").click();
   await expect(page).toHaveURL(/statut=terminee/);
   await expect(page.getByTestId("activite-row").filter({ hasText: "Natation" })).toHaveCount(1);
   await expect(page.getByTestId("activite-row").filter({ hasText: "Danse" })).toHaveCount(0);
   await page.getByTestId("filtre-statut-en_cours").click();
+  // Attendre l'URL avant d'enchaîner : les assertions de lignes peuvent passer
+  // sur le DOM PRÉCÉDENT, et le clic suivant partirait pendant la navigation.
+  await expect(page).toHaveURL(/statut=en_cours/);
   await expect(page.getByTestId("activite-row").filter({ hasText: "Danse" })).toHaveCount(1);
   await expect(page.getByTestId("activite-row").filter({ hasText: "Natation" })).toHaveCount(1);
 
@@ -341,7 +346,8 @@ test("la carte place les clubs, les filtre par membre et dit ce qu'elle ne montr
 
   // Le filtre par membre est le MÊME composant que la liste : les paramètres
   // d'URL sont partagés, donc les filtres survivent au changement de vue.
-  const filtreTom = page.getByTestId("activites-filtres").getByRole("button", { name: "Tom" });
+  // Un LIEN, pas un bouton : les filtres sont rendus par le serveur.
+  const filtreTom = page.getByTestId("activites-filtres").getByRole("link", { name: "Tom" }).first();
   await filtreTom.click();
   await expect(page).toHaveURL(/membre=/);
   await expect(epingles).toHaveCount(1);
@@ -491,4 +497,55 @@ test("la fiche annonce une durée estimée depuis chez nous", async ({ page }) =
   await page.getByTestId("activite-row").filter({ hasText: "Natation" }).first()
     .getByRole("link").first().click();
   await expect(page.getByTestId("fiche-activite")).toBeVisible();
+});
+
+// Écarts relevés le 8 septembre (docs/design/ECARTS-ACTIVITES-2026-09-08.md).
+test("le mode de règlement se saisit et s'affiche — il ne restait plus vide", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Football" }).first()
+    .getByRole("link").first().click();
+
+  const libelle = `Licence ${String(Date.now()).slice(-6)}`;
+  await page.getByTestId("paiement-ajouter").click();
+  const form = page.getByTestId("paiement-form");
+  await form.getByTestId("paiement-libelle").fill(libelle);
+  await form.getByTestId("paiement-montant").fill("95");
+  await form.getByTestId("paiement-periodicite").selectOption("seance");
+  await form.getByTestId("paiement-moyen").selectOption("prelevement");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("paiement-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("fiche-echeance").filter({ hasText: libelle });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  // La colonne `moyen` existait, était lue et acceptée — mais aucun formulaire
+  // ne la postait. Ce test est le garde-fou de ce chemin d'écriture.
+  await expect(ligne).toContainText("Prélèvement");
+  await expect(ligne).toContainText("À la séance");
+});
+
+test("les alertes disent quoi faire, et les filtres se retirent un par un", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites/alertes");
+  // Le verbe suit la nature de l'alerte : « Régler » n'est pas « Renouveler ».
+  const premiere = page.getByTestId("alerte-row").first();
+  if (await premiere.count()) {
+    await expect(premiere.getByTestId("alerte-traiter")).not.toHaveText("Traiter");
+  }
+
+  await page.goto("/fr/activites?onglet=tous");
+  // Attendre que les filtres soient là avant de cliquer : un clic lancé pendant
+  // que la page change encore se perd, et le test accuserait le code à tort.
+  await expect(page.getByTestId("activites-filtres")).toBeVisible();
+  await page.getByTestId("filtre-statut-terminee").click();
+  // Une puce nomme le filtre posé, et le retire d'un clic.
+  const puce = page.getByTestId("filtre-pose-terminee");
+  await expect(puce).toBeVisible();
+  // L'en-tête de résultats le nomme aussi : « N activités · Terminée ».
+  await expect(page.getByTestId("activites-compte")).toContainText("Terminée");
+  await puce.click();
+  await expect(page).not.toHaveURL(/statut=terminee/);
+  await expect(page.getByTestId("filtres-poses")).toHaveCount(0);
 });

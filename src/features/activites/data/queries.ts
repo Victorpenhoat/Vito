@@ -104,6 +104,8 @@ export type CreneauDetail = Creneau & {
 };
 
 export type ActiviteDetail = ActiviteListe & {
+  contactNom: string | null;
+  contactTelephone: string | null;
   email: string | null;
   siteWeb: string | null;
   espaceFamilleUrl: string | null;
@@ -148,7 +150,8 @@ export const getActiviteDetail = cache(async (
   const { data, error } = await supabase
     .from("activites")
     .select(
-      `id, type, nom, statut, club_nom, adresse, telephone, email, site_web, espace_famille_url,
+      `id, type, nom, statut, club_nom, adresse, telephone, contact_nom, contact_telephone,
+       email, site_web, espace_famille_url,
        consignes_acces, notes, lat, lng, formule_seances, saison_debut, saison_fin,
        activite_membres(family_members(id, first_name, avatar_color, profile_id)),
        activite_creneaux(id, jour_semaine, heure_debut, heure_fin, valide_du, valide_au,
@@ -190,6 +193,8 @@ export const getActiviteDetail = cache(async (
     clubNom: data.club_nom,
     adresse: data.adresse,
     telephone: data.telephone,
+    contactNom: data.contact_nom,
+    contactTelephone: data.contact_telephone,
     lat: data.lat,
     lng: data.lng,
     email: data.email,

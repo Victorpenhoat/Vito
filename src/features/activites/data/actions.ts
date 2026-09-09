@@ -21,6 +21,8 @@ export async function ajouterActivite(_prev: unknown, formData: FormData) {
     adresse: formData.get("adresse") ?? undefined,
     telephone: formData.get("telephone") ?? undefined,
     formuleSeances: formData.get("formuleSeances") || undefined,
+    contactNom: formData.get("contactNom") ?? undefined,
+    contactTelephone: formData.get("contactTelephone") ?? undefined,
     membres: formData.getAll("membres"),
   });
   if (!parsed.success) return { error: "Activité invalide" };
@@ -36,6 +38,10 @@ export async function ajouterActivite(_prev: unknown, formData: FormData) {
       user_id: uid, type: d.type, nom: d.nom, statut: d.statut,
       club_nom: d.clubNom ?? null, adresse: d.adresse ?? null,
       telephone: d.telephone ?? null, formule_seances: d.formuleSeances ?? null,
+      // La contrainte exige les deux ou aucun : un demi-contact serait refusé
+      // par la base, autant ne pas le proposer.
+      contact_nom: d.contactNom && d.contactTelephone ? d.contactNom : null,
+      contact_telephone: d.contactNom && d.contactTelephone ? d.contactTelephone : null,
     })
     .select("id")
     .single();
