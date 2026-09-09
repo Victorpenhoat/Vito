@@ -1879,7 +1879,15 @@
       "jusqua": "fino alle {heure}",
       "manquee": "Persa · {voyage}",
       "interrompue": "Sospeso durante le vacanze",
-      "enConflit": "In conflitto con un'altra lezione"
+      "enConflit": "In conflitto con un'altra lezione",
+      "conflitCourt": "Conflitto",
+      "vacancesCourt": "Vacanze",
+      "deposeCourt": "?",
+      "legende": {
+        "conflit": "Conflitto di orari",
+        "voyage": "Viaggio — lezione persa",
+        "vacances": "Vacanze scolastiche (zona {zone})"
+      }
     },
     "carte": {
       "autourDeMoi": "Intorno a me",

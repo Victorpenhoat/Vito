@@ -1879,7 +1879,15 @@
       "jusqua": "jusqu'à {heure}",
       "manquee": "Manqué · {voyage}",
       "interrompue": "Interrompu pendant les vacances",
-      "enConflit": "En conflit avec une autre séance"
+      "enConflit": "En conflit avec une autre séance",
+      "conflitCourt": "Conflit",
+      "vacancesCourt": "Vacances",
+      "deposeCourt": "?",
+      "legende": {
+        "conflit": "Conflit d'horaires",
+        "voyage": "Voyage — cours manqué",
+        "vacances": "Vacances scolaires (zone {zone})"
+      }
     },
     "carte": {
       "autourDeMoi": "Autour de moi",

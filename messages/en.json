@@ -1879,7 +1879,15 @@
       "jusqua": "until {heure}",
       "manquee": "Missed · {voyage}",
       "interrompue": "Paused during the holidays",
-      "enConflit": "Clashes with another session"
+      "enConflit": "Clashes with another session",
+      "conflitCourt": "Clash",
+      "vacancesCourt": "Holidays",
+      "deposeCourt": "?",
+      "legende": {
+        "conflit": "Schedule clash",
+        "voyage": "Trip — class missed",
+        "vacances": "School holidays (zone {zone})"
+      }
     },
     "carte": {
       "autourDeMoi": "Around me",

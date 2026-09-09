@@ -8,6 +8,7 @@ import {
   joursDeLaSemaine, semaineVoisine, occurrencesDuJour, conflitsDuJour, signauxDuJour,
 } from "../domain/semaine";
 import { EtatVide } from "./EtatVide";
+import { GrilleSemaine } from "./GrilleSemaine";
 
 /**
  * « Cette semaine » : l'écran du quotidien.
@@ -35,11 +36,16 @@ export async function VueSemaine({ semaine, aujourdhui }: {
   const borne = (j: string) =>
     format.dateTime(new Date(`${j}T00:00:00Z`), { day: "numeric", month: "long", timeZone: "UTC" });
 
-  const contenu = jours.map((jour) => ({
-    jour,
-    occurrences: occurrencesDuJour(activites, jour, exceptions),
-    signaux: signauxDuJour(jour, VACANCES_ZONE_C, periodes),
-  }));
+  const contenu = jours.map((jour) => {
+    const occurrences = occurrencesDuJour(activites, jour, exceptions);
+    return {
+      jour,
+      occurrences,
+      signaux: signauxDuJour(jour, VACANCES_ZONE_C, periodes),
+      // Calculés une fois : la liste et la grille montrent les mêmes conflits.
+      conflits: new Set(conflitsDuJour(occurrences).flat().map((o) => o.creneauId)),
+    };
+  });
   const vide = contenu.every((c) => c.occurrences.length === 0);
   // « Vacances scolaires — reprise le lundi 21 » : une semaine vide pendant les
   // vacances n'est pas un carnet vide, et le dire évite de chercher une panne.
@@ -62,6 +68,13 @@ export async function VueSemaine({ semaine, aujourdhui }: {
           className="grid h-7 w-7 place-items-center rounded-full border border-line text-muted hover:text-ink">→</Link>
       </div>
 
+      {/* Sur grand écran, la SEMAINE ENTIÈRE d'un coup d'œil : sept colonnes
+          et un rail horaire. La liste par jour reste sur téléphone, où une
+          grille de douze heures serait illisible. */}
+      {!vide && (
+        <GrilleSemaine jours={contenu} aujourdhui={aujourdhui} zone={ZONE_SCOLAIRE} />
+      )}
+
       {vide ? (
         <EtatVide
           titre={t("vide.semaineTitre")}
@@ -71,13 +84,12 @@ export async function VueSemaine({ semaine, aujourdhui }: {
               })
             : t("vide.semaineTexte")} />
       ) : (
-        contenu.map(({ jour, occurrences, signaux }) => {
+        contenu.map(({ jour, occurrences, signaux, conflits: enConflit }) => {
           if (occurrences.length === 0) return null;
           const conflits = conflitsDuJour(occurrences);
-          const enConflit = new Set(conflits.flat().map((o) => o.creneauId));
           return (
             <section key={jour} data-testid="semaine-jour"
-              className={`flex flex-col gap-1.5 rounded-card border px-3.5 py-2.5 ${
+              className={`flex flex-col gap-1.5 rounded-card border px-3.5 py-2.5 lg:hidden ${
                 jour === aujourdhui ? "border-accent/40 bg-accent-50/30" : "border-line bg-surface"
               }`}>
               <header className="flex flex-wrap items-center gap-2">

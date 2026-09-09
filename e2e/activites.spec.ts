@@ -294,6 +294,9 @@ test("un document d'activité ne s'ouvre pas sans ticket", async ({ page, reques
 // Incrément 6 : la semaine. Ce qu'on vient y chercher, c'est moins ce qui a
 // lieu que ce qui se télescope.
 test("« Cette semaine » montre les séances, et signale les trajets impossibles", async ({ page }) => {
+  // La liste par jour est la lecture TÉLÉPHONE : sur grand écran, c'est la
+  // grille en sept colonnes qui prend le relais (test plus bas).
+  await page.setViewportSize({ width: 390, height: 844 });
   await login(page, "client@vito.test");
   // Un samedi de référence : le seed y place l'équitation de Camille (10h) et
   // le football de Tom (10h30), au même moment et à deux endroits.
@@ -317,6 +320,7 @@ test("« Cette semaine » montre les séances, et signale les trajets impossible
 });
 
 test("les vacances scolaires et les voyages se superposent à la semaine", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await login(page, "client@vito.test");
   // Toussaint zone C : du 17 octobre au 2 novembre, source partagée avec le
   // planning des Voyages.
@@ -585,4 +589,36 @@ test("choisir une adresse suggérée situe le club, et le fait apparaître sur l
   const epingles = page.locator(".leaflet-marker-icon");
   await expect(epingles.first()).toBeVisible();
   expect(await epingles.count()).toBeGreaterThanOrEqual(4);
+});
+
+// Écart 5 : la semaine en sept colonnes sur grand écran. Ce qu'une liste ne
+// montre pas, c'est le chevauchement — la grille le met sous les yeux.
+test("desktop : la semaine se lit en sept colonnes, avec son rail horaire", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites?onglet=semaine&semaine=2026-09-12");
+
+  const grille = page.getByTestId("grille-semaine");
+  await expect(grille).toBeVisible();
+  await expect(page.getByTestId("grille-colonne")).toHaveCount(7);
+
+  // Le samedi porte le conflit dans son en-tête, et ses deux séances côte à côte.
+  await expect(page.getByTestId("colonne-conflit")).toHaveCount(1);
+  const samedi = page.getByTestId("grille-colonne").nth(5);
+  await expect(samedi.getByTestId("grille-seance")).toHaveCount(2);
+
+  // Deux séances simultanées ne se superposent pas : elles se partagent la
+  // largeur, ce qui est tout l'intérêt de la grille.
+  const boites = await samedi.getByTestId("grille-seance").all();
+  const a = await boites[0]!.boundingBox();
+  const b = await boites[1]!.boundingBox();
+  expect(a!.x + a!.width).toBeLessThanOrEqual(b!.x + 1);
+
+  // Et la légende nomme les trois teintes.
+  await expect(page.getByTestId("grille-legende")).toContainText("Conflit d'horaires");
+
+  // Sur téléphone, c'est la liste par jour : douze heures de grille y seraient
+  // illisibles.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByTestId("grille-semaine")).toBeHidden();
+  await expect(page.getByTestId("semaine-jour").first()).toBeVisible();
 });

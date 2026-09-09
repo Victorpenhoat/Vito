@@ -1879,7 +1879,15 @@
       "jusqua": "hasta las {heure}",
       "manquee": "Perdida · {voyage}",
       "interrompue": "Interrumpido en vacaciones",
-      "enConflit": "Coincide con otra sesión"
+      "enConflit": "Coincide con otra sesión",
+      "conflitCourt": "Conflicto",
+      "vacancesCourt": "Vacaciones",
+      "deposeCourt": "?",
+      "legende": {
+        "conflit": "Conflicto de horarios",
+        "voyage": "Viaje — clase perdida",
+        "vacances": "Vacaciones escolares (zona {zone})"
+      }
     },
     "carte": {
       "autourDeMoi": "A mi alrededor",
