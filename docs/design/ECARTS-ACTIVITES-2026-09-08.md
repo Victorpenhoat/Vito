@@ -9,15 +9,39 @@ la maquette **au mot près**.
 
 Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
 
-⚠️⚠️ **CET AUDIT ENJAMBE DU TRAVAIL NON COMMITÉ.** Au moment de l'écrire, l'arbre
-de travail portait 11 fichiers modifiés et 4 fichiers non suivis, datés du
-**8 septembre 18h09–18h11** — soit deux heures après le dernier commit (#174,
-16h05). Ce travail ajoute le **temps de trajet** (`domain/trajet.ts`, clé
-`lieu.duree` = « ~{n} min depuis chez nous »), les **coordonnées du foyer**
-(migration `00057_foyer_coordonnees.sql`) et le **géocodage** de l'adresse du
-foyer (`features/famille/data/geocodage.ts`). Les constats ci-dessous en
-tiennent compte et le disent là où c'est déterminant. Un lecteur qui se
-fierait à `git log` ne verrait rien de tout cela.
+> **État au 9 septembre, après #177, #179 et #180.** Sur les **onze** écarts :
+> **sept comblés**, **un en partie**, **trois ouverts**. Le détail est marqué
+> **au fil du document** : chaque écart garde son constat d'origine lisible, avec
+> la PR qui l'a comblé. Un document d'écarts qui se vide de son contenu perd sa
+> valeur d'archive — dans six mois, savoir *pourquoi* le mode de règlement avait
+> été oublié vaut mieux que constater qu'il est là.
+>
+> · **Comblés** : mode de règlement (#179) · « à la séance » (#179) · « soutien
+>   scolaire » (#179) · puces de filtre retirables (#179) · en-tête nommant les
+>   filtres (#179) · second contact avec son rôle (#179) · **autocomplétion de
+>   l'adresse du club (#180)**.
+> · **En partie (#179)** : verbes d'alerte — trois au lieu de quatre, et
+>   l'affectation diffère.
+> · **Ouverts** : semaine desktop en 7 colonnes · covoiturage · swipe.
+>
+> ⚠️ Une version antérieure de ce bandeau annonçait « sept comblés » **après
+> #179 seulement**, en comptant le **temps de trajet** — qui n'est PAS l'un des
+> onze écarts : il figure dans « ce qui est tenu » plus bas, et a été mergé en
+> #177. La vérité était alors **six** sur onze. Le compte de sept ne devient
+> juste qu'avec #180. Un décompte se vérifie contre la liste, pas de mémoire.
+
+⚠️ **CET AUDIT A ENJAMBÉ DU TRAVAIL EN VOL — depuis résolu (mise à jour du
+9 septembre).** À l'écriture, l'arbre portait 11 fichiers modifiés et 4 non
+suivis, datés du 8 septembre 18h09–18h11, que `git log` ne montrait pas. Ce lot
+— **temps de trajet** (`domain/trajet.ts`, clé `lieu.duree` = « ~{n} min depuis
+chez nous »), **coordonnées du foyer** (migration `00057_foyer_coordonnees.sql`)
+et **géocodage** de l'adresse du foyer (`features/famille/data/geocodage.ts`) —
+a été mergé le 9 septembre à 10h25 (**#177**, `eebac54`). Les passages concernés
+ci-dessous ont été corrigés en conséquence.
+
+⚠️ **La leçon reste** : un audit daté décrit un dépôt à un instant, et un dépôt
+peut porter du travail qu'aucune commande d'historique ne révèle. Vérifier
+`git status`, pas seulement `git log`.
 
 ⚠️ **Portée de l'audit** : il compare la maquette au **code et aux 159 clés
 i18n**. Il n'a **pas** été mené en pilotant l'application. Il attrape donc les
@@ -28,9 +52,17 @@ degré.
 
 ---
 
-## 1. Le mode de règlement est un champ mort
+## 1. Le mode de règlement est un champ mort — ✅ COMBLÉ (#179)
 
-C'est l'écart le plus grave, et le seul qui touche la donnée.
+C'était l'écart le plus grave, et le seul qui touchait la donnée.
+
+> **Comblé le 9 septembre** : `SectionCout.tsx` poste désormais `moyen`, et les
+> libellés existent (`cout.moyen` = « Mode de règlement », les six valeurs, plus
+> `cout.sansMoyen` = « Mode non précisé » — cet état vide était nécessaire, les
+> échéances déjà saisies n'ayant aucun moyen).
+> ⚠️ Le constat qui suit est **conservé parce qu'il explique comment ça arrive** :
+> un chemin d'écriture complet de bout en bout sauf son premier maillon, sans
+> qu'aucune erreur ne se lève.
 
 | | |
 |---|---|
@@ -49,7 +81,7 @@ câblé, et qui reste donc vide sans que personne le sache.
 Coût de reprise : un sélecteur dans `SectionCout`, six libellés i18n, un
 affichage sur la fiche. Tout le reste est déjà là.
 
-## 2. La semaine desktop n'a pas la forme dessinée
+## 2. La semaine desktop n'a pas la forme dessinée — ⬜ OUVERT
 
 | | |
 |---|---|
@@ -64,40 +96,41 @@ affichage sur la fiche. Tout le reste est déjà là.
 La composition desktop **1+5** (liste + fiche côte à côte), elle, est conforme
 (`ListeActivites.tsx`, grille `lg:grid-cols-[1fr_460px]`).
 
-## 3. Trois absences franches
+## 3. Trois absences franches — ✅ deux comblées (#179), ⬜ une ouverte
 
 | Maquette | État |
 |---|---|
-| **Covoiturage**, à côté de « Qui dépose » (écran 7) | **Zéro occurrence** dans `src`, `messages` et les migrations |
-| Périodicité **« À la séance »** (écran 9) | L'énumération s'arrête à `annuelle` : `["unique","mensuelle","trimestrielle","annuelle"]` |
-| Type d'activité **« Soutien scolaire »** (écran 6) | Zéro occurrence. Les 8 autres types de la maquette sont là |
+| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ⬜ **Toujours zéro occurrence** dans `src`, `messages` et les migrations |
+| Périodicité **« À la séance »** (écran 9) | ✅ Ajoutée (#179) : `check` élargi à `'seance'`, clé « À la séance » |
+| Type d'activité **« Soutien scolaire »** (écran 6) | ✅ Ajouté (#179) : `soutien_scolaire` en base, dans le schéma et au formulaire |
 
 ⚠️ Le covoiturage n'est pas un libellé manquant : il n'y a ni colonne, ni
 champ, ni notion. C'est le plus coûteux des trois.
 
-## 4. Trois appauvrissements
+## 4. Trois appauvrissements — ✅ deux comblés, 🟨 un en partie (#179)
 
 | Maquette | Construit |
 |---|---|
-| Chaque alerte porte **son verbe** : « Régler » (paiement), « Ajouter » (assurance manquante), « Renouveler » (certificat), « Ouvrir » (inscription) | Une seule action générique — seuls `alertes.traiter` et `alertes.ouvrir` existent |
-| Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | Aucun ✕ dans `FiltresActivites.tsx`. Le rail desktop par sections (Membre / Statut / Type / Tags) est en revanche conforme |
-| En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | `t("compte", { n })` → « 3 activités » |
+| Chaque alerte porte **son verbe** : « Régler » (paiement), « Ajouter » (assurance expirée), « Renouveler » (certificat qui expire), « Ouvrir » (inscription) | 🟨 **En partie** (#179) : `verbeAlerte` rend **trois** verbes — `regler`, `renouveler`, `ouvrir` — au lieu de quatre, et leur **affectation est décalée d'un cran** : la maquette met « Ajouter » sur le document *expiré* et « Renouveler » sur celui qui *expire bientôt* ; le code met « Renouveler » sur l'expiré et « Ouvrir » sur l'imminent. Le progrès est réel — trois verbes plutôt qu'un « Traiter » muet — la correspondance ne l'est pas |
+| Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | ✅ Comblé (#179) : clé `filtres.retirer` = « Retirer le filtre {libelle} » |
+| En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | ✅ Comblé (#179) : `ListeActivites` joint le compte et `nomsDesFiltres` — *« le compte SEUL laisse la question 3 sur combien, et pourquoi ceux-là »* |
 
-## 5. Deux détails
+## 5. Deux détails — ✅ deux comblés (#179, #180), ⬜ un ouvert
 
-- **Un seul téléphone.** La migration porte `telephone text` (ligne 31) ; la
-  maquette montre **deux contacts avec leur rôle** : « 05 56 22 41 08 · club »
-  et « 06 12 88 04 51 · Claire, monitrice ».
-- **Pas d'autocomplétion d'adresse au formulaire d'activité.** La maquette
-  montre deux suggestions départageant « 12 route du Cap, 33470 Le Teich » de
-  « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » — c'est-à-dire exactement
-  le cas où la saisie libre se trompe.
-  ⚠️ **Nuance importante** : un géocodeur existe désormais
-  (`features/famille/data/geocodage.ts`, non commité), mais il est branché sur
-  l'adresse **du foyer** (`famille/data/actions.ts`), pas sur celle du club.
-  La brique est donc là ; c'est son emploi sur ce formulaire qui manque.
-- Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club / itinéraire »)
-  n'existe pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
+- ✅ **Un seul téléphone — comblé (#179).** La migration `00058` ajoute
+  `contact_nom` et `contact_telephone`, sous une contrainte que le constat
+  d'origine ne demandait pas et qui vaut mieux que lui :
+  `num_nonnulls(contact_nom, contact_telephone) in (0, 2)` — *un numéro sans nom
+  ne dit pas qui décroche ; un nom sans numéro n'appelle personne*.
+- ✅ **Autocomplétion d'adresse du formulaire d'activité — comblée (#180).**
+  La maquette montrait deux suggestions départageant « 12 route du Cap,
+  33470 Le Teich » de « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » —
+  c'est-à-dire exactement le cas où la saisie libre se trompe. `ChampAdresseClub.tsx`
+  (100 lignes) s'appuie sur le géocodeur arrivé en #177 pour le foyer : le
+  rebranchement annoncé ici a bien été fait, et l'adresse du club est désormais
+  **située**, pas seulement saisie.
+- ⬜ Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club /
+  itinéraire ») n'existe toujours pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
   pas la capacité.
 
 ---
@@ -115,17 +148,25 @@ appareil photo** (`capture="environment"`) ; le **badge de compte** sur l'onglet
 (`nombreAlertesUrgentes`) ; les **tags** (affichage et filtre) ; la **saison** ;
 les **états vides**, y compris « reprise le 21 » pendant les vacances.
 
-⚠️ **Le temps de trajet est à part** : il est fait — `domain/trajet.ts`,
-`dureeEstimeeMinutes`, employé par `FicheActivite`, clé `lieu.duree`
-« ~{n} min depuis chez nous », alimenté par les coordonnées du foyer de la
-migration `00057` — mais **rien de tout cela n'est commité**. Le mot
-« estimation » est d'ailleurs assumé dans le code (distance à vol d'oiseau,
-vitesse moyenne de 22 km/h), là où la maquette écrit « 22 min » sans nuance.
-Tant que ce lot n'est pas commité, cette ligne n'existe pour personne d'autre.
+Le **temps de trajet** est tenu lui aussi depuis #177 : `domain/trajet.ts`,
+`dureeEstimeeMinutes`, employé par `FicheActivite`, clé `lieu.duree`, alimenté
+par les coordonnées du foyer (migration `00057`).
+
+⚠️ Une nuance de fond, qui n'est pas un écart mais un choix à connaître : le
+code assume le mot **« estimation »** — `~{n} min`, distance à vol d'oiseau et
+vitesse moyenne de 22 km/h, sans appel à un service d'itinéraire — là où la
+maquette écrit « 22 min depuis chez nous » sans réserve. Le tilde est dans la
+clé i18n : c'est délibéré, et c'est la bonne façon de ne pas promettre une
+précision qu'on n'a pas.
 
 ---
 
 ## Ordre suggéré
+
+> ⚠️ **Cet ordre est celui du 8 septembre.** #179 a traité ses points 1 à 4,
+> #180 le point 7. Il reste : l'**affectation** des verbes d'alerte (reliquat du
+> point 2), la **semaine desktop** (point 5) et le **covoiturage** (point 6) —
+> plus le **swipe**, qui n'y figurait pas, étant un geste et non une fonction.
 
 1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.
    Peu coûteux, et plus il attend, plus les échéances déjà saisies seront
@@ -140,8 +181,8 @@ Tant que ce lot n'est pas commité, cette ligne n'existe pour personne d'autre.
 6. **Covoiturage** — nouvelle notion (colonne, champ, affichage) : un chantier,
    pas une finition.
 7. **Deuxième contact avec rôle**, puis **autocomplétion d'adresse du club** —
-   le géocodeur existe déjà (il sert l'adresse du foyer) : il s'agit de
-   l'employer sur un second formulaire, pas de choisir un service.
-8. **Committer le lot « temps de trajet »** — hors périmètre de cet audit, mais
-   c'est la première chose à faire : ce travail n'existe aujourd'hui que sur
-   une seule machine.
+   le géocodeur est sur `main` depuis #177 (il sert l'adresse du foyer) : il
+   s'agit de l'employer sur un second formulaire, pas de choisir un service.
+
+*(Le point « committer le lot temps de trajet », qui figurait ici, est sans
+objet : #177 l'a mergé le 9 septembre.)*
