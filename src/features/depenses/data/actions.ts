@@ -38,39 +38,7 @@ export async function createGroupe(_prev: unknown, formData: FormData) {
   return { ok: true as const };
 }
 
-export async function updateGroupe(_prev: unknown, formData: FormData) {
-  const id = formData.get("groupeId");
-  if (typeof id !== "string") return { error: "Entrée invalide" };
-  const parsed = groupeInputSchema.safeParse({
-    titre: formData.get("titre"),
-    devise: formData.get("devise") || undefined,
-  });
-  if (!parsed.success) return { error: "Groupe invalide" };
-  const supabase = await createServerSupabase();
-  if (!(await userId(supabase))) return { error: "Non authentifié" };
-  const { data, error } = await supabase
-    .from("depense_groupes")
-    .update({ titre: parsed.data.titre, devise: parsed.data.devise ?? "EUR" })
-    .eq("id", id)
-    .select("id")
-    .maybeSingle();
-  if (error) { logActionError("depenses.updateGroupe", error); return { error: "Mise à jour échouée" }; }
-  if (!data) return { error: "Mise à jour non autorisée" };
-  revalidatePath(`/depenses/${id}`);
-  return { ok: true as const };
-}
 
-export async function deleteGroupe(_prev: unknown, formData: FormData) {
-  const id = formData.get("groupeId");
-  if (typeof id !== "string") return { error: "Entrée invalide" };
-  const supabase = await createServerSupabase();
-  if (!(await userId(supabase))) return { error: "Non authentifié" };
-  const { data, error } = await supabase.from("depense_groupes").delete().eq("id", id).select("id").maybeSingle();
-  if (error) { logActionError("depenses.deleteGroupe", error); return { error: "Suppression échouée" }; }
-  if (!data) return { error: "Suppression non autorisée" };
-  revalidatePath("/depenses");
-  return { ok: true as const };
-}
 
 export async function addDepense(_prev: unknown, formData: FormData) {
   const parsed = depenseInputSchema.safeParse({
@@ -156,18 +124,6 @@ export async function addRemboursement(_prev: unknown, formData: FormData) {
   return { ok: true as const };
 }
 
-export async function deleteRemboursement(_prev: unknown, formData: FormData) {
-  const id = formData.get("remboursementId");
-  const groupeId = formData.get("groupeId");
-  if (typeof id !== "string" || typeof groupeId !== "string") return { error: "Entrée invalide" };
-  const supabase = await createServerSupabase();
-  if (!(await userId(supabase))) return { error: "Non authentifié" };
-  const { data, error } = await supabase.from("remboursements").delete().eq("id", id).select("id").maybeSingle();
-  if (error) { logActionError("depenses.deleteRemboursement", error); return { error: "Suppression échouée" }; }
-  if (!data) return { error: "Suppression non autorisée" };
-  revalidatePath(`/depenses/${groupeId}`);
-  return { ok: true as const };
-}
 
 export async function shareGroupe(_prev: unknown, formData: FormData) {
   const parsed = shareGroupeSchema.safeParse({ groupeId: formData.get("groupeId"), email: formData.get("email") });

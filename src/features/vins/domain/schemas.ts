@@ -25,7 +25,6 @@ export const creerVinSchema = z.object({
 
 /** Lieux de dégustation (design écran 3) : un restaurant OU un lieu libre. */
 export const LIEUX_DEGUSTATION = ["restaurant", "maison", "amis", "caviste", "autre"] as const;
-export type LieuDegustation = (typeof LIEUX_DEGUSTATION)[number];
 
 /** Le prix se compare mal sans son unité : 12 € au verre n'est pas 12 € la bouteille. */
 export const PRIX_UNITES = ["bouteille", "verre"] as const;
@@ -48,7 +47,6 @@ export const degustationCompleteSchema = z.object({
   tagIds: z.array(z.string().uuid()).default([]),
   nouveauxTags: z.array(z.string().min(1).max(60)).default([]),
 });
-export type DegustationComplete = z.infer<typeof degustationCompleteSchema>;
 
 /**
  * Correction de l'analyse (design écran 9). Tout est facultatif : on corrige le

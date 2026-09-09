@@ -10,5 +10,3 @@ export function getVinLabelProvider(): VinLabelProvider {
   return new MockVinLabelProvider();
 }
 
-export type { VinLabelProvider, LabelResult, LabelFields, LabelConfiance, LabelAnalyse, Confiance } from "./types";
-export { CONFIANCES, EMPTY_LABEL_FIELDS } from "./types";

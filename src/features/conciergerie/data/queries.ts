@@ -30,9 +30,3 @@ export async function getInboxConciergerie() {
   return data ?? [];
 }
 
-export async function getDemande(id: string) {
-  const supabase = await createServerSupabase();
-  const { data, error } = await supabase.from("conciergerie_demandes").select(SELECT).eq("id", id).single();
-  if (error) throw error;
-  return data;
-}

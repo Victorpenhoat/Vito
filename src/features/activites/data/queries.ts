@@ -2,7 +2,7 @@ import { cache } from "react";
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { prochaineOccurrence, seancesRestantes, type Creneau, type Occurrence } from "../domain/activite";
 
-export type MembreActivite = {
+type MembreActivite = {
   id: string;
   prenom: string;
   couleur: string | null;
@@ -97,7 +97,7 @@ export const getActivites = cache(async (aujourdhui: string, heure = "00:00"): P
   });
 });
 
-export type CreneauDetail = Creneau & {
+type CreneauDetail = Creneau & {
   lieuPrecision: string | null;
   intervenant: string | null;
   deposePar: { id: string; prenom: string } | null;

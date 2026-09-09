@@ -45,8 +45,8 @@ export type CaveStats = {
 };
 
 /** Le design en montre quatre : au-delà, ce n'est plus un classement mais une liste. */
-export const TOP_ENTREES = 4;
-export const MOIS_SUIVIS = 6;
+const TOP_ENTREES = 4;
+const MOIS_SUIVIS = 6;
 
 /** Ordre du design (et de l'enum `vin_couleur`), pour départager les ex æquo. */
 const ORDRE_COULEURS = ["rouge", "blanc", "rose", "petillant", "autre"];

@@ -4,7 +4,7 @@
 // en mémoire pour un carnet de famille, et filtrer ici plutôt qu'en base évite
 // autant d'allers-retours que de clics sur un filtre.
 
-export type MembreRef = { id: string; prenom: string; couleur: string | null; estMoi?: boolean };
+type MembreRef = { id: string; prenom: string; couleur: string | null; estMoi?: boolean };
 
 export type ActiviteFiltrable = {
   id: string;

@@ -3,7 +3,7 @@ import type { ImageBlockParam } from "@anthropic-ai/sdk/resources";
 import type { Confiance, LabelAnalyse, LabelConfiance, LabelFields, LabelResult, VinLabelProvider } from "./types";
 import { CONFIANCES, EMPTY_LABEL_FIELDS, VIN_COULEURS_LABEL } from "./types";
 
-export const VIN_LABEL_MODEL = "claude-sonnet-5";
+const VIN_LABEL_MODEL = "claude-sonnet-5";
 
 const PROMPT =
   "Tu es un sommelier qui lit une étiquette de bouteille de vin. Renvoie UNIQUEMENT un objet JSON " +

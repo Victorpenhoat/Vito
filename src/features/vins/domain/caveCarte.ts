@@ -7,8 +7,8 @@ import { moyenneVerres } from "./verres";
 // caviste, autre) n'a qu'un nom. Plutôt que d'inventer une position, ces
 // dégustations sont rendues sous la carte dans un bloc « Ailleurs ».
 
-export const LIEUX_LIBRES = ["restaurant", "maison", "amis", "caviste", "autre"] as const;
-export type LieuLibre = (typeof LIEUX_LIBRES)[number];
+const LIEUX_LIBRES = ["restaurant", "maison", "amis", "caviste", "autre"] as const;
+type LieuLibre = (typeof LIEUX_LIBRES)[number];
 
 export type DegustationLieu = {
   id: string;

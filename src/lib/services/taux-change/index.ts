@@ -8,4 +8,3 @@ export function getTauxProvider(): TauxProvider {
   return new AucunTauxProvider();
 }
 
-export type { TauxProvider, TauxDeChange } from "./types";

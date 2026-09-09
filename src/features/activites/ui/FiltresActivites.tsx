@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 
-export type OptionFiltre = { valeur: string; libelle: string; couleur?: string | null };
+type OptionFiltre = { valeur: string; libelle: string; couleur?: string | null };
 export type DimensionFiltre = { cle: string; libelle: string; options: OptionFiltre[] };
 
 /**

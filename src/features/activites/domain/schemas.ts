@@ -31,7 +31,6 @@ export const activiteInputSchema = z.object({
   contactTelephone: optionnel(40),
   membres: z.array(id).default([]),
 });
-export type ActiviteInput = z.infer<typeof activiteInputSchema>;
 
 export const creneauInputSchema = z
   .object({
@@ -49,7 +48,6 @@ export const creneauInputSchema = z
     message: "Un créneau ne peut pas finir avant de commencer",
     path: ["heureFin"],
   });
-export type CreneauInput = z.infer<typeof creneauInputSchema>;
 
 export const paiementInputSchema = z.object({
   activiteId: id,

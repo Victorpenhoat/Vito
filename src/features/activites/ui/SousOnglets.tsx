@@ -2,7 +2,7 @@ import { Link } from "@/lib/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
 /** Les quatre vues de l'onglet, dans l'ordre du design. */
-export const ONGLETS_ACTIVITES = ["en_cours", "semaine", "tous", "carte"] as const;
+const ONGLETS_ACTIVITES = ["en_cours", "semaine", "tous", "carte"] as const;
 export type OngletActivites = (typeof ONGLETS_ACTIVITES)[number];
 
 export function ongletValide(brut: string | undefined): OngletActivites {

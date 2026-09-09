@@ -10,4 +10,3 @@ export function getPlacesProvider(): PlacesProvider {
   return new MockPlacesProvider();
 }
 
-export type { PlacesProvider, PlaceResult, PlaceSummary } from "./types";

@@ -82,19 +82,6 @@ export async function revelerCode(_prev: unknown, formData: FormData) {
   return { ok: true as const, valeur };
 }
 
-export async function supprimerCode(_prev: unknown, formData: FormData) {
-  const codeId = formData.get("id");
-  const activiteId = formData.get("activiteId");
-  if (typeof codeId !== "string" || typeof activiteId !== "string") return { error: "Entrée invalide" };
-  const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Non authentifié" };
-  const { data, error } = await supabase
-    .from("activite_codes").delete().eq("id", codeId).select("id").maybeSingle();
-  if (error || !data) return { error: "Suppression échouée" };
-  revalidatePath(`/activites/${activiteId}`);
-  return { ok: true as const };
-}
 
 export async function ajouterDocumentActivite(_prev: unknown, formData: FormData) {
   const activiteId = formData.get("activiteId");
@@ -164,16 +151,3 @@ export async function ouvrirDocumentActivite(_prev: unknown, formData: FormData)
   return { ok: true as const, ticket };
 }
 
-export async function supprimerDocumentActivite(_prev: unknown, formData: FormData) {
-  const docId = formData.get("id");
-  const activiteId = formData.get("activiteId");
-  if (typeof docId !== "string" || typeof activiteId !== "string") return { error: "Entrée invalide" };
-  const supabase = await createServerSupabase();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Non authentifié" };
-  const { data, error } = await supabase
-    .from("activite_documents").delete().eq("id", docId).select("id").maybeSingle();
-  if (error || !data) return { error: "Suppression échouée" };
-  revalidatePath(`/activites/${activiteId}`);
-  return { ok: true as const };
-}

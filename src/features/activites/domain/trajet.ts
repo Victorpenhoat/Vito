@@ -15,7 +15,7 @@ import { haversineKm } from "@/features/restos/domain/distance";
  * comptés les feux, les détours et le stationnement — bien en dessous de la
  * vitesse autorisée, et volontairement.
  */
-export const VITESSE_MOYENNE_KMH = 22;
+const VITESSE_MOYENNE_KMH = 22;
 
 /** Le détour réel par les rues, rapporté à la ligne droite. */
 const SINUOSITE = 1.3;
