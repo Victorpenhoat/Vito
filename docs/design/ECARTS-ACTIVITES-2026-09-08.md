@@ -9,20 +9,26 @@ la maquette **au mot près**.
 
 Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
 
-> **État au 9 septembre, après #179.** Sept des onze écarts sont comblés, un
-> l'est en partie, trois restent ouverts. Le détail est marqué **au fil du
-> document** : chaque écart garde son constat d'origine lisible, avec la PR qui
-> l'a comblé. Un document d'écarts qui se vide de son contenu perd sa valeur
-> d'archive — dans six mois, savoir *pourquoi* le mode de règlement avait été
-> oublié vaut mieux que constater qu'il est là.
+> **État au 9 septembre, après #177, #179 et #180.** Sur les **onze** écarts :
+> **sept comblés**, **un en partie**, **trois ouverts**. Le détail est marqué
+> **au fil du document** : chaque écart garde son constat d'origine lisible, avec
+> la PR qui l'a comblé. Un document d'écarts qui se vide de son contenu perd sa
+> valeur d'archive — dans six mois, savoir *pourquoi* le mode de règlement avait
+> été oublié vaut mieux que constater qu'il est là.
 >
-> · **Comblés (#179)** : mode de règlement · « à la séance » · « soutien
->   scolaire » · puces de filtre retirables · en-tête nommant les filtres ·
->   second contact avec son rôle. **Comblé (#177)** : temps de trajet.
+> · **Comblés** : mode de règlement (#179) · « à la séance » (#179) · « soutien
+>   scolaire » (#179) · puces de filtre retirables (#179) · en-tête nommant les
+>   filtres (#179) · second contact avec son rôle (#179) · **autocomplétion de
+>   l'adresse du club (#180)**.
 > · **En partie (#179)** : verbes d'alerte — trois au lieu de quatre, et
 >   l'affectation diffère.
-> · **Ouverts** : semaine desktop en 7 colonnes · covoiturage · autocomplétion
->   de l'adresse du club · swipe.
+> · **Ouverts** : semaine desktop en 7 colonnes · covoiturage · swipe.
+>
+> ⚠️ Une version antérieure de ce bandeau annonçait « sept comblés » **après
+> #179 seulement**, en comptant le **temps de trajet** — qui n'est PAS l'un des
+> onze écarts : il figure dans « ce qui est tenu » plus bas, et a été mergé en
+> #177. La vérité était alors **six** sur onze. Le compte de sept ne devient
+> juste qu'avec #180. Un décompte se vérifie contre la liste, pas de mémoire.
 
 ⚠️ **CET AUDIT A ENJAMBÉ DU TRAVAIL EN VOL — depuis résolu (mise à jour du
 9 septembre).** À l'écriture, l'arbre portait 11 fichiers modifiés et 4 non
@@ -109,22 +115,20 @@ champ, ni notion. C'est le plus coûteux des trois.
 | Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | ✅ Comblé (#179) : clé `filtres.retirer` = « Retirer le filtre {libelle} » |
 | En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | ✅ Comblé (#179) : `ListeActivites` joint le compte et `nomsDesFiltres` — *« le compte SEUL laisse la question 3 sur combien, et pourquoi ceux-là »* |
 
-## 5. Deux détails — ✅ un comblé (#179), ⬜ deux ouverts
+## 5. Deux détails — ✅ deux comblés (#179, #180), ⬜ un ouvert
 
 - ✅ **Un seul téléphone — comblé (#179).** La migration `00058` ajoute
   `contact_nom` et `contact_telephone`, sous une contrainte que le constat
   d'origine ne demandait pas et qui vaut mieux que lui :
   `num_nonnulls(contact_nom, contact_telephone) in (0, 2)` — *un numéro sans nom
   ne dit pas qui décroche ; un nom sans numéro n'appelle personne*.
-- ⬜ **Pas d'autocomplétion d'adresse au formulaire d'activité.** La maquette
-  montre deux suggestions départageant « 12 route du Cap, 33470 Le Teich » de
-  « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » — c'est-à-dire exactement
-  le cas où la saisie libre se trompe.
-  ⚠️ **Nuance importante** : un géocodeur existe désormais sur `main`
-  (`features/famille/data/geocodage.ts`, mergé en #177), mais il est branché sur
-  l'adresse **du foyer** (`famille/data/actions.ts`), pas sur celle du club.
-  La brique est donc là ; c'est son emploi sur ce formulaire qui manque — un
-  rebranchement, pas un choix de service.
+- ✅ **Autocomplétion d'adresse du formulaire d'activité — comblée (#180).**
+  La maquette montrait deux suggestions départageant « 12 route du Cap,
+  33470 Le Teich » de « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » —
+  c'est-à-dire exactement le cas où la saisie libre se trompe. `ChampAdresseClub.tsx`
+  (100 lignes) s'appuie sur le géocodeur arrivé en #177 pour le foyer : le
+  rebranchement annoncé ici a bien été fait, et l'adresse du club est désormais
+  **située**, pas seulement saisie.
 - ⬜ Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club /
   itinéraire ») n'existe toujours pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
   pas la capacité.
@@ -159,9 +163,10 @@ précision qu'on n'a pas.
 
 ## Ordre suggéré
 
-> ⚠️ **Cet ordre est celui du 8 septembre.** #179 a traité ses points 1 à 4. Il
-> reste : l'**affectation** des verbes d'alerte (reliquat du point 2), puis les
-> points 5 (semaine desktop), 6 (covoiturage) et 7 (contact, adresse).
+> ⚠️ **Cet ordre est celui du 8 septembre.** #179 a traité ses points 1 à 4,
+> #180 le point 7. Il reste : l'**affectation** des verbes d'alerte (reliquat du
+> point 2), la **semaine desktop** (point 5) et le **covoiturage** (point 6) —
+> plus le **swipe**, qui n'y figurait pas, étant un geste et non une fonction.
 
 1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.
    Peu coûteux, et plus il attend, plus les échéances déjà saisies seront
