@@ -9,15 +9,18 @@ la maquette **au mot près**.
 
 Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
 
-⚠️⚠️ **CET AUDIT ENJAMBE DU TRAVAIL NON COMMITÉ.** Au moment de l'écrire, l'arbre
-de travail portait 11 fichiers modifiés et 4 fichiers non suivis, datés du
-**8 septembre 18h09–18h11** — soit deux heures après le dernier commit (#174,
-16h05). Ce travail ajoute le **temps de trajet** (`domain/trajet.ts`, clé
-`lieu.duree` = « ~{n} min depuis chez nous »), les **coordonnées du foyer**
-(migration `00057_foyer_coordonnees.sql`) et le **géocodage** de l'adresse du
-foyer (`features/famille/data/geocodage.ts`). Les constats ci-dessous en
-tiennent compte et le disent là où c'est déterminant. Un lecteur qui se
-fierait à `git log` ne verrait rien de tout cela.
+⚠️ **CET AUDIT A ENJAMBÉ DU TRAVAIL EN VOL — depuis résolu (mise à jour du
+9 septembre).** À l'écriture, l'arbre portait 11 fichiers modifiés et 4 non
+suivis, datés du 8 septembre 18h09–18h11, que `git log` ne montrait pas. Ce lot
+— **temps de trajet** (`domain/trajet.ts`, clé `lieu.duree` = « ~{n} min depuis
+chez nous »), **coordonnées du foyer** (migration `00057_foyer_coordonnees.sql`)
+et **géocodage** de l'adresse du foyer (`features/famille/data/geocodage.ts`) —
+a été mergé le 9 septembre à 10h25 (**#177**, `eebac54`). Les passages concernés
+ci-dessous ont été corrigés en conséquence.
+
+⚠️ **La leçon reste** : un audit daté décrit un dépôt à un instant, et un dépôt
+peut porter du travail qu'aucune commande d'historique ne révèle. Vérifier
+`git status`, pas seulement `git log`.
 
 ⚠️ **Portée de l'audit** : il compare la maquette au **code et aux 159 clés
 i18n**. Il n'a **pas** été mené en pilotant l'application. Il attrape donc les
@@ -92,10 +95,11 @@ champ, ni notion. C'est le plus coûteux des trois.
   montre deux suggestions départageant « 12 route du Cap, 33470 Le Teich » de
   « 12 route du Cap-Ferret, 33950 Lège-Cap-Ferret » — c'est-à-dire exactement
   le cas où la saisie libre se trompe.
-  ⚠️ **Nuance importante** : un géocodeur existe désormais
-  (`features/famille/data/geocodage.ts`, non commité), mais il est branché sur
+  ⚠️ **Nuance importante** : un géocodeur existe désormais sur `main`
+  (`features/famille/data/geocodage.ts`, mergé en #177), mais il est branché sur
   l'adresse **du foyer** (`famille/data/actions.ts`), pas sur celle du club.
-  La brique est donc là ; c'est son emploi sur ce formulaire qui manque.
+  La brique est donc là ; c'est son emploi sur ce formulaire qui manque — un
+  rebranchement, pas un choix de service.
 - Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club / itinéraire »)
   n'existe pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
   pas la capacité.
@@ -115,13 +119,16 @@ appareil photo** (`capture="environment"`) ; le **badge de compte** sur l'onglet
 (`nombreAlertesUrgentes`) ; les **tags** (affichage et filtre) ; la **saison** ;
 les **états vides**, y compris « reprise le 21 » pendant les vacances.
 
-⚠️ **Le temps de trajet est à part** : il est fait — `domain/trajet.ts`,
-`dureeEstimeeMinutes`, employé par `FicheActivite`, clé `lieu.duree`
-« ~{n} min depuis chez nous », alimenté par les coordonnées du foyer de la
-migration `00057` — mais **rien de tout cela n'est commité**. Le mot
-« estimation » est d'ailleurs assumé dans le code (distance à vol d'oiseau,
-vitesse moyenne de 22 km/h), là où la maquette écrit « 22 min » sans nuance.
-Tant que ce lot n'est pas commité, cette ligne n'existe pour personne d'autre.
+Le **temps de trajet** est tenu lui aussi depuis #177 : `domain/trajet.ts`,
+`dureeEstimeeMinutes`, employé par `FicheActivite`, clé `lieu.duree`, alimenté
+par les coordonnées du foyer (migration `00057`).
+
+⚠️ Une nuance de fond, qui n'est pas un écart mais un choix à connaître : le
+code assume le mot **« estimation »** — `~{n} min`, distance à vol d'oiseau et
+vitesse moyenne de 22 km/h, sans appel à un service d'itinéraire — là où la
+maquette écrit « 22 min depuis chez nous » sans réserve. Le tilde est dans la
+clé i18n : c'est délibéré, et c'est la bonne façon de ne pas promettre une
+précision qu'on n'a pas.
 
 ---
 
@@ -140,8 +147,8 @@ Tant que ce lot n'est pas commité, cette ligne n'existe pour personne d'autre.
 6. **Covoiturage** — nouvelle notion (colonne, champ, affichage) : un chantier,
    pas une finition.
 7. **Deuxième contact avec rôle**, puis **autocomplétion d'adresse du club** —
-   le géocodeur existe déjà (il sert l'adresse du foyer) : il s'agit de
-   l'employer sur un second formulaire, pas de choisir un service.
-8. **Committer le lot « temps de trajet »** — hors périmètre de cet audit, mais
-   c'est la première chose à faire : ce travail n'existe aujourd'hui que sur
-   une seule machine.
+   le géocodeur est sur `main` depuis #177 (il sert l'adresse du foyer) : il
+   s'agit de l'employer sur un second formulaire, pas de choisir un service.
+
+*(Le point « committer le lot temps de trajet », qui figurait ici, est sans
+objet : #177 l'a mergé le 9 septembre.)*
