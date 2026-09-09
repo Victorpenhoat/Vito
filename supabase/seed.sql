@@ -265,6 +265,12 @@ values
 insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color) values
   ('f1111111-1111-4111-8111-111111111111', '11111111-1111-1111-1111-111111111111', 'Camille', 'Durand', 'enfant', 'proche', '#6B7A8F');
 
+-- La fiche « Moi » du compte de démonstration, avec son adresse SITUÉE : c'est
+-- le point de départ des « ~22 min depuis chez nous ».
+insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color, address, lat, lng) values
+  ('f1111111-1111-4111-8111-111111111110', '11111111-1111-1111-1111-111111111111',
+   'Victor', 'Durand', 'moi', 'proche', '#2563EB', '10 cours du Chapeau Rouge, Bordeaux', 44.8424, -0.5747);
+
 -- Un second enfant : sans lui, le groupement par membre de l'onglet Activités
 -- n'aurait rien à grouper.
 insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color) values

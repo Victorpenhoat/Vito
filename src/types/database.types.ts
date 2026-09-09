@@ -1217,6 +1217,8 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          lat: number | null
+          lng: number | null
           phone: string | null
           profile_id: string | null
           relation: string
@@ -1235,6 +1237,8 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
+          lat?: number | null
+          lng?: number | null
           phone?: string | null
           profile_id?: string | null
           relation: string
@@ -1253,6 +1257,8 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          lat?: number | null
+          lng?: number | null
           phone?: string | null
           profile_id?: string | null
           relation?: string

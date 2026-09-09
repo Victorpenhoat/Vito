@@ -1776,7 +1776,8 @@
       "maps": "Mappe",
       "espaceFamille": "Area famiglie",
       "ouvrir": "Apri",
-      "aucun": "Nessun indirizzo né telefono."
+      "aucun": "Nessun indirizzo né telefono.",
+      "duree": "~{n} min da casa"
     },
     "cout": {
       "aucun": "Nessuna scadenza registrata.",
