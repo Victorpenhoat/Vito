@@ -1776,7 +1776,8 @@
       "maps": "Maps",
       "espaceFamille": "Family portal",
       "ouvrir": "Open",
-      "aucun": "No address or phone yet."
+      "aucun": "No address or phone yet.",
+      "duree": "~{n} min from home"
     },
     "cout": {
       "aucun": "No payment recorded.",

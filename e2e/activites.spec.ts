@@ -472,3 +472,23 @@ test("une échéance se saisit, se règle, et disparaît des alertes", async ({ 
   await page.goto("/fr/activites/alertes");
   await expect(page.getByTestId("alerte-row").filter({ hasText: libelle })).toHaveCount(0);
 });
+
+// L'adresse du foyer est située : la fiche peut annoncer un ordre de grandeur.
+test("la fiche annonce une durée estimée depuis chez nous", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Équitation" }).first()
+    .getByRole("link").first().click();
+
+  const duree = page.getByTestId("fiche-duree");
+  await expect(duree).toBeVisible();
+  // Le tilde est dans le libellé : c'est une estimation, et elle le dit.
+  await expect(duree).toContainText("~");
+  await expect(duree).toContainText("depuis chez nous");
+
+  // Une activité sans adresse n'annonce aucune durée — mieux vaut se taire.
+  await page.goto("/fr/activites?onglet=tous");
+  await page.getByTestId("activite-row").filter({ hasText: "Natation" }).first()
+    .getByRole("link").first().click();
+  await expect(page.getByTestId("fiche-activite")).toBeVisible();
+});

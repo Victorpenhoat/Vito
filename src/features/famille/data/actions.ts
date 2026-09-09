@@ -14,6 +14,7 @@ import { randomBytes } from "node:crypto";
 import { getDocumentKey } from "@/lib/crypto/documentKey";
 import { avatarColor } from "../domain/avatarColor";
 import { journaliser } from "@/lib/audit/journal";
+import { geocoderAdresse } from "./geocodage";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -187,6 +188,25 @@ function procheValues(p: ProcheInput, formData: FormData) {
   };
 }
 
+/**
+ * Situe l'adresse du FOYER, c'est-à-dire celle de la fiche « Moi ».
+ *
+ * Seulement celle-là : les autres proches en héritent, et géocoder chaque fiche
+ * multiplierait des appels payants pour un point qu'on possède déjà. Et
+ * seulement quand l'adresse a changé, pour la même raison.
+ */
+async function coordonneesDuFoyer(
+  relation: string,
+  adresse: string | null,
+  ancienne?: string | null,
+): Promise<{ lat: number | null; lng: number | null } | null> {
+  if (relation !== "moi") return null;
+  if (adresse === (ancienne ?? null)) return null;
+  if (!adresse) return { lat: null, lng: null };
+  const point = await geocoderAdresse(adresse);
+  return { lat: point?.lat ?? null, lng: point?.lng ?? null };
+}
+
 export async function creerProche(_prev: unknown, formData: FormData) {
   const parsed = parseProche(formData);
   if (!parsed.success) return { error: "Champs invalides" };
@@ -199,6 +219,7 @@ export async function creerProche(_prev: unknown, formData: FormData) {
     .insert({
       user_id: uid,
       ...procheValues(p, formData),
+      ...(await coordonneesDuFoyer(p.relation, clean(formData.get("address"))) ?? {}),
       avatar_color: avatarColor(`${p.first_name} ${p.last_name}`),
     })
     .select("id")
@@ -222,9 +243,15 @@ export async function modifierProche(_prev: unknown, formData: FormData) {
   const supabase = await createServerSupabase();
   if (!(await userId(supabase))) return { error: "Non authentifié" };
   const p = parsed.data;
+  // L'adresse actuelle, relue SOUS RLS : elle dit si le géocodage a lieu d'être.
+  const { data: avant } = await supabase
+    .from("family_members").select("address").eq("id", id).maybeSingle();
   const { data, error } = await supabase
     .from("family_members")
-    .update(procheValues(p, formData))
+    .update({
+      ...procheValues(p, formData),
+      ...(await coordonneesDuFoyer(p.relation, clean(formData.get("address")), avant?.address) ?? {}),
+    })
     .eq("id", id)
     .select("id")
     .maybeSingle();

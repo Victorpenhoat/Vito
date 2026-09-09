@@ -1776,7 +1776,8 @@
       "maps": "Maps",
       "espaceFamille": "Espace famille",
       "ouvrir": "Ouvrir",
-      "aucun": "Ni adresse ni téléphone pour l'instant."
+      "aucun": "Ni adresse ni téléphone pour l'instant.",
+      "duree": "~{n} min depuis chez nous"
     },
     "cout": {
       "aucun": "Aucune échéance enregistrée.",

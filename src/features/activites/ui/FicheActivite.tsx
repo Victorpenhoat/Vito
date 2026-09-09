@@ -3,6 +3,7 @@ import { Phone, MapPin, Globe, Clock, User } from "lucide-react";
 import { LienExterne } from "@/features/shared/ui/LienExterne";
 import type { ActiviteDetail } from "../data/queries";
 import { resumePresence } from "../domain/fiche";
+import { dureeEstimeeMinutes } from "../domain/trajet";
 import { FormulaireCreneau } from "./FormulaireCreneau";
 import { StatutActivite } from "./StatutActivite";
 import { SectionAcces } from "./SectionAcces";
@@ -33,14 +34,22 @@ function Section({ titre, children, action }: {
  * ouverture : la page ne porte ni les codes ni les fichiers, seulement de quoi
  * les demander.
  */
-export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
+export async function FicheActivite({ activite, aujourdhui, membresDuFoyer, pointDuFoyer }: {
   activite: ActiviteDetail;
   aujourdhui: string;
   membresDuFoyer: { id: string; prenom: string }[];
+  /** Adresse du foyer située : sans elle, aucune durée n'est annoncée. */
+  pointDuFoyer?: { lat: number; lng: number } | null;
 }) {
   const t = await getTranslations("activites");
   const format = await getFormatter();
   const presence = resumePresence(activite.seances, activite.formuleSeances);
+  // « ~22 min depuis chez nous » : une ESTIMATION, et le mot est dans le
+  // libellé. Rien ne s'affiche si l'un des deux points manque.
+  const minutes = dureeEstimeeMinutes(
+    pointDuFoyer ?? null,
+    activite.lat != null && activite.lng != null ? { lat: activite.lat, lng: activite.lng } : null,
+  );
   const jour = (n: number) => t(`jours.${n}`);
   const dateCourte = (iso: string) =>
     format.dateTime(new Date(`${iso}T00:00:00Z`), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -132,7 +141,14 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer }: {
         {activite.adresse && (
           <p className="flex items-start gap-2 text-[13.5px] text-ink">
             <MapPin size={13} className="mt-1 shrink-0 text-accent" aria-hidden />
-            <span className="min-w-0 flex-1">{activite.adresse}</span>
+            <span className="min-w-0 flex-1">
+              {activite.adresse}
+              {minutes != null && (
+                <span data-testid="fiche-duree" className="block text-[11.5px] text-muted">
+                  {t("lieu.duree", { n: minutes })}
+                </span>
+              )}
+            </span>
             <LienExterne
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activite.adresse)}`}
               className="shrink-0 text-[11.5px] font-semibold text-accent hover:underline">
