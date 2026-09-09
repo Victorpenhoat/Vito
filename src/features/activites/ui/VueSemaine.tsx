@@ -8,6 +8,8 @@ import {
   joursDeLaSemaine, semaineVoisine, occurrencesDuJour, conflitsDuJour, signauxDuJour,
 } from "../domain/semaine";
 import { EtatVide } from "./EtatVide";
+import { deposeDuCreneau } from "../domain/depose";
+import { libelleDepose } from "./libelleDepose";
 import { GrilleSemaine } from "./GrilleSemaine";
 
 /**
@@ -138,9 +140,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                       <span className="truncate text-[11.5px] text-muted">
                         {[
                           t("semaine.jusqua", { heure: o.heureFin.replace(":", "h") }),
-                          o.deposePar
-                            ? t("horaires.depose", { nom: o.deposePar.prenom })
-                            : t("horaires.deposeADefinir"),
+                          libelleDepose(deposeDuCreneau(o), t),
                         ].join(" · ")}
                       </span>
                     </span>

@@ -69,6 +69,9 @@ test("« En cours » groupe par membre, « Tous » filtre et cherche", async ({ 
 
   // « Tous » ouvre les statuts, et les dit.
   await page.getByTestId("onglet-tous").click();
+  // Le rail de filtres n'existe QUE dans cette vue : l'attendre prouve que la
+  // navigation est finie, et évite qu'un clic parte dans le vide.
+  await expect(page.getByTestId("activites-filtres")).toBeVisible();
   await expect(page.getByTestId("activite-row").filter({ hasText: "Natation" }).first())
     .toContainText("Terminée");
 
@@ -544,6 +547,9 @@ test("les alertes disent quoi faire, et les filtres se retirent un par un", asyn
   // que la page change encore se perd, et le test accuserait le code à tort.
   await expect(page.getByTestId("activites-filtres")).toBeVisible();
   await page.getByTestId("filtre-statut-terminee").click();
+  // L'URL d'abord : elle vient du href, donc elle est déterministe. Si elle est
+  // juste et que la puce manque, c'est un vrai défaut — pas une course.
+  await expect(page).toHaveURL(/statut=terminee/);
   // Une puce nomme le filtre posé, et le retire d'un clic.
   const puce = page.getByTestId("filtre-pose-terminee");
   await expect(puce).toBeVisible();
@@ -621,4 +627,38 @@ test("desktop : la semaine se lit en sept colonnes, avec son rail horaire", asyn
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByTestId("grille-semaine")).toBeHidden();
   await expect(page.getByTestId("semaine-jour").first()).toBeVisible();
+});
+
+// Écart 6 : le covoiturage. La maquette en fait un TROISIÈME choix de « qui
+// dépose », pas un système d'alternance entre familles.
+test("un créneau peut être déposé en covoiturage, et le dit partout", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+  await page.getByTestId("activite-row").filter({ hasText: "Danse" }).first()
+    .getByRole("link").first().click();
+
+  await page.getByTestId("creneau-ajouter").click();
+  const form = page.getByTestId("creneau-form");
+  await form.getByTestId("creneau-jour").selectOption("2");
+  await form.getByTestId("creneau-debut").fill("16:00");
+  await form.getByTestId("creneau-fin").fill("17:00");
+  const marque = `Atelier ${String(Date.now()).slice(-6)}`;
+  await form.getByTestId("creneau-intervenant").fill(marque);
+  await form.getByTestId("creneau-depose").selectOption("covoiturage");
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("creneau-valider").click(),
+  ]);
+
+  const ligne = page.getByTestId("fiche-creneau").filter({ hasText: marque });
+  await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
+  await expect(ligne).toContainText("Covoiturage");
+
+  // La semaine le dit aussi — c'est là qu'on regarde les trajets.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/fr/activites?onglet=semaine&semaine=2026-09-08");
+  // Ciblé sur l'HEURE : la danse a déjà un créneau le lundi, et « premier de la
+  // semaine » désignerait celui-là.
+  await expect(page.getByTestId("semaine-seance").filter({ hasText: "16h00" }).first())
+    .toContainText("Covoiturage");
 });

@@ -1768,7 +1768,8 @@
       "deposeLabel": "Qui dépose",
       "enregistrer": "Enregistrer le créneau",
       "calendrier": "Ajouter au calendrier",
-      "dansPlanning": "Ces créneaux apparaissent aussi dans le planning des voyages."
+      "dansPlanning": "Ces créneaux apparaissent aussi dans le planning des voyages.",
+      "covoiturage": "Covoiturage"
     },
     "presence": {
       "formule": "Formule {n} séances",

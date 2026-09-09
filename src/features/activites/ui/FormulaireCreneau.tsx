@@ -49,6 +49,8 @@ export function FormulaireCreneau({ activiteId, membres }: {
         {/* Vide = « à définir » : c'est une réponse, pas une absence de saisie. */}
         <option value="">{t("horaires.deposeADefinir")}</option>
         {membres.map((m) => <option key={m.id} value={m.id}>{m.prenom}</option>)}
+        {/* Le covoiturage dit que quelqu'un s'en charge, sans que ce soit nous. */}
+        <option value="covoiturage">{t("horaires.covoiturage")}</option>
       </select>
       {state && "error" in state && state.error && (
         <p role="alert" className="text-[12px] text-danger">{state.error}</p>

@@ -41,7 +41,9 @@ export const creneauInputSchema = z
     heureFin: heure,
     lieuPrecision: optionnel(200),
     intervenant: optionnel(200),
-    deposePar: id.optional(),
+    // « covoiturage » n'est pas un identifiant : c'est le troisième choix du
+    // sélecteur, traduit en colonnes par `colonnesDepose`.
+    deposePar: z.union([id, z.literal("covoiturage")]).optional(),
   })
   .refine((c) => c.heureFin > c.heureDebut, {
     message: "Un créneau ne peut pas finir avant de commencer",

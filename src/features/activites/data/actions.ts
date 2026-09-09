@@ -6,6 +6,7 @@ import {
   activiteInputSchema, creneauInputSchema, statutActiviteSchema,
   paiementInputSchema, reglerPaiementSchema,
 } from "../domain/schemas";
+import { colonnesDepose } from "../domain/depose";
 
 async function userId(supabase: Awaited<ReturnType<typeof createServerSupabase>>) {
   const { data } = await supabase.auth.getUser();
@@ -94,8 +95,10 @@ export async function ajouterCreneau(_prev: unknown, formData: FormData) {
       activite_id: d.activiteId, jour_semaine: d.jourSemaine,
       heure_debut: d.heureDebut, heure_fin: d.heureFin,
       lieu_precision: d.lieuPrecision ?? null, intervenant: d.intervenant ?? null,
-      // Null porte du sens : c'est le « dépose à définir » de la maquette.
-      depose_par: d.deposePar ?? null,
+      // Trois états, deux colonnes : un proche, un covoiturage, ou la question
+      // laissée ouverte — qui reste une réponse.
+      depose_par: colonnesDepose(d.deposePar).deposePar,
+      depose_covoiturage: colonnesDepose(d.deposePar).covoiturage,
     })
     .select("id")
     .single();

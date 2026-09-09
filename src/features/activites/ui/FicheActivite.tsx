@@ -3,6 +3,8 @@ import { Phone, MapPin, Globe, Clock, User } from "lucide-react";
 import { LienExterne } from "@/features/shared/ui/LienExterne";
 import type { ActiviteDetail } from "../data/queries";
 import { resumePresence } from "../domain/fiche";
+import { deposeDuCreneau } from "../domain/depose";
+import { libelleDepose } from "./libelleDepose";
 import { dureeEstimeeMinutes } from "../domain/trajet";
 import { FormulaireCreneau } from "./FormulaireCreneau";
 import { StatutActivite } from "./StatutActivite";
@@ -95,9 +97,7 @@ export async function FicheActivite({ activite, aujourdhui, membresDuFoyer, poin
                     .filter(Boolean).join(" · ")}
                 </span>
                 <span className="pl-[21px] text-[12px] text-muted">
-                  {c.deposePar
-                    ? t("horaires.depose", { nom: c.deposePar.prenom })
-                    : t("horaires.deposeADefinir")}
+                  {libelleDepose(deposeDuCreneau(c), t)}
                 </span>
               </li>
             ))}

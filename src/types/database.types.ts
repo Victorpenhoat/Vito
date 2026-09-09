@@ -120,6 +120,7 @@ export type Database = {
         Row: {
           activite_id: string
           created_at: string
+          depose_covoiturage: boolean
           depose_par: string | null
           heure_debut: string
           heure_fin: string
@@ -133,6 +134,7 @@ export type Database = {
         Insert: {
           activite_id: string
           created_at?: string
+          depose_covoiturage?: boolean
           depose_par?: string | null
           heure_debut: string
           heure_fin: string
@@ -146,6 +148,7 @@ export type Database = {
         Update: {
           activite_id?: string
           created_at?: string
+          depose_covoiturage?: boolean
           depose_par?: string | null
           heure_debut?: string
           heure_fin?: string

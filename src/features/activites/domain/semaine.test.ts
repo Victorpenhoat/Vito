@@ -77,7 +77,7 @@ describe("conflitsDuJour", () => {
   const occ = (p: Partial<Occurrence>): Occurrence => ({
     activiteId: "a", activiteNom: "Foot", clubNom: null, creneauId: "c1",
     date: "2026-09-09", heureDebut: "14:00", heureFin: "15:00",
-    membres: [tom], deposePar: null, lieuPrecision: null, ...p,
+    membres: [tom], deposePar: null, covoiturage: false, lieuPrecision: null, ...p,
   });
 
   it("deux séances à la même heure pour deux enfants : il faut être à deux endroits", () => {

@@ -1768,7 +1768,8 @@
       "deposeLabel": "Who drops off",
       "enregistrer": "Save session",
       "calendrier": "Add to calendar",
-      "dansPlanning": "These sessions also appear in the trips planner."
+      "dansPlanning": "These sessions also appear in the trips planner.",
+      "covoiturage": "Carpool"
     },
     "presence": {
       "formule": "{n}-session pass",

@@ -116,7 +116,11 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
                   <span className="truncate font-semibold">{o.activiteNom}</span>
                   <span className="truncate opacity-80">{o.heureDebut.replace(":", "h")}</span>
                   <span className="truncate opacity-80">
-                    {o.deposePar ? o.deposePar.prenom : t("semaine.deposeCourt")}
+                    {o.deposePar
+                      ? o.deposePar.prenom
+                      : o.covoiturage
+                        ? t("horaires.covoiturage")
+                        : t("semaine.deposeCourt")}
                   </span>
                 </Link>
               );
