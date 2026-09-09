@@ -9,26 +9,32 @@ la maquette **au mot près**.
 
 Ce document liste ce que la comparaison révèle malgré cela. Il ne corrige rien.
 
-> **État au 9 septembre, après #177, #179 et #180.** Sur les **onze** écarts :
-> **sept comblés**, **un en partie**, **trois ouverts**. Le détail est marqué
-> **au fil du document** : chaque écart garde son constat d'origine lisible, avec
-> la PR qui l'a comblé. Un document d'écarts qui se vide de son contenu perd sa
-> valeur d'archive — dans six mois, savoir *pourquoi* le mode de règlement avait
-> été oublié vaut mieux que constater qu'il est là.
+> ## Clôture — 9 septembre, fin de journée
 >
-> · **Comblés** : mode de règlement (#179) · « à la séance » (#179) · « soutien
->   scolaire » (#179) · puces de filtre retirables (#179) · en-tête nommant les
->   filtres (#179) · second contact avec son rôle (#179) · **autocomplétion de
->   l'adresse du club (#180)**.
-> · **En partie (#179)** : verbes d'alerte — trois au lieu de quatre, et
->   l'affectation diffère.
-> · **Ouverts** : semaine desktop en 7 colonnes · covoiturage · swipe.
+> Sur les **onze** écarts : **huit comblés**, **un abandonné** (décision PO),
+> **un en partie**, **un ouvert**. Ce document est clos ; il reste comme
+> archive. Chaque écart garde son constat d'origine lisible, avec la PR qui l'a
+> comblé — savoir *pourquoi* le mode de règlement avait été oublié vaut mieux,
+> dans six mois, que constater qu'il est là.
 >
-> ⚠️ Une version antérieure de ce bandeau annonçait « sept comblés » **après
-> #179 seulement**, en comptant le **temps de trajet** — qui n'est PAS l'un des
-> onze écarts : il figure dans « ce qui est tenu » plus bas, et a été mergé en
-> #177. La vérité était alors **six** sur onze. Le compte de sept ne devient
-> juste qu'avec #180. Un décompte se vérifie contre la liste, pas de mémoire.
+> | | |
+> |---|---|
+> | ✅ **Comblés (8)** | mode de règlement · « à la séance » · « soutien scolaire » · puces de filtre retirables · en-tête nommant les filtres · second contact avec son rôle *(#179)* · autocomplétion de l'adresse du club *(#180)* · **semaine desktop en 7 colonnes** *(#181)* |
+> | ⛔ **Abandonné (1)** | **covoiturage** — arbitrage PO du 9 septembre, cf. §3 |
+> | 🟨 **En partie (1)** | verbes d'alerte : trois au lieu de quatre, affectation décalée, cf. §4 |
+> | ⬜ **Ouvert (1)** | **swipe** sur la liste — non tranché, cf. §5 |
+>
+> Hors écarts, le **temps de trajet** (§« ce qui est tenu ») est arrivé en #177.
+>
+> ⚠️ **Deux erreurs de décompte à moi, corrigées ici et laissées visibles.**
+> ① Un bandeau antérieur annonçait « sept comblés » après #179 seulement, en
+> additionnant le temps de trajet — qui n'est PAS l'un des onze. La vérité était
+> **six**. ② Un « reliquat de légende » a été signalé à l'oral sur la grille
+> semaine : il **n'existe pas** — les trois entrées sont là
+> (`activites.semaine.legende.{conflit,voyage,vacances}`, rendues dans un
+> `<ul data-testid="grille-legende">`). La sonde cherchait `activites.legende`.
+> **Un décompte se vérifie contre la liste ; une absence, contre le chemin
+> complet de la clé.**
 
 ⚠️ **CET AUDIT A ENJAMBÉ DU TRAVAIL EN VOL — depuis résolu (mise à jour du
 9 septembre).** À l'écriture, l'arbre portait 11 fichiers modifiés et 4 non
@@ -81,7 +87,16 @@ câblé, et qui reste donc vide sans que personne le sache.
 Coût de reprise : un sélecteur dans `SectionCout`, six libellés i18n, un
 affichage sur la fiche. Tout le reste est déjà là.
 
-## 2. La semaine desktop n'a pas la forme dessinée — ⬜ OUVERT
+## 2. La semaine desktop n'a pas la forme dessinée — ✅ COMBLÉ (#181)
+
+> **Comblé le 9 septembre.** `GrilleSemaine.tsx` (145 lignes, `hidden lg:`) rend
+> `grid-cols-[3rem_repeat(7,minmax(0,1fr))]` — un rail de 3rem plus **sept
+> colonnes égales**, forme plus juste que le `grid-cols-7` que ce document
+> laissait attendre. Le domaine porte `RAIL_DEBUT = 8`, `RAIL_FIN = 20` et
+> `GRADUATIONS = [8,10,12,14,16,18,20]`, sous le commentaire *« le rail horaire
+> de la maquette : 8h en haut, 20h en bas »*. Les signaux (conflit, voyage,
+> vacances) sont portés par les en-têtes de colonne, et la **légende en trois
+> entrées** est rendue. Le constat d'origine suit.
 
 | | |
 |---|---|
@@ -96,11 +111,19 @@ affichage sur la fiche. Tout le reste est déjà là.
 La composition desktop **1+5** (liste + fiche côte à côte), elle, est conforme
 (`ListeActivites.tsx`, grille `lg:grid-cols-[1fr_460px]`).
 
-## 3. Trois absences franches — ✅ deux comblées (#179), ⬜ une ouverte
+## 3. Trois absences franches — ✅ deux comblées (#179), ⛔ une abandonnée
+
+> ⛔ **Le covoiturage est ABANDONNÉ — arbitrage PO du 9 septembre**, et non une
+> dette qui traîne. C'était le seul des onze écarts à demander une **notion
+> nouvelle** (colonne, champ, affichage), là où tous les autres n'étaient que du
+> câblage manquant sur des données déjà présentes. Et c'est le seul dont
+> l'abandon se défend sur le fond : la maquette le place à côté de « Qui
+> dépose », mais un covoiturage se négocie entre parents — pas dans un carnet
+> familial. **Ne pas le rouvrir sans revenir sur cet arbitrage.**
 
 | Maquette | État |
 |---|---|
-| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ⬜ **Toujours zéro occurrence** dans `src`, `messages` et les migrations |
+| **Covoiturage**, à côté de « Qui dépose » (écran 7) | ⛔ **Abandonné** (arbitrage PO, 9 sept.) — zéro occurrence, et il n'en aura pas |
 | Périodicité **« À la séance »** (écran 9) | ✅ Ajoutée (#179) : `check` élargi à `'seance'`, clé « À la séance » |
 | Type d'activité **« Soutien scolaire »** (écran 6) | ✅ Ajouté (#179) : `soutien_scolaire` en base, dans le schéma et au formulaire |
 
@@ -115,7 +138,7 @@ champ, ni notion. C'est le plus coûteux des trois.
 | Filtres actifs en **puces retirables** : « A Alexia ✕ En pause ✕ », à côté d'« Effacer » (écran 3, mobile) | ✅ Comblé (#179) : clé `filtres.retirer` = « Retirer le filtre {libelle} » |
 | En-tête de résultats **nommant les filtres** : « 3 activités · Alexia · En pause » | ✅ Comblé (#179) : `ListeActivites` joint le compte et `nomsDesFiltres` — *« le compte SEUL laisse la question 3 sur combien, et pourquoi ceux-là »* |
 
-## 5. Deux détails — ✅ deux comblés (#179, #180), ⬜ un ouvert
+## 5. Deux détails — ✅ deux comblés (#179, #180), ⬜ un OUVERT et NON TRANCHÉ
 
 - ✅ **Un seul téléphone — comblé (#179).** La migration `00058` ajoute
   `contact_nom` et `contact_telephone`, sous une contrainte que le constat
@@ -130,7 +153,12 @@ champ, ni notion. C'est le plus coûteux des trois.
   rebranchement annoncé ici a bien été fait, et l'adresse du club est désormais
   **située**, pas seulement saisie.
 - ⬜ Le **swipe** annoté sur l'écran 1 (« ← swipe : appeler le club /
-  itinéraire ») n'existe toujours pas. Les deux actions sont là, en boutons : c'est le geste qui manque,
+  itinéraire ») n'existe toujours pas.
+  ⚠️ **Seul écart NON TRANCHÉ à la clôture** : ni fait, ni abandonné. À la
+  différence du covoiturage, il ne demande aucune donnée nouvelle — les deux
+  actions existent déjà en boutons (`appeler`, `itineraire`). C'est un **geste**
+  qui manque, pas une fonction : le coût est en interaction tactile, pas en
+  modèle. À trancher pour de bon plutôt qu'à laisser dormir. Les deux actions sont là, en boutons : c'est le geste qui manque,
   pas la capacité.
 
 ---
@@ -163,10 +191,10 @@ précision qu'on n'a pas.
 
 ## Ordre suggéré
 
-> ⚠️ **Cet ordre est celui du 8 septembre.** #179 a traité ses points 1 à 4,
-> #180 le point 7. Il reste : l'**affectation** des verbes d'alerte (reliquat du
-> point 2), la **semaine desktop** (point 5) et le **covoiturage** (point 6) —
-> plus le **swipe**, qui n'y figurait pas, étant un geste et non une fonction.
+> ⚠️ **Cet ordre est celui du 8 septembre, et il est SOLDÉ.** #179 a traité ses
+> points 1 à 4, #180 le point 7, #181 le point 5. Le point 6 (covoiturage) est
+> abandonné. Il ne reste, hors de cette liste, que deux choses :
+> l'**affectation** des verbes d'alerte (§4) et le **swipe** (§5).
 
 1. **Mode de règlement** — le seul écart qui laisse une colonne vide en base.
    Peu coûteux, et plus il attend, plus les échéances déjà saisies seront
