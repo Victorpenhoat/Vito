@@ -345,3 +345,22 @@ export const getActivitesDuMembre = cache(async (membreId: string, aujourdhui: s
   const toutes = await getActivites(aujourdhui);
   return toutes.filter((a) => a.membres.some((m) => m.id === membreId));
 });
+
+/**
+ * Le point de départ des trajets : l'adresse du foyer, c'est-à-dire la fiche
+ * « Moi » du Cercle.
+ *
+ * `null` tant qu'elle n'a pas été située — la durée ne s'affiche alors pas,
+ * plutôt que d'être calculée depuis un point faux.
+ */
+export const getPointDuFoyer = cache(async (): Promise<{ lat: number; lng: number } | null> => {
+  const supabase = await createServerSupabase();
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+  const { data } = await supabase
+    .from("family_members")
+    .select("lat, lng")
+    .eq("relation", "moi")
+    .maybeSingle();
+  return data?.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : null;
+});

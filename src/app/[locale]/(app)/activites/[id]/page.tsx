@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import { PageHeader } from "@/features/shared/ui/PageHeader";
-import { getActiviteDetail } from "@/features/activites/data/queries";
+import { getActiviteDetail, getPointDuFoyer } from "@/features/activites/data/queries";
 import { getProches } from "@/features/famille/data/queries";
 import { FicheActivite } from "@/features/activites/ui/FicheActivite";
 import { ListeActivites } from "@/features/activites/ui/ListeActivites";
@@ -23,9 +23,10 @@ export default async function ActivitePage({ params, searchParams }: {
   const aujourdhui = maintenant.toISOString().slice(0, 10);
   const heure = maintenant.toISOString().slice(11, 16);
 
-  const [activite, proches] = await Promise.all([
+  const [activite, proches, pointDuFoyer] = await Promise.all([
     getActiviteDetail(id, aujourdhui, heure),
     getProches(),
+    getPointDuFoyer(),
   ]);
   // Inexistante ou pas à moi : la RLS ne distingue pas les deux, l'écran non
   // plus. Dire « elle existe mais pas pour vous » en dirait déjà trop.
@@ -46,7 +47,8 @@ export default async function ActivitePage({ params, searchParams }: {
         selectedId={id}
         detail={
           <FicheActivite activite={activite} aujourdhui={aujourdhui}
-            membresDuFoyer={proches.map((p) => ({ id: p.id, prenom: p.first_name }))} />
+            membresDuFoyer={proches.map((p) => ({ id: p.id, prenom: p.first_name }))}
+            pointDuFoyer={pointDuFoyer} />
         }
       />
     </main>

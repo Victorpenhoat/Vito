@@ -1776,7 +1776,8 @@
       "maps": "Mapas",
       "espaceFamille": "Espacio familias",
       "ouvrir": "Abrir",
-      "aucun": "Sin dirección ni teléfono."
+      "aucun": "Sin dirección ni teléfono.",
+      "duree": "~{n} min desde casa"
     },
     "cout": {
       "aucun": "Ningún pago registrado.",
