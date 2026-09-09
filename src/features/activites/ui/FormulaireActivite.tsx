@@ -5,6 +5,7 @@ import { useRouter } from "@/lib/i18n/routing";
 import { ajouterActivite } from "../data/actions";
 import { TYPES_ACTIVITE } from "../domain/activite";
 import { Button } from "@/features/shared/ui/Button";
+import { ChampAdresseClub } from "./ChampAdresseClub";
 
 /** « + Nouvelle activité » : le strict nécessaire, le reste s'ajoute sur la fiche. */
 export function FormulaireActivite({ membres, libelle }: {
@@ -47,7 +48,7 @@ export function FormulaireActivite({ membres, libelle }: {
           placeholder={t("nouvelle.formule")} aria-label={t("nouvelle.formule")} className={`${champ} w-40`} />
       </div>
       <input name="clubNom" data-testid="activite-club" placeholder={t("nouvelle.club")} aria-label={t("nouvelle.club")} className={champ} />
-      <input name="adresse" data-testid="activite-adresse" placeholder={t("nouvelle.adresse")} aria-label={t("nouvelle.adresse")} className={champ} />
+      <ChampAdresseClub />
       <input name="telephone" data-testid="activite-telephone" placeholder={t("nouvelle.telephone")} aria-label={t("nouvelle.telephone")} className={champ} />
       <div className="flex flex-wrap gap-2">
         <input name="contactNom" data-testid="activite-contact-nom" placeholder={t("nouvelle.contactNom")}

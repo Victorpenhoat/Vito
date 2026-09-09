@@ -1828,7 +1828,8 @@
       "membres": "Chi la pratica",
       "enregistrer": "Salva",
       "contactNom": "Contatto (nome, ruolo)",
-      "contactTel": "Il suo telefono"
+      "contactTel": "Il suo telefono",
+      "adresseSituee": "Indirizzo localizzato"
     },
     "jours": {
       "1": "lunedì",

@@ -1828,7 +1828,8 @@
       "membres": "Quién la practica",
       "enregistrer": "Guardar",
       "contactNom": "Contacto (nombre, rol)",
-      "contactTel": "Su teléfono"
+      "contactTel": "Su teléfono",
+      "adresseSituee": "Dirección localizada"
     },
     "jours": {
       "1": "lunes",

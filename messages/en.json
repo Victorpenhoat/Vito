@@ -1828,7 +1828,8 @@
       "membres": "Who attends",
       "enregistrer": "Save",
       "contactNom": "Contact (name, role)",
-      "contactTel": "Their phone"
+      "contactTel": "Their phone",
+      "adresseSituee": "Address located"
     },
     "jours": {
       "1": "Monday",

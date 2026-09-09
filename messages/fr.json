@@ -1828,7 +1828,8 @@
       "membres": "Qui la pratique",
       "enregistrer": "Enregistrer",
       "contactNom": "Contact (nom, rôle)",
-      "contactTel": "Son téléphone"
+      "contactTel": "Son téléphone",
+      "adresseSituee": "Adresse située"
     },
     "jours": {
       "1": "lundi",

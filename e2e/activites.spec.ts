@@ -549,3 +549,40 @@ test("les alertes disent quoi faire, et les filtres se retirent un par un", asyn
   await expect(page).not.toHaveURL(/statut=terminee/);
   await expect(page.getByTestId("filtres-poses")).toHaveCount(0);
 });
+
+// Écart 7b : l'adresse du club se choisit. Ce qui compte n'est pas la
+// suggestion, c'est ce qu'elle apporte — les coordonnées, sans lesquelles un
+// club n'est sur aucune carte.
+test("choisir une adresse suggérée situe le club, et le fait apparaître sur la carte", async ({ page }) => {
+  await login(page, "client@vito.test");
+  await page.goto("/fr/activites");
+
+  const marque = String(Date.now()).slice(-6);
+  await page.getByTestId("activite-ajouter").click();
+  const form = page.getByTestId("activite-form");
+  await form.getByTestId("activite-nom").fill(`Escrime ${marque}`);
+  await form.getByTestId("activite-club").fill("Salle d'armes");
+
+  // Le fournisseur d'adresses est bouché en test : ses fixtures répondent à
+  // « bistrot », ce qui suffit à éprouver le chemin.
+  await form.getByTestId("activite-adresse").fill("bistrot");
+  const suggestion = page.getByTestId("adresse-suggestion").first();
+  await expect(suggestion).toBeVisible({ timeout: 15_000 });
+  await suggestion.click();
+  // Le repère dit que le point est acquis — c'est lui qui vaut la carte.
+  await expect(page.getByTestId("adresse-situee")).toBeVisible();
+
+  await form.locator('input[name="membres"]').first().check();
+  await Promise.all([
+    page.waitForResponse((r) => r.request().method() === "POST" && r.status() < 400),
+    form.getByTestId("activite-valider").click(),
+  ]);
+  await expect(page).toHaveURL(/\/fr\/activites\/[0-9a-f-]{36}$/, { timeout: 15_000 });
+
+  // Et la carte l'épingle : c'était impossible tant que l'adresse se tapait.
+  await page.goto("/fr/activites?onglet=carte");
+  await expect(page.getByTestId("carte-activites")).toBeVisible({ timeout: 15_000 });
+  const epingles = page.locator(".leaflet-marker-icon");
+  await expect(epingles.first()).toBeVisible();
+  expect(await epingles.count()).toBeGreaterThanOrEqual(4);
+});

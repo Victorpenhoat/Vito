@@ -17,6 +17,11 @@ export const activiteInputSchema = z.object({
   statut: z.enum(STATUTS_ACTIVITE).default("en_cours"),
   clubNom: optionnel(200),
   adresse: optionnel(400),
+  // Coordonnées apportées par la suggestion choisie. Elles vont par paire :
+  // une latitude sans sa longitude ne situe rien.
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lng: z.coerce.number().min(-180).max(180).optional(),
+  placeId: optionnel(200),
   telephone: optionnel(40),
   // Formule à la carte : vide = abonnement illimité, pas zéro séance.
   formuleSeances: z.coerce.number().int().positive().optional(),
