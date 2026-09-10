@@ -3,7 +3,7 @@ import { log } from "@/lib/log";
 import { logActionError } from "@/lib/actionError";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { signatureValide } from "@/lib/mail/signature";
-import { statutDepuisEvenement, avance, type Statut } from "@/lib/mail/statut";
+import { statutDepuisEvenement, avance, statutsAnterieurs, type Statut } from "@/lib/mail/statut";
 
 // Corps brut requis pour la vérif de signature → runtime nodejs (pas edge).
 // Même patron que /api/stripe/webhook, éprouvé.
@@ -28,7 +28,13 @@ export async function POST(request: Request): Promise<Response> {
 
   let evenement: { type?: unknown; data?: { email_id?: unknown } };
   try {
-    evenement = JSON.parse(corps);
+    const analyse: unknown = JSON.parse(corps);
+    // `JSON.parse("null")` réussit et rend `null` : sans ce garde-fou, la ligne
+    // suivante lit `.type` dessus et jette hors du try/catch.
+    if (typeof analyse !== "object" || analyse === null) {
+      return new Response("corps illisible", { status: 400 });
+    }
+    evenement = analyse as { type?: unknown; data?: { email_id?: unknown } };
   } catch {
     return new Response("corps illisible", { status: 400 });
   }
@@ -55,7 +61,18 @@ export async function POST(request: Request): Promise<Response> {
     }
     if (!avance(data.statut as Statut, nouveau)) return new Response(null, { status: 200 });
 
-    await admin.from("journal_envois").update({ statut: nouveau }).eq("id", data.id);
+    // Le `avance()` ci-dessus évite un aller-retour inutile mais ne PROTÈGE rien :
+    // deux webhooks concurrents (un rebond et une remise tardive, par ex.) peuvent
+    // tous deux lire ce même statut avant l'écriture de l'autre, tous deux passer
+    // leur propre `avance()`, puis s'écraser au hasard de l'ordre des UPDATE. La
+    // correction tient dans le WHERE : la ligne n'est touchée que si son statut
+    // est encore un de ceux qui précèdent `nouveau`, vérifié atomiquement par
+    // Postgres au moment de l'écriture — pas par ce qu'on a lu plus tôt.
+    await admin
+      .from("journal_envois")
+      .update({ statut: nouveau })
+      .eq("id", data.id)
+      .in("statut", statutsAnterieurs(nouveau));
   } catch (err) {
     logActionError("resend.webhook.maj", err);
     return new Response("erreur de mise à jour", { status: 500 }); // Resend rejouera

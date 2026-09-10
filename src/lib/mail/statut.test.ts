@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { statutDepuisEvenement, avance } from "./statut";
+import { statutDepuisEvenement, avance, statutsAnterieurs } from "./statut";
 
 describe("statutDepuisEvenement", () => {
   it("traduit les événements qui nous intéressent", () => {
@@ -29,5 +29,16 @@ describe("avance", () => {
   it("laisse un rebond ou une plainte l'emporter sur une remise", () => {
     expect(avance("remis", "rebond")).toBe(true);
     expect(avance("remis", "plainte")).toBe(true);
+  });
+});
+
+// Pour l'écriture atomique de la route : le WHERE d'un UPDATE doit accepter
+// exactement les statuts de départ qui constituent un progrès vers `nouveau`.
+describe("statutsAnterieurs", () => {
+  it("donne les statuts strictement moins avancés qu'un statut donné", () => {
+    const anterieurs = statutsAnterieurs("remis");
+    expect(anterieurs.sort()).toEqual(["accepte", "echec", "en_cours"]);
+    expect(anterieurs).not.toContain("rebond");
+    expect(anterieurs).not.toContain("plainte");
   });
 });

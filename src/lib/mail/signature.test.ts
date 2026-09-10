@@ -37,6 +37,13 @@ describe("signatureValide", () => {
     expect(signatureValide(SECRET, ID, vieux, CORPS, signer(ID, vieux, CORPS))).toBe(false);
   });
 
+  // La fenêtre protège dans les deux sens : un horodatage dans le futur n'est
+  // pas plus légitime qu'un vieux, seul l'écart compte.
+  it("refuse un horodatage dans le futur", () => {
+    const futur = (Math.floor(Date.now() / 1000) + 3600).toString();
+    expect(signatureValide(SECRET, ID, futur, CORPS, signer(ID, futur, CORPS))).toBe(false);
+  });
+
   it("accepte quand l'en-tête porte plusieurs signatures, dont la bonne", () => {
     const ts = maintenant();
     const entete = "v1,dGVzdA== " + signer(ID, ts, CORPS);

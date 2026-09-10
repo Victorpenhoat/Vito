@@ -27,3 +27,10 @@ const RANG: Record<Statut, number> = {
 export function avance(actuel: Statut, nouveau: Statut): boolean {
   return RANG[nouveau] > RANG[actuel];
 }
+
+// Pour une écriture atomique : les statuts qu'un `UPDATE ... WHERE statut IN (...)`
+// doit accepter comme état de départ pour que le passage à `nouveau` soit un progrès.
+// Dérivé du même RANG qu'`avance()` — une seconde liste tenue à la main dériverait.
+export function statutsAnterieurs(nouveau: Statut): Statut[] {
+  return (Object.keys(RANG) as Statut[]).filter((s) => RANG[s] < RANG[nouveau]);
+}
