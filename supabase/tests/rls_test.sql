@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(105);
+select plan(107);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -698,6 +698,24 @@ select throws_ok(
        'insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
         values (''2026-2027'', ''Zone A'', ''pgtap faux'', ''2026-01-01'', ''2026-01-02'')') $$,
   '42501', null, 'un compte connecté n''écrit pas dans le calendrier');
+
+-- ── Bornes d'une période (00065) ────────────────────────────────────────────
+-- Le rôle de service contourne la RLS, donc la seule barrière qui lui reste
+-- est la contrainte. Elle compte : la dérivée d'été pose la fin au 31 août,
+-- ce qui serait AVANT le début pour un été austral, et une coquille du
+-- ministère produirait la même chose. Une ligne à l'envers écrite une fois
+-- survivrait à la correction du code — le cache ne se relit pas.
+select throws_ok(
+  $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+     values ('2026-2027', 'Réunion', 'pgtap à l''envers', '2026-12-18', '2026-08-31') $$,
+  '23514', null, 'une période qui finit avant de commencer est refusée');
+
+-- Et l'égalité reste permise : le Pont de l'Ascension des zones A, B et C
+-- tient en un seul jour, début et fin confondus.
+select lives_ok(
+  $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+     values ('2026-2027', 'Zone A', 'pgtap un seul jour', '2027-05-07', '2027-05-07') $$,
+  'une période d''un seul jour est acceptée');
 
 select finish();
 rollback;
