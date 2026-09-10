@@ -229,6 +229,29 @@ describe("normaliser", () => {
     expect(normaliser(MARQUEUR_AUSTRAL)).toEqual([]);
   });
 
+  // Une coquille de saisie au ministère : la fin avant le début. Depuis la
+  // migration 00065 elle ferait échouer l'upsert — qui porte TOUTE l'année en
+  // un appel — et, la réponse portant quand même la zone, le mémo ne
+  // s'armerait pas : le planning rejouerait le même upsert condamné à chaque
+  // rendu. La ligne saute, l'année reste.
+  const LIGNE_A_L_ENVERS = {
+    results: [
+      { description: "Vacances de Noël", start_date: "2026-12-18T23:00:00+00:00",
+        end_date: "2027-01-03T23:00:00+00:00", zones: "Zone A", population: "-",
+        annee_scolaire: "2026-2027" },
+      { description: "Vacances d'Hiver", start_date: "2027-02-12T23:00:00+00:00",
+        end_date: "2027-02-05T23:00:00+00:00", zones: "Zone A", population: "-",
+        annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("écarte une ligne dont la fin précède le début, sans perdre l'année", () => {
+    expect(normaliser(LIGNE_A_L_ENVERS)).toEqual([
+      { anneeScolaire: "2026-2027", zone: "Zone A", libelle: "Vacances de Noël",
+        debut: "2026-12-19", fin: "2027-01-04" },
+    ]);
+  });
+
   it("garde le vocabulaire de la source, sans le réduire à A/B/C", () => {
     const zones = new Set(normaliser(REPONSE).map((p) => p.zone));
     expect(zones).toEqual(new Set(["Zone A", "Zone B", "Zone C"]));

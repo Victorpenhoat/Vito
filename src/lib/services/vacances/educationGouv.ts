@@ -97,7 +97,14 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
     const anneeScolaire = typeof brut.annee_scolaire === "string" ? brut.annee_scolaire : "";
     const debut = typeof brut.start_date === "string" ? dateDeParis(brut.start_date) : null;
     const fin = typeof brut.end_date === "string" ? dateDeParis(brut.end_date) : null;
-    if (!zone || !libelle || !anneeScolaire || !debut || !fin) continue;
+    // `fin < debut` : une coquille de saisie au ministère. Elle ne sert à
+    // personne — l'écran ne dessine pas une barre inversée — et depuis la
+    // migration 00065 elle ferait échouer l'upsert, qui est UN SEUL appel
+    // pour toute l'année : une ligne fausse coûterait le calendrier entier,
+    // et comme la réponse porterait quand même la zone, le mémo des
+    // tentatives vaines ne s'armerait pas et le planning rejouerait le même
+    // upsert condamné à chaque rendu. On écarte la ligne, on garde l'année.
+    if (!zone || !libelle || !anneeScolaire || !debut || !fin || fin < debut) continue;
 
     const periode = { anneeScolaire, zone, libelle, debut, fin };
     if (libelle === MARQUEUR_ETE) {
