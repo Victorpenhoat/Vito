@@ -2636,6 +2636,7 @@ export type Database = {
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
+      compte_existe: { Args: { p_email: string }; Returns: boolean }
       consommer_invitation: { Args: { p_token: string }; Returns: Json }
       consommer_quota: {
         Args: { p_action: string; p_fenetre_secondes: number; p_limite: number }

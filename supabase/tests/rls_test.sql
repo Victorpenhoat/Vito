@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(110);
+select plan(115);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -718,6 +718,26 @@ select is((select count(*) from public.journal_envois where destinataire = 'vieu
   0::bigint, 'la ligne de 91 jours a disparu');
 select is((select count(*) from public.journal_envois where destinataire = 'a@vito.test'),
   1::bigint, 'la ligne récente est restée');
+
+-- ── Sonde d'existence de compte (00062, correction post-revue) ─────────────
+-- compte_existe existe pour éviter d'appeler generateLink — qui CRÉE le
+-- compte pour 'magiclink' — sur une adresse inconnue. Deux choses à
+-- verrouiller : qu'elle réponde juste, et que personne d'autre que
+-- service_role ne puisse l'appeler (sinon c'est elle-même un endpoint
+-- d'énumération).
+select ok(public.compte_existe('client@vito.test'), 'compte_existe reconnaît un compte seedé');
+select ok(not public.compte_existe('jamais-vu-pgtap@vito.test'),
+  'compte_existe ne reconnaît pas une adresse absente');
+select ok(public.compte_existe('CLIENT@VITO.TEST'),
+  'compte_existe compare sans tenir compte de la casse');
+
+select throws_ok(
+  $$ select tests.bool_as_anon('select public.compte_existe(''sonde-pgtap@vito.test'')') $$,
+  '42501', null, 'anon ne peut pas appeler compte_existe (ce serait un endpoint d''énumération)');
+select throws_ok(
+  $$ select tests.bool_as('11111111-1111-1111-1111-111111111111',
+       'select public.compte_existe(''sonde-pgtap@vito.test'')') $$,
+  '42501', null, 'authenticated non plus : seul le rôle de service appelle compte_existe');
 
 select finish();
 rollback;

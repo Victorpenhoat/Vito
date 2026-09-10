@@ -10,6 +10,13 @@ import { log } from "@/lib/log";
 // Le corps reste le HTML nu d'aujourd'hui (repris de
 // supabase/templates/magic_link.html) : ce lot déplace la voie, le lot 2 lui
 // donnera l'allure de Vito.
+//
+// ATTENTION, fait vérifié contre l'API (et le comportement mesuré en local) :
+// `generateLink` CRÉE le compte pour `type: 'magiclink'`, tout comme pour
+// 'signup' et 'invite' — c'est une opération privilégiée qui contourne
+// délibérément `enable_signup = false`. On ne peut donc PAS l'appeler pour
+// savoir si un compte existe : il faut le savoir AVANT, via compte_existe()
+// (migration 00062), qui répond sans jamais créer quoi que ce soit.
 
 /**
  * Ne rend RIEN et ne jette JAMAIS — et c'est une règle de sécurité, pas une
@@ -19,16 +26,26 @@ import { log } from "@/lib/log";
 export async function envoyerLienMagiqueA(email: string, origine: string): Promise<void> {
   try {
     const admin = createAdminClient();
-    // `magiclink` échoue pour une adresse inconnue et ne crée AUCUN compte :
-    // c'est l'équivalent de `shouldCreateUser: false`. L'inscription reste sur
-    // invitation.
+    // Vérifié AVANT tout appel à generateLink — jamais après : generateLink
+    // créerait le compte, ce que l'inscription sur invitation interdit.
+    const { data: existe, error: erreurExistence } = await admin.rpc("compte_existe", {
+      p_email: email,
+    });
+    if (erreurExistence || !existe) {
+      // Tracé, jamais montré : compte inconnu (le cas normal ici), ou souci
+      // technique sur la sonde elle-même.
+      log.warn("lien_magique", { message: erreurExistence?.message ?? "compte inconnu" });
+      return;
+    }
+
     const { data, error } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email,
     });
     const jeton = data?.properties?.hashed_token;
     if (error || !jeton) {
-      // Tracé, jamais montré : compte inconnu, quota atteint, service en panne.
+      // Tracé, jamais montré : quota atteint, service en panne — le compte,
+      // lui, est déjà confirmé existant à ce stade.
       log.warn("lien_magique", { message: error?.message ?? "aucun jeton" });
       return;
     }
