@@ -59,6 +59,52 @@ L'écriture du journal **ne peut pas faire échouer** une révélation : l'utili
 a donné son mot de passe, il a droit à sa donnée. Un journal indisponible est un
 problème d'exploitation, pas une raison de lui refuser l'accès.
 
+### Le journal des envois suit la même règle
+
+`journal_envois` (migration 00061) est le second journal append-only, et il
+existe pour une seule question : « je n'ai rien reçu » — est-ce parti, remis,
+rebondi. Il garde donc le **genre** du message et son sort, **jamais son
+contenu** : ni sujet, ni corps, ni lien. Un journal qui contiendrait le lien
+magique n'aurait fait que le déplacer.
+
+Ce qu'il garde et qui coûte : **l'adresse du destinataire, en clair**. C'est une
+donnée personnelle, et c'est assumé — hachée, elle ne répondrait plus à la seule
+question qui justifie la table. Elle est bornée par une **purge à 90 jours**
+(`purger_journal_envois`), le délai qui répond au support sans constituer un
+historique indéfini des adresses. La purge est écrite ; sa planification arrive
+au lot 4, avec celle des comptes.
+
+Mêmes protections que `journal_acces` : `select` sur ses propres lignes pour
+`authenticated`, rien pour `anon`, écriture réservée au rôle de service, et
+`revoke update, delete` explicite — pour la raison qui rend ce revoke
+indispensable partout ici : sans lui, une réécriture passerait **en silence**.
+
+**Ce journal ouvre une porte publique**, `POST /api/resend/webhook`, seule route
+qui l'écrive sans session. Elle est tenue par trois règles : signature Svix
+vérifiée avant toute lecture (`src/lib/mail/signature.ts`, HMAC sur
+`id.horodatage.corps`, fenêtre de 5 minutes, comparaison à temps constant) ;
+**secret absent = 500**, jamais d'ouverture par défaut ; et **aucune insertion**
+— un identifiant inconnu est ignoré, sans quoi qui connaît l'URL remplirait la
+table.
+
+**Le chemin de connexion est devenu notre code** : depuis le lot 1 des mails, le
+lien magique part par `envoyer()` et non plus par GoTrue. Deux conséquences
+portées ici :
+
+- l'origine du lien vient de la **configuration** en production
+  (`NEXT_PUBLIC_APP_URL`), jamais de l'en-tête `Host` — un `Host` fourni par
+  l'appelant enverrait le `token_hash` de la victime sur le domaine d'un tiers ;
+- la **limitation de débit** que GoTrue appliquait est reprise côté application
+  (5 liens par quart d’heure et par adresse, comptés dans ce journal), parce que
+  `generateLink` est une opération d'administration qui contourne celle de
+  GoTrue. Le refus est silencieux : la réponse de connexion est la même dans
+  tous les cas, sinon elle laisserait énumérer les comptes.
+
+Et la garde qui va avec : en production, l'absence de `RESEND_API_KEY`,
+`RESEND_WEBHOOK_SECRET`, `MAIL_EXPEDITEUR` ou `NEXT_PUBLIC_APP_URL` **empêche le
+démarrage** (`src/lib/env.ts`). Sans elle, un déploiement mal configuré
+répondrait « regardez votre boîte » à tout le monde sans que rien ne parte.
+
 ## 4. Rien de protégé ne va en cache
 
 Les routes de lecture répondent en `Cache-Control: private, no-store`. Le service
@@ -80,6 +126,8 @@ activité le proche d'un autre compte.
 - [ ] `supabase test db` au vert
 - [ ] aucune valeur protégée dans les journaux applicatifs (les actions ne
       renvoient qu'un message unique : « Vérification impossible »)
+- [ ] les quatre variables d'e-mail renseignées en production — sinon le
+      déploiement refuse de démarrer, et c'est voulu
 
 ## Garde-fous automatiques (9 septembre 2026)
 

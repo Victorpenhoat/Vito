@@ -19,6 +19,16 @@ jobs:
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(supabase status -o env | grep '^ANON_KEY=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
           echo "SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
           echo "DOCUMENTS_ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" >> "$GITHUB_ENV"
+          echo "MAIL_EXPEDITEUR=contact@vito.app" >> "$GITHUB_ENV"
+          # La CLI émet les DEUX clés et appelle déjà INBUCKET_URL dépréciée ;
+          # `version: latest` la fera disparaître sans prévenir. On prend la
+          # nouvelle en priorité, l'ancienne en repli. (Une valeur vide serait
+          # acceptée par env.ts — cf. le préprocesseur de MAIL_MAILPIT_URL —
+          # mais l'e2e n'aurait alors plus de boîte où lire les messages.)
+          STATUT=$(supabase status -o env)
+          MAILPIT=$(printf '%s\n' "$STATUT" | grep '^MAILPIT_URL=' | cut -d= -f2- | tr -d '"')
+          [ -n "$MAILPIT" ] || MAILPIT=$(printf '%s\n' "$STATUT" | grep '^INBUCKET_URL=' | cut -d= -f2- | tr -d '"')
+          echo "MAIL_MAILPIT_URL=$MAILPIT" >> "$GITHUB_ENV"
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test

@@ -1403,6 +1403,50 @@ export type Database = {
           },
         ]
       }
+      journal_envois: {
+        Row: {
+          created_at: string
+          destinataire: string
+          detail: string | null
+          fournisseur_id: string | null
+          genre: string
+          id: string
+          statut: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          destinataire: string
+          detail?: string | null
+          fournisseur_id?: string | null
+          genre: string
+          id?: string
+          statut?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          destinataire?: string
+          detail?: string | null
+          fournisseur_id?: string | null
+          genre?: string
+          id?: string
+          statut?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_envois_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       liste_item_tags: {
         Row: {
           liste_item_id: string
@@ -2592,6 +2636,7 @@ export type Database = {
       can_access_groupe: { Args: { g_id: string }; Returns: boolean }
       can_access_voyage: { Args: { v_id: string }; Returns: boolean }
       cancel_subscription: { Args: never; Returns: undefined }
+      compte_existe: { Args: { p_email: string }; Returns: boolean }
       consommer_invitation: { Args: { p_token: string }; Returns: Json }
       consommer_quota: {
         Args: { p_action: string; p_fenetre_secondes: number; p_limite: number }
@@ -2666,6 +2711,7 @@ export type Database = {
       }
       mock_subscribe: { Args: { p_period: string }; Returns: undefined }
       purger_comptes_supprimes: { Args: never; Returns: number }
+      purger_journal_envois: { Args: never; Returns: number }
       purger_recommandations: { Args: never; Returns: number }
       quitter_famille: { Args: never; Returns: undefined }
       recommander_adresse: {
