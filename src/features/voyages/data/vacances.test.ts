@@ -22,13 +22,14 @@ vi.mock("@/lib/supabase/server", () => ({
       select: () => ({
         eq: (_c: string, zone: string) => ({
           in: (_c2: string, annees: string[]) => ({
-            order: async () =>
-              erreurLecture
-                ? { data: null, error: { message: erreurLecture } }
-                : {
-                    data: lignes.filter((l) => l.zone === zone && annees.includes(l.annee_scolaire)),
-                    error: null,
-                  },
+            order: async () => {
+              const data = lignes.filter((l) => l.zone === zone && annees.includes(l.annee_scolaire));
+              // PostgREST rend `data` ET `error` en cas d'échec : c'est exactement
+              // ce que `lire()` doit refuser de servir, en faisant confiance à
+              // `error` plutôt qu'à `data`. Un mock qui rendrait `data: null` ne
+              // distinguerait rien — un `return data ?? []` bogué passerait aussi.
+              return erreurLecture ? { data, error: { message: erreurLecture } } : { data, error: null };
+            },
           }),
         }),
       }),
@@ -102,9 +103,14 @@ describe("getVacances", () => {
     await expect(getVacances("Zone C", "2026-10-01", "2027-06-30")).resolves.toEqual([]);
   });
 
-  it("ne jette pas quand la lecture de la table échoue, et rend une liste vide", async () => {
+  // Discriminant : le mock rend À LA FOIS des lignes et une erreur (ce que
+  // PostgREST fait réellement en cas d'échec), pour prouver que `lire()` fait
+  // confiance à `error` plutôt qu'à `data` — pas seulement qu'une table vide
+  // donne une liste vide, ce qu'un `return data ?? []` bogué ferait aussi.
+  it("ne sert pas les lignes reçues quand la table les accompagne d'une erreur", async () => {
+    lignes = [{ annee_scolaire: "2026-2027", zone: "Zone C", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" }];
     erreurLecture = "connexion refusée";
-    recuperer.mockResolvedValue(null);
+    recuperer.mockResolvedValue(null); // rien ne doit repeupler le cache après le refus.
     await expect(getVacances("Zone C", "2026-10-01", "2027-06-30")).resolves.toEqual([]);
   });
 
