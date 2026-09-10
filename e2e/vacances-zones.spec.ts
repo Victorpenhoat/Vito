@@ -78,6 +78,14 @@ test("sans zone du tout, l'écran demande la zone au lieu de se taire", async ({
 
   await expect(page.getByTestId("planning-zone")).toHaveCount(0);
   await expect(page.getByTestId("autres-zones")).toHaveCount(0);
+
+  // Les deux vues portent le lien, sous deux identifiants distincts : un
+  // testid partagé serait une violation du mode strict le jour où elles
+  // seraient rendues ensemble.
+  await page.getByTestId("vue-annee").click();
+  await expect(page.getByTestId("frise-choisir-zone")).toBeVisible();
+
+  await page.getByTestId("vue-mois").click();
   await page.getByTestId("planning-choisir-zone").click();
   await expect(page).toHaveURL(/\/fr\/reglages/);
 });

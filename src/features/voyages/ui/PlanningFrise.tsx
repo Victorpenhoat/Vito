@@ -46,7 +46,11 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
           {!zone && (
             <>
               {" "}
-              <Link href="/reglages" data-testid="planning-choisir-zone" className="font-semibold text-accent underline">
+              {/* Identifiant PROPRE à la frise : le calendrier porte le même
+                  lien sous `planning-choisir-zone`, et un jour où les deux
+                  vues seraient rendues ensemble, un testid partagé ferait
+                  échouer les tests sur le mode strict. */}
+              <Link href="/reglages" data-testid="frise-choisir-zone" className="font-semibold text-accent underline">
                 {t("choisirZone")}
               </Link>
             </>

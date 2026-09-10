@@ -106,6 +106,11 @@ export async function VueSemaine({ semaine, aujourdhui }: {
               }`}>
               <header className="flex flex-wrap items-center gap-2">
                 <h3 className="text-[13px] font-semibold text-ink first-letter:uppercase">{jourLong(jour)}</h3>
+                {/* `&& zone` n'est pas une garde redondante : `signaux.
+                    vacances` est certes toujours nul sans zone (la liste des
+                    périodes est vide), mais c'est ce test qui donne à
+                    TypeScript le `string` que réclame le libellé ci-dessous.
+                    Le retirer casse la compilation, pas le rendu. */}
                 {signaux.vacances && zone && (
                   <span data-testid="jour-vacances"
                     className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
