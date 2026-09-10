@@ -134,8 +134,30 @@ describe("normaliser", () => {
     expect(normaliser({ results: [...MARQUEUR_ET_PLAGE.results].reverse() })).toEqual(attendu);
   });
 
-  it("n'invente aucun été quand la source n'en publie aucune ligne", () => {
-    expect(normaliser(REPONSE).some((p) => p.libelle.includes("Été"))).toBe(false);
+  // « Aucun été inventé » ne se prouve pas sur une réponse sans marqueur :
+  // `deriverEte` n'y aurait de toute façon rien à faire, correctif ou pas. Il
+  // faut une réponse où la dérivation OPÈRE pour une zone, afin que l'absence
+  // d'été chez l'autre dise quelque chose.
+  const MARQUEUR_UNE_SEULE_ZONE = {
+    results: [
+      ...MARQUEUR_SEUL.results,
+      // Zone A : pas la moindre ligne d'été, ni marqueur ni plage.
+      { description: "Vacances de Noël", start_date: "2026-12-18T23:00:00+00:00",
+        end_date: "2027-01-03T23:00:00+00:00", zones: "Zone A", population: "-",
+        location: "Besançon", annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("n'invente un été QUE là où la source pose un marqueur", () => {
+    const periodes = normaliser(MARQUEUR_UNE_SEULE_ZONE);
+    expect(periodes.filter((p) => p.libelle.includes("Été"))).toEqual([
+      { anneeScolaire: "2026-2027", zone: "Zone C", libelle: "Vacances d'Été",
+        debut: "2027-07-03", fin: "2027-08-31" },
+    ]);
+    // La Zone A garde son Noël et rien de plus : la dérivation ne déborde pas
+    // sur les zones voisines de la même réponse.
+    expect(periodes.filter((p) => p.zone === "Zone A").map((p) => p.libelle))
+      .toEqual(["Vacances de Noël"]);
   });
 
   // Deux lignes qui diffèrent VRAIMENT, une fois les enseignants écartés.
@@ -159,6 +181,37 @@ describe("normaliser", () => {
     expect(normaliser(DEUX_DEGRES)).toEqual([
       { anneeScolaire: "2026-2027", zone: "Polynésie", libelle: "Grandes Vacances",
         debut: "2027-07-01", fin: "2027-08-24" },
+    ]);
+  });
+
+  // L'autre moitié du filtre, celle qu'aucun test ne tenait : un resserrement
+  // en « ne garder que `-` et `Élèves…` » ferait disparaître la Guadeloupe et
+  // les deux degrés SANS qu'aucune assertion bronche. Ces populations ne
+  // nomment pas un public enseignant — les guadeloupéennes ne nomment même
+  // pas un public, mais un territoire.
+  const POPULATIONS_GARDEES = {
+    results: [
+      { description: "Vacances de Noël", start_date: "2026-12-18T23:00:00+00:00",
+        end_date: "2027-01-03T23:00:00+00:00", zones: "Zone A",
+        population: "Premier degré", annee_scolaire: "2026-2027" },
+      { description: "Vacances de Noël", start_date: "2026-12-18T23:00:00+00:00",
+        end_date: "2027-01-03T23:00:00+00:00", zones: "Zone B",
+        population: "Second degré", annee_scolaire: "2026-2027" },
+      { description: "Vacances de Carnaval", start_date: "2027-02-12T23:00:00+00:00",
+        end_date: "2027-02-21T23:00:00+00:00", zones: "Guadeloupe",
+        population: "Guadeloupe & Saint-Martin", annee_scolaire: "2026-2027" },
+      { description: "Vacances de Pâques", start_date: "2027-04-09T22:00:00+00:00",
+        end_date: "2027-04-25T22:00:00+00:00", zones: "Guadeloupe",
+        population: "Saint-Barthélémy", annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("ne sur-filtre pas : les degrés et les populations territoriales survivent", () => {
+    expect(normaliser(POPULATIONS_GARDEES).map((p) => `${p.zone} · ${p.libelle}`)).toEqual([
+      "Zone A · Vacances de Noël",
+      "Zone B · Vacances de Noël",
+      "Guadeloupe · Vacances de Carnaval",
+      "Guadeloupe · Vacances de Pâques",
     ]);
   });
 
