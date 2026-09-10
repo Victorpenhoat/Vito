@@ -19,6 +19,8 @@ jobs:
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(supabase status -o env | grep '^ANON_KEY=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
           echo "SUPABASE_SERVICE_ROLE_KEY=$(supabase status -o env | grep '^SERVICE_ROLE_KEY=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
           echo "DOCUMENTS_ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" >> "$GITHUB_ENV"
+          echo "MAIL_EXPEDITEUR=contact@vito.app" >> "$GITHUB_ENV"
+          echo "MAIL_MAILPIT_URL=$(supabase status -o env | grep '^INBUCKET_URL=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test

@@ -29,6 +29,10 @@ const schema = z
     RESEND_API_KEY: z.string().optional(),
     RESEND_WEBHOOK_SECRET: z.string().optional(),
     MAIL_EXPEDITEUR: z.string().email().optional(),
+    // Transport local (dev/CI) : dépose dans la boîte Mailpit de la pile
+    // Supabase. Ignorée dès que RESEND_API_KEY est présente, et absente en
+    // production — impossible d'y envoyer un vrai message par ce biais.
+    MAIL_MAILPIT_URL: z.string().url().optional(),
   })
   .refine(
     (v) =>
@@ -67,6 +71,7 @@ const parsed = schema.safeParse({
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   RESEND_WEBHOOK_SECRET: process.env.RESEND_WEBHOOK_SECRET,
   MAIL_EXPEDITEUR: process.env.MAIL_EXPEDITEUR,
+  MAIL_MAILPIT_URL: process.env.MAIL_MAILPIT_URL,
 });
 
 if (!parsed.success) {
