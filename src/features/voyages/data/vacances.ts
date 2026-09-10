@@ -24,6 +24,34 @@ export function anneesScolairesDe(debut: string, fin: string): string[] {
   return out;
 }
 
+/**
+ * Mémo des tentatives infructueuses, en mémoire de PROCESSUS.
+ *
+ * 2027-2028 existe dans la source mais n'y porte que Mayotte et la Polynésie.
+ * Dès octobre 2026 la fenêtre de douze mois l'inclut : la récupération
+ * réussira, écrira ces deux zones, et la relecture pour une zone
+ * métropolitaine rendra toujours zéro ligne. Sans mémo, chaque rendu du
+ * planning rappellerait le ministère pour une année qui ne contiendra jamais
+ * cette zone.
+ *
+ * Volontairement pauvre : pas de table, pas de migration, pas de réglage,
+ * perdu au redéploiement. Un mémo perdu coûte une requête de plus, ce qui est
+ * exactement le prix qu'on accepte de payer pour ne pas gérer d'état.
+ *
+ * Il ne borne QUE l'appel réseau : ce que la table contient est servi comme
+ * avant. Et il ne retient qu'un échec CONCLUANT — la source a répondu, elle
+ * ne connaît simplement pas cette zone pour cette année. Une source
+ * injoignable n'y entre pas : une panne de quelques minutes ne doit pas geler
+ * le calendrier pour six heures.
+ */
+const DELAI_RETENTATIVE_MS = 6 * 60 * 60 * 1000;
+const tentativesVaines = new Map<string, number>();
+
+function vainRecemment(annee: string, zone: string): boolean {
+  const quand = tentativesVaines.get(`${annee}|${zone}`);
+  return quand !== undefined && Date.now() - quand < DELAI_RETENTATIVE_MS;
+}
+
 async function lire(zone: string, annees: string[]) {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
@@ -50,13 +78,24 @@ async function lire(zone: string, annees: string[]) {
  * requêtes à chaque rentrée, pour un problème rare.
  *
  * Ne jette jamais : un calendrier absent dégrade l'écran, il ne le casse pas.
+ *
+ * Une année que la source ne garnit pas pour cette zone n'est redemandée
+ * qu'au bout de six heures (cf. `tentativesVaines`).
  */
 export async function getVacances(zone: string, debut: string, fin: string): Promise<Periode[]> {
   const annees = anneesScolairesDe(debut, fin);
   let lignes = await lire(zone, annees);
 
-  const presentes = new Set(lignes.map((l) => l.annee_scolaire));
-  const manquantes = annees.filter((a) => !presentes.has(a));
+  // La présence est une propriété du COUPLE (année, zone), jamais de l'année
+  // seule : la source publie des années qui ne portent qu'une poignée de zones
+  // (2027-2028, Mayotte et Polynésie). `lire()` filtre déjà sur la zone, donc
+  // le filtre ci-dessous est redondant AUJOURD'HUI — il est écrit pour que la
+  // propriété se lise ici, tenue par un test, plutôt que de dépendre d'un
+  // détail d'une autre fonction.
+  const presentes = new Set(
+    lignes.filter((l) => l.zone === zone).map((l) => l.annee_scolaire),
+  );
+  const manquantes = annees.filter((a) => !presentes.has(a) && !vainRecemment(a, zone));
 
   if (manquantes.length > 0) {
     const provider = getVacancesProvider();
@@ -74,6 +113,12 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
 
     for (const annee of manquantes) {
       const periodes = await provider.recuperer(annee);
+      // Réponse reçue, mais aucune ligne pour CETTE zone : la source connaît
+      // l'année et n'y met pas cette zone. C'est concluant — inutile de le
+      // redemander au prochain rendu.
+      if (periodes && !periodes.some((p) => p.zone === zone)) {
+        tentativesVaines.set(`${annee}|${zone}`, Date.now());
+      }
       if (!periodes || periodes.length === 0 || !admin) continue;
       const { error } = await admin
         .from("vacances_scolaires")

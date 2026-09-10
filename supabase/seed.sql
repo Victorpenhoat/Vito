@@ -529,9 +529,15 @@ insert into public.invitations (id, token, email, role_vise, voyage_id, cree_par
 -- une année absente n'est pas un bug — le cache ira la chercher à la source,
 -- ce qui est exactement son travail.
 --
--- ⚠ Passé l'été 2027, cette année-là sortira de la fenêtre de douze mois et le
--- planning consultera de nouveau l'API : au moment où le ministère publiera
--- 2027-2028 (absente de la source au 2026-09-10), l'ajouter ici.
+-- ⚠ Dès OCTOBRE 2026 — pas « passé l'été 2027 » — la fenêtre de douze mois
+-- atteint 2027-2028, et le planning ira la chercher à l'API. Cette année-là
+-- existe déjà dans la source au 2026-09-10, mais garnie de Mayotte et de la
+-- Polynésie SEULEMENT : la récupération réussira, écrira ces deux zones, et
+-- la relecture pour une zone métropolitaine rendra toujours zéro ligne. Le
+-- mémo en mémoire de processus de `getVacances` borne la rafale (une
+-- tentative toutes les six heures par (année, zone)), il ne la supprime pas.
+-- Quand le ministère publiera les zones métropolitaines de 2027-2028, les
+-- ajouter ici.
 insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin) values
  ('2026-2027','Zone A','Vacances de la Toussaint','2026-10-17','2026-11-02'),
  ('2026-2027','Zone A','Vacances de Noël','2026-12-19','2027-01-04'),

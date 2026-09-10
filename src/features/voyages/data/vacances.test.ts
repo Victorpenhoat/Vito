@@ -114,6 +114,41 @@ describe("getVacances", () => {
     await expect(getVacances("Zone C", "2026-10-01", "2027-06-30")).resolves.toEqual([]);
   });
 
+  // ⚠ Le mémo des tentatives vaines vit en mémoire de PROCESSUS : il survit à
+  // `beforeEach`. Les deux tests ci-dessous emploient donc chacun un couple
+  // (année, zone) qui n'apparaît nulle part ailleurs dans ce fichier.
+
+  it("ne tient pas une année pour présente parce qu'une AUTRE zone y a des lignes", async () => {
+    // 2027-2028 existe dans la source, garnie de Mayotte et de la Polynésie
+    // seulement. Une présence indexée sur l'année seule dispenserait la
+    // Zone A de récupérer, et son planning resterait vide pour toujours.
+    lignes = [{ annee_scolaire: "2027-2028", zone: "Mayotte", libelle: "Grandes Vacances", debut: "2027-12-17", fin: "2028-01-10" }];
+    recuperer.mockResolvedValue(null);
+
+    await getVacances("Zone A", "2027-10-01", "2028-06-30");
+
+    expect(recuperer).toHaveBeenCalledWith("2027-2028");
+  });
+
+  it("ne rappelle pas la source dans la foulée pour une (année, zone) qu'elle ne garnit pas", async () => {
+    // La source répond, et sa réponse est concluante : elle connaît
+    // 2027-2028, elle n'y met simplement aucune Zone B. Sans mémo, chaque
+    // rendu du planning rappellerait le ministère pour rien.
+    lignes = [{ annee_scolaire: "2026-2027", zone: "Zone B", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" }];
+    recuperer.mockResolvedValue([
+      { anneeScolaire: "2027-2028", zone: "Mayotte", libelle: "Grandes Vacances", debut: "2027-12-17", fin: "2028-01-10" },
+    ]);
+
+    const premier = await getVacances("Zone B", "2027-06-01", "2028-05-31");
+    const second = await getVacances("Zone B", "2027-06-01", "2028-05-31");
+
+    expect(recuperer).toHaveBeenCalledTimes(1);
+    // Le mémo ne court-circuite que l'appel réseau : ce que la table contient
+    // est servi aux deux appels, à l'identique.
+    expect(premier).toHaveLength(1);
+    expect(second).toEqual(premier);
+  });
+
   // Le point de tout le dispositif, version écriture : une source qui répond
   // mais un upsert qui échoue ne doit ni jeter ni faire disparaître ce que la
   // table contenait déjà pour l'année déjà en cache.
