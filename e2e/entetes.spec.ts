@@ -82,6 +82,54 @@ for (const chemin of ["/fr", "/en", "/fr/login", "/fr/confidentialite"]) {
   });
 }
 
+// Les URL sans route sont traitées au niveau du ROUTAGE : `not-found.tsx` ne
+// les voit jamais, c'est `global-not-found.tsx` qui répond. Sans lui, le 404
+// par défaut de Next répondait — prérendu en statique, donc sans nonce, donc
+// dix scripts bloqués et autant de rapports à chaque visite.
+const ATTENDU: ReadonlyArray<[string, string, string]> = [
+  ["/fr/nexistepas", "fr", "Page introuvable"],
+  ["/en/nope", "en", "Page not found"],
+  ["/es/nada", "es", "Página no encontrada"],
+  ["/it/niente", "it", "Pagina non trovata"],
+];
+
+for (const [chemin, lang, titre] of ATTENDU) {
+  test(`une URL sans route rend le 404 de Vito en ${lang}, nonçé`, async ({ page }) => {
+    const reponse = await page.goto(chemin);
+    expect(reponse!.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: titre })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", lang);
+
+    const html = await (await page.request.get(chemin)).text();
+    const balises = html.match(/<script\b[^>]*>/g) ?? [];
+    expect(balises.length).toBeGreaterThan(0);
+    expect(balises.filter((b) => !b.includes("nonce="))).toEqual([]);
+  });
+}
+
+// Dix pages appellent notFound() pour une fiche absente ou appartenant à un
+// autre compte. C'est le 404 qu'un vrai lecteur rencontre — pas l'URL tapée de
+// travers. Il se rend dans le layout [locale], donc traduit ET nonçé, là où le
+// 404 par défaut de Next est prérendu en statique, anglais et sans nonce.
+test("une fiche absente rend le 404 de Vito, traduit et nonçé", async ({ page }) => {
+  await login(page);
+  const chemin = "/fr/famille/proches/00000000-0000-0000-0000-000000000000";
+  const reponse = await page.goto(chemin);
+  await expect(page.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
+
+  // 200, et non 404 : cette version de Next rend `not-found` en 200 dès que la
+  // réponse est en FLUX, et ne pose 404 que hors flux. Rien à corriger — mais
+  // il vaut mieux l'écrire ici que le redécouvrir dans six mois.
+  expect(reponse!.status()).toBe(200);
+
+  const nonce = /'nonce-([a-f0-9]{32})'/.exec(reponse!.headers()["content-security-policy"] ?? "")?.[1];
+  expect(nonce).toBeTruthy();
+  const html = await (await page.request.get(chemin)).text();
+  const balises = html.match(/<script\b[^>]*>/g) ?? [];
+  expect(balises.length).toBeGreaterThan(0);
+  expect(balises.filter((b) => !b.includes("nonce="))).toEqual([]);
+});
+
 test("une page authentifiée qui rend la carte garde ses en-têtes", async ({ page }) => {
   await login(page);
   const reponse = await page.goto("/fr/restos");

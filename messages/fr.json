@@ -1922,5 +1922,10 @@
       "toutVoir": "Tout voir",
       "aTraiter": "{n, plural, one {# action à traiter} other {# actions à traiter}}"
     }
+  },
+  "notFound": {
+    "titre": "Page introuvable",
+    "texte": "Cette page n'existe pas, ou la fiche que vous cherchiez a été supprimée.",
+    "retour": "Retour à Vito"
   }
 }

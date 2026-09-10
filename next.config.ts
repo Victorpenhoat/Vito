@@ -5,6 +5,7 @@ import { ENTETES_STATIQUES } from "./src/lib/securite/entetes";
 const withNextIntl = createNextIntlPlugin("./src/lib/i18n/request.ts");
 const nextConfig: NextConfig = {
   experimental: {
+    globalNotFound: true,
     serverActions: {
       // Documents Cercle : jusqu'à 2 faces × 10 Mo (validées côté action) + overhead
       // multipart. Le défaut Next (1 Mo) rejetait déjà les gros scans avant validation.

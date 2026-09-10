@@ -81,17 +81,36 @@ l'app sont dynamiques, et le HTML servi le confirme : `/fr` compte 15 balises
 lecture du HTML servi — c'est le seul endroit où le basculement se verrait,
 puisque rien dans le typage ne le signale.
 
-**L'exception connue : `/_not-found`.** C'est la seule route prérendue en
-statique, et c'est la page 404 par défaut de Next — dix balises `<script>`,
-aucune nonce, plus un `<style>` inline. Sous la politique en vigueur, tout y est
-bloqué : le 404 s'affiche en texte anglais non stylé, et chaque visite émet une
-dizaine de rapports. Rien de fonctionnel ne s'y perd (cette page n'a aucune
-interaction), mais le bruit peut noyer un vrai signal.
+**Ce que le Report-Only n'avait pas vu : `frame-src 'none'`.** La mesure portait
+sur la carte, les restaurants et les vins ; les documents de famille n'en
+étaient pas. Or `ScanProtege` affiche un scan **PDF** dans une `<iframe>` de
+notre propre origine. En vigueur, le navigateur ne chargeait plus rien : le
+lecteur redonnait son mot de passe pour voir un cadre vide, et le ticket à
+usage unique n'était même pas consommé — c'est d'ailleurs ainsi que le test
+e2e l'a dit, en recevant 200 là où il attendait 401 sur le rejeu du ticket.
 
-La sortie serait de servir un 404 **dynamique** — un `not-found.tsx` sous
-`[locale]`, qui hériterait de la nonce et, au passage, parlerait les quatre
-langues. Ce n'est pas fait : l'app n'a jamais eu de 404 à elle, et en écrire une
-est une décision de produit, pas une conséquence de la CSP.
+La directive est passée à **`frame-src 'self'`**. À ne pas confondre avec
+`frame-ancestors`, qui dit qui peut NOUS encadrer et reste à `'none'` : l'une
+protège du clickjacking, l'autre décide de ce que nous affichons chez nous. Un
+test unitaire les tient désormais côte à côte, précisément parce qu'elles se
+ressemblent.
+
+**`/_not-found` : deux portes, une seule page.** C'était la seule route
+prérendue en statique, et le 404 par défaut de Next — anglais, dix scripts sans
+nonce. Next distingue deux cas, et il faut les deux :
+
+- `[locale]/not-found.tsx` répond aux `notFound()` des pages (fiche absente ou
+  d'un autre compte). Rendu dans le layout, donc nonçé. Attention : cette
+  version renvoie **200** dès que la réponse est en flux, pas 404.
+- `global-not-found.tsx` répond aux URL sans route, que Next traite au niveau du
+  routage — `not-found.tsx` ne les voit jamais. Il contourne le layout : la page
+  porte donc sa propre coque HTML, ses polices, et le provider next-intl (sans
+  lui, le lien de retour jette « No intl context »).
+
+**`force-dynamic` est ce qui ferme le trou** : sans lui, `global-not-found` est
+prérendu au build, où il n'existe ni requête ni nonce. Mesuré : la route passe
+de `○ Static` à `ƒ Dynamic`, et les quatre langues répondent 404 avec zéro
+script sans nonce.
 
 ## Ce qui reste
 

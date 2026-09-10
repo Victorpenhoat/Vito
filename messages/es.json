@@ -1922,5 +1922,10 @@
       "toutVoir": "Ver todo",
       "aTraiter": "{n, plural, one {# acción pendiente} other {# acciones pendientes}}"
     }
+  },
+  "notFound": {
+    "titre": "Página no encontrada",
+    "texte": "Esta página no existe, o la ficha que buscabas ha sido eliminada.",
+    "retour": "Volver a Vito"
   }
 }

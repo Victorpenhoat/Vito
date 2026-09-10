@@ -86,7 +86,12 @@ export function construireCsp({ nonce, dev, supabase, sentry }: OptionsCsp): str
     `connect-src ${connect.join(" ")}`,
     "worker-src 'self'",
     "manifest-src 'self'",
-    "frame-src 'none'",
+    // Ce que NOUS pouvons encadrer — à ne pas confondre avec `frame-ancestors`,
+    // plus bas, qui dit qui peut nous encadrer et reste fermé. Un scan de
+    // document en PDF s'affiche dans une iframe de notre origine
+    // (`ScanProtege`) : à 'none', l'utilisateur redonne son mot de passe pour
+    // ne rien voir, et le ticket à usage unique n'est même pas consommé.
+    "frame-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
