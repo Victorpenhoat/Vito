@@ -1952,6 +1952,36 @@ export type Database = {
           },
         ]
       }
+      vacances_scolaires: {
+        Row: {
+          annee_scolaire: string
+          debut: string
+          fin: string
+          id: string
+          libelle: string
+          recupere_le: string
+          zone: string
+        }
+        Insert: {
+          annee_scolaire: string
+          debut: string
+          fin: string
+          id?: string
+          libelle: string
+          recupere_le?: string
+          zone: string
+        }
+        Update: {
+          annee_scolaire?: string
+          debut?: string
+          fin?: string
+          id?: string
+          libelle?: string
+          recupere_le?: string
+          zone?: string
+        }
+        Relationships: []
+      }
       vins: {
         Row: {
           achat_url: string | null
