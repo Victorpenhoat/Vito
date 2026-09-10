@@ -53,6 +53,18 @@ describe("construireCsp", () => {
     }
   });
 
+  // Deux directives que leur ressemblance rend faciles à confondre, et qui ne
+  // protègent pas du tout la même chose : `frame-ancestors` dit QUI PEUT NOUS
+  // ENCADRER (clickjacking) et reste fermé ; `frame-src` dit CE QUE NOUS
+  // POUVONS ENCADRER. Un scan de document en PDF s'affiche dans une iframe de
+  // notre propre origine : à 'none', l'utilisateur redonne son mot de passe et
+  // ne voit rien.
+  it("nous laisse encadrer notre origine, sans laisser personne nous encadrer", () => {
+    const csp = construireCsp(base);
+    expect(csp).toContain("frame-src 'self'");
+    expect(csp).toContain("frame-ancestors 'none'");
+  });
+
   it("ne force https qu'en production", () => {
     expect(construireCsp(base)).toContain("upgrade-insecure-requests");
     expect(construireCsp({ ...base, dev: true })).not.toContain("upgrade-insecure-requests");

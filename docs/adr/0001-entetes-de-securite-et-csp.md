@@ -1,6 +1,7 @@
 # 0001 — En-têtes de sécurité et CSP
 
-**Date** : 9 septembre 2026 · **Statut** : accepté, CSP en Report-Only
+**Date** : 9 septembre 2026 · **Statut** : accepté · **CSP en vigueur depuis le
+10 septembre 2026** (voir « Passage en vigueur »)
 
 ## Constat
 
@@ -62,8 +63,57 @@ remonte — `script-src` bloquant `eval`, **76 fois**. Elle vient de
 l'instrumentation Playwright, pas de l'app : les 89 chunks client ne
 contiennent ni `eval(` ni `new Function(`, et React n'évalue pas en production.
 
+## Passage en vigueur (10 septembre 2026)
+
+L'en-tête est désormais `Content-Security-Policy`. `report-uri` reste posé : une
+violation renseigne autant quand elle bloque que quand elle rapportait.
+
+**Ce qu'il fallait vérifier n'était pas la liste des violations, mais la nonce.**
+`script-src` porte `'strict-dynamic'`, qui fait **ignorer `'self'`** : seuls les
+scripts portant la nonce se chargent. Une page rendue **statiquement** — bâtie
+au build, sans requête, donc sans nonce — n'exécute alors plus une ligne. Elle
+répond 200 et ne fait rien : la panne la plus silencieuse qui soit.
+
+Le build le dit route par route (`○ Static` / `ƒ Dynamic`). Les 44 routes de
+l'app sont dynamiques, et le HTML servi le confirme : `/fr` compte 15 balises
+`<script>` et 17 `nonce=`, aucune balise sans nonce sur `/fr`, `/en`,
+`/fr/login` ni `/fr/confidentialite`. Un test e2e tient cet invariant par
+lecture du HTML servi — c'est le seul endroit où le basculement se verrait,
+puisque rien dans le typage ne le signale.
+
+**Ce que le Report-Only n'avait pas vu : `frame-src 'none'`.** La mesure portait
+sur la carte, les restaurants et les vins ; les documents de famille n'en
+étaient pas. Or `ScanProtege` affiche un scan **PDF** dans une `<iframe>` de
+notre propre origine. En vigueur, le navigateur ne chargeait plus rien : le
+lecteur redonnait son mot de passe pour voir un cadre vide, et le ticket à
+usage unique n'était même pas consommé — c'est d'ailleurs ainsi que le test
+e2e l'a dit, en recevant 200 là où il attendait 401 sur le rejeu du ticket.
+
+La directive est passée à **`frame-src 'self'`**. À ne pas confondre avec
+`frame-ancestors`, qui dit qui peut NOUS encadrer et reste à `'none'` : l'une
+protège du clickjacking, l'autre décide de ce que nous affichons chez nous. Un
+test unitaire les tient désormais côte à côte, précisément parce qu'elles se
+ressemblent.
+
+**`/_not-found` : deux portes, une seule page.** C'était la seule route
+prérendue en statique, et le 404 par défaut de Next — anglais, dix scripts sans
+nonce. Next distingue deux cas, et il faut les deux :
+
+- `[locale]/not-found.tsx` répond aux `notFound()` des pages (fiche absente ou
+  d'un autre compte). Rendu dans le layout, donc nonçé. Attention : cette
+  version renvoie **200** dès que la réponse est en flux, pas 404.
+- `global-not-found.tsx` répond aux URL sans route, que Next traite au niveau du
+  routage — `not-found.tsx` ne les voit jamais. Il contourne le layout : la page
+  porte donc sa propre coque HTML, ses polices, et le provider next-intl (sans
+  lui, le lien de retour jette « No intl context »).
+
+**`force-dynamic` est ce qui ferme le trou** : sans lui, `global-not-found` est
+prérendu au build, où il n'existe ni requête ni nonce. Mesuré : la route passe
+de `○ Static` à `ƒ Dynamic`, et les quatre langues répondent 404 avec zéro
+script sans nonce.
+
 ## Ce qui reste
 
-Le passage en vigueur (`Content-Security-Policy` au lieu de
-`…-Report-Only`) doit être validé sur un vrai navigateur, sur l'URL de preview,
-et non sous Playwright dont l'instrumentation fausse la mesure de `script-src`.
+Un parcours cliqué sur un **vrai navigateur**, sur l'URL de preview : Playwright
+ne rend pas les mêmes choses qu'un Safari iOS, et `/api/csp-report` est là pour
+recueillir ce que la suite n'aura pas vu.

@@ -31,7 +31,7 @@ test("une route d'API les porte aussi — le proxy ne la voit pas, next.config s
 
 test("la CSP est posée, porte une nonce, et n'autorise aucun script inline", async ({ page }) => {
   const reponse = await page.goto("/fr/login");
-  const csp = reponse!.headers()["content-security-policy-report-only"];
+  const csp = reponse!.headers()["content-security-policy"];
   expect(csp).toBeTruthy();
   expect(csp).toMatch(/script-src [^;]*'nonce-[a-f0-9]{32}'/);
   expect(csp).toContain("'strict-dynamic'");
@@ -43,7 +43,7 @@ test("la CSP est posée, porte une nonce, et n'autorise aucun script inline", as
 test("la nonce change à chaque requête", async ({ page }) => {
   const lire = async () => {
     const r = await page.goto("/fr/login");
-    return /'nonce-([a-f0-9]{32})'/.exec(r!.headers()["content-security-policy-report-only"] ?? "")?.[1];
+    return /'nonce-([a-f0-9]{32})'/.exec(r!.headers()["content-security-policy"] ?? "")?.[1];
   };
   const premiere = await lire();
   const seconde = await lire();
@@ -54,19 +54,85 @@ test("la nonce change à chaque requête", async ({ page }) => {
 test("Next pose bien la nonce sur ses propres scripts", async ({ request }) => {
   const reponse = await request.get("/fr/login");
   const nonce = /'nonce-([a-f0-9]{32})'/.exec(
-    reponse.headers()["content-security-policy-report-only"] ?? "",
+    reponse.headers()["content-security-policy"] ?? "",
   )?.[1];
   expect(nonce).toBeTruthy();
   // On lit le HTML SERVI, pas le DOM : le navigateur vide l'attribut nonce
   // après analyse, et un sélecteur CSS ne verrait plus rien. C'est la preuve
-  // que la nonce traverse next-intl jusqu'au rendu — sans quoi la mesure du
-  // Report-Only serait fausse et la CSP intenable une fois appliquée.
+  // que la nonce traverse next-intl jusqu'au rendu — sans quoi 'strict-dynamic'
+  // bloquerait tous les scripts et la page se servirait muette.
   expect(await reponse.text()).toContain(`nonce="${nonce}"`);
+});
+
+// Le test qui compte depuis que la CSP mord. 'strict-dynamic' fait IGNORER
+// 'self' dans script-src : une page dont le HTML est bâti sans requête n'a pas
+// de nonce, donc pas un seul script autorisé. Elle répond 200 et ne fait rien.
+// Rien dans le typage ne signale ce basculement — seule cette lecture le voit.
+for (const chemin of ["/fr", "/en", "/fr/login", "/fr/confidentialite"]) {
+  test(`aucune balise script sans nonce sur ${chemin}`, async ({ request }) => {
+    const reponse = await request.get(chemin);
+    expect(reponse.status()).toBe(200);
+    const nonce = /'nonce-([a-f0-9]{32})'/.exec(reponse.headers()["content-security-policy"] ?? "")?.[1];
+    expect(nonce).toBeTruthy();
+
+    const html = await reponse.text();
+    const balises = html.match(/<script\b[^>]*>/g) ?? [];
+    expect(balises.length).toBeGreaterThan(0);
+    expect(balises.filter((b) => !b.includes(`nonce="${nonce}"`))).toEqual([]);
+  });
+}
+
+// Les URL sans route sont traitées au niveau du ROUTAGE : `not-found.tsx` ne
+// les voit jamais, c'est `global-not-found.tsx` qui répond. Sans lui, le 404
+// par défaut de Next répondait — prérendu en statique, donc sans nonce, donc
+// dix scripts bloqués et autant de rapports à chaque visite.
+const ATTENDU: ReadonlyArray<[string, string, string]> = [
+  ["/fr/nexistepas", "fr", "Page introuvable"],
+  ["/en/nope", "en", "Page not found"],
+  ["/es/nada", "es", "Página no encontrada"],
+  ["/it/niente", "it", "Pagina non trovata"],
+];
+
+for (const [chemin, lang, titre] of ATTENDU) {
+  test(`une URL sans route rend le 404 de Vito en ${lang}, nonçé`, async ({ page }) => {
+    const reponse = await page.goto(chemin);
+    expect(reponse!.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: titre })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", lang);
+
+    const html = await (await page.request.get(chemin)).text();
+    const balises = html.match(/<script\b[^>]*>/g) ?? [];
+    expect(balises.length).toBeGreaterThan(0);
+    expect(balises.filter((b) => !b.includes("nonce="))).toEqual([]);
+  });
+}
+
+// Dix pages appellent notFound() pour une fiche absente ou appartenant à un
+// autre compte. C'est le 404 qu'un vrai lecteur rencontre — pas l'URL tapée de
+// travers. Il se rend dans le layout [locale], donc traduit ET nonçé, là où le
+// 404 par défaut de Next est prérendu en statique, anglais et sans nonce.
+test("une fiche absente rend le 404 de Vito, traduit et nonçé", async ({ page }) => {
+  await login(page);
+  const chemin = "/fr/famille/proches/00000000-0000-0000-0000-000000000000";
+  const reponse = await page.goto(chemin);
+  await expect(page.getByRole("heading", { name: "Page introuvable" })).toBeVisible();
+
+  // 200, et non 404 : cette version de Next rend `not-found` en 200 dès que la
+  // réponse est en FLUX, et ne pose 404 que hors flux. Rien à corriger — mais
+  // il vaut mieux l'écrire ici que le redécouvrir dans six mois.
+  expect(reponse!.status()).toBe(200);
+
+  const nonce = /'nonce-([a-f0-9]{32})'/.exec(reponse!.headers()["content-security-policy"] ?? "")?.[1];
+  expect(nonce).toBeTruthy();
+  const html = await (await page.request.get(chemin)).text();
+  const balises = html.match(/<script\b[^>]*>/g) ?? [];
+  expect(balises.length).toBeGreaterThan(0);
+  expect(balises.filter((b) => !b.includes("nonce="))).toEqual([]);
 });
 
 test("une page authentifiée qui rend la carte garde ses en-têtes", async ({ page }) => {
   await login(page);
   const reponse = await page.goto("/fr/restos");
   expect(reponse!.headers()["x-content-type-options"]).toBe("nosniff");
-  expect(reponse!.headers()["content-security-policy-report-only"]).toContain("tile.openstreetmap.org");
+  expect(reponse!.headers()["content-security-policy"]).toContain("tile.openstreetmap.org");
 });

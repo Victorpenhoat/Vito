@@ -1922,5 +1922,10 @@
       "toutVoir": "Vedi tutto",
       "aTraiter": "{n, plural, one {# azione da gestire} other {# azioni da gestire}}"
     }
+  },
+  "notFound": {
+    "titre": "Pagina non trovata",
+    "texte": "Questa pagina non esiste, oppure la scheda che cercavi è stata eliminata.",
+    "retour": "Torna a Vito"
   }
 }

@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { log } from "@/lib/log";
 
-// Collecteur de violations CSP. Il n'existe que le temps du Report-Only : c'est
-// lui qui dira si la politique est applicable pour de bon, plutôt que de la
-// passer en vigueur en espérant.
+// Collecteur de violations CSP. Il a servi à mesurer avant de mordre ; il reste
+// une fois la politique en vigueur, où il vaut plus encore : une violation n'y
+// est plus un avertissement mais quelque chose de cassé chez un utilisateur,
+// sur un navigateur ou un parcours que nos tests n'ont pas.
 //
 // Le corps est envoyé par le navigateur, donc non fiable : on n'en garde que
 // quelques champs, tronqués, et jamais l'URL complète du document (elle porte
