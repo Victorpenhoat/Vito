@@ -24,6 +24,11 @@ const schema = z
     DOCUMENTS_ENCRYPTION_KEY: z.string().optional(),
     SENTRY_DSN: z.string().optional(),
     NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    // Envoi d'e-mails (lot 1 « mails »). Absentes : rien ne part, et le journal
+    // le dit — c'est l'état du développement local et de la CI.
+    RESEND_API_KEY: z.string().optional(),
+    RESEND_WEBHOOK_SECRET: z.string().optional(),
+    MAIL_EXPEDITEUR: z.string().email().optional(),
   })
   .refine(
     (v) =>
@@ -34,7 +39,12 @@ const schema = z
         v.NEXT_PUBLIC_APP_URL &&
         v.SUPABASE_SERVICE_ROLE_KEY),
     { message: "STRIPE_SECRET_KEY présent : STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_YEARLY, NEXT_PUBLIC_APP_URL et SUPABASE_SERVICE_ROLE_KEY sont requis" }
-  );
+  )
+  .refine((v) => !v.RESEND_API_KEY || (v.RESEND_WEBHOOK_SECRET && v.MAIL_EXPEDITEUR), {
+    message:
+      "RESEND_API_KEY présent : RESEND_WEBHOOK_SECRET et MAIL_EXPEDITEUR sont requis — " +
+      "une configuration à moitié faite produit les pannes qu'on ne comprend pas",
+  });
 
 const parsed = schema.safeParse({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -54,6 +64,9 @@ const parsed = schema.safeParse({
   DOCUMENTS_ENCRYPTION_KEY: process.env.DOCUMENTS_ENCRYPTION_KEY,
   SENTRY_DSN: process.env.SENTRY_DSN,
   NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  RESEND_WEBHOOK_SECRET: process.env.RESEND_WEBHOOK_SECRET,
+  MAIL_EXPEDITEUR: process.env.MAIL_EXPEDITEUR,
 });
 
 if (!parsed.success) {
