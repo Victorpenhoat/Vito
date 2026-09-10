@@ -20,6 +20,9 @@ create table public.journal_envois (
   -- l'appel n'est jamais revenu.
   statut         text not null default 'en_cours'
                    check (statut in ('en_cours','accepte','remis','rebond','plainte','echec')),
+  -- Un code technique court («non_parti», «exception»...), jamais un message
+  -- du fournisseur ni quoi que ce soit tiré de l'e-mail : le journal ne
+  -- garde pas de contenu, ce champ n'y fait pas exception.
   detail         text,
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()

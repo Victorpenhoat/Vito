@@ -703,13 +703,11 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select throws_ok(
   $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
        'update public.journal_envois set statut = ''remis''') $$,
-  null, 'permission denied for table journal_envois',
-  'on ne réécrit pas le statut d''un envoi');
+  '42501', null, 'on ne réécrit pas le statut d''un envoi');
 select throws_ok(
   $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
        'delete from public.journal_envois') $$,
-  null, 'permission denied for table journal_envois',
-  'on n''efface pas une ligne du journal');
+  '42501', null, 'on n''efface pas une ligne du journal');
 
 -- La purge ne prend que le vieux.
 insert into public.journal_envois (user_id, destinataire, genre, created_at)
