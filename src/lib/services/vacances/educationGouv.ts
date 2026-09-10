@@ -8,9 +8,22 @@ const BASE =
 // l'API refuse tout `limit` au-delà de 100 (HTTP 400) — mesuré, pas deviné.
 // Il faut donc paginer : `TAILLE_PAGE` borne chaque requête, `PAGES_MAX`
 // borne leur nombre pour qu'une source qui n'annoncerait jamais la fin ne
-// fasse pas tourner l'appelant indéfiniment.
+// fasse pas tourner l'appelant indéfiniment. Deux pages suffisent aux 198
+// lignes mesurées ; trois laissent une marge sans faire du plafond un permis
+// de tourner.
 const TAILLE_PAGE = 100;
-const PAGES_MAX = 10;
+const PAGES_MAX = 3;
+
+// Budget de temps de TOUTE la récupération d'une année, pages comprises.
+//
+// Il est créé une seule fois et partagé : un délai par page ne bornerait plus
+// rien. Une source qui répondrait juste sous la limite à chaque page
+// donnerait `PAGES_MAX` × le délai pour une année, le double pour une fenêtre
+// à cheval sur deux années, et encore trois fois plus quand l'interrupteur
+// ouvre les zones voisines en parallèle — le tout avant le premier octet
+// rendu. Un point d'accès qui pend doit dégrader l'écran, pas le faire
+// pendre.
+const BUDGET_MS = 4_000;
 
 /**
  * Date de Paris à partir de l'horodatage de la source.
@@ -176,24 +189,31 @@ function urlPage(anneeScolaire: string, offset: number): string {
 export class EducationGouvProvider implements VacancesProvider {
   readonly name = "education-gouv";
 
+  /** `budgetMs` n'est paramétrable que pour que le test puisse l'éprouver
+   *  sans faire attendre la suite quatre secondes. */
+  constructor(private readonly budgetMs: number = BUDGET_MS) {}
+
   /**
    * Récupère toutes les pages d'une année scolaire.
    *
-   * Une erreur sur une page — refus HTTP, réseau, JSON illisible — jette tout
-   * ce qui a déjà été accumulé et rend `null` : un calendrier à moitié
-   * rempli serait un mensonge silencieux, pire que son absence assumée. Seul
-   * le plafond de pages (garde-fou, pas une panne) rend ce qui a été
-   * collecté jusque-là.
+   * Une erreur sur une page — refus HTTP, réseau, JSON illisible, budget de
+   * temps épuisé — jette tout ce qui a déjà été accumulé et rend `null` : un
+   * calendrier à moitié rempli serait un mensonge silencieux, pire que son
+   * absence assumée. Seul le plafond de pages (garde-fou, pas une panne) rend
+   * ce qui a été collecté jusque-là.
    */
   async recuperer(anneeScolaire: string): Promise<PeriodeVacances[] | null> {
     const bruts: unknown[] = [];
     let attendu: number | null = null;
+    // AVANT la boucle, et une seule fois : c'est ce qui en fait un budget
+    // pour l'année entière plutôt qu'une permission par page.
+    const budget = AbortSignal.timeout(this.budgetMs);
 
     for (let page = 0; page < PAGES_MAX; page++) {
       const offset = page * TAILLE_PAGE;
       let corps: unknown;
       try {
-        const reponse = await fetch(urlPage(anneeScolaire, offset), { signal: AbortSignal.timeout(4_000) });
+        const reponse = await fetch(urlPage(anneeScolaire, offset), { signal: budget });
         if (!reponse.ok) {
           log.warn("vacances_refus", { statut: reponse.status, anneeScolaire, offset });
           return null;

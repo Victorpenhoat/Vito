@@ -309,7 +309,44 @@ describe("EducationGouvProvider", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const periodes = await provider.recuperer("2026-2027");
-    expect(fetchMock).toHaveBeenCalledTimes(10);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(periodes).not.toBeNull();
+  });
+
+  // Le plafond de pages prouve que la boucle S'ARRÊTE, jamais qu'elle
+  // s'arrête À TEMPS. Une source dégradée qui répond juste sous la limite à
+  // chaque page épuiserait un délai posé par page sans jamais le déclencher :
+  // trois pages de 250 ms, puis deux années, puis trois zones en parallèle,
+  // et la page entière pend. Le budget est donc créé une fois pour toute la
+  // récupération.
+  //
+  // Le fetch simulé RESPECTE le signal — sans quoi le test ne mesurerait que
+  // la patience de Vitest.
+  it("borne le temps de la récupération ENTIÈRE, pas de chaque page", async () => {
+    const BUDGET = 300;
+    const PAGE_MS = 250;
+    const fetchMock = vi.fn((_url: string, init?: { signal?: AbortSignal }) =>
+      new Promise((resolve, reject) => {
+        const t = setTimeout(
+          () => resolve({ ok: true, json: async () => ({ total_count: 100_000, results: page(100, 0) }) }),
+          PAGE_MS);
+        init?.signal?.addEventListener("abort", () => {
+          clearTimeout(t);
+          reject(new DOMException("The operation was aborted", "TimeoutError"));
+        });
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const debut = Date.now();
+    const periodes = await new EducationGouvProvider(BUDGET).recuperer("2026-2027");
+    const ecoule = Date.now() - debut;
+
+    // La deuxième page est coupée par le budget de la première : rien de
+    // complet, donc `null` — pas un calendrier à moitié rempli.
+    expect(periodes).toBeNull();
+    // Et le temps total reste celui du budget, pas `PAGES_MAX` fois le sien.
+    // Marge large : c'est la différence entre ~300 ms et ~750 ms qu'on
+    // mesure, pas la précision d'un `setTimeout`.
+    expect(ecoule).toBeLessThan(BUDGET * 2);
   });
 });
