@@ -106,6 +106,13 @@ describe("anneesScolairesDe", () => {
   it("rend les deux années d'une fenêtre à cheval sur septembre", () => {
     expect(anneesScolairesDe("2027-06-01", "2028-05-31")).toEqual(["2026-2027", "2027-2028"]);
   });
+  // Les deux fixtures ci-dessus ne franchissent jamais la frontière : elles
+  // passeraient tout aussi bien avec une bascule au 1er août. Un jour d'écart
+  // décalerait TOUTE la fenêtre d'une année scolaire.
+  it("bascule le 1er septembre, pas la veille ni le mois d'avant", () => {
+    expect(anneesScolairesDe("2026-08-31", "2026-08-31")).toEqual(["2025-2026"]);
+    expect(anneesScolairesDe("2026-09-01", "2026-09-01")).toEqual(["2026-2027"]);
+  });
 });
 
 describe("getVacances", () => {
@@ -209,6 +216,20 @@ describe("getVacances", () => {
     // est servi aux deux appels, à l'identique.
     expect(premier).toHaveLength(1);
     expect(second).toEqual(premier);
+  });
+
+  it("ne mémorise pas une source INJOIGNABLE : une panne d'un instant n'en devient pas une de six heures", async () => {
+    // L'arbitrage retenu : seul un échec concluant (la source répond, elle ne
+    // porte pas cette zone) entre au mémo. Écrit dans le commentaire du
+    // module, défendu dans le journal — et jusqu'ici gardé par rien.
+    // Couple (année, zone) inédit dans ce fichier : le mémo vit en mémoire de
+    // processus et survit à `beforeEach`.
+    recuperer.mockResolvedValue(null);
+
+    await getVacances("Guyane", "2027-10-01", "2028-06-30");
+    await getVacances("Guyane", "2027-10-01", "2028-06-30");
+
+    expect(recuperer).toHaveBeenCalledTimes(2);
   });
 
   // Sans clé de service, rien de ce qu'on récupérerait ne serait conservé :
