@@ -8,7 +8,7 @@ export async function getMonProfil() {
   if (!auth.user) return null;
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, first_name, last_name, display_name, role, locale, created_at, verrou_delai_minutes, biometrie_activee, suppression_demandee_le")
+    .select("id, first_name, last_name, display_name, role, locale, created_at, verrou_delai_minutes, biometrie_activee, suppression_demandee_le, zone_scolaire")
     .eq("id", auth.user.id)
     .maybeSingle();
   if (error) throw error;

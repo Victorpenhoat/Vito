@@ -771,6 +771,13 @@
       "expire": "caduca el {date}",
       "copieImpossible": "No se puede copiar: selecciona el enlace a mano.",
       "echec": "No se puede crear el enlace por ahora."
+    },
+    "zone": {
+      "titre": "Zona de vacaciones escolares",
+      "deduite": "{zone}, deducida de tu dirección. Confírmala o cámbiala.",
+      "inconnue": "No hemos podido deducir tu zona. Elígela para ver las vacaciones en la planificación.",
+      "enregistrer": "Guardar",
+      "enregistree": "Zona guardada"
     }
   },
   "depenses": {
@@ -1471,7 +1478,8 @@
       "abonnement": "Suscripción",
       "abonnementSous": "Plan y facturación",
       "comptes": "Cuentas",
-      "comptesSous": "Gestionar accesos — nunca contenidos"
+      "comptesSous": "Gestionar accesos — nunca contenidos",
+      "vacances": "Vacaciones escolares"
     },
     "verrou": {
       "titre": "Bloquear Vito",

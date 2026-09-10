@@ -771,6 +771,13 @@
       "expire": "scade il {date}",
       "copieImpossible": "Copia non riuscita: seleziona il link a mano.",
       "echec": "Creazione del link non possibile al momento."
+    },
+    "zone": {
+      "titre": "Zona di vacanze scolastiche",
+      "deduite": "{zone}, dedotta dal tuo indirizzo. Confermala o cambiala.",
+      "inconnue": "Non siamo riusciti a dedurre la tua zona. Scegliela per vedere le vacanze nel planning.",
+      "enregistrer": "Salva",
+      "enregistree": "Zona salvata"
     }
   },
   "depenses": {
@@ -1471,7 +1478,8 @@
       "abonnement": "Abbonamento",
       "abonnementSous": "Piano e fatturazione",
       "comptes": "Account",
-      "comptesSous": "Gestire gli accessi — mai i contenuti"
+      "comptesSous": "Gestire gli accessi — mai i contenuti",
+      "vacances": "Vacanze scolastiche"
     },
     "verrou": {
       "titre": "Blocca Vito",

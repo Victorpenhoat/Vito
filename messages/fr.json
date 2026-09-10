@@ -771,6 +771,13 @@
       "expire": "expire le {date}",
       "copieImpossible": "Copie impossible — sélectionnez le lien à la main.",
       "echec": "Création du lien impossible pour l'instant."
+    },
+    "zone": {
+      "titre": "Zone de vacances scolaires",
+      "deduite": "{zone}, déduite de votre adresse. Confirmez ou changez.",
+      "inconnue": "Nous n'avons pas pu déduire votre zone. Choisissez-la pour voir les vacances sur le planning.",
+      "enregistrer": "Enregistrer",
+      "enregistree": "Zone enregistrée"
     }
   },
   "depenses": {
@@ -1471,7 +1478,8 @@
       "abonnement": "Abonnement",
       "abonnementSous": "Formule et facturation",
       "comptes": "Comptes",
-      "comptesSous": "Gérer les accès — jamais les contenus"
+      "comptesSous": "Gérer les accès — jamais les contenus",
+      "vacances": "Vacances scolaires"
     },
     "verrou": {
       "titre": "Verrouiller Vito",

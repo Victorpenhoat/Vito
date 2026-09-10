@@ -771,6 +771,13 @@
       "expire": "expires on {date}",
       "copieImpossible": "Cannot copy — select the link manually.",
       "echec": "Cannot create the link right now."
+    },
+    "zone": {
+      "titre": "School holiday zone",
+      "deduite": "{zone}, inferred from your address. Confirm or change it.",
+      "inconnue": "We could not infer your zone. Choose it to see holidays on the planning.",
+      "enregistrer": "Save",
+      "enregistree": "Zone saved"
     }
   },
   "depenses": {
@@ -1471,7 +1478,8 @@
       "abonnement": "Subscription",
       "abonnementSous": "Plan and billing",
       "comptes": "Accounts",
-      "comptesSous": "Manage access — never content"
+      "comptesSous": "Manage access — never content",
+      "vacances": "School holidays"
     },
     "verrou": {
       "titre": "Lock Vito",
