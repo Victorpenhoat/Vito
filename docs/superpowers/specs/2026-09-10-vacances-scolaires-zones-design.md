@@ -36,6 +36,16 @@ absente. **Si l'API tombe, le dernier calendrier connu s'affiche encore** ; si
 elle tombe et qu'on n'a rien, l'écran garde son message actuel. On n'invente
 jamais une date.
 
+**Une seule exception, tranchée après coup** (ronde de correction 1) : quand la
+source ne publie pour un été que le marqueur d'un jour `Début des Vacances
+d'Été` — sa forme provisoire tant que la rentrée suivante n'est pas arrêtée —
+le fournisseur en dérive un `Vacances d'Été` qui court jusqu'au **31 août**.
+Ce n'est pas une date inventée : c'est le plancher déjà retenu par le PO dans
+l'ancien `vacancesScolaires.ts`, il tombe toujours **avant** la vraie rentrée,
+et la convention du dépôt (`fin` = jour de la rentrée) fait donc tomber
+l'erreur du côté sûr. L'alternative — deux mois d'été affichés comme libres —
+est celle qui mentirait.
+
 Précédent dans le dépôt : les photos de lieux sont cachées en base avec leur
 date de récupération (`photo_ref` / `photo_fetched_at`, migration 00018).
 
@@ -51,9 +61,20 @@ Ils ne se devinent pas, et chacun produit une erreur silencieuse :
 2. **La duplication.** 198 enregistrements pour une seule année scolaire : il y a
    une ligne par **académie**, pas par zone. Sans déduplication sur
    (zone, libellé), la même période apparaîtrait une dizaine de fois.
-3. **Le public.** Le champ `population` vaut `Élèves`, `Enseignants` ou `-`.
-   Sans filtre, on annoncerait aux familles des dates de prérentrée qui ne
-   concernent que les enseignants.
+3. **Le public.** Le champ `population` prend **vingt et une** valeurs
+   (mesuré le 2026-09-10), pas trois : `-`, `Élèves`, `Élèves des collèges`,
+   `Élèves des lycées`, `Élèves du premier degré`, `Élèves du second degré`,
+   `Premier degré`, `Second degré`, `Premier degré et collèges`,
+   `Enseignants` et ses quatre déclinaisons (`des collèges`, `des lycées`,
+   `du premier degré`, `du second degré`), et sept valeurs territoriales
+   guadeloupéennes (`Guadeloupe & Saint-Barthélémy`, `Guadeloupe &
+   Saint-Martin`, `Guadeloupe sauf Saint-Martin`, `Guadeloupe, Saint-Martin &
+   Saint-Barthélémy`, `Saint Martin`, `Saint-Martin`, `Saint-Barthélémy`) qui
+   nomment un territoire et non un public. Le filtre porte donc sur le
+   **préfixe** `Enseignant`, jamais sur une égalité : sans lui on annoncerait
+   aux familles des dates qui ne concernent que les enseignants — et comme la
+   déduplication ignore la population, une ligne enseignante écraserait celle
+   des élèves de la même période.
 
 ### Le vocabulaire des zones n'est pas « A, B, C »
 
@@ -164,7 +185,8 @@ là), `aucun.ts`, `index.ts`.
 
 - **Unitaire** : normalisation contre une **fixture capturée sur la vraie API**
   — Noël doit tomber le 19 et non le 18, 198 lignes doivent se réduire aux
-  périodes distinctes, une ligne `population = Enseignants` doit disparaître ;
+  périodes distinctes, toute ligne `population` commençant par `Enseignant`
+  doit disparaître ;
   `deduireZone` sur ses ancres et ses cas nuls (pas de code postal, adresse vide).
 - **pgTAP** : `anon` ne lit rien de `vacances_scolaires` ; `authenticated` lit.
 - **e2e** : les réglages proposent la zone déduite et enregistrent le choix ;
