@@ -23,6 +23,12 @@ const PAGES_MAX = 3;
 // ouvre les zones voisines en parallèle — le tout avant le premier octet
 // rendu. Un point d'accès qui pend doit dégrader l'écran, pas le faire
 // pendre.
+//
+// Ce qu'il ne borne PAS, et qu'il faut savoir : il vaut par appel à
+// `recuperer`, donc par année scolaire. Une fenêtre à cheval sur septembre en
+// demande deux, séquentiellement — soit 2 × BUDGET au pire avant le premier
+// octet. Les zones voisines, elles, partent en parallèle (`Promise.all` dans
+// la page du planning) et n'ajoutent rien à ce plafond.
 const BUDGET_MS = 4_000;
 
 /**
@@ -214,8 +220,8 @@ export class EducationGouvProvider implements VacancesProvider {
    * Une erreur sur une page — refus HTTP, réseau, JSON illisible, budget de
    * temps épuisé — jette tout ce qui a déjà été accumulé et rend `null` : un
    * calendrier à moitié rempli serait un mensonge silencieux, pire que son
-   * absence assumée. Seul le plafond de pages (garde-fou, pas une panne) rend
-   * ce qui a été collecté jusque-là.
+   * absence assumée. Le plafond de pages ne fait pas exception : cf. sa
+   * sortie de boucle.
    */
   async recuperer(anneeScolaire: string): Promise<PeriodeVacances[] | null> {
     const bruts: unknown[] = [];
@@ -253,7 +259,16 @@ export class EducationGouvProvider implements VacancesProvider {
       }
     }
 
-    log.warn("vacances_pagination_plafond", { anneeScolaire, pages: PAGES_MAX, recoltees: bruts.length });
+    log.warn("vacances_pagination_plafond", { anneeScolaire, pages: PAGES_MAX, recoltees: bruts.length, attendu });
+    // `total_count` est connu dès la page 0 : arriver ici en le connaissant et
+    // en étant en deçà, c'est SAVOIR que la moisson est incomplète. La rendre
+    // quand même serait le mensonge silencieux que cette méthode refuse
+    // partout ailleurs — et il serait définitif : `getVacances` l'upserterait,
+    // le couple (année, zone) deviendrait présent, et comme on ne rafraîchit
+    // jamais ce qu'on a déjà, les périodes manquantes ne reviendraient plus.
+    // Mieux vaut rendre `null` : l'écran dira « calendrier absent », et la
+    // prochaine ouverture réessaiera.
+    if (attendu !== null && bruts.length < attendu) return null;
     return normaliser({ results: bruts });
   }
 }

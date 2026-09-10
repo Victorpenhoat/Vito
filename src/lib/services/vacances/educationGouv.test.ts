@@ -313,7 +313,7 @@ describe("EducationGouvProvider", () => {
     expect(await provider.recuperer("2026-2027")).toBeNull();
   });
 
-  it("s'arrête au plafond de pages plutôt que de tourner sans fin sur une source qui n'annonce jamais la fin", async () => {
+  it("s'arrête au plafond de pages, et n'en rapporte pas une moisson tronquée", async () => {
     // Chaque page est pleine (100) et `total_count` reste hors de portée :
     // sans garde-fou, la boucle ne s'arrêterait jamais.
     const fetchMock = vi.fn().mockResolvedValue({
@@ -324,7 +324,24 @@ describe("EducationGouvProvider", () => {
 
     const periodes = await provider.recuperer("2026-2027");
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(periodes).not.toBeNull();
+    // `total_count` est connu dès la page 0 : arriver au plafond en deçà,
+    // c'est SAVOIR que la moisson est incomplète. La rendre quand même la
+    // ferait mettre en cache, et « on ne rafraîchit que ce qui manque »
+    // rendrait la troncature définitive.
+    expect(periodes).toBeNull();
+  });
+
+  it("rapporte ce qu'il a quand la source s'arrête d'elle-même avant le plafond", async () => {
+    // Le pendant du test ci-dessus : une source qui annonce 150 lignes et en
+    // rend 150 sur deux pages n'a rien de tronqué. Sans cette distinction, le
+    // refus de la moisson incomplète refuserait aussi les moissons complètes.
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 150, results: page(100, 0) }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 150, results: page(50, 100) }) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await provider.recuperer("2026-2027")).toHaveLength(150);
   });
 
   // Le plafond de pages prouve que la boucle S'ARRÊTE, jamais qu'elle
