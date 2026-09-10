@@ -16,14 +16,27 @@ const upserts: unknown[][] = [];
 // réécrire les mocks : `null` = comportement normal.
 let erreurLecture: string | null = null;
 let erreurEcriture: string | null = null;
+// Les zones réellement passées à `.eq("zone", …)`, dans l'ordre : elles
+// prouvent que `lire()` filtre pour de bon, et donc que la bascule ci-dessous
+// simule une table trop généreuse plutôt qu'un code qui ne demanderait rien.
+const zonesLues: string[] = [];
+// Bascule de MENSONGE de la table : le mock rend alors les lignes de TOUTES
+// les zones. Sans elle, ce fichier reproduirait le `.eq("zone", zone)` de
+// `lire()` et aucun test ne pourrait éprouver ce que `getVacances` fait d'un
+// tableau contenant autre chose que ce qu'il a demandé — la propriété serait
+// tenue par le mock, pas par le code.
+let lectureIgnoreLaZone = false;
 vi.mock("@/lib/supabase/server", () => ({
   createServerSupabase: async () => ({
     from: () => ({
       select: () => ({
-        eq: (_c: string, zone: string) => ({
+        eq: (_c: string, zone: string) => {
+          zonesLues.push(zone);
+          return ({
           in: (_c2: string, annees: string[]) => ({
             order: async () => {
-              const data = lignes.filter((l) => l.zone === zone && annees.includes(l.annee_scolaire));
+              const data = lignes.filter(
+                (l) => (lectureIgnoreLaZone || l.zone === zone) && annees.includes(l.annee_scolaire));
               // PostgREST rend `data` ET `error` en cas d'échec : c'est exactement
               // ce que `lire()` doit refuser de servir, en faisant confiance à
               // `error` plutôt qu'à `data`. Un mock qui rendrait `data: null` ne
@@ -31,7 +44,8 @@ vi.mock("@/lib/supabase/server", () => ({
               return erreurLecture ? { data, error: { message: erreurLecture } } : { data, error: null };
             },
           }),
-        }),
+        });
+        },
       }),
     }),
   }),
@@ -54,6 +68,8 @@ beforeEach(() => {
   upserts.length = 0;
   erreurLecture = null;
   erreurEcriture = null;
+  lectureIgnoreLaZone = false;
+  zonesLues.length = 0;
   recuperer.mockReset();
 });
 
@@ -122,12 +138,21 @@ describe("getVacances", () => {
     // 2027-2028 existe dans la source, garnie de Mayotte et de la Polynésie
     // seulement. Une présence indexée sur l'année seule dispenserait la
     // Zone A de récupérer, et son planning resterait vide pour toujours.
+    //
+    // La bascule est le cœur du test : elle fait rendre à la table les lignes
+    // de toutes les zones. Sans elle, le mock reproduirait le filtre de
+    // `lire()` et le test passerait même avec un `presentes` bâti sur
+    // l'année seule — il ne prouverait rien.
+    lectureIgnoreLaZone = true;
     lignes = [{ annee_scolaire: "2027-2028", zone: "Mayotte", libelle: "Grandes Vacances", debut: "2027-12-17", fin: "2028-01-10" }];
     recuperer.mockResolvedValue(null);
 
     await getVacances("Zone A", "2027-10-01", "2028-06-30");
 
     expect(recuperer).toHaveBeenCalledWith("2027-2028");
+    // Et la bascule ne dispense pas `lire()` de demander sa zone : c'est bien
+    // une table trop généreuse qu'on simule, pas une requête sans filtre.
+    expect(zonesLues).toEqual(["Zone A", "Zone A"]);
   });
 
   it("ne rappelle pas la source dans la foulée pour une (année, zone) qu'elle ne garnit pas", async () => {
