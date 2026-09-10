@@ -61,6 +61,40 @@ describe("normaliser", () => {
     expect(normaliser(REPONSE).some((p) => p.zone === "Mayotte")).toBe(false);
   });
 
+  // Mesuré le 2026-09-10 : le jeu publie VINGT ET UNE valeurs de `population`,
+  // dont cinq familles enseignantes (« Enseignants », « … des collèges »,
+  // « … des lycées », « … du premier degré », « … du second degré »). Une
+  // égalité stricte sur « Enseignants » laissait passer les quatre autres, et
+  // comme la clé de dédoublonnage ignore la population, la ligne enseignante
+  // ÉCRASAIT celle des élèves : Zone C 2025-2026, l'été des enseignants finit
+  // un jour plus tôt que celui des familles.
+  const ETE_MELANGE = {
+    results: [
+      { description: "Vacances d'Été", start_date: "2026-07-03T22:00:00+00:00",
+        end_date: "2026-08-31T22:00:00+00:00", zones: "Zone C", population: "Élèves",
+        location: "Paris", annee_scolaire: "2025-2026" },
+      // Une famille enseignante SANS ligne élève en face : si le filtre la
+      // laissait passer, elle inventerait une période pour la Zone B.
+      { description: "Prérentrée", start_date: "2026-08-30T22:00:00+00:00",
+        end_date: "2026-08-30T22:00:00+00:00", zones: "Zone B",
+        population: "Enseignants du premier degré", location: "Lille",
+        annee_scolaire: "2025-2026" },
+      // EN DERNIER dans le tableau, comme dans la réponse réelle : sans filtre,
+      // c'est elle qui gagne et on annonce le 31 août aux familles.
+      { description: "Vacances d'Été", start_date: "2026-07-03T22:00:00+00:00",
+        end_date: "2026-08-30T22:00:00+00:00", zones: "Zone C",
+        population: "Enseignants du second degré", location: "Paris",
+        annee_scolaire: "2025-2026" },
+    ],
+  };
+
+  it("écarte TOUTES les familles enseignantes, pas seulement « Enseignants »", () => {
+    expect(normaliser(ETE_MELANGE)).toEqual([
+      { anneeScolaire: "2025-2026", zone: "Zone C", libelle: "Vacances d'Été",
+        debut: "2026-07-04", fin: "2026-09-01" },
+    ]);
+  });
+
   it("garde le vocabulaire de la source, sans le réduire à A/B/C", () => {
     const zones = new Set(normaliser(REPONSE).map((p) => p.zone));
     expect(zones).toEqual(new Set(["Zone A", "Zone B", "Zone C"]));

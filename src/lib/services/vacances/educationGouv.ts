@@ -39,8 +39,17 @@ type Brut = {
  * la vraie réponse :
  *  1. les dates sont à minuit de Paris exprimé en UTC ;
  *  2. il y a une ligne par académie, donc jusqu'à onze doublons par période ;
- *  3. `population` vaut parfois « Enseignants » : ces dates ne concernent pas
- *     les familles et ne doivent jamais leur être annoncées.
+ *  3. `population` ne vaut pas « Élèves », « Enseignants » ou « - » : le jeu
+ *     publie VINGT ET UNE valeurs (mesuré le 2026-09-10), dont cinq familles
+ *     enseignantes — « Enseignants », et les mêmes déclinées « des collèges »,
+ *     « des lycées », « du premier degré », « du second degré ». Une égalité
+ *     stricte en laissait passer quatre, et comme la clé de dédoublonnage
+ *     ignore la population, la ligne enseignante ÉCRASAIT celle des élèves :
+ *     Zone C 2025-2026, l'été des enseignants finit un jour plus tôt. D'où le
+ *     préfixe plutôt que l'égalité. Tout le reste concerne bien une famille :
+ *     `-`, les « Élèves … », « Premier degré », « Second degré »,
+ *     « Premier degré et collèges », et les valeurs guadeloupéennes, qui
+ *     nomment un territoire et non un public.
  */
 export function normaliser(reponse: unknown): PeriodeVacances[] {
   const results = (reponse as { results?: unknown } | null)?.results;
@@ -49,7 +58,10 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
   const parCle = new Map<string, PeriodeVacances>();
   for (const brut of results as Brut[]) {
     const population = typeof brut.population === "string" ? brut.population : "";
-    if (population === "Enseignants") continue;
+    // Le préfixe couvre les cinq variantes connues et celles à venir : une
+    // sixième déclinaison enseignante ne doit pas rouvrir la faille en
+    // silence.
+    if (population.startsWith("Enseignant")) continue;
 
     const zone = typeof brut.zones === "string" ? brut.zones : "";
     const libelle = typeof brut.description === "string" ? brut.description : "";
