@@ -7,13 +7,39 @@ vi.mock("server-only", () => ({}));
 // `vi.hoisted` : les `vi.mock` sont hissés en tête de fichier, avant toute
 // déclaration de variable — sans ça, les fabriques ci-dessous liraient
 // `generateLink`/`rpc`/`envoyer` avant leur initialisation.
-const { generateLink, rpc, envoyer } = vi.hoisted(() => ({
+const { generateLink, rpc, envoyer, compter, filtres } = vi.hoisted(() => ({
   generateLink: vi.fn(),
   rpc: vi.fn(),
   envoyer: vi.fn(),
+  // Le compteur du limiteur : rend { count, error } comme PostgREST en
+  // `head: true`, et enregistre les filtres pour qu'on vérifie SUR QUOI il compte.
+  compter: vi.fn(),
+  filtres: [] as [string, unknown][],
 }));
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ auth: { admin: { generateLink } }, rpc }),
+  createAdminClient: () => ({
+    auth: { admin: { generateLink } },
+    rpc,
+    from: (table: string) => ({
+      select: (_colonnes: string, options?: { count?: string; head?: boolean }) => {
+        filtres.push(["from", table]);
+        filtres.push(["select", options]);
+        const chaine = {
+          eq: (colonne: string, valeur: unknown) => {
+            filtres.push([`eq:${colonne}`, valeur]);
+            return chaine;
+          },
+          gte: (colonne: string, valeur: unknown) => {
+            filtres.push([`gte:${colonne}`, valeur]);
+            return chaine;
+          },
+          then: (ok: (r: unknown) => unknown, ko?: (e: unknown) => unknown) =>
+            Promise.resolve(compter()).then(ok, ko),
+        };
+        return chaine;
+      },
+    }),
+  }),
 }));
 vi.mock("@/lib/mail/envoyer", () => ({ envoyer }));
 
@@ -27,6 +53,10 @@ beforeEach(() => {
   rpc.mockResolvedValue({ data: true, error: null });
   envoyer.mockReset();
   envoyer.mockResolvedValue({ id: "re_1" });
+  compter.mockReset();
+  // Sous la limite par défaut : chaque test qui veut le refus le dit.
+  compter.mockResolvedValue({ count: 0, error: null });
+  filtres.length = 0;
 });
 
 describe("envoyerLienMagiqueA", () => {
@@ -73,5 +103,67 @@ describe("envoyerLienMagiqueA", () => {
     });
     envoyer.mockResolvedValue(null);
     await expect(envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app")).resolves.toBeUndefined();
+  });
+});
+
+// I3 : le garde-fou de débit, qui n'existait pas — et dont l'absence est une
+// régression, pas un manque : GoTrue appliquait `rate_limit_email_sent` tant
+// qu'il envoyait, `generateLink` le contourne.
+describe("limitation de débit du lien magique", () => {
+  it("compte les liens déjà envoyés à CETTE adresse, sur une fenêtre récente", async () => {
+    generateLink.mockResolvedValue({
+      data: { properties: { hashed_token: "abc" }, user: { id: "u-1" } },
+      error: null,
+    });
+    await envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app");
+
+    expect(filtres).toContainEqual(["from", "journal_envois"]);
+    expect(filtres).toContainEqual(["select", { count: "exact", head: true }]);
+    expect(filtres).toContainEqual(["eq:destinataire", "lecteur@vito.test"]);
+    expect(filtres).toContainEqual(["eq:genre", "lien_magique"]);
+    const borne = filtres.find(([c]) => c === "gte:created_at")?.[1] as string;
+    const ecartMinutes = (Date.now() - Date.parse(borne)) / 60_000;
+    expect(ecartMinutes).toBeGreaterThan(14.9);
+    expect(ecartMinutes).toBeLessThan(15.1);
+  });
+
+  it("passe tant qu'on est sous la limite", async () => {
+    compter.mockResolvedValue({ count: 2, error: null });
+    generateLink.mockResolvedValue({
+      data: { properties: { hashed_token: "abc" }, user: { id: "u-1" } },
+      error: null,
+    });
+    await envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app");
+    expect(envoyer).toHaveBeenCalledOnce();
+  });
+
+  it("au-delà de la limite : refus SILENCIEUX, aucun generateLink, aucun envoi", async () => {
+    compter.mockResolvedValue({ count: 3, error: null });
+    await expect(
+      envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app"),
+    ).resolves.toBeUndefined();
+    expect(generateLink).not.toHaveBeenCalled();
+    expect(envoyer).not.toHaveBeenCalled();
+  });
+
+  // La casse ne doit pas offrir un quota neuf : « Foo@ » puis « foo@ » sont la
+  // même boîte, et `compte_existe` compare déjà en minuscules.
+  it("normalise l'adresse : une variante de casse compte sur le même compteur", async () => {
+    compter.mockResolvedValue({ count: 3, error: null });
+    await envoyerLienMagiqueA("  Lecteur@Vito.TEST ", "https://vito.app");
+    expect(filtres).toContainEqual(["eq:destinataire", "lecteur@vito.test"]);
+    expect(rpc).toHaveBeenCalledWith("compte_existe", { p_email: "lecteur@vito.test" });
+    expect(generateLink).not.toHaveBeenCalled();
+  });
+
+  // Même règle que consommerQuota (ADR 0002) : un limiteur qui s'ouvre quand la
+  // base tousse n'en est pas un.
+  it("refuse quand le compteur est indisponible", async () => {
+    compter.mockResolvedValue({ count: null, error: { message: "base indisponible" } });
+    await expect(
+      envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app"),
+    ).resolves.toBeUndefined();
+    expect(generateLink).not.toHaveBeenCalled();
+    expect(envoyer).not.toHaveBeenCalled();
   });
 });

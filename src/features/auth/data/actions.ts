@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "@/lib/i18n/routing";
 import { getLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
+import { env, EN_PRODUCTION } from "@/lib/env";
 import { credentialsSchema, emailSchema } from "../domain/schemas";
 import { envoyerLienMagiqueA } from "./lienMagique";
 
@@ -47,13 +48,25 @@ export async function envoyerLienMagique(_prev: unknown, formData: FormData) {
     const t = await getTranslations("auth.errors");
     return { error: t("emailInvalide") };
   }
-  // L'origine réelle (le port diffère entre dev, e2e et prod) — le lien doit
-  // revenir sur la même instance.
+  // L'origine du lien. EN PRODUCTION elle vient de la CONFIGURATION, jamais de
+  // la requête : `Host` est fourni par l'appelant, et un `Host` empoisonné
+  // enverrait le `token_hash` de la victime sur le domaine de l'attaquant —
+  // c'est-à-dire sa session. Tant que GoTrue envoyait le message, il validait
+  // cette valeur contre `SITE_URL` et sa liste de redirections ; depuis que nous
+  // envoyons, plus personne ne la valide. Même parade que Stripe, qui construit
+  // ses URL de retour depuis `NEXT_PUBLIC_APP_URL` pour la même raison.
+  //
+  // Hors production, l'origine de la requête reste la bonne : le port diffère
+  // entre le développement (3000) et l'e2e (3001), et le lien doit revenir sur
+  // l'instance qui l'a émis.
   const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("host") ?? "localhost:3000";
+  // `NEXT_PUBLIC_APP_URL` est exigée en production par env.ts : le `??` n'est
+  // qu'une ceinture, il ne se déclenche pas là où le `Host` est dangereux.
+  const origine = (EN_PRODUCTION ? env.NEXT_PUBLIC_APP_URL : null) ?? `${proto}://${host}`;
   // Ne rend rien et ne jette rien : la réponse ci-dessous est la MÊME que le
   // compte existe ou non, et c'est ce qui empêche d'énumérer les comptes.
-  await envoyerLienMagiqueA(parsed.data.email, `${proto}://${host}`);
+  await envoyerLienMagiqueA(parsed.data.email, origine);
   return { envoye: true as const, email: parsed.data.email };
 }
