@@ -47,11 +47,18 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const admin = createAdminClient();
-    const { data } = await admin
+    const { data, error } = await admin
       .from("journal_envois")
       .select("id, statut")
       .eq("fournisseur_id", fournisseurId)
       .maybeSingle();
+
+    // supabase-js NE JETTE PAS sur une requête en erreur : sans ce test, une
+    // base indisponible rendrait `data: null`, qu'on lirait comme « identifiant
+    // inconnu ». On répondrait 200 à un événement perdu pour toujours, et le
+    // journal dirait le contraire de ce qui s'est passé à qui viendrait chercher
+    // pourquoi le message n'est jamais arrivé. 500 : Resend rejouera.
+    if (error) throw new Error(`lecture du journal : ${error.message}`);
 
     // Un identifiant inconnu est IGNORÉ, jamais inséré : sans quoi qui sait
     // l'URL remplit la table.
@@ -68,11 +75,15 @@ export async function POST(request: Request): Promise<Response> {
     // correction tient dans le WHERE : la ligne n'est touchée que si son statut
     // est encore un de ceux qui précèdent `nouveau`, vérifié atomiquement par
     // Postgres au moment de l'écriture — pas par ce qu'on a lu plus tôt.
-    await admin
+    const { error: erreurMaj } = await admin
       .from("journal_envois")
       .update({ statut: nouveau })
       .eq("id", data.id)
       .in("statut", statutsAnterieurs(nouveau));
+    // Même raison que ci-dessus : une écriture refusée en silence est un
+    // événement de remise perdu. Zéro ligne touchée n'est pas une erreur (c'est
+    // le cas normal d'un webhook en retard, filtré par le `in`) — une erreur, si.
+    if (erreurMaj) throw new Error(`mise à jour du journal : ${erreurMaj.message}`);
   } catch (err) {
     logActionError("resend.webhook.maj", err);
     return new Response("erreur de mise à jour", { status: 500 }); // Resend rejouera
