@@ -72,6 +72,20 @@ describe("normaliser", () => {
   });
 });
 
+// Une page de résultats bruts, `n` enregistrements distincts à partir de
+// `offset` (zones toutes différentes : aucun dédoublonnage ne doit en
+// avaler un par accident, ce qui fausserait le compte de la pagination).
+function page(n: number, offset: number) {
+  return Array.from({ length: n }, (_, i) => ({
+    description: "Vacances de test",
+    start_date: "2026-12-18T23:00:00+00:00",
+    end_date: "2027-01-03T23:00:00+00:00",
+    zones: `Zone ${offset + i}`,
+    population: "-",
+    annee_scolaire: "2026-2027",
+  }));
+}
+
 describe("EducationGouvProvider", () => {
   const provider = new EducationGouvProvider();
 
@@ -82,6 +96,9 @@ describe("EducationGouvProvider", () => {
     const periodes = await provider.recuperer("2026-2027");
     expect(periodes?.length).toBe(3);
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain("2026-2027");
+    // Une seule page a suffi (6 résultats sur les 6 annoncés) : pas de
+    // deuxième requête inutile.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("rend null plutôt que de jeter quand la source refuse ou tombe", async () => {
@@ -89,5 +106,56 @@ describe("EducationGouvProvider", () => {
     expect(await provider.recuperer("2026-2027")).toBeNull();
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("ECONNRESET")));
     expect(await provider.recuperer("2026-2027")).toBeNull();
+  });
+
+  it("ne demande jamais plus de 100 résultats par page (l'API refuse au-delà)", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 198, results: page(100, 0) }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 198, results: page(98, 100) }) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await provider.recuperer("2026-2027");
+    for (const call of fetchMock.mock.calls) {
+      expect(String(call[0])).toContain("limit=100");
+      expect(String(call[0])).not.toContain("limit=200");
+    }
+  });
+
+  it("page au-delà de 100 résultats et accumule les pages jusqu'au total annoncé", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 198, results: page(100, 0) }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 198, results: page(98, 100) }) });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const periodes = await provider.recuperer("2026-2027");
+    expect(periodes).toHaveLength(198);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[1]?.[0])).toContain("offset=100");
+  });
+
+  it("rend null si une page suivante échoue, plutôt qu'un calendrier à moitié rempli", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ total_count: 198, results: page(100, 0) }) })
+      .mockRejectedValueOnce(new Error("ECONNRESET"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await provider.recuperer("2026-2027")).toBeNull();
+  });
+
+  it("s'arrête au plafond de pages plutôt que de tourner sans fin sur une source qui n'annonce jamais la fin", async () => {
+    // Chaque page est pleine (100) et `total_count` reste hors de portée :
+    // sans garde-fou, la boucle ne s'arrêterait jamais.
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ total_count: 100_000, results: page(100, 0) }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const periodes = await provider.recuperer("2026-2027");
+    expect(fetchMock).toHaveBeenCalledTimes(10);
+    expect(periodes).not.toBeNull();
   });
 });

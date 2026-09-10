@@ -4,8 +4,13 @@ import type { PeriodeVacances, VacancesProvider } from "./types";
 const BASE =
   "https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records";
 
-// Le jeu publie une ligne par ACADÉMIE : ~200 pour une année scolaire.
-const LIMITE = 200;
+// Le jeu publie une ligne par ACADÉMIE : ~200 pour une année scolaire. Mais
+// l'API refuse tout `limit` au-delà de 100 (HTTP 400) — mesuré, pas deviné.
+// Il faut donc paginer : `TAILLE_PAGE` borne chaque requête, `PAGES_MAX`
+// borne leur nombre pour qu'une source qui n'annoncerait jamais la fin ne
+// fasse pas tourner l'appelant indéfiniment.
+const TAILLE_PAGE = 100;
+const PAGES_MAX = 10;
 
 /**
  * Date de Paris à partir de l'horodatage de la source.
@@ -60,23 +65,60 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
   return [...parCle.values()];
 }
 
+function urlPage(anneeScolaire: string, offset: number): string {
+  return (
+    `${BASE}?where=annee_scolaire%3D%22${encodeURIComponent(anneeScolaire)}%22` +
+    `&limit=${TAILLE_PAGE}&offset=${offset}` +
+    `&select=description,start_date,end_date,zones,population,annee_scolaire`
+  );
+}
+
 export class EducationGouvProvider implements VacancesProvider {
   readonly name = "education-gouv";
 
+  /**
+   * Récupère toutes les pages d'une année scolaire.
+   *
+   * Une erreur sur une page — refus HTTP, réseau, JSON illisible — jette tout
+   * ce qui a déjà été accumulé et rend `null` : un calendrier à moitié
+   * rempli serait un mensonge silencieux, pire que son absence assumée. Seul
+   * le plafond de pages (garde-fou, pas une panne) rend ce qui a été
+   * collecté jusque-là.
+   */
   async recuperer(anneeScolaire: string): Promise<PeriodeVacances[] | null> {
-    const url =
-      `${BASE}?where=annee_scolaire%3D%22${encodeURIComponent(anneeScolaire)}%22` +
-      `&limit=${LIMITE}&select=description,start_date,end_date,zones,population,annee_scolaire`;
-    try {
-      const reponse = await fetch(url, { signal: AbortSignal.timeout(4_000) });
-      if (!reponse.ok) {
-        log.warn("vacances_refus", { statut: reponse.status, anneeScolaire });
+    const bruts: unknown[] = [];
+    let attendu: number | null = null;
+
+    for (let page = 0; page < PAGES_MAX; page++) {
+      const offset = page * TAILLE_PAGE;
+      let corps: unknown;
+      try {
+        const reponse = await fetch(urlPage(anneeScolaire, offset), { signal: AbortSignal.timeout(4_000) });
+        if (!reponse.ok) {
+          log.warn("vacances_refus", { statut: reponse.status, anneeScolaire, offset });
+          return null;
+        }
+        corps = await reponse.json();
+      } catch (err) {
+        log.warn("vacances_injoignable", { anneeScolaire, offset, ...errorContext(err) });
         return null;
       }
-      return normaliser(await reponse.json());
-    } catch (err) {
-      log.warn("vacances_injoignable", { anneeScolaire, ...errorContext(err) });
-      return null;
+
+      const page_ = corps as { results?: unknown; total_count?: unknown } | null;
+      const results = page_?.results;
+      if (!Array.isArray(results)) {
+        log.warn("vacances_reponse_difforme", { anneeScolaire, offset });
+        return null;
+      }
+      bruts.push(...results);
+      if (typeof page_?.total_count === "number") attendu = page_.total_count;
+
+      if (results.length === 0 || (attendu !== null && bruts.length >= attendu)) {
+        return normaliser({ results: bruts });
+      }
     }
+
+    log.warn("vacances_pagination_plafond", { anneeScolaire, pages: PAGES_MAX, recoltees: bruts.length });
+    return normaliser({ results: bruts });
   }
 }
