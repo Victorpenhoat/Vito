@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(101);
+select plan(110);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -676,6 +676,50 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
   'with u as (update public.quotas set compteur = 0 returning 1) select count(*) from u'),
   0::bigint, 'on ne remet pas son compteur à zéro');
+
+-- ── Journal des envois (00061) ──────────────────────────────────────────────
+select has_table('public', 'journal_envois', 'la table du journal des envois existe');
+
+insert into public.journal_envois (user_id, destinataire, genre, statut)
+values ('11111111-1111-1111-1111-111111111111', 'a@vito.test', 'lien_magique', 'accepte'),
+       ('22222222-2222-2222-2222-222222222222', 'b@vito.test', 'lien_magique', 'accepte');
+
+-- anon ne voit rien. C'est l'invariant que le dépôt verrouille partout, et il
+-- tient au `revoke all ... from anon`, pas à une policy.
+select is(tests.count_as_anon('select count(*) from public.journal_envois'),
+  0::bigint, 'anon ne lit rien du journal des envois');
+
+-- On voit les siens, et uniquement les siens.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+  'select count(*) from public.journal_envois where destinataire = ''a@vito.test'''),
+  1::bigint, 'on lit son propre envoi');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+  'select count(*) from public.journal_envois where destinataire = ''b@vito.test'''),
+  0::bigint, 'on ne lit pas l''envoi d''un autre compte');
+
+-- Le journal ne se réécrit pas. C'est le revoke qui tient cela, pas la RLS :
+-- sans grant du tout, l'update est refusé AVANT même que la RLS soit
+-- évaluée — une erreur franche, pas un silencieux zéro ligne touchée.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'update public.journal_envois set statut = ''remis''') $$,
+  null, 'permission denied for table journal_envois',
+  'on ne réécrit pas le statut d''un envoi');
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'delete from public.journal_envois') $$,
+  null, 'permission denied for table journal_envois',
+  'on n''efface pas une ligne du journal');
+
+-- La purge ne prend que le vieux.
+insert into public.journal_envois (user_id, destinataire, genre, created_at)
+values ('11111111-1111-1111-1111-111111111111', 'vieux@vito.test', 'lien_magique',
+        now() - interval '91 days');
+select ok(public.purger_journal_envois() >= 1, 'la purge supprime au moins la ligne de 91 jours');
+select is((select count(*) from public.journal_envois where destinataire = 'vieux@vito.test'),
+  0::bigint, 'la ligne de 91 jours a disparu');
+select is((select count(*) from public.journal_envois where destinataire = 'a@vito.test'),
+  1::bigint, 'la ligne récente est restée');
 
 select finish();
 rollback;
