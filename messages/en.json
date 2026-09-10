@@ -775,7 +775,7 @@
     "zone": {
       "titre": "School holiday zone",
       "deduite": "{zone}, inferred from your address. Confirm or change it.",
-      "inconnue": "We could not infer your zone. Choose it to see holidays on the planning.",
+      "inconnue": "We could not infer your zone. Choose it to see holidays in the planner.",
       "enregistrer": "Save",
       "enregistree": "Zone saved"
     }

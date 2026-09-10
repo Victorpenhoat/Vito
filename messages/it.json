@@ -775,7 +775,7 @@
     "zone": {
       "titre": "Zona di vacanze scolastiche",
       "deduite": "{zone}, dedotta dal tuo indirizzo. Confermala o cambiala.",
-      "inconnue": "Non siamo riusciti a dedurre la tua zona. Scegliela per vedere le vacanze nel planning.",
+      "inconnue": "Non siamo riusciti a dedurre la tua zona. Scegliela per vedere le vacanze nella pianificazione.",
       "enregistrer": "Salva",
       "enregistree": "Zona salvata"
     }

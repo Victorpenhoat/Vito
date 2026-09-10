@@ -12,16 +12,16 @@ export async function enregistrerZoneScolaire(_prev: unknown, formData: FormData
   const zone = String(formData.get("zone") ?? "");
   // Le vocabulaire vient de la source : une valeur hors liste ne correspondrait
   // à aucune ligne du calendrier, et n'a pu venir que d'un formulaire trafiqué.
-  if (!(ZONES as readonly string[]).includes(zone)) return { error: "zone inconnue" };
+  if (!(ZONES as readonly string[]).includes(zone)) return { error: "Zone inconnue" };
 
   const supabase = await createServerSupabase();
   const { data } = await supabase.auth.getUser();
-  if (!data.user) return { error: "non authentifié" };
+  if (!data.user) return { error: "Non authentifié" };
 
   const { error } = await supabase.from("profiles").update({ zone_scolaire: zone }).eq("id", data.user.id);
   if (error) {
     logActionError("zone_scolaire.update", error);
-    return { error: "enregistrement impossible" };
+    return { error: "Enregistrement impossible" };
   }
   revalidatePath("/voyages/planning");
   return { ok: true as const };
