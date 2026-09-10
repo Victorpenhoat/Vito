@@ -1567,6 +1567,7 @@ export type Database = {
           suppression_demandee_le: string | null
           suspendu_le: string | null
           verrou_delai_minutes: number
+          zone_scolaire: string | null
         }
         Insert: {
           biometrie_activee?: boolean
@@ -1581,6 +1582,7 @@ export type Database = {
           suppression_demandee_le?: string | null
           suspendu_le?: string | null
           verrou_delai_minutes?: number
+          zone_scolaire?: string | null
         }
         Update: {
           biometrie_activee?: boolean
@@ -1595,6 +1597,7 @@ export type Database = {
           suppression_demandee_le?: string | null
           suspendu_le?: string | null
           verrou_delai_minutes?: number
+          zone_scolaire?: string | null
         }
         Relationships: []
       }
