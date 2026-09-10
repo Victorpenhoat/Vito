@@ -165,6 +165,14 @@ function fusionner(
  * vraie plage paraîtra, elle écrasera la dérivée par la clé unique au lieu de
  * s'ajouter à côté d'elle. Et si les deux arrivent dans la même réponse, la
  * vraie l'emporte — la dérivée ne comble qu'un trou.
+ *
+ * ⚠ Cet écrasement suppose qu'on repasse par ici. En pratique la dérivée est
+ * mise en CACHE, et `getVacances` ne rafraîchit que ce qui manque : une fois
+ * la ligne écrite, la publication de la vraie plage par le ministère ne la
+ * remplacera pas d'elle-même. C'est assumé — l'écart est d'un ou deux jours
+ * et va dans le sens sûr — et le remède est celui de toute correction de
+ * date : supprimer les lignes de l'année dans `vacances_scolaires`, la
+ * prochaine ouverture du planning les reprendra à la source.
  */
 function deriverEte(
   parCle: Map<string, PeriodeVacances>,

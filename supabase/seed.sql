@@ -523,6 +523,13 @@ insert into public.invitations (id, token, email, role_vise, voyage_id, cree_par
 -- `deriverEte` dans educationGouv.ts). Ce seed reste donc un instantané de ce
 -- que le fournisseur produit, pas un calendrier écrit à la main.
 --
+-- ⚠ La dérivée ne se corrigera pas toute seule : le cache ne rafraîchit que
+-- ce qui manque, donc le jour où le ministère publiera la vraie plage d'été
+-- 2026-2027, la ligne ci-dessous restera celle du 31 août. L'écart est d'un
+-- ou deux jours et va dans le sens sûr (la vraie rentrée est plus tard) ; le
+-- remède, en dev comme en prod, est de supprimer les lignes de l'année pour
+-- que la prochaine ouverture du planning les reprenne à la source.
+--
 -- Quatre zones, celles que les comptes de test habitent : le foyer de
 -- client@vito.test est à Bordeaux (Zone A) et l'interrupteur montre les deux
 -- voisines ; admin@vito.test est en Corse, une zone SANS voisine. Une zone ou
