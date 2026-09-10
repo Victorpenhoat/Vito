@@ -95,7 +95,7 @@ portées ici :
   (`NEXT_PUBLIC_APP_URL`), jamais de l'en-tête `Host` — un `Host` fourni par
   l'appelant enverrait le `token_hash` de la victime sur le domaine d'un tiers ;
 - la **limitation de débit** que GoTrue appliquait est reprise côté application
-  (3 liens par quart d'heure et par adresse, comptés dans ce journal), parce que
+  (5 liens par quart d’heure et par adresse, comptés dans ce journal), parce que
   `generateLink` est une opération d'administration qui contourne celle de
   GoTrue. Le refus est silencieux : la réponse de connexion est la même dans
   tous les cas, sinon elle laisserait énumérer les comptes.

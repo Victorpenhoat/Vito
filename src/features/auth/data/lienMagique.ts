@@ -96,12 +96,24 @@ export async function envoyerLienMagiqueA(email: string, origine: string): Promi
 // son objet. Le compteur est donc le journal lui-même : `envoyer()` y écrit une
 // ligne AVANT de partir, si bien que compter les lignes revient à compter les
 // envois, sans table ni compteur supplémentaire.
-const LIMITE_LIENS = 3;
+/**
+ * Cinq, et non trois, pour une raison qui n'a rien à voir avec l'abus : la CI
+ * rejoue un test échoué deux fois (`retries: 2`), et le parcours du lien
+ * magique demande un lien à chaque tentative. À trois, la limite valait
+ * exactement le budget de retries — tout passait, mais la marge était nulle, et
+ * le jour où elle serait franchie l'échec se lirait « aucun message reçu »,
+ * c'est-à-dire comme une panne d'envoi plutôt que comme un refus de débit.
+ * Cinq laisse deux tentatives de marge sans rien céder sur le bombardement.
+ *
+ * Exportée pour que le test dérive d'elle : deux nombres qui doivent s'accorder
+ * finissent par diverger.
+ */
+export const LIMITE_LIENS = 5;
 const FENETRE_MINUTES = 15;
 
 /**
- * Trois liens par quart d'heure et par adresse. Le lien vaut 15 minutes : au
- * troisième, ce n'est plus quelqu'un qui n'a rien reçu, c'est une boucle ou un
+ * Cinq liens par quart d'heure et par adresse. Le lien vaut 15 minutes : au
+ * cinquième, ce n'est plus quelqu'un qui n'a rien reçu, c'est une boucle ou un
  * bombardement. Le refus est SILENCIEUX — l'appelante répond exactement la même
  * chose dans tous les cas, et une erreur visible ici dirait à l'attaquant qu'il
  * a trouvé une adresse connue.

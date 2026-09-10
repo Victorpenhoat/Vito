@@ -43,7 +43,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 vi.mock("@/lib/mail/envoyer", () => ({ envoyer }));
 
-import { envoyerLienMagiqueA } from "./lienMagique";
+import { envoyerLienMagiqueA, LIMITE_LIENS } from "./lienMagique";
 
 beforeEach(() => {
   generateLink.mockReset();
@@ -128,7 +128,7 @@ describe("limitation de débit du lien magique", () => {
   });
 
   it("passe tant qu'on est sous la limite", async () => {
-    compter.mockResolvedValue({ count: 2, error: null });
+    compter.mockResolvedValue({ count: LIMITE_LIENS - 1, error: null });
     generateLink.mockResolvedValue({
       data: { properties: { hashed_token: "abc" }, user: { id: "u-1" } },
       error: null,
@@ -138,7 +138,7 @@ describe("limitation de débit du lien magique", () => {
   });
 
   it("au-delà de la limite : refus SILENCIEUX, aucun generateLink, aucun envoi", async () => {
-    compter.mockResolvedValue({ count: 3, error: null });
+    compter.mockResolvedValue({ count: LIMITE_LIENS, error: null });
     await expect(
       envoyerLienMagiqueA("lecteur@vito.test", "https://vito.app"),
     ).resolves.toBeUndefined();
@@ -149,7 +149,7 @@ describe("limitation de débit du lien magique", () => {
   // La casse ne doit pas offrir un quota neuf : « Foo@ » puis « foo@ » sont la
   // même boîte, et `compte_existe` compare déjà en minuscules.
   it("normalise l'adresse : une variante de casse compte sur le même compteur", async () => {
-    compter.mockResolvedValue({ count: 3, error: null });
+    compter.mockResolvedValue({ count: LIMITE_LIENS, error: null });
     await envoyerLienMagiqueA("  Lecteur@Vito.TEST ", "https://vito.app");
     expect(filtres).toContainEqual(["eq:destinataire", "lecteur@vito.test"]);
     expect(rpc).toHaveBeenCalledWith("compte_existe", { p_email: "lecteur@vito.test" });
