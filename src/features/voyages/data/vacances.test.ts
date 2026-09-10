@@ -62,15 +62,24 @@ vi.mock("@/lib/supabase/server", () => ({
     }),
   }),
 }));
+// Bascule « clé de service absente » : `createAdminClient()` JETTE alors, comme
+// il le fait vraiment quand `SUPABASE_SERVICE_ROLE_KEY` manque (elle est
+// `.optional()` dans env.ts). Un mock qui ne jetterait jamais ne pourrait rien
+// dire du `try/catch` qui l'entoure — c'est le motif de test vide que ce
+// chantier a déjà purgé plusieurs fois.
+let cleDeServiceAbsente = false;
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({
-    from: () => ({
-      upsert: async (rows: unknown[]) => {
-        upserts.push(rows);
-        return erreurEcriture ? { error: { message: erreurEcriture } } : { error: null };
-      },
-    }),
-  }),
+  createAdminClient: () => {
+    if (cleDeServiceAbsente) throw new Error("SUPABASE_SERVICE_ROLE_KEY manquante");
+    return {
+      from: () => ({
+        upsert: async (rows: unknown[]) => {
+          upserts.push(rows);
+          return erreurEcriture ? { error: { message: erreurEcriture } } : { error: null };
+        },
+      }),
+    };
+  },
 }));
 
 import { getVacances, anneesScolairesDe, getZoneDeduiteDuFoyer } from "./vacances";
@@ -81,6 +90,7 @@ beforeEach(() => {
   erreurLecture = null;
   erreurEcriture = null;
   lectureIgnoreLaZone = false;
+  cleDeServiceAbsente = false;
   utilisateur = { id: "u1" };
   adresseFoyer = null;
   zonesLues.length = 0;
@@ -144,6 +154,19 @@ describe("getVacances", () => {
     await expect(getVacances("Zone C", "2026-10-01", "2027-06-30")).resolves.toEqual([]);
   });
 
+  it("ne prend pas une lecture EN ERREUR pour une année absente : rien n'est demandé au ministère", async () => {
+    // Une table qui refuse de répondre ne dit pas qu'elle est vide : la tenir
+    // pour vide ferait partir à la source — puis écrire — à chaque hoquet
+    // transitoire, pour des années peut-être déjà en cache.
+    lignes = [{ annee_scolaire: "2026-2027", zone: "Zone C", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" }];
+    erreurLecture = "connexion refusée";
+
+    await getVacances("Zone C", "2026-10-01", "2027-06-30");
+
+    expect(recuperer).not.toHaveBeenCalled();
+    expect(upserts).toHaveLength(0);
+  });
+
   // ⚠ Le mémo des tentatives vaines vit en mémoire de PROCESSUS : il survit à
   // `beforeEach`. Les deux tests ci-dessous emploient donc chacun un couple
   // (année, zone) qui n'apparaît nulle part ailleurs dans ce fichier.
@@ -186,6 +209,34 @@ describe("getVacances", () => {
     // est servi aux deux appels, à l'identique.
     expect(premier).toHaveLength(1);
     expect(second).toEqual(premier);
+  });
+
+  // Sans clé de service, rien de ce qu'on récupérerait ne serait conservé :
+  // quatre appels par ouverture du planning, douze avec l'interrupteur, à
+  // chaque rendu et pour toujours, vers un service public, au bénéfice de
+  // personne. Les deux tests suivants tiennent les deux moitiés de cette
+  // garde : ne pas jeter, et ne pas appeler.
+  const sansCleDeService = () => {
+    cleDeServiceAbsente = true;
+    lignes = [{ annee_scolaire: "2026-2027", zone: "Zone C", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" }];
+    // 2027-2028 manque : sans la garde, la boucle de récupération partirait.
+    recuperer.mockResolvedValue([
+      { anneeScolaire: "2027-2028", zone: "Zone C", libelle: "Toussaint", debut: "2027-10-16", fin: "2027-11-01" },
+    ]);
+  };
+
+  it("sans clé de service, sert le cache sans jeter", async () => {
+    sansCleDeService();
+    await expect(getVacances("Zone C", "2027-06-01", "2028-05-31")).resolves.toEqual([
+      { id: "2026-2027|Zone C|Noël", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" },
+    ]);
+  });
+
+  it("sans clé de service, n'appelle pas le ministère du tout", async () => {
+    sansCleDeService();
+    await getVacances("Zone C", "2027-06-01", "2028-05-31");
+    expect(recuperer).not.toHaveBeenCalled();
+    expect(upserts).toHaveLength(0);
   });
 
   // Le point de tout le dispositif, version écriture : une source qui répond

@@ -52,7 +52,13 @@ function vainRecemment(annee: string, zone: string): boolean {
   return quand !== undefined && Date.now() - quand < DELAI_RETENTATIVE_MS;
 }
 
-async function lire(zone: string, annees: string[]) {
+type Lecture = {
+  lignes: { annee_scolaire: string; zone: string; libelle: string; debut: string; fin: string }[];
+  /** La table a REFUSÉ de répondre — à ne pas confondre avec « elle est vide ». */
+  erreur: boolean;
+};
+
+async function lire(zone: string, annees: string[]): Promise<Lecture> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("vacances_scolaires")
@@ -62,9 +68,9 @@ async function lire(zone: string, annees: string[]) {
     .order("debut");
   if (error) {
     log.warn("vacances_lecture", { message: error.message });
-    return [];
+    return { lignes: [], erreur: true };
   }
-  return data ?? [];
+  return { lignes: data ?? [], erreur: false };
 }
 
 /**
@@ -80,11 +86,14 @@ async function lire(zone: string, annees: string[]) {
  * Ne jette jamais : un calendrier absent dégrade l'écran, il ne le casse pas.
  *
  * Une année que la source ne garnit pas pour cette zone n'est redemandée
- * qu'au bout de six heures (cf. `tentativesVaines`).
+ * qu'au bout de six heures (cf. `tentativesVaines`). Et deux situations
+ * arrêtent la récupération avant même de commencer : une lecture en erreur
+ * (on ne sait pas ce que la table contient) et l'absence de clé de service
+ * (on ne pourrait rien conserver de ce qu'on irait chercher).
  */
 export async function getVacances(zone: string, debut: string, fin: string): Promise<Periode[]> {
   const annees = anneesScolairesDe(debut, fin);
-  let lignes = await lire(zone, annees);
+  let { lignes, erreur } = await lire(zone, annees);
 
   // La présence est une propriété du COUPLE (année, zone), jamais de l'année
   // seule : la source publie des années qui ne portent qu'une poignée de zones
@@ -95,31 +104,46 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
   const presentes = new Set(
     lignes.filter((l) => l.zone === zone).map((l) => l.annee_scolaire),
   );
-  const manquantes = annees.filter((a) => !presentes.has(a) && !vainRecemment(a, zone));
+  // Une lecture EN ERREUR n'est pas une table vide : on ne sait pas ce qu'elle
+  // contient. La tenir pour vide ferait partir au ministère — puis écrire —
+  // à chaque hoquet transitoire de la base, pour des années peut-être déjà
+  // présentes. On préfère se taire : l'écran dira « calendrier absent ».
+  const manquantes = erreur
+    ? []
+    : annees.filter((a) => !presentes.has(a) && !vainRecemment(a, zone));
 
+  // Un seul client, pas un par année manquante. Sa création est protégée : la
+  // clé de service est optionnelle (cf. `env.ts`) et `createAdminClient()`
+  // jette si elle manque — une absence de configuration doit dégrader
+  // l'écran, pas le faire tomber.
+  let admin: ReturnType<typeof createAdminClient> | null = null;
   if (manquantes.length > 0) {
-    const provider = getVacancesProvider();
-
-    // Un seul client, pas un par année manquante. Sa création est protégée :
-    // la clé de service est optionnelle (cf. `env.ts`) et `createAdminClient()`
-    // jette si elle manque — une absence de configuration doit dégrader
-    // l'écran, pas le faire tomber.
-    let admin: ReturnType<typeof createAdminClient> | null = null;
     try {
       admin = createAdminClient();
     } catch (err) {
       log.warn("vacances_ecriture", errorContext(err));
     }
+  }
+
+  // Sans client d'écriture, rien de ce qu'on récupérerait ne serait conservé.
+  // Interroger quand même le ministère serait une rafale permanente vers un
+  // service public — quatre appels par ouverture du planning, douze avec
+  // l'interrupteur, à chaque rendu et pour toujours — au bénéfice de
+  // personne. D'où la garde ICI, avant la boucle, et non au moment d'écrire.
+  if (admin) {
+    const provider = getVacancesProvider();
 
     for (const annee of manquantes) {
       const periodes = await provider.recuperer(annee);
       // Réponse reçue, mais aucune ligne pour CETTE zone : la source connaît
       // l'année et n'y met pas cette zone. C'est concluant — inutile de le
-      // redemander au prochain rendu.
+      // redemander au prochain rendu. Une source injoignable (`null`), elle,
+      // n'entre pas au mémo : une panne d'un instant ne doit pas devenir une
+      // panne d'une demi-journée.
       if (periodes && !periodes.some((p) => p.zone === zone)) {
         tentativesVaines.set(`${annee}|${zone}`, Date.now());
       }
-      if (!periodes || periodes.length === 0 || !admin) continue;
+      if (!periodes || periodes.length === 0) continue;
       const { error } = await admin
         .from("vacances_scolaires")
         .upsert(
@@ -131,7 +155,7 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
         );
       if (error) log.warn("vacances_ecriture", { annee, message: error.message });
     }
-    lignes = await lire(zone, annees);
+    lignes = (await lire(zone, annees)).lignes;
   }
 
   return lignes.map((l) => ({
