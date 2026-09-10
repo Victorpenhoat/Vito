@@ -147,16 +147,31 @@ create table public.vacances_scolaires (
 
 Données publiques, mais l'écran qui les affiche est derrière la connexion :
 `select` pour `authenticated`, rien pour `anon`, écriture réservée au rôle de
-service (le rafraîchissement est serveur). Pas de `revoke update, delete` ici —
-ce n'est pas un journal : une ligne fausse doit pouvoir être recalculée.
+service (le rafraîchissement est serveur). `authenticated` n'a donc ni
+`insert`, ni `update`, ni `delete` — la migration les révoque toutes les trois.
+Ce n'est pas pour autant un journal : une ligne fausse doit pouvoir être
+recalculée, et elle l'est par le rôle de service, qui contourne la RLS.
 
 ## Flux
 
 1. Le planning demande les périodes d'une zone sur une fenêtre de douze mois.
-2. `getVacances(zone, fenetre)` lit la table. Si une année scolaire de la fenêtre
-   manque, il la récupère, la normalise, l'écrit, puis relit.
+2. `getVacances(zone, fenetre)` lit la table. La présence est une propriété du
+   **couple (année, zone)**, jamais de l'année seule : la source publie des
+   années qui ne portent qu'une poignée de zones (2027-2028 n'a, au
+   2026-09-10, que Mayotte et la Polynésie). Un couple manquant est récupéré,
+   normalisé, écrit, puis relu.
 3. Une récupération qui échoue est tracée et **n'interrompt rien** : on sert ce
-   que la table contient, quitte à ne rien servir.
+   que la table contient, quitte à ne rien servir. Et un couple que la source
+   ne garnit pas n'est pas redemandé avant **six heures** — un mémo en mémoire
+   de processus, sans table ni réglage, qui borne la rafale qu'une zone
+   légitimement absente déclencherait à chaque rendu. Seul un échec concluant
+   y entre : une source injoignable est réessayée tout de suite, une panne
+   d'un instant ne devient pas une panne d'une demi-journée.
+
+   Deux situations arrêtent la récupération avant même de commencer : une
+   lecture de la table **en erreur** (on ne sait pas ce qu'elle contient, donc
+   on ne va rien chercher) et l'absence de clé de service (on ne pourrait
+   conserver rien de ce qu'on irait chercher).
 
 **On ne rafraîchit que ce qui manque**, jamais ce qu'on a déjà. La règle est
 volontairement bête, et sa conséquence est assumée : si le ministère corrige une
