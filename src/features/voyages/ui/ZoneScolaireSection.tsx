@@ -32,8 +32,13 @@ export function ZoneScolaireSection({ zoneEnregistree, zoneDeduite }: {
         ))}
       </select>
 
+      {/* Ce paragraphe n'existe QUE tant que rien n'est enregistré : sa
+          présence à l'écran est donc la preuve que la déduction n'a pas
+          écrit en base — c'est ce que la spec e2e éprouve. */}
       {!zoneEnregistree && zoneDeduite && (
-        <p className="text-[11.5px] text-muted">{t("zone.deduite", { zone: zoneDeduite })}</p>
+        <p data-testid="zone-scolaire-deduite" className="text-[11.5px] text-muted">
+          {t("zone.deduite", { zone: zoneDeduite })}
+        </p>
       )}
       {!zoneEnregistree && !zoneDeduite && (
         <p className="text-[11.5px] text-muted">{t("zone.inconnue")}</p>

@@ -1,5 +1,25 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { login } from "./helpers";
+
+/**
+ * Enregistre une zone dans les Réglages et attend qu'elle soit VRAIMENT en
+ * base. Deux temps, et les deux comptent : le message d'accusé prouve que
+ * l'action serveur a répondu, le rechargement prouve que le profil relu porte
+ * bien la nouvelle valeur. S'en tenir au message laisserait passer un
+ * enregistrement qui n'a pas abouti — et c'est précisément l'aller que le
+ * retour de ce test doit défaire.
+ */
+async function choisirZone(page: Page, zone: string): Promise<void> {
+  await page.goto("/fr/reglages");
+  await page.getByTestId("zone-scolaire-select").selectOption(zone);
+  await page.getByTestId("zone-scolaire-enregistrer").click();
+  // Délai large : sur un serveur froid, la première action serveur de la
+  // session dépasse les 5 s par défaut, et un enregistrement à moitié fait
+  // laisserait le compte de seed dans un état que la spec voisine lit.
+  await expect(page.getByTestId("zone-scolaire-enregistree")).toBeVisible({ timeout: 20_000 });
+  await page.reload();
+  await expect(page.getByTestId("zone-scolaire-select")).toHaveValue(zone);
+}
 
 // Le planning ne lit plus une liste écrite à la main pour une seule zone et
 // une seule année scolaire : il lit le calendrier du ministère, mis en cache,
@@ -90,6 +110,22 @@ test("sans zone du tout, l'écran demande la zone au lieu de se taire", async ({
   await expect(page).toHaveURL(/\/fr\/reglages/);
 });
 
+test("les Réglages proposent la zone déduite de l'adresse, sans l'enregistrer", async ({ page }) => {
+  // Déduire n'est pas décider. Le foyer de client@vito.test est à Bordeaux
+  // (33000, Zone A) et aucune zone n'est enregistrée : l'écran propose Zone A
+  // et le dit, mais rien n'est écrit tant que le formulaire n'a pas été
+  // envoyé. Le paragraphe de suggestion n'est rendu QUE si rien n'est
+  // enregistré : sa présence est la preuve que la base n'a pas bougé.
+  //
+  // Test en lecture seule : il ne mute rien, donc il n'a rien à restaurer —
+  // et il laisse intact l'état dont dépend la spec du planning ci-dessus.
+  await login(page);
+  await page.goto("/fr/reglages");
+
+  await expect(page.getByTestId("zone-scolaire-select")).toHaveValue("Zone A");
+  await expect(page.getByTestId("zone-scolaire-deduite")).toBeVisible();
+});
+
 test("la zone choisie dans les Réglages est celle que le planning suit", async ({ page }) => {
   // L'aller-retour qui porte la fonctionnalité : choisir sa zone, la retrouver
   // sur le planning. admin@vito.test a « Corse » enregistrée (seed) — une zone
@@ -99,10 +135,7 @@ test("la zone choisie dans les Réglages est celle que le planning suit", async 
   await login(page, "admin@vito.test");
 
   try {
-    await page.goto("/fr/reglages");
-    await page.getByTestId("zone-scolaire-select").selectOption("Zone B");
-    await page.getByTestId("zone-scolaire-enregistrer").click();
-    await expect(page.getByTestId("zone-scolaire-enregistree")).toBeVisible();
+    await choisirZone(page, "Zone B");
 
     await page.goto("/fr/voyages/planning");
     await expect(page.getByTestId("planning-zone")).toContainText("Zone B");
@@ -118,14 +151,9 @@ test("la zone choisie dans les Réglages est celle que le planning suit", async 
     // planning a suivi le choix jusque dans ce qu'il propose.
     await expect(page.getByTestId("autres-zones")).toBeVisible();
   } finally {
-    // Restauration : les deux tests ci-dessus attendent « Corse ».
-    await page.goto("/fr/reglages");
-    await page.getByTestId("zone-scolaire-select").selectOption("Corse");
-    await page.getByTestId("zone-scolaire-enregistrer").click();
-    await expect(page.getByTestId("zone-scolaire-enregistree")).toBeVisible();
-    // Vérifiée en base, pas seulement à l'écran : un rechargement relit le
-    // profil, et c'est ce que verra la spec suivante.
-    await page.reload();
-    await expect(page.getByTestId("zone-scolaire-select")).toHaveValue("Corse");
+    // Restauration : les deux tests ci-dessus attendent « Corse ». Le même
+    // helper que l'aller, donc la même exigence — la valeur relue en base,
+    // pas le message à l'écran.
+    await choisirZone(page, "Corse");
   }
 });
