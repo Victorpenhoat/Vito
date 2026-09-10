@@ -68,7 +68,7 @@ export class EducationGouvProvider implements VacancesProvider {
       `${BASE}?where=annee_scolaire%3D%22${encodeURIComponent(anneeScolaire)}%22` +
       `&limit=${LIMITE}&select=description,start_date,end_date,zones,population,annee_scolaire`;
     try {
-      const reponse = await fetch(url);
+      const reponse = await fetch(url, { signal: AbortSignal.timeout(4_000) });
       if (!reponse.ok) {
         log.warn("vacances_refus", { statut: reponse.status, anneeScolaire });
         return null;
