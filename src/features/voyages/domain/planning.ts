@@ -10,6 +10,14 @@ export type Intervalle = { debut: string; fin: string };
 export type Barre = { gauchePct: number; largeurPct: number };
 export type MoisFrise = { annee: number; mois: number; debut: string; fin: string };
 
+/**
+ * Les douze mois du planning. Une seule définition parce que trois écrans s'y
+ * réfèrent : la frise les dessine, la page borne sa requête de vacances
+ * dessus, et deux calculs côte à côte finiraient par diverger d'un mois sans
+ * que personne comprenne pourquoi la dernière période manque.
+ */
+export const MOIS_PLANNING = 12;
+
 const JOUR_MS = 86_400_000;
 const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
 const jour = (d: string) => Date.parse(`${d}T00:00:00Z`);

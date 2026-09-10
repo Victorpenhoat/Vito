@@ -1,27 +1,36 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import {
-  fenetreDepuis, barrePour, periodesDeLaFenetre, vacancesDuVoyage, type Periode,
+  fenetreDepuis, barrePour, periodesDeLaFenetre, vacancesDuVoyage,
+  MOIS_PLANNING, type Periode,
 } from "../domain/planning";
 
-const MOIS_AFFICHES = 12;
-
 type VoyageFrise = { id: string; titre: string; debut: string | null; fin: string | null };
+
+// Seules « Zone A », « Zone B » et « Zone C » arrivent jusqu'ici (la page ne
+// propose l'interrupteur qu'en métropole) : la dernière lettre EST la lettre
+// de la zone, et une étiquette d'un caractère est tout ce que ces pistes
+// fines peuvent porter.
+const lettreDeZone = (zone: string) => zone.slice(-1);
 
 // Frise du planning (Lot E). Une ligne par voyage, une bande pour les vacances
 // scolaires : ce qu'on cherche, c'est autant les chevauchements que les
 // créneaux libres. La frise défile horizontalement plutôt que de comprimer
 // douze mois dans une largeur de téléphone.
-export async function PlanningFrise({ voyages, vacances, aujourdhui }: {
+export async function PlanningFrise({ voyages, vacances, zone, autresZones = [], aujourdhui }: {
   voyages: VoyageFrise[];
   vacances: Periode[];
+  /** Zone du foyer, ou `null` quand elle n'est ni choisie ni déductible. */
+  zone: string | null;
+  /** Les zones voisines, quand on a demandé à les voir. */
+  autresZones?: { zone: string; periodes: Periode[] }[];
   /** « YYYY-MM-DD » calculé au rendu serveur : le domaine ne lit pas l'horloge. */
   aujourdhui: string;
 }) {
   const t = await getTranslations("voyages.planning");
   const format = await getFormatter();
 
-  const fenetre = fenetreDepuis(new Date(`${aujourdhui}T00:00:00Z`), MOIS_AFFICHES);
+  const fenetre = fenetreDepuis(new Date(`${aujourdhui}T00:00:00Z`), MOIS_PLANNING);
   const periodes = periodesDeLaFenetre(vacances, fenetre);
   const dates = voyages.filter((v) => v.debut);
   const marqueurAujourdhui = barrePour(aujourdhui, aujourdhui, fenetre);
@@ -33,9 +42,19 @@ export async function PlanningFrise({ voyages, vacances, aujourdhui }: {
     <div className="flex flex-col gap-3">
       {vacances.length === 0 && (
         // Une frise vide de vacances laisserait croire qu'il n'y en a pas :
-        // mieux vaut dire que le calendrier n'est pas encore renseigné.
+        // mieux vaut dire que le calendrier n'est pas encore renseigné. Sans
+        // zone, le silence a une CAUSE et un remède — on les donne tous deux
+        // plutôt que de laisser chercher la panne.
         <p data-testid="planning-sans-vacances" className="rounded-card border border-current/20 bg-kpi-amber-bg px-3.5 py-2.5 text-[12.5px] text-ink">
           {t("calendrierAbsent")}
+          {!zone && (
+            <>
+              {" "}
+              <Link href="/reglages" data-testid="planning-choisir-zone" className="font-semibold text-accent underline">
+                {t("choisirZone")}
+              </Link>
+            </>
+          )}
         </p>
       )}
 
@@ -72,6 +91,29 @@ export async function PlanningFrise({ voyages, vacances, aujourdhui }: {
                 style={{ left: `${marqueurAujourdhui.gauchePct}%` }} />
             )}
           </div>
+
+          {/* Les zones voisines, sur demande : des pistes plus fines et plus
+              pâles sous la sienne. Elles servent à comparer — croiser des
+              cousins, éviter les routes du samedi de chassé-croisé — pas à
+              être lues aussi souvent, d'où le rang inférieur. */}
+          {autresZones.map(({ zone: autre, periodes: leurs }) => (
+            <div key={autre} data-testid="piste-zone-autre"
+              className="relative mt-1 h-3.5 rounded-[3px] bg-surface-hover/60">
+              <span aria-hidden
+                className="pointer-events-none absolute left-1 top-1/2 z-10 -translate-y-1/2 text-[9px] font-semibold uppercase tracking-[0.08em] text-faint">
+                {lettreDeZone(autre)}
+              </span>
+              {periodesDeLaFenetre(leurs, fenetre).map((p) => {
+                const barre = barrePour(p.debut, p.fin, fenetre);
+                if (!barre) return null;
+                return (
+                  <span key={p.id} title={`${autre} · ${p.libelle}`}
+                    className="absolute inset-y-0 rounded-[3px] bg-kpi-amber/15"
+                    style={{ left: `${barre.gauchePct}%`, width: `${barre.largeurPct}%` }} />
+                );
+              })}
+            </div>
+          ))}
 
           {/* Une ligne par voyage daté */}
           <ul className="mt-1.5 flex flex-col gap-1.5">

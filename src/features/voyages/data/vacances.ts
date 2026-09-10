@@ -1,8 +1,9 @@
 import "server-only";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getVacancesProvider } from "@/lib/services/vacances";
 import { log, errorContext } from "@/lib/log";
+import { deduireZone } from "../domain/zoneScolaire";
 import type { Periode } from "../domain/planning";
 
 /**
@@ -95,4 +96,34 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
     debut: l.debut,
     fin: l.fin,
   }));
+}
+
+/**
+ * La zone du foyer : celle qu'on a ENREGISTRÉE, sinon celle que l'adresse
+ * laisse déduire, sinon `null`.
+ *
+ * Deux écrans en dépendent — le planning des voyages et la semaine des
+ * activités — et l'un d'eux annonce la zone à l'écran. La règle est donc
+ * écrite ici une seule fois : dupliquée, elle finirait par différer, et les
+ * deux écrans se contrediraient sur les mêmes vacances.
+ *
+ * `null` n'est pas une panne : c'est « je ne sais pas », et l'écran demande
+ * alors plutôt que de deviner (cf. `deduireZone`).
+ */
+export async function getZoneDuFoyer(): Promise<string | null> {
+  // Fail-safe anon (cf. #61/#63) : page et layout rendent en parallèle.
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+
+  const supabase = await createServerSupabase();
+  const { data: profil } = await supabase
+    .from("profiles").select("zone_scolaire").eq("id", auth.user.id).maybeSingle();
+  // Le choix explicite l'emporte, et dispense de lire l'adresse.
+  if (profil?.zone_scolaire) return profil.zone_scolaire;
+
+  // Adresse du foyer = adresse de la fiche « Moi » (la RLS borne déjà à
+  // l'utilisateur, cf. la même lecture dans reglages/page.tsx).
+  const { data: moi } = await supabase
+    .from("family_members").select("address").eq("relation", "moi").maybeSingle();
+  return deduireZone(moi?.address);
 }

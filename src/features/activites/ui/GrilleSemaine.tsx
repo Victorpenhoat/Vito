@@ -22,7 +22,8 @@ export type JourGrille = {
 export async function GrilleSemaine({ jours, aujourdhui, zone }: {
   jours: JourGrille[];
   aujourdhui: string;
-  zone: string;
+  /** Zone du foyer, ou `null` quand elle n'est ni choisie ni déductible. */
+  zone: string | null;
 }) {
   const t = await getTranslations("activites");
   const format = await getFormatter();
@@ -139,10 +140,14 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
           <span className="h-2.5 w-2.5 rounded-[3px] border border-accent/30 bg-accent-50" aria-hidden />
           {t("semaine.legende.voyage")}
         </li>
-        <li className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-[3px] border border-current/20 bg-kpi-amber-bg" aria-hidden />
-          {t("semaine.legende.vacances", { zone })}
-        </li>
+        {/* Sans zone, aucune case n'est teintée : la légende n'aurait rien à
+            nommer. */}
+        {zone && (
+          <li className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-[3px] border border-current/20 bg-kpi-amber-bg" aria-hidden />
+            {t("semaine.legende.vacances", { zone })}
+          </li>
+        )}
       </ul>
     </div>
   );

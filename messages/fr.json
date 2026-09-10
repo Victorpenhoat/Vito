@@ -733,7 +733,9 @@
       "pendantVacances": "pendant {libelle}",
       "horsFenetre": "{titre} — hors des douze mois affichés",
       "aucunVoyageDate": "Aucun voyage daté à placer sur la frise.",
-      "zone": "Vacances · Zone {zone}",
+      "zone": "Vacances · {zone}",
+      "choisirZone": "Choisir votre zone",
+      "autresZones": "Montrer aussi les autres zones",
       "vues": {
         "semaine": "Semaine",
         "mois": "Mois",
@@ -756,7 +758,8 @@
         "a_venir": "À venir",
         "en_cours": "En cours",
         "en_preparation": "En préparation / idée",
-        "vacances": "Vacances scolaires (zone {zone})"
+        "vacances": "Vacances scolaires ({zone})",
+        "autresZones": "Vacances des autres zones"
       },
       "anneeScolaire": "Année scolaire",
       "creerIdee": "Créer une idée"
@@ -1883,7 +1886,7 @@
       "du": "{debut} – {fin}",
       "precedente": "Semaine précédente",
       "suivante": "Semaine suivante",
-      "vacances": "Vacances scolaires · zone {zone}",
+      "vacances": "Vacances scolaires · {zone}",
       "conflit": "Conflit — deux trajets à {heure}",
       "jusqua": "jusqu'à {heure}",
       "manquee": "Manqué · {voyage}",
@@ -1895,7 +1898,7 @@
       "legende": {
         "conflit": "Conflit d'horaires",
         "voyage": "Voyage — cours manqué",
-        "vacances": "Vacances scolaires (zone {zone})"
+        "vacances": "Vacances scolaires ({zone})"
       }
     },
     "carte": {

@@ -19,13 +19,17 @@ type Voyage = VoyagePlanning & { participants: number };
 // panneau d'année scolaire qui dit ce qui est prévu — ou qu'une période est
 // libre. C'est cette dernière idée qui fait le sel de l'écran : on y vient
 // autant pour voir ce qui reste à remplir que ce qui est déjà pris.
-export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnnee, creneaux = [] }: {
+export function PlanningCalendrier({
+  voyages, vacances, aujourdhui, zone, autresZones = [], vueAnnee, creneaux = [],
+}: {
   voyages: Voyage[];
   vacances: Periode[];
   /** « YYYY-MM-DD » calculé au rendu serveur : le domaine ne lit pas l'horloge. */
   aujourdhui: string;
-  /** Zone scolaire annoncée dans l'en-tête (C par défaut). */
-  zone: string;
+  /** Zone du foyer annoncée dans l'en-tête, ou `null` si elle reste à choisir. */
+  zone: string | null;
+  /** Les zones voisines, quand on a demandé à les voir. */
+  autresZones?: { zone: string; periodes: Periode[] }[];
   /** La frise de douze mois, rendue par le SERVEUR et passée en nœud : un
    *  composant serveur ne s'invoque pas depuis un composant client. */
   vueAnnee: React.ReactNode;
@@ -50,6 +54,10 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
 
   const dansVacances = (jour: string) =>
     vacances.some((p) => chevauche({ debut: jour, fin: jour }, p));
+
+  /** Quelles zones voisines sont en vacances ce jour-là. */
+  const autresEnVacances = (jour: string) =>
+    autresZones.filter(({ periodes }) => periodes.some((p) => chevauche({ debut: jour, fin: jour }, p)));
 
   /** Y a-t-il cours ce jour-là ? Un point sous la date suffit à le dire. */
   const aCours = (jour: string) => {
@@ -78,10 +86,20 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
     <div data-testid="planning-calendrier" className="flex flex-col gap-4">
       {/* en-tête : zone scolaire + bascules de vue */}
       <div className="flex flex-wrap items-center gap-2">
-        <span data-testid="planning-zone"
-          className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-kpi-amber">
-          {t("zone", { zone })}
-        </span>
+        {zone ? (
+          <span data-testid="planning-zone"
+            className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-kpi-amber">
+            {t("zone", { zone })}
+          </span>
+        ) : (
+          // Sans zone, aucune bande ne sera dessinée : le dire ICI, dans la vue
+          // par défaut, plutôt que de laisser un calendrier muet qu'on prendrait
+          // pour une panne.
+          <Link href="/reglages" data-testid="planning-choisir-zone"
+            className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-kpi-amber hover:underline">
+            {t("choisirZone")}
+          </Link>
+        )}
         <div className="ml-auto flex gap-1 rounded-control border border-line p-0.5">
           {(["semaine", "mois", "annee"] as const).map((v) => (
             <button key={v} type="button" data-testid={`vue-${v}`} aria-pressed={vue === v}
@@ -134,6 +152,18 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
                       <span data-testid="jour-activite" aria-hidden
                         className="mx-auto mt-0.5 block h-1 w-1 rounded-full bg-accent" />
                     )}
+                    {/* Les zones voisines : une pastille pâle, pas une bande —
+                        la case appartient à la zone du foyer, les autres ne
+                        font qu'y passer. Le libellé est dans l'infobulle : à
+                        cette taille, une lettre serait illisible. */}
+                    {!j.horsMois && autresZones.length > 0 && (
+                      <span className="mt-0.5 flex justify-center gap-0.5">
+                        {autresEnVacances(j.jour).map(({ zone: autre }) => (
+                          <span key={autre} data-testid="pastille-zone-autre" title={autre}
+                            className="h-1 w-1 rounded-full bg-kpi-amber/50" />
+                        ))}
+                      </span>
+                    )}
                   </span>
                 ))}
               </div>
@@ -167,10 +197,18 @@ export function PlanningCalendrier({ voyages, vacances, aujourdhui, zone, vueAnn
                 {t(`legende.${e}`)}
               </li>
             ))}
-            <li className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-[3px] bg-kpi-amber-bg" aria-hidden />
-              {t("legende.vacances", { zone })}
-            </li>
+            {zone && (
+              <li className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-[3px] bg-kpi-amber-bg" aria-hidden />
+                {t("legende.vacances", { zone })}
+              </li>
+            )}
+            {autresZones.length > 0 && (
+              <li className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-kpi-amber/50" aria-hidden />
+                {t("legende.autresZones")}
+              </li>
+            )}
           </ul>
         </div>
       )}

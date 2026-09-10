@@ -325,12 +325,13 @@ test("« Cette semaine » montre les séances, et signale les trajets impossible
 test("les vacances scolaires et les voyages se superposent à la semaine", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await login(page, "client@vito.test");
-  // Toussaint zone C : du 17 octobre au 2 novembre, source partagée avec le
-  // planning des Voyages.
+  // Toussaint zone A (le foyer du seed est à Bordeaux) : du 17 octobre au
+  // 2 novembre, MÊME source que le planning des Voyages — le calendrier du
+  // ministère mis en cache, lu pour la zone du foyer.
   await page.goto("/fr/activites?onglet=semaine&semaine=2026-10-24");
 
   const jours = page.getByTestId("semaine-jour");
-  await expect(jours.first().getByTestId("jour-vacances")).toContainText("zone C");
+  await expect(jours.first().getByTestId("jour-vacances")).toContainText("Zone A");
   // Les vacances suspendent, elles n'annulent pas : on signale sans affirmer.
   await expect(jours.first().getByTestId("seance-vacances")).toContainText("Interrompu");
 });
