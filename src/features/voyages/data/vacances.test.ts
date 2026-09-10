@@ -175,8 +175,16 @@ describe("getVacances", () => {
   });
 
   // ⚠ Le mémo des tentatives vaines vit en mémoire de PROCESSUS : il survit à
-  // `beforeEach`. Les deux tests ci-dessous emploient donc chacun un couple
-  // (année, zone) qui n'apparaît nulle part ailleurs dans ce fichier.
+  // `beforeEach`, et un test qui l'arme pour un couple (année, zone) prive
+  // tous les tests SUIVANTS de la récupération pour ce couple-là.
+  //
+  // Cela vaut pour tout ce qui suit dans ce fichier, pas seulement pour les
+  // deux tests ci-dessous : ceux qui comptent les appels à `recuperer`
+  // emploient chacun un couple inédit, et ceux qui attendent une
+  // récupération — les deux « sans clé de service », sur (2027-2028, Zone C)
+  // — supposent qu'aucun test placé plus haut ne l'a armé. Un test inséré
+  // au-dessus qui armerait l'un de ces couples les casserait de loin, sans
+  // que rien ne désigne le coupable.
 
   it("ne tient pas une année pour présente parce qu'une AUTRE zone y a des lignes", async () => {
     // 2027-2028 existe dans la source, garnie de Mayotte et de la Polynésie

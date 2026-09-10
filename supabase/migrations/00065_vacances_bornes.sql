@@ -10,7 +10,9 @@
 -- survivrait à la correction du code. La contrainte est donc le seul endroit
 -- où l'invariant tient pour de bon.
 --
--- Bornes INCLUSES, d'où l'égalité permise : le « Pont de l'Ascension » dure un
--- seul jour, début et fin confondus (cf. le seed).
+-- Bornes INCLUSES, d'où l'égalité permise : une période peut tenir en un seul
+-- jour, début et fin confondus — c'est le cas du « Pont de l'Ascension » des
+-- zones A, B et C. (Celui de la Corse s'étale sur quatre jours : la source ne
+-- traite pas ce pont partout de la même façon.)
 alter table public.vacances_scolaires
   add constraint vacances_scolaires_bornes_check check (fin >= debut);
