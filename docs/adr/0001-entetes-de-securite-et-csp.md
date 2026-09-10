@@ -59,9 +59,26 @@ donc par `'self'`.
 
 Suite complète : **176 e2e au vert**, dont 6 nouveaux sur les en-têtes.
 Sur les parcours carte, restaurants et vins, une seule espèce de violation
-remonte — `script-src` bloquant `eval`, **76 fois**. Elle vient de
-l'instrumentation Playwright, pas de l'app : les 89 chunks client ne
-contiennent ni `eval(` ni `new Function(`, et React n'évalue pas en production.
+remonte — `script-src` bloquant `eval`, **76 fois**.
+
+> **Correction du 10 septembre.** Ce document a d'abord imputé ces violations à
+> l'instrumentation Playwright, en s'appuyant sur une recherche de `eval(` et
+> `new Function(` dans les chunks. C'était faux, et la recherche était trop
+> étroite : le coupable s'écrit **`Function(` sans `new`**, et c'est **Zod**.
+>
+> Zod compile ses validateurs en JIT et commence par tester si le navigateur
+> l'y autorise, avec un `Function("")` sous `try/catch`. Sous notre CSP l'appel
+> lève, Zod bascule proprement sur son chemin interprété — mais le navigateur
+> signale la tentative. Rien n'était cassé ; le bruit, lui, était réel, et il
+> venait de notre propre bundle. Mesuré sur la production : une violation sur
+> `/fr` et une sur `/fr/login`, pointant `chunks/42xfeypmuyz-o.js`.
+>
+> Réglé par `config({ jitless: true })` dans `src/instrumentation-client.ts`,
+> **côté client uniquement** : il n'y a pas de CSP côté serveur, où le JIT
+> fonctionne et sert. Après correction, zéro violation sur les trois pages.
+>
+> La leçon vaut plus que le correctif : une absence de preuve avait été écrite
+> ici comme une preuve d'absence.
 
 ## Passage en vigueur (10 septembre 2026)
 
