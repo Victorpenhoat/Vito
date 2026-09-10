@@ -153,10 +153,17 @@ toutes optionnelles, avec le même `refine` que Stripe : la clé présente rend 
 deux autres obligatoires. Une configuration à moitié faite est ce qui produit les
 pannes qu'on ne comprend pas.
 
-**Hors du code, et bloquant : le domaine.** Tant que le domaine d'envoi n'est pas
-vérifié chez Resend (SPF, DKIM, et DMARC), les messages partent en indésirable.
-C'est une action DNS du PO, et l'adresse expéditrice reste à choisir — c'est elle
-que les gens liront et à laquelle ils répondront.
+**L'expéditeur est `contact@vito.app`** (décision PO du 10 septembre). C'est une
+adresse à laquelle on peut répondre, pas un `no-reply` — donc quelqu'un doit lire
+cette boîte : un lien magique qui n'arrive pas produira une réponse, et c'est
+tant mieux. Elle reste distincte de `CONTACT_EMAIL`, qui n'existe que pour
+l'affichage sur `/confidentialite` : les deux valent la même chose aujourd'hui,
+et rien n'oblige qu'elles le restent.
+
+**Hors du code, et bloquant : le domaine.** Tant que `vito.app` n'est pas vérifié
+chez Resend (SPF, DKIM, DMARC), les messages partent en indésirable. C'est une
+action DNS du PO, à faire avant la mise en service — le code, lui, peut être
+écrit et testé sans.
 
 ## Ce que ce lot ne livre pas
 
