@@ -93,7 +93,8 @@ async function lire(zone: string, annees: string[]): Promise<Lecture> {
  */
 export async function getVacances(zone: string, debut: string, fin: string): Promise<Periode[]> {
   const annees = anneesScolairesDe(debut, fin);
-  let { lignes, erreur } = await lire(zone, annees);
+  const lecture = await lire(zone, annees);
+  let lignes = lecture.lignes;
 
   // La présence est une propriété du COUPLE (année, zone), jamais de l'année
   // seule : la source publie des années qui ne portent qu'une poignée de zones
@@ -108,7 +109,7 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
   // contient. La tenir pour vide ferait partir au ministère — puis écrire —
   // à chaque hoquet transitoire de la base, pour des années peut-être déjà
   // présentes. On préfère se taire : l'écran dira « calendrier absent ».
-  const manquantes = erreur
+  const manquantes = lecture.erreur
     ? []
     : annees.filter((a) => !presentes.has(a) && !vainRecemment(a, zone));
 
