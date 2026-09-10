@@ -381,6 +381,14 @@ describe("EducationGouvProvider", () => {
     const PAGE_MS = 250;
     const fetchMock = vi.fn((_url: string, init?: { signal?: AbortSignal }) =>
       new Promise((resolve, reject) => {
+        // Le vrai `fetch` rejette IMMÉDIATEMENT sur un signal déjà avorté, et
+        // n'attend pas un évènement qui ne viendra plus. Le cas ne se
+        // présente pas dans ce scénario, mais un mock qui ment sur ce point
+        // finirait par masquer la page de trop.
+        if (init?.signal?.aborted) {
+          reject(new DOMException("The operation was aborted", "TimeoutError"));
+          return;
+        }
         const t = setTimeout(
           () => resolve({ ok: true, json: async () => ({ total_count: 100_000, results: page(100, 0) }) }),
           PAGE_MS);
