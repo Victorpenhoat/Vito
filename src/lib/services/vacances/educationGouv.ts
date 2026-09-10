@@ -82,16 +82,45 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
 
     const periode = { anneeScolaire, zone, libelle, debut, fin };
     if (libelle === MARQUEUR_ETE) {
-      marqueursEte.set(`${anneeScolaire}|${zone}`, periode);
+      fusionner(marqueursEte, `${anneeScolaire}|${zone}`, periode);
       continue;
     }
     // La clé porte la zone et le libellé, pas l'académie : c'est elle qui
-    // écrase les doublons.
-    parCle.set(`${anneeScolaire}|${zone}|${libelle}`, periode);
+    // rassemble les doublons.
+    fusionner(parCle, `${anneeScolaire}|${zone}|${libelle}`, periode);
   }
 
   deriverEte(parCle, marqueursEte);
   return [...parCle.values()];
+}
+
+/**
+ * Range une période sous sa clé, en gardant l'amplitude la plus LARGE.
+ *
+ * Les onze lignes académiques d'une même période portent les mêmes dates : la
+ * fusion ne les change pas. Mais une fois les enseignants écartés, il reste des
+ * lignes qui diffèrent vraiment — mesuré, Polynésie 2026-2027 « Grandes
+ * Vacances » commence un jour plus tôt pour le premier degré que pour le
+ * second. Un « le dernier gagne » choisirait au hasard de l'ordre de la
+ * réponse ; un foyer peut avoir des enfants dans les deux degrés, et c'est
+ * l'union qui le renseigne. Les dates étant en `YYYY-MM-DD`, l'ordre
+ * lexicographique EST l'ordre chronologique.
+ */
+function fusionner(
+  parCle: Map<string, PeriodeVacances>,
+  cle: string,
+  periode: PeriodeVacances,
+): void {
+  const deja = parCle.get(cle);
+  if (!deja) {
+    parCle.set(cle, periode);
+    return;
+  }
+  parCle.set(cle, {
+    ...deja,
+    debut: periode.debut < deja.debut ? periode.debut : deja.debut,
+    fin: periode.fin > deja.fin ? periode.fin : deja.fin,
+  });
 }
 
 /**

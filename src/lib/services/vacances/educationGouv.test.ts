@@ -138,6 +138,30 @@ describe("normaliser", () => {
     expect(normaliser(REPONSE).some((p) => p.libelle.includes("Été"))).toBe(false);
   });
 
+  // Deux lignes qui diffèrent VRAIMENT, une fois les enseignants écartés.
+  // Mesuré : Polynésie 2026-2027 « Grandes Vacances » commence un jour plus
+  // tôt pour le premier degré que pour le second — et un foyer peut avoir des
+  // enfants dans les deux. Le décalage de FIN est ajouté ici : la source n'en
+  // montre pas aujourd'hui, rien ne garantit qu'elle n'en montrera jamais, et
+  // la règle (amplitude la plus large) doit tenir des deux côtés.
+  const DEUX_DEGRES = {
+    results: [
+      { description: "Grandes Vacances", start_date: "2027-06-30T22:00:00+00:00",
+        end_date: "2027-08-23T22:00:00+00:00", zones: "Polynésie",
+        population: "Élèves du premier degré", annee_scolaire: "2026-2027" },
+      { description: "Grandes Vacances", start_date: "2027-07-01T22:00:00+00:00",
+        end_date: "2027-08-22T22:00:00+00:00", zones: "Polynésie",
+        population: "Élèves du second degré", annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("fusionne à l'amplitude la plus large deux lignes de même clé aux dates décalées", () => {
+    expect(normaliser(DEUX_DEGRES)).toEqual([
+      { anneeScolaire: "2026-2027", zone: "Polynésie", libelle: "Grandes Vacances",
+        debut: "2027-07-01", fin: "2027-08-24" },
+    ]);
+  });
+
   it("garde le vocabulaire de la source, sans le réduire à A/B/C", () => {
     const zones = new Set(normaliser(REPONSE).map((p) => p.zone));
     expect(zones).toEqual(new Set(["Zone A", "Zone B", "Zone C"]));
