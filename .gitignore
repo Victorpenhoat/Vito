@@ -60,3 +60,6 @@ storybook-static
 .design-sync/*.log
 .ds-sync/
 ds-bundle/
+
+# Superpowers : ledgers, rapports de revue et maquettes de brainstorm — scratch local
+.superpowers/
