@@ -29,6 +29,11 @@ const ZONE_PAR_DEPARTEMENT: Record<string, string> = Object.fromEntries([
       "72","76","80","83","84","85","88"].map((d) => [d, "Zone B"]),
   ...["09","11","12","30","31","32","34","46","48","65","66","75","77","78","81","82","91",
       "92","93","94","95"].map((d) => [d, "Zone C"]),
+  // "2A"/"2B" ne sont jamais atteints par une recherche via code postal (le
+  // 20xxx est intercepté plus bas, avant consultation de la table) : ces deux
+  // lignes servent une recherche par code de département, pas par code
+  // postal. Elles restent correctes et utiles à ce titre — à ne pas
+  // supprimer comme « mortes ».
   ["2A", "Corse"], ["2B", "Corse"],
   ["971", "Guadeloupe"], ["977", "Guadeloupe"], ["978", "Guadeloupe"],
   ["972", "Martinique"], ["973", "Guyane"], ["974", "Réunion"],
@@ -46,9 +51,16 @@ export function deduireZone(adresse: string | null | undefined): string | null {
   if (!adresse) return null;
   // Un code postal français : cinq chiffres isolés. La Corse s'écrit 20xxx en
   // code postal et 2A/2B en département — la conversion est dans la table.
-  const m = /\b(\d{5})\b/.exec(adresse);
-  if (!m) return null;
-  const cp = m[1]!;
+  //
+  // On garde le DERNIER nombre à cinq chiffres, pas le premier : en adresse
+  // française, le code postal précède immédiatement la ville, donc il se
+  // trouve en fin de chaîne. Un numéro de lot, de résidence ou de boîte
+  // postale plus tôt dans le texte peut aussi faire cinq chiffres — le
+  // premier-match s'y ferait piéger et rendrait une zone fausse plutôt que
+  // `null`, exactement ce que cette fonction doit éviter.
+  const correspondances = adresse.match(/\b\d{5}\b/g);
+  if (!correspondances) return null;
+  const cp = correspondances[correspondances.length - 1]!;
   // La Corse s'écrit 20xxx en code POSTAL mais 2A/2B en DÉPARTEMENT. Les deux
   // partagent la même zone, donc la distinction Corse-du-Sud / Haute-Corse est
   // sans objet ici — d'où le raccourci, écrit plutôt que sous-entendu.

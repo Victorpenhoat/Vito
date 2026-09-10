@@ -34,4 +34,12 @@ describe("deduireZone", () => {
     expect(deduireZone(null)).toBeNull();
     expect(deduireZone("99999 Nulle-Part")).toBeNull();
   });
+
+  it("prend le dernier nombre à cinq chiffres, pas le premier venu avant le code postal", () => {
+    // Leurre : « Résidence 20000 » ressemble à un code postal corse, mais le
+    // vrai code postal — 75011 — vient après, comme toujours en adresse
+    // française. Un premier-match confondrait cette famille parisienne avec
+    // la Corse.
+    expect(deduireZone("Résidence 20000, 75011 Paris")).toBe("Zone C");
+  });
 });
