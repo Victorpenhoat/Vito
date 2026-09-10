@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { MailpitMailProvider } from "./mailpit";
 
 const provider = new MailpitMailProvider("http://127.0.0.1:54324", "contact@vito.app");
-const message = { a: "lecteur@vito.test", sujet: "Sujet", html: "<p>x</p>", texte: "x" };
+const message = { a: "lecteur@vito.test", genre: "lien_magique", sujet: "Sujet", html: "<p>x</p>", texte: "x" };
 
 afterEach(() => vi.unstubAllGlobals());
 

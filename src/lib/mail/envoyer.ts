@@ -56,6 +56,7 @@ export async function envoyer(p: Envoi): Promise<{ id: string } | null> {
 
     const envoye = await getMailProvider().envoyer({
       a: p.a,
+      genre: p.genre,
       sujet: p.sujet,
       html: p.html,
       texte: p.texte,

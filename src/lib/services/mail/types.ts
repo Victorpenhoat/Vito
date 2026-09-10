@@ -1,4 +1,12 @@
 export type Message = {
+  /**
+   * Le genre du message, pour la TRACE uniquement — il n'est transmis à aucun
+   * fournisseur. Il existe pour qu'un journal ou un log puisse dire ce qui est
+   * parti sans jamais citer le sujet ni le corps : le sujet d'un lien magique
+   * est du contenu, et les logs ne doivent pas devenir l'endroit où le contenu
+   * s'accumule à la place du journal, qui n'en garde exprès aucun.
+   */
+  genre: string;
   // Pas d'expéditeur ici : il est configuré une fois (MAIL_EXPEDITEUR) et
   // appartient au fournisseur. Un appelant qui pourrait le choisir pourrait
   // le choisir mal.

@@ -61,14 +61,23 @@ describe("envoyer", () => {
     });
   });
 
-  it("ne journalise ni le sujet ni le corps", async () => {
+  it("ne journalise ni le sujet ni le corps — à l'insertion COMME à la mise à jour", async () => {
     envoyerFournisseur.mockResolvedValue({ id: "re_1" });
     await envoyer(message);
-    const ligne = JSON.stringify(inserees[0]);
     // Marqueur distinctif partagé par sujet/html/texte, absent de tout ce qui est
     // légitimement journalisé (genre, destinataire, statut) : une seule assertion
     // suffit à couvrir une fuite depuis n'importe lequel des trois champs.
-    expect(ligne).not.toContain("secret-9f3a");
+    expect(JSON.stringify(inserees)).not.toContain("secret-9f3a");
+    // La mise à jour aussi : c'est elle qui écrit `detail`, donc le chemin
+    // qu'emprunterait un futur « et si on journalisait le message du
+    // fournisseur ». Le journal ne garde AUCUN contenu, `detail` compris.
+    expect(JSON.stringify(misesAJour)).not.toContain("secret-9f3a");
+  });
+
+  it("ne journalise pas davantage de contenu quand l'envoi échoue (c'est là qu'on écrit `detail`)", async () => {
+    envoyerFournisseur.mockResolvedValue(null);
+    await envoyer(message);
+    expect(JSON.stringify(misesAJour)).not.toContain("secret-9f3a");
   });
 
   it("passe la ligne à 'accepte' avec l'identifiant du fournisseur", async () => {

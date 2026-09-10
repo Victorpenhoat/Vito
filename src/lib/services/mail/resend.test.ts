@@ -5,6 +5,7 @@ const provider = new ResendMailProvider("cle-de-test", "contact@vito.app");
 
 const message = {
   a: "lecteur@vito.test",
+  genre: "lien_magique",
   sujet: "Votre lien de connexion",
   html: "<p>lien</p>",
   texte: "lien",

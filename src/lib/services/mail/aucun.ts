@@ -7,7 +7,7 @@ import type { MailProvider, Message } from "./types";
 export class AucunMailProvider implements MailProvider {
   readonly name = "aucun";
   async envoyer(m: Message): Promise<null> {
-    log.info("mail_non_configure", { a: m.a, sujet: m.sujet });
+    log.info("mail_non_configure", { a: m.a, genre: m.genre });
     return null;
   }
 }
