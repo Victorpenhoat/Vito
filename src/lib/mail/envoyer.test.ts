@@ -39,9 +39,9 @@ import { envoyer } from "./envoyer";
 const message = {
   a: "lecteur@vito.test",
   genre: "lien_magique" as const,
-  sujet: "Votre lien de connexion",
-  html: "<p>lien</p>",
-  texte: "lien",
+  sujet: "sujet-secret-9f3a",
+  html: "<p>corps-secret-9f3a</p>",
+  texte: "corps-secret-9f3a",
 };
 
 beforeEach(() => {
@@ -65,10 +65,10 @@ describe("envoyer", () => {
     envoyerFournisseur.mockResolvedValue({ id: "re_1" });
     await envoyer(message);
     const ligne = JSON.stringify(inserees[0]);
-    expect(ligne).not.toContain("connexion");
-    // Pas "lien" tout court : le genre "lien_magique", lui, est censé être journalisé
-    // et contient ce sous-mot. On vise le corps effectivement passé au fournisseur.
-    expect(ligne).not.toContain("<p>lien</p>");
+    // Marqueur distinctif partagé par sujet/html/texte, absent de tout ce qui est
+    // légitimement journalisé (genre, destinataire, statut) : une seule assertion
+    // suffit à couvrir une fuite depuis n'importe lequel des trois champs.
+    expect(ligne).not.toContain("secret-9f3a");
   });
 
   it("passe la ligne à 'accepte' avec l'identifiant du fournisseur", async () => {
