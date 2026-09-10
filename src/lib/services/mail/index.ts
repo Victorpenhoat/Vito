@@ -16,4 +16,4 @@ export function getMailProvider(): MailProvider {
   return new AucunMailProvider();
 }
 
-export type { MailProvider, Message, MessageEnvoye } from "./types";
+export type { MailProvider } from "./types";

@@ -4,7 +4,7 @@ import { getMailProvider } from "@/lib/services/mail";
 import { log, errorContext } from "@/lib/log";
 import type { TablesUpdate } from "@/types/database.types";
 
-export type Genre =
+type Genre =
   | "lien_magique"
   | "invitation"
   | "rappel_activites"

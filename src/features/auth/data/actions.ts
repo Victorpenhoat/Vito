@@ -4,6 +4,7 @@ import { redirect } from "@/lib/i18n/routing";
 import { getLocale, getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { credentialsSchema, emailSchema } from "../domain/schemas";
+import { envoyerLienMagiqueA } from "./lienMagique";
 
 export async function signIn(_prev: unknown, formData: FormData) {
   const t = await getTranslations("auth.errors");
@@ -33,11 +34,12 @@ export async function signOut() {
 // ── Onboarding lot O-B : connexion sans mot de passe ────────────────────────
 
 /**
- * Envoie un lien magique. Deux règles de sécurité :
- * - `shouldCreateUser: false` — l'inscription se fait UNIQUEMENT sur invitation
- *   (décision PO) ; sans cela, ce formulaire créerait des comptes.
+ * Envoie un lien magique. Deux règles de sécurité, appliquées dans
+ * `envoyerLienMagiqueA` (voir `./lienMagique.ts`) :
+ * - l'inscription se fait UNIQUEMENT sur invitation (décision PO) ; le lien
+ *   généré ne crée jamais de compte.
  * - la réponse est TOUJOURS la même, succès ou échec : elle ne doit jamais
- *   révéler si un compte existe pour cette adresse (contrainte du brief).
+ *   révéler si un compte existe pour cette adresse.
  */
 export async function envoyerLienMagique(_prev: unknown, formData: FormData) {
   const parsed = emailSchema.safeParse({ email: formData.get("email") });
@@ -45,18 +47,13 @@ export async function envoyerLienMagique(_prev: unknown, formData: FormData) {
     const t = await getTranslations("auth.errors");
     return { error: t("emailInvalide") };
   }
-  const supabase = await createServerSupabase();
   // L'origine réelle (le port diffère entre dev, e2e et prod) — le lien doit
   // revenir sur la même instance.
   const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("host") ?? "localhost:3000";
-  const { error } = await supabase.auth.signInWithOtp({
-    email: parsed.data.email,
-    options: { shouldCreateUser: false, emailRedirectTo: `${proto}://${host}/api/auth/confirm` },
-  });
-  // Erreur volontairement avalée (compte inconnu, quota…) : on la trace, on ne
-  // la montre pas. Seul un vrai problème de configuration mérite un log.
-  if (error) console.warn("lien_magique", error.message);
+  // Ne rend rien et ne jette rien : la réponse ci-dessous est la MÊME que le
+  // compte existe ou non, et c'est ce qui empêche d'énumérer les comptes.
+  await envoyerLienMagiqueA(parsed.data.email, `${proto}://${host}`);
   return { envoye: true as const, email: parsed.data.email };
 }
