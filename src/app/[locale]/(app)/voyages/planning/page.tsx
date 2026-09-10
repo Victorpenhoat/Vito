@@ -9,11 +9,7 @@ import { AutresZonesInterrupteur } from "@/features/voyages/ui/AutresZonesInterr
 import { PlanningCalendrier } from "@/features/voyages/ui/PlanningCalendrier";
 import { PlanningFrise } from "@/features/voyages/ui/PlanningFrise";
 import { getActivitesSemaine } from "@/features/activites/data/queries";
-
-// Les deux autres zones ne se comparent qu'entre A, B et C : la Corse et
-// l'outre-mer n'ont pas de « zone voisine », et l'interrupteur n'y est donc
-// pas proposé.
-const METROPOLE = ["Zone A", "Zone B", "Zone C"];
+import { ZONES_METROPOLE, estMetropole } from "@/features/voyages/domain/zoneScolaire";
 
 // Planning (maquettes « Planning Mois » et « Web — Planning global ») : un
 // calendrier, les voyages sous la semaine qu'ils traversent, et l'année
@@ -39,9 +35,9 @@ export default async function PlanningPage() {
   const vacances = zone ? await getVacances(zone, fenetre.debut, fenetre.fin) : [];
 
   const veutAutres = (await cookies()).get("zones_autres")?.value === "1";
-  const autresZones = veutAutres && zone && METROPOLE.includes(zone)
+  const autresZones = veutAutres && estMetropole(zone)
     ? await Promise.all(
-        METROPOLE.filter((z) => z !== zone)
+        ZONES_METROPOLE.filter((z) => z !== zone)
           .map(async (z) => ({ zone: z, periodes: await getVacances(z, fenetre.debut, fenetre.fin) })),
       )
     : [];
@@ -53,7 +49,7 @@ export default async function PlanningPage() {
         <Link href="/voyages" data-testid="planning-retour" className="text-[12.5px] font-semibold text-accent hover:underline">
           ← {t("planning.retour")}
         </Link>
-        {zone && METROPOLE.includes(zone) && <AutresZonesInterrupteur actif={veutAutres} />}
+        {estMetropole(zone) && <AutresZonesInterrupteur actif={veutAutres} />}
       </div>
       <PlanningCalendrier
         voyages={voyages.map((v) => ({

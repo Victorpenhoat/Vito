@@ -4,14 +4,10 @@ import {
   fenetreDepuis, barrePour, periodesDeLaFenetre, vacancesDuVoyage,
   MOIS_PLANNING, type Periode,
 } from "../domain/planning";
+import { lettreDeZone } from "../domain/zoneScolaire";
 
 type VoyageFrise = { id: string; titre: string; debut: string | null; fin: string | null };
 
-// Seules « Zone A », « Zone B » et « Zone C » arrivent jusqu'ici (la page ne
-// propose l'interrupteur qu'en métropole) : la dernière lettre EST la lettre
-// de la zone, et une étiquette d'un caractère est tout ce que ces pistes
-// fines peuvent porter.
-const lettreDeZone = (zone: string) => zone.slice(-1);
 
 // Frise du planning (Lot E). Une ligne par voyage, une bande pour les vacances
 // scolaires : ce qu'on cherche, c'est autant les chevauchements que les
@@ -99,10 +95,16 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
           {autresZones.map(({ zone: autre, periodes: leurs }) => (
             <div key={autre} data-testid="piste-zone-autre"
               className="relative mt-1 h-3.5 rounded-[3px] bg-surface-hover/60">
-              <span aria-hidden
-                className="pointer-events-none absolute left-1 top-1/2 z-10 -translate-y-1/2 text-[9px] font-semibold uppercase tracking-[0.08em] text-faint">
-                {lettreDeZone(autre)}
-              </span>
+              {/* Une étiquette d'un caractère est tout ce que ces pistes fines
+                  peuvent porter — mais une zone sans lettre n'en reçoit
+                  aucune plutôt qu'une fausse (le nom reste dans l'infobulle
+                  des barres). */}
+              {lettreDeZone(autre) && (
+                <span aria-hidden
+                  className="pointer-events-none absolute left-1 top-1/2 z-10 -translate-y-1/2 text-[9px] font-semibold uppercase tracking-[0.08em] text-faint">
+                  {lettreDeZone(autre)}
+                </span>
+              )}
               {periodesDeLaFenetre(leurs, fenetre).map((p) => {
                 const barre = barrePour(p.debut, p.fin, fenetre);
                 if (!barre) return null;

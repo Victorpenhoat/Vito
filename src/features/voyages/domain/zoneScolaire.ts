@@ -14,6 +14,37 @@ export const ZONES = [
 ] as const;
 
 /**
+ * Les trois zones qui se comparent entre elles.
+ *
+ * La Corse et l'outre-mer n'ont pas de « zone voisine » : leur calendrier ne
+ * s'échange avec personne, et l'interrupteur des autres zones ne leur est donc
+ * pas proposé. La liste vit ICI, à côté du vocabulaire dont elle est un
+ * sous-ensemble : recopiée dans un écran, elle finirait par en dire autre
+ * chose qu'un autre.
+ */
+export const ZONES_METROPOLE = ["Zone A", "Zone B", "Zone C"] as const;
+
+/** La zone fait-elle partie des trois métropolitaines ? */
+export function estMetropole(zone: string | null | undefined): boolean {
+  return !!zone && (ZONES_METROPOLE as readonly string[]).includes(zone);
+}
+
+/**
+ * La lettre d'une zone, pour les pistes trop fines pour porter son nom — ou
+ * `null` quand la zone n'en a pas.
+ *
+ * `zone.slice(-1)` rendait « e » pour la Corse et « n » pour la Réunion. Ce
+ * n'était pas visible parce que l'appelant ne dessine ces pistes qu'en
+ * métropole : un couplage implicite entre deux fichiers, qui devient une
+ * lettre fausse à l'écran dès que l'un des deux change. Mieux vaut rendre
+ * `null` et laisser l'appelant décider de n'afficher aucune étiquette que
+ * d'en afficher une qui ment.
+ */
+export function lettreDeZone(zone: string): string | null {
+  return /^Zone [A-Z]$/.test(zone) ? zone.slice(-1) : null;
+}
+
+/**
  * Département → zone. Construit par jointure des deux jeux du ministère le
  * 2026-09-10 (requêtes citées en tête de fichier), pas de mémoire.
  *

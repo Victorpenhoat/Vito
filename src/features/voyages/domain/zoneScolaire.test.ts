@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deduireZone, ZONES } from "./zoneScolaire";
+import { deduireZone, estMetropole, lettreDeZone, ZONES, ZONES_METROPOLE } from "./zoneScolaire";
 
 describe("ZONES", () => {
   it("porte le vocabulaire de la source, pas un A/B/C réducteur", () => {
@@ -8,6 +8,38 @@ describe("ZONES", () => {
     expect(ZONES).toContain("Réunion");
     expect(ZONES).toHaveLength(11);
   });
+});
+
+describe("ZONES_METROPOLE", () => {
+  it("porte les trois zones qui se comparent entre elles, et rien d'autre", () => {
+    expect([...ZONES_METROPOLE]).toEqual(["Zone A", "Zone B", "Zone C"]);
+  });
+
+  it("n'invente pas de zone hors du vocabulaire de la source", () => {
+    for (const zone of ZONES_METROPOLE) expect(ZONES).toContain(zone);
+  });
+
+  it.each(["Corse", "Réunion", "Polynésie"])("%s n'est pas une zone métropolitaine", (zone) => {
+    expect(estMetropole(zone)).toBe(false);
+  });
+
+  it("ne tient pas une zone absente pour métropolitaine", () => {
+    expect(estMetropole(null)).toBe(false);
+    expect(estMetropole("")).toBe(false);
+  });
+});
+
+describe("lettreDeZone", () => {
+  it.each([["Zone A", "A"], ["Zone B", "B"], ["Zone C", "C"]])("%s → %s", (zone, lettre) => {
+    expect(lettreDeZone(zone)).toBe(lettre);
+  });
+
+  // `zone.slice(-1)` rendait « e » pour la Corse et « n » pour la Réunion :
+  // une étiquette fausse plutôt qu'aucune.
+  it.each(["Corse", "Réunion", "Polynésie", "Saint Pierre et Miquelon"])(
+    "%s n'a pas de lettre, et n'en reçoit donc aucune", (zone) => {
+      expect(lettreDeZone(zone)).toBeNull();
+    });
 });
 
 describe("deduireZone", () => {
