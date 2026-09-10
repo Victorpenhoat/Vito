@@ -515,7 +515,13 @@ insert into public.invitations (id, token, email, role_vise, voyage_id, cree_par
 -- Ce ne sont pas des dates inventées : elles viennent du jeu
 -- fr-en-calendrier-scolaire, relevé le 2026-09-10, normalisées comme le fait
 -- le fournisseur (heure de PARIS, une ligne par zone et non par académie,
--- population « Enseignants » écartée).
+-- toute population « Enseignant… » écartée).
+--
+-- L'été des quatre zones est la période DÉRIVÉE : la source ne publie pour
+-- 2026-2027 qu'un `Début des Vacances d'Été` d'un seul jour, et le
+-- fournisseur en fait un `Vacances d'Été` qui court jusqu'au 31 août (cf.
+-- `deriverEte` dans educationGouv.ts). Ce seed reste donc un instantané de ce
+-- que le fournisseur produit, pas un calendrier écrit à la main.
 --
 -- Quatre zones, celles que les comptes de test habitent : le foyer de
 -- client@vito.test est à Bordeaux (Zone A) et l'interrupteur montre les deux
@@ -532,22 +538,22 @@ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin
  ('2026-2027','Zone A','Vacances d''Hiver','2027-02-13','2027-03-01'),
  ('2026-2027','Zone A','Vacances de Printemps','2027-04-10','2027-04-26'),
  ('2026-2027','Zone A','Pont de l''Ascension','2027-05-07','2027-05-07'),
- ('2026-2027','Zone A','Début des Vacances d''Été','2027-07-03','2027-07-03'),
+ ('2026-2027','Zone A','Vacances d''Été','2027-07-03','2027-08-31'),
  ('2026-2027','Zone B','Vacances de la Toussaint','2026-10-17','2026-11-02'),
  ('2026-2027','Zone B','Vacances de Noël','2026-12-19','2027-01-04'),
  ('2026-2027','Zone B','Vacances d''Hiver','2027-02-20','2027-03-08'),
  ('2026-2027','Zone B','Vacances de Printemps','2027-04-17','2027-05-03'),
  ('2026-2027','Zone B','Pont de l''Ascension','2027-05-07','2027-05-07'),
- ('2026-2027','Zone B','Début des Vacances d''Été','2027-07-03','2027-07-03'),
+ ('2026-2027','Zone B','Vacances d''Été','2027-07-03','2027-08-31'),
  ('2026-2027','Zone C','Vacances de la Toussaint','2026-10-17','2026-11-02'),
  ('2026-2027','Zone C','Vacances de Noël','2026-12-19','2027-01-04'),
  ('2026-2027','Zone C','Vacances d''Hiver','2027-02-06','2027-02-22'),
  ('2026-2027','Zone C','Vacances de Printemps','2027-04-03','2027-04-19'),
  ('2026-2027','Zone C','Pont de l''Ascension','2027-05-07','2027-05-07'),
- ('2026-2027','Zone C','Début des Vacances d''Été','2027-07-03','2027-07-03'),
+ ('2026-2027','Zone C','Vacances d''Été','2027-07-03','2027-08-31'),
  ('2026-2027','Corse','Vacances de la Toussaint','2026-10-17','2026-11-02'),
  ('2026-2027','Corse','Vacances de Noël','2026-12-19','2027-01-04'),
  ('2026-2027','Corse','Vacances d''Hiver','2027-02-13','2027-03-01'),
  ('2026-2027','Corse','Vacances de Printemps','2027-04-10','2027-04-26'),
  ('2026-2027','Corse','Pont de l''Ascension','2027-05-07','2027-05-10'),
- ('2026-2027','Corse','Début des Vacances d''Été','2027-07-03','2027-07-03');
+ ('2026-2027','Corse','Vacances d''Été','2027-07-03','2027-08-31');

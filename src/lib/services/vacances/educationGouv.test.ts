@@ -95,6 +95,49 @@ describe("normaliser", () => {
     ]);
   });
 
+  // Zone C 2026-2027 ne publie QUE `Début des Vacances d'Été`, une ligne d'un
+  // seul jour : sans dérivation, juillet et août se lisent comme libres.
+  const MARQUEUR_SEUL = {
+    results: [
+      { description: "Début des Vacances d'Été", start_date: "2027-07-02T22:00:00+00:00",
+        end_date: "2027-07-02T22:00:00+00:00", zones: "Zone C", population: "-",
+        location: "Paris", annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  // La forme habituelle : un vrai `Vacances d'Été` avec sa plage, que le
+  // marqueur accompagne parfois.
+  const MARQUEUR_ET_PLAGE = {
+    results: [
+      ...MARQUEUR_SEUL.results,
+      { description: "Vacances d'Été", start_date: "2027-07-02T22:00:00+00:00",
+        end_date: "2027-08-31T22:00:00+00:00", zones: "Zone C", population: "Élèves",
+        location: "Paris", annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("dérive les grandes vacances quand la source n'en publie que le marqueur", () => {
+    expect(normaliser(MARQUEUR_SEUL)).toEqual([
+      { anneeScolaire: "2026-2027", zone: "Zone C", libelle: "Vacances d'Été",
+        debut: "2027-07-03", fin: "2027-08-31" },
+    ]);
+  });
+
+  it("laisse la vraie plage l'emporter sur la dérivée, sans doublon", () => {
+    const attendu = [
+      { anneeScolaire: "2026-2027", zone: "Zone C", libelle: "Vacances d'Été",
+        debut: "2027-07-03", fin: "2027-09-01" },
+    ];
+    expect(normaliser(MARQUEUR_ET_PLAGE)).toEqual(attendu);
+    // L'ordre de la réponse ne doit rien décider : la dérivation n'a lieu
+    // qu'une fois toutes les lignes lues.
+    expect(normaliser({ results: [...MARQUEUR_ET_PLAGE.results].reverse() })).toEqual(attendu);
+  });
+
+  it("n'invente aucun été quand la source n'en publie aucune ligne", () => {
+    expect(normaliser(REPONSE).some((p) => p.libelle.includes("Été"))).toBe(false);
+  });
+
   it("garde le vocabulaire de la source, sans le réduire à A/B/C", () => {
     const zones = new Set(normaliser(REPONSE).map((p) => p.zone));
     expect(zones).toEqual(new Set(["Zone A", "Zone B", "Zone C"]));

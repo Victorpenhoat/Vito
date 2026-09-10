@@ -34,6 +34,12 @@ type Brut = {
   zones?: unknown; population?: unknown; annee_scolaire?: unknown;
 };
 
+// Les deux libellés d'été de la source. Le second est la forme définitive
+// (une plage) ; le premier est la forme PROVISOIRE : une ligne d'un seul jour,
+// publiée tant que la rentrée suivante n'est pas arrêtée. Cf. `dériverEte`.
+const MARQUEUR_ETE = "Début des Vacances d'Été";
+const ETE = "Vacances d'Été";
+
 /**
  * Trois filtres, trois pièges — aucun ne se devine, tous ont été relevés dans
  * la vraie réponse :
@@ -56,6 +62,10 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
   if (!Array.isArray(results)) return [];
 
   const parCle = new Map<string, PeriodeVacances>();
+  // Les marqueurs d'été mis de côté, par `annee|zone` : ils ne deviennent une
+  // période qu'à la fin, et seulement si la vraie plage manque (cf. plus bas).
+  const marqueursEte = new Map<string, PeriodeVacances>();
+
   for (const brut of results as Brut[]) {
     const population = typeof brut.population === "string" ? brut.population : "";
     // Le préfixe couvre les cinq variantes connues et celles à venir : une
@@ -70,11 +80,60 @@ export function normaliser(reponse: unknown): PeriodeVacances[] {
     const fin = typeof brut.end_date === "string" ? dateDeParis(brut.end_date) : null;
     if (!zone || !libelle || !anneeScolaire || !debut || !fin) continue;
 
+    const periode = { anneeScolaire, zone, libelle, debut, fin };
+    if (libelle === MARQUEUR_ETE) {
+      marqueursEte.set(`${anneeScolaire}|${zone}`, periode);
+      continue;
+    }
     // La clé porte la zone et le libellé, pas l'académie : c'est elle qui
     // écrase les doublons.
-    parCle.set(`${anneeScolaire}|${zone}|${libelle}`, { anneeScolaire, zone, libelle, debut, fin });
+    parCle.set(`${anneeScolaire}|${zone}|${libelle}`, periode);
   }
+
+  deriverEte(parCle, marqueursEte);
   return [...parCle.values()];
+}
+
+/**
+ * Les grandes vacances, quand la source n'en publie que le début.
+ *
+ * Mesuré le 2026-09-10 : Zone C 2026-2027 ne porte QUE
+ * `Début des Vacances d'Été`, une ligne d'un seul jour. Sans traitement,
+ * juillet et août 2027 se lisent comme libres — sur la frise, dans le
+ * calendrier, et pour `vacancesDuVoyage`. Ce n'est pas la forme habituelle :
+ * 2019-2020, 2022-2023, 2024-2025 et 2025-2026 publient toutes un vrai
+ * `Vacances d'Été` avec une plage. Le marqueur d'un jour est la forme
+ * PROVISOIRE d'une année dont la rentrée suivante n'est pas encore arrêtée.
+ *
+ * On ne peut pas attendre la forme définitive — l'écran est consulté
+ * maintenant — et on ne peut pas la dériver de l'année suivante : 2027-2028
+ * existe dans le jeu mais ne porte que Mayotte et la Polynésie, aucune zone
+ * métropolitaine.
+ *
+ * D'où la dérivée : début = la date du marqueur, telle quelle ; fin = le
+ * 31 août de la même année civile. Ce 31 août n'est pas inventé, c'est le
+ * plancher que ce dépôt utilisait déjà avec l'accord du PO (ancien
+ * `vacancesScolaires.ts`, entrée `ete-2027`), et il tombe TOUJOURS avant la
+ * vraie rentrée. La convention du dépôt étant `fin` = jour de la rentrée,
+ * bornes incluses, la dérivée s'arrête un cran en deçà : l'erreur va dans le
+ * sens sûr. Un jour de vacances manquant se rattrape ; un jour de classe
+ * annoncé comme vacances envoie planifier un départ un lundi de rentrée.
+ *
+ * Le libellé est celui de la forme définitive, pas un troisième : quand la
+ * vraie plage paraîtra, elle écrasera la dérivée par la clé unique au lieu de
+ * s'ajouter à côté d'elle. Et si les deux arrivent dans la même réponse, la
+ * vraie l'emporte — la dérivée ne comble qu'un trou.
+ */
+function deriverEte(
+  parCle: Map<string, PeriodeVacances>,
+  marqueursEte: Map<string, PeriodeVacances>,
+): void {
+  for (const [cle, marqueur] of marqueursEte) {
+    if (parCle.has(`${cle}|${ETE}`)) continue;
+    parCle.set(`${cle}|${ETE}`, {
+      ...marqueur, libelle: ETE, fin: `${marqueur.debut.slice(0, 4)}-08-31`,
+    });
+  }
 }
 
 function urlPage(anneeScolaire: string, offset: number): string {
