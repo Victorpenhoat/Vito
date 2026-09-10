@@ -26,13 +26,25 @@ const zonesLues: string[] = [];
 // tableau contenant autre chose que ce qu'il a demandé — la propriété serait
 // tenue par le mock, pas par le code.
 let lectureIgnoreLaZone = false;
+// L'utilisateur que `getCachedUser` rapporte, et l'adresse de la fiche « Moi ».
+// `utilisateur = null` simule le rendu parallèle page/layout où la session
+// n'est pas encore établie : la RLS répondrait alors « permission denied » à
+// `anon` (cf. #61/#63), pas « zéro ligne ».
+let utilisateur: { id: string } | null = { id: "u1" };
+let adresseFoyer: string | null = null;
 vi.mock("@/lib/supabase/server", () => ({
+  getCachedUser: async () => ({ user: utilisateur }),
   createServerSupabase: async () => ({
     from: () => ({
       select: () => ({
         eq: (_c: string, zone: string) => {
           zonesLues.push(zone);
           return ({
+          // Lecture d'une seule ligne : la fiche « Moi » du foyer, ou le
+          // profil. Seule l'adresse intéresse ces tests.
+          maybeSingle: async () => ({
+            data: adresseFoyer === null ? null : { address: adresseFoyer, zone_scolaire: null },
+          }),
           in: (_c2: string, annees: string[]) => ({
             order: async () => {
               const data = lignes.filter(
@@ -61,7 +73,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
-import { getVacances, anneesScolairesDe } from "./vacances";
+import { getVacances, anneesScolairesDe, getZoneDeduiteDuFoyer } from "./vacances";
 
 beforeEach(() => {
   lignes = [];
@@ -69,6 +81,8 @@ beforeEach(() => {
   erreurLecture = null;
   erreurEcriture = null;
   lectureIgnoreLaZone = false;
+  utilisateur = { id: "u1" };
+  adresseFoyer = null;
   zonesLues.length = 0;
   recuperer.mockReset();
 });
@@ -191,5 +205,22 @@ describe("getVacances", () => {
 
     expect(upserts).toHaveLength(1);
     expect(periodes).toEqual([{ id: "2026-2027|Zone C|Noël", libelle: "Noël", debut: "2026-12-19", fin: "2027-01-04" }]);
+  });
+});
+
+describe("getZoneDeduiteDuFoyer", () => {
+  it("déduit la zone de l'adresse de la fiche « Moi »", async () => {
+    adresseFoyer = "12 rue de la Paix, 75002 Paris";
+    expect(await getZoneDeduiteDuFoyer()).toBe("Zone C");
+  });
+
+  // La garde, et rien d'autre : l'adresse déduirait « Zone C », mais sans
+  // session établie la lecture ne doit PAS partir. Retirer le
+  // `if (!auth.user) return null;` fait tomber ce test — c'est sa seule
+  // raison d'être.
+  it("ne lit rien tant que la session n'est pas établie", async () => {
+    adresseFoyer = "12 rue de la Paix, 75002 Paris";
+    utilisateur = null;
+    expect(await getZoneDeduiteDuFoyer()).toBeNull();
   });
 });

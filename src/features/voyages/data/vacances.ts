@@ -166,8 +166,28 @@ export async function getZoneDuFoyer(): Promise<string | null> {
   // Le choix explicite l'emporte, et dispense de lire l'adresse.
   if (profil?.zone_scolaire) return profil.zone_scolaire;
 
-  // Adresse du foyer = adresse de la fiche « Moi » (la RLS borne déjà à
-  // l'utilisateur, cf. la même lecture dans reglages/page.tsx).
+  return getZoneDeduiteDuFoyer();
+}
+
+/**
+ * La zone que l'ADRESSE laisse deviner — une suggestion, jamais un choix.
+ *
+ * Deux écrans la demandent : les réglages, qui l'affichent comme proposition
+ * tant que rien n'est enregistré, et `getZoneDuFoyer` ci-dessus, qui n'y
+ * recourt qu'à défaut de choix. Elle vit ici en un seul exemplaire parce que
+ * la lecture qu'elle fait a besoin d'une garde, et qu'une garde recopiée est
+ * une garde qu'on finit par oublier : les réglages lisaient `family_members`
+ * en direct, sans elle, et rejouaient donc le défaut des PR #61 et #63.
+ *
+ * Adresse du foyer = adresse de la fiche « Moi ».
+ */
+export async function getZoneDeduiteDuFoyer(): Promise<string | null> {
+  // Fail-safe anon (cf. #61/#63) : page et layout rendent en parallèle, et la
+  // RLS refuserait la lecture à `anon` au lieu de rendre zéro ligne.
+  const auth = await getCachedUser();
+  if (!auth.user) return null;
+
+  const supabase = await createServerSupabase();
   const { data: moi } = await supabase
     .from("family_members").select("address").eq("relation", "moi").maybeSingle();
   return deduireZone(moi?.address);
