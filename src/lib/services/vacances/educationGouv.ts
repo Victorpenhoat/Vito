@@ -172,9 +172,16 @@ function deriverEte(
 ): void {
   for (const [cle, marqueur] of marqueursEte) {
     if (parCle.has(`${cle}|${ETE}`)) continue;
-    parCle.set(`${cle}|${ETE}`, {
-      ...marqueur, libelle: ETE, fin: `${marqueur.debut.slice(0, 4)}-08-31`,
-    });
+    const fin = `${marqueur.debut.slice(0, 4)}-08-31`;
+    // Le 31 août suppose un été BORÉAL. À la Réunion, les grandes vacances
+    // commencent mi-décembre : la dérivée irait du 18 décembre au 31 août
+    // précédent, une période à l'envers. L'écran ne la dessinerait pas
+    // (`barrePour` refuse une barre inversée), mais elle serait écrite dans
+    // le cache et y resterait. On ne dérive donc rien : l'écran dira
+    // « calendrier absent », ce qui est vrai. (La base tient le même
+    // invariant depuis la migration 00065.)
+    if (fin < marqueur.debut) continue;
+    parCle.set(`${cle}|${ETE}`, { ...marqueur, libelle: ETE, fin });
   }
 }
 

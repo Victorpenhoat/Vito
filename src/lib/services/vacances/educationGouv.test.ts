@@ -215,6 +215,20 @@ describe("normaliser", () => {
     ]);
   });
 
+  // Été AUSTRAL : à la Réunion, les grandes vacances commencent mi-décembre.
+  // Le 31 août de la même année civile tombe alors AVANT le début.
+  const MARQUEUR_AUSTRAL = {
+    results: [
+      { description: "Début des Vacances d'Été", start_date: "2026-12-17T23:00:00+00:00",
+        end_date: "2026-12-17T23:00:00+00:00", zones: "Réunion", population: "-",
+        annee_scolaire: "2026-2027" },
+    ],
+  };
+
+  it("ne dérive rien plutôt qu'une période à l'envers (été austral)", () => {
+    expect(normaliser(MARQUEUR_AUSTRAL)).toEqual([]);
+  });
+
   it("garde le vocabulaire de la source, sans le réduire à A/B/C", () => {
     const zones = new Set(normaliser(REPONSE).map((p) => p.zone));
     expect(zones).toEqual(new Set(["Zone A", "Zone B", "Zone C"]));
