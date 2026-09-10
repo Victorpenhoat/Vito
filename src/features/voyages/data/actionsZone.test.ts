@@ -6,10 +6,19 @@ vi.mock("server-only", () => ({}));
 
 const update = vi.fn();
 const getUser = vi.fn();
+// Le filtre réellement passé à `.eq(…)`. Un mock qui l'avalerait laisserait
+// passer un `.eq("id", "quelqu-un-d-autre")` : la RLS le rattraperait en base,
+// mais le test prétendrait couvrir une écriture qu'il ne regarde pas.
+const filtres: [string, unknown][] = [];
 vi.mock("@/lib/supabase/server", () => ({
   createServerSupabase: async () => ({
     auth: { getUser },
-    from: () => ({ update: (v: unknown) => { update(v); return { eq: async () => ({ error: null }) }; } }),
+    from: () => ({
+      update: (v: unknown) => {
+        update(v);
+        return { eq: async (colonne: string, valeur: unknown) => { filtres.push([colonne, valeur]); return { error: null }; } };
+      },
+    }),
   }),
 }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -24,6 +33,7 @@ const formulaire = (zone: string) => {
 
 beforeEach(() => {
   update.mockReset();
+  filtres.length = 0;
   getUser.mockResolvedValue({ data: { user: { id: "u-1" } }, error: null });
 });
 
@@ -31,6 +41,13 @@ describe("enregistrerZoneScolaire", () => {
   it("enregistre une zone du vocabulaire de la source", async () => {
     expect(await enregistrerZoneScolaire(undefined, formulaire("Zone C"))).toEqual({ ok: true });
     expect(update).toHaveBeenCalledWith({ zone_scolaire: "Zone C" });
+  });
+
+  // L'écriture porte sur la ligne de CELUI qui la demande, et sur elle seule.
+  it("n'écrit que sur le profil de l'utilisateur de la session", async () => {
+    getUser.mockResolvedValue({ data: { user: { id: "u-42" } }, error: null });
+    await enregistrerZoneScolaire(undefined, formulaire("Zone C"));
+    expect(filtres).toEqual([["id", "u-42"]]);
   });
 
   it("accepte les territoires, pas seulement A/B/C", async () => {
