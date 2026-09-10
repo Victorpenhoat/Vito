@@ -89,3 +89,43 @@ test("sans zone du tout, l'écran demande la zone au lieu de se taire", async ({
   await page.getByTestId("planning-choisir-zone").click();
   await expect(page).toHaveURL(/\/fr\/reglages/);
 });
+
+test("la zone choisie dans les Réglages est celle que le planning suit", async ({ page }) => {
+  // L'aller-retour qui porte la fonctionnalité : choisir sa zone, la retrouver
+  // sur le planning. admin@vito.test a « Corse » enregistrée (seed) — une zone
+  // qu'on peut donc REMETTRE en fin de test, contrairement à client@vito.test
+  // dont la zone est seulement déduite et qu'aucun formulaire ne saurait
+  // rendre à son état « non choisie ».
+  await login(page, "admin@vito.test");
+
+  try {
+    await page.goto("/fr/reglages");
+    await page.getByTestId("zone-scolaire-select").selectOption("Zone B");
+    await page.getByTestId("zone-scolaire-enregistrer").click();
+    await expect(page.getByTestId("zone-scolaire-enregistree")).toBeVisible();
+
+    await page.goto("/fr/voyages/planning");
+    await expect(page.getByTestId("planning-zone")).toContainText("Zone B");
+
+    // Ce sont bien les périodes de la Zone B, pas celles de la Corse : les
+    // deux zones partagent la Toussaint et Noël, mais leur hiver diffère —
+    // le 20 février pour la Zone B, le 13 pour la Corse (seed).
+    const hiver = page.getByTestId("periode-scolaire").filter({ hasText: "Vacances d'Hiver" });
+    await expect(hiver).toHaveCount(1);
+    await expect(hiver).toContainText("20 févr.");
+
+    // Et la Zone B a deux voisines, là où la Corse n'en avait aucune : le
+    // planning a suivi le choix jusque dans ce qu'il propose.
+    await expect(page.getByTestId("autres-zones")).toBeVisible();
+  } finally {
+    // Restauration : les deux tests ci-dessus attendent « Corse ».
+    await page.goto("/fr/reglages");
+    await page.getByTestId("zone-scolaire-select").selectOption("Corse");
+    await page.getByTestId("zone-scolaire-enregistrer").click();
+    await expect(page.getByTestId("zone-scolaire-enregistree")).toBeVisible();
+    // Vérifiée en base, pas seulement à l'écran : un rechargement relit le
+    // profil, et c'est ce que verra la spec suivante.
+    await page.reload();
+    await expect(page.getByTestId("zone-scolaire-select")).toHaveValue("Corse");
+  }
+});
