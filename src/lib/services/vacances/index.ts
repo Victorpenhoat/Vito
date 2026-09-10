@@ -7,4 +7,4 @@ export function getVacancesProvider(): VacancesProvider {
   return new EducationGouvProvider();
 }
 
-export type { PeriodeVacances, VacancesProvider } from "./types";
+export type { VacancesProvider } from "./types";

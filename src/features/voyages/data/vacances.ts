@@ -2,7 +2,7 @@ import "server-only";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getVacancesProvider } from "@/lib/services/vacances";
-import { log } from "@/lib/log";
+import { log, errorContext } from "@/lib/log";
 import type { Periode } from "../domain/planning";
 
 /**
@@ -59,10 +59,22 @@ export async function getVacances(zone: string, debut: string, fin: string): Pro
 
   if (manquantes.length > 0) {
     const provider = getVacancesProvider();
+
+    // Un seul client, pas un par année manquante. Sa création est protégée :
+    // la clé de service est optionnelle (cf. `env.ts`) et `createAdminClient()`
+    // jette si elle manque — une absence de configuration doit dégrader
+    // l'écran, pas le faire tomber.
+    let admin: ReturnType<typeof createAdminClient> | null = null;
+    try {
+      admin = createAdminClient();
+    } catch (err) {
+      log.warn("vacances_ecriture", errorContext(err));
+    }
+
     for (const annee of manquantes) {
       const periodes = await provider.recuperer(annee);
-      if (!periodes || periodes.length === 0) continue;
-      const { error } = await createAdminClient()
+      if (!periodes || periodes.length === 0 || !admin) continue;
+      const { error } = await admin
         .from("vacances_scolaires")
         .upsert(
           periodes.map((p) => ({
