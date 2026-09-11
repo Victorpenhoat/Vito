@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { TagChip } from "./TagChip";
 
 describe("TagChip", () => {
@@ -16,12 +15,12 @@ describe("TagChip", () => {
 
   // Un chip « vide » annonce zéro : le rendre cliquable promet un filtre qui
   // ne filtrera rien.
-  it("est désactivé quand il est vide et empêche le clic", async () => {
+  it("est désactivé quand il est vide et empêche le clic", () => {
     const clic = vi.fn();
     render(<TagChip ton="vide" onClick={clic}>Coréen</TagChip>);
     const btn = screen.getByRole("button");
     expect(btn.hasAttribute("disabled")).toBe(true);
-    await userEvent.click(btn);
+    fireEvent.click(btn);
     expect(clic).not.toHaveBeenCalled();
   });
 
@@ -74,5 +73,37 @@ describe("TagChip", () => {
     // Ton d'action : pas de aria-pressed
     rerender(<TagChip ton="suggere" onClick={() => {}}>Occasion</TagChip>);
     expect(screen.getByRole("button")).not.toHaveAttribute("aria-pressed");
+  });
+
+  // Quand onRetirer est présent, un wrapper <span> enveloppe le bouton principal.
+  // `aria-pressed` doit rester sur le <button>, pas migrer sur le wrapper.
+  it("porte aria-pressed sur le bouton même avec onRetirer et un ton qui bascule", () => {
+    render(
+      <TagChip
+        ton="selectionne"
+        onClick={() => {}}
+        onRetirer={() => {}}
+        libelleRetrait="Retirer"
+      >
+        Terrasse
+      </TagChip>
+    );
+    const btn = screen.getByRole("button", { name: "Terrasse" });
+    expect(btn).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+// Tests de typage : l'union discriminée doit rejeter les appels invalides.
+// Ces lignes n'existent pas pour être exécutées, mais pour garantir que
+// le compilateur TypeScript refuse les mauvais appels.
+describe("TagChip — vérification des types (non exécutée)", () => {
+  it("rejette onRetirer sans libelleRetrait", () => {
+    // @ts-expect-error — libelleRetrait est obligatoire avec onRetirer
+    <TagChip onClick={() => {}} onRetirer={() => {}}>Terrasse</TagChip>;
+  });
+
+  it("rejette libelleRetrait sans onRetirer", () => {
+    // @ts-expect-error — libelleRetrait ne peut exister sans onRetirer
+    <TagChip libelleRetrait="Retirer">Terrasse</TagChip>;
   });
 });
