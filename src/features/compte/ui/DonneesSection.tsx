@@ -91,7 +91,7 @@ export function DonneesSection({ inventaire, suppressionDemandeeLe, delaiJours }
                 {t("donnees.exporterAvant")}
               </a>
               <button type="button" data-testid="suppression-suivant" onClick={() => setEtape(2)}
-                className="rounded-control bg-danger px-3 py-1.5 text-[11.5px] font-semibold text-white">
+                className="rounded-control bg-danger px-3 py-1.5 text-[11.5px] font-semibold text-on-fill">
                 {t("donnees.continuer")}
               </button>
               <button type="button" onClick={() => setEtape(0)} className="text-[11.5px] text-muted hover:text-ink">
@@ -113,7 +113,7 @@ export function DonneesSection({ inventaire, suppressionDemandeeLe, delaiJours }
                 {t("donnees.retour")}
               </button>
               <button type="button" data-testid="suppression-suivant-2" onClick={() => setEtape(3)}
-                className="ml-auto rounded-control bg-danger px-3 py-1.5 text-[11.5px] font-semibold text-white">
+                className="ml-auto rounded-control bg-danger px-3 py-1.5 text-[11.5px] font-semibold text-on-fill">
                 {t("donnees.continuer")}
               </button>
             </div>

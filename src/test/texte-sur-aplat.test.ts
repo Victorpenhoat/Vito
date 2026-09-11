@@ -34,10 +34,6 @@ const AUTORISES: Record<string, string> = {
 // filtrait sur `px-|py-` et manquait les boutons ronds, d'où seize fichiers
 // annoncés au plan pour vingt-cinq réels.
 const DETTE: Record<string, string> = {
-  // tâche 2 — les aplats illisibles (blanc sur --ink : 1,12:1)
-  "features/activites/ui/SousOnglets.tsx": "tâche 2",
-  "features/activites/ui/FiltresActivites.tsx": "tâche 2",
-  "features/compte/ui/DonneesSection.tsx": "tâche 2",
   // tâche 4 — le composant lui-même
   "features/shared/ui/Button.tsx": "tâche 4",
   // tâche 5 — les primitives qui portent leur propre copie

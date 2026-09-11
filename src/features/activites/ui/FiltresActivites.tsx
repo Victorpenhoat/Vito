@@ -71,7 +71,7 @@ export async function FiltresActivites({ params, dimensions }: {
           {posees.map((o) => (
             <a key={`${o.cle}-${o.valeur}`} href={url(lien(o.cle, o.valeur))}
               data-testid={`filtre-pose-${o.valeur}`} aria-label={t("retirer", { libelle: o.libelle })}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-ink px-3 py-1 text-[12px] font-medium text-white">
+              className="inline-flex items-center gap-1.5 rounded-full border border-ink bg-ink px-3 py-1 text-[12px] font-medium text-on-fill">
               {o.couleur && <span className="h-2 w-2 rounded-full" style={{ background: o.couleur }} aria-hidden />}
               {o.libelle}
               <X size={11} aria-hidden />
@@ -95,7 +95,7 @@ export async function FiltresActivites({ params, dimensions }: {
               <a key={o.valeur} href={url(lien(d.cle, o.valeur))} aria-current={choisi ? "true" : undefined}
                 data-testid={`filtre-${d.cle}-${o.valeur}`}
                 className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] font-medium transition-colors ${
-                  choisi ? "border-ink bg-ink text-white" : "border-line bg-surface text-muted hover:border-accent/30 hover:text-ink"
+                  choisi ? "border-ink bg-ink text-on-fill" : "border-line bg-surface text-muted hover:border-accent/30 hover:text-ink"
                 }`}>
                 {o.couleur && (
                   <span className="h-2 w-2 rounded-full" style={{ background: o.couleur }} aria-hidden />
