@@ -122,3 +122,33 @@ describe("les rayons", () => {
     expect(rayons).toMatchObject({ card: "12px", tile: "12px", control: "10px", pill: "999px" });
   });
 });
+
+describe("le carnet emporté", () => {
+  // Cette page embarque sa propre copie des jetons : elle vit HORS du groupe
+  // (app) pour que le verrou n'enferme pas le lecteur dehors, et n'hérite donc
+  // pas de globals.css. Une copie diverge toujours — ce test est la seule chose
+  // qui l'en empêche, et l'écart ne se verrait qu'en avion.
+  it("porte les mêmes valeurs que la table", () => {
+    const page = readFileSync(
+      path.resolve(__dirname, "[locale]/carnet-hors-ligne/[id]/page.tsx"),
+      "utf8",
+    );
+    for (const [bloc, ouverture] of [
+      [".carnet {", ':root,\n[data-theme="dark"]'],
+      ['[data-theme="light"] .carnet {', '[data-theme="light"]'],
+    ] as const) {
+      const roles = rolesDuBloc(CSS, ouverture);
+      const debut = page.indexOf(bloc);
+      expect(debut, `bloc introuvable dans la page : ${bloc}`).toBeGreaterThan(-1);
+      const corps = page.slice(debut, page.indexOf("}", debut));
+      const vus: string[] = [];
+      for (const m of corps.matchAll(/--c-([a-z-]+)\s*:\s*([^;]+);/g)) {
+        const attendu = roles.get(m[1]!);
+        expect(attendu, `--c-${m[1]} ne correspond à aucun rôle de la table`).toBeDefined();
+        expect(m[2]!.trim().toLowerCase(), `--c-${m[1]} diverge`).toBe(attendu!.toLowerCase());
+        vus.push(m[1]!);
+      }
+      expect(vus.length, `aucun jeton relevé dans ${bloc}`).toBeGreaterThan(0);
+    }
+  });
+});
