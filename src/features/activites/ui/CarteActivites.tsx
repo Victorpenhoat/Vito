@@ -8,7 +8,6 @@ import { LocateFixed } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { positionActuelle } from "@/lib/platform/position";
 import { bornesDesPoints } from "@/features/places/domain/clusters";
-import { AVATAR_PALETTE } from "@/features/famille/domain/avatarColor";
 
 export type PointActivite = {
   id: string;
@@ -100,7 +99,7 @@ export function CarteActivites({ points, sansAdresse }: {
             <Marker
               key={p.id}
               position={[p.lat, p.lng]}
-              icon={epingle(p.membres[0]?.couleur ?? AVATAR_PALETTE[0], p.statut !== "en_cours")}
+              icon={epingle(p.membres[0]?.couleur ?? "var(--accent)", p.statut !== "en_cours")}
               eventHandlers={{ click: () => setChoisie(p) }}
             />
           ))}
