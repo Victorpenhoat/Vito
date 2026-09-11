@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
-
-const SRC = path.resolve(__dirname, "..");
+import { SRC, fichiersSources } from "./fichiersSources";
 
 // Liste CLOSE, chaque entrée avec sa raison. C'est une liste de FICHIERS et non
 // un motif : un nouveau fichier qui code une teinte doit faire échouer ce test
@@ -25,16 +24,9 @@ const AUTORISES: Record<string, string> = {
 // travers. Ce piège a été mesuré en écrivant ce plan, pas supposé.
 const TEINTE = /#[0-9A-Fa-f]{6}(?![0-9A-Fa-f])|rgba?\(\s*\d/;
 
-function fichiers(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true, recursive: true })
-    .filter((e) => e.isFile() && /\.(ts|tsx|css)$/.test(e.name))
-    .map((e) => path.relative(SRC, path.join(e.parentPath, e.name)))
-    .filter((p) => !/\.(test|stories)\.tsx?$/.test(p));
-}
-
 describe("aucune teinte littérale hors de la table", () => {
   it("ne trouve de couleur en dur que dans les fichiers autorisés", () => {
-    const coupables = fichiers(SRC)
+    const coupables = fichiersSources()
       .filter((f) => !(f in AUTORISES))
       .filter((f) => TEINTE.test(readFileSync(path.join(SRC, f), "utf8")))
       .sort();
@@ -46,7 +38,7 @@ describe("aucune teinte littérale hors de la table", () => {
   // passaient à 12. Les `border-radius` inline des marqueurs Leaflet et de la
   // page hors ligne ne sont pas concernés : ils vivent hors de Tailwind.
   it("ne laisse aucun rayon littéral dans une classe Tailwind", () => {
-    const coupables = fichiers(SRC)
+    const coupables = fichiersSources()
       .filter((f) => /rounded-\[/.test(readFileSync(path.join(SRC, f), "utf8")))
       .sort();
     expect(coupables).toEqual([]);

@@ -26,7 +26,7 @@ export async function SousOnglets({ actif }: { actif: OngletActivites }) {
           aria-current={o === actif ? "page" : undefined}
           className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors ${
             o === actif
-              ? "border-ink bg-ink text-white"
+              ? "border-ink bg-ink text-on-fill"
               : "border-line bg-surface text-muted hover:border-accent/30 hover:text-ink"
           }`}
         >
