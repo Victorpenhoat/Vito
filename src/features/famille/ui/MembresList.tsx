@@ -3,7 +3,7 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { retirerMembre, quitterFamille } from "../data/actions";
 import { Button } from "@/features/shared/ui/Button";
-import { Badge } from "@/features/shared/ui/Badge";
+import { CountBadge } from "@/features/shared/ui/CountBadge";
 
 type Membre = { profile_id: string; role: string; display_name: string | null };
 
@@ -16,7 +16,7 @@ export function MembresList({ membres, isOwner, currentProfileId }: { membres: M
       {membres.map((m) => (
         <li key={m.profile_id} data-testid="membre-row" className="rounded-card border border-line bg-surface p-4 flex items-center gap-2">
           <span className="flex-1">{m.display_name ?? m.profile_id}</span>
-          {m.role === "owner" && <Badge>{t("roleOwner")}</Badge>}
+          {m.role === "owner" && <CountBadge>{t("roleOwner")}</CountBadge>}
           {isOwner && m.role !== "owner" && (
             <form action={retirer}>
               <input type="hidden" name="profileId" value={m.profile_id} />

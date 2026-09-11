@@ -10,7 +10,7 @@ export { Button } from "../src/features/shared/ui/Button";
 export { Input } from "../src/features/shared/ui/Input";
 export { Select } from "../src/features/shared/ui/Select";
 export { Avatar } from "../src/features/shared/ui/Avatar";
-export { Badge } from "../src/features/shared/ui/Badge";
+export { CountBadge } from "../src/features/shared/ui/CountBadge";
 export { Card } from "../src/features/shared/ui/Card";
 export { Tile } from "../src/features/shared/ui/Tile";
 export { Toast } from "../src/features/shared/ui/Toast";
