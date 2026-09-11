@@ -363,7 +363,7 @@ function EtatVide({ onglet, filtre, q, t, onTrouver }: {
         {filtre ? t("vide.aucunResultatTexte", { q: q.trim() }) : t(`vide.${onglet}Texte`)}
       </p>
       <button type="button" onClick={onTrouver}
-        className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(37,99,235,.3)] focus-visible:outline-2 focus-visible:outline-accent">
+        className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)] focus-visible:outline-2 focus-visible:outline-accent">
         <Search size={15} aria-hidden />
         {filtre && q.trim() ? t("vide.chercherExterne", { q: q.trim() }) : t("trouverTitre")}
       </button>

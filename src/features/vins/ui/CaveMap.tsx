@@ -21,7 +21,7 @@ function pastille(nb: number, actif: boolean): L.DivIcon {
     html:
       `<div style="width:${taille}px;height:${taille}px;border-radius:999px;background:var(--accent);color:#fff;` +
       `display:grid;place-items:center;font:600 13px/1 ui-sans-serif,system-ui;border:2px solid #fff;` +
-      `box-shadow:0 3px 6px rgba(33,30,26,.35);${actif ? "transform:scale(1.15);" : ""}">${nb}</div>`,
+      `box-shadow:0 3px 6px var(--color-shadow);${actif ? "transform:scale(1.15);" : ""}">${nb}</div>`,
     iconSize: [taille, taille],
     iconAnchor: [taille / 2, taille / 2],
   });
@@ -37,7 +37,7 @@ function AutourDeMoi({ label }: { label: string }) {
         const pos = await positionActuelle();
         if (pos) map.setView([pos.lat, pos.lng], 13);
       }}
-      className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_rgba(33,30,26,.15)] focus-visible:outline-2 focus-visible:outline-accent"
+      className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_var(--color-shadow)] focus-visible:outline-2 focus-visible:outline-accent"
     >
       <LocateFixed size={13} className="text-accent" aria-hidden />
       {label}
@@ -70,7 +70,7 @@ export function CaveMap({ lieux }: { lieux: LieuCarte[] }) {
 
       {selection && (
         <div data-testid="cave-marqueur-fiche"
-          className="absolute inset-x-3 bottom-3 z-[1000] flex items-start gap-3 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_rgba(33,30,26,.22)]">
+          className="absolute inset-x-3 bottom-3 z-[1000] flex items-start gap-3 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
           <div className="min-w-0 flex-1">
             <div className="truncate font-serif text-base text-ink">{selection.nom}</div>
             <div className="mt-0.5 flex items-center gap-2 text-[11.5px] text-faint">

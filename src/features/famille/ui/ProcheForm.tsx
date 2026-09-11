@@ -74,7 +74,7 @@ export function ProcheForm({
         {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
 
         <div className="sticky bottom-16 -mx-4 bg-gradient-to-t from-app from-60% to-transparent px-4 pb-3 pt-6 md:bottom-0">
-          <Button type="submit" pending={pending} className="w-full py-3.5 shadow-[0_6px_18px_rgba(37,99,235,.3)]">
+          <Button type="submit" pending={pending} className="w-full py-3.5 shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)]">
             {t("form.enregistrer")}
           </Button>
         </div>

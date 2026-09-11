@@ -49,7 +49,7 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
 
   const chipCls = (active: boolean) =>
     `inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-      active ? "border-line bg-surface text-ink shadow-[0_2px_6px_rgba(33,30,26,.1)]" : "border-line bg-surface text-faint opacity-60"
+      active ? "border-line bg-surface text-ink shadow-[0_2px_6px_var(--color-shadow)]" : "border-line bg-surface text-faint opacity-60"
     }`;
 
   return (

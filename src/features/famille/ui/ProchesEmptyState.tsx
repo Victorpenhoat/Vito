@@ -20,7 +20,7 @@ export async function ProchesEmptyState({ userName }: { userName?: string | null
       <h2 className="font-serif text-2xl font-medium text-ink">{t("proches.vide")}</h2>
       <p className="mt-2 mb-6 max-w-sm text-sm leading-relaxed text-muted">{t("proches.videTexte")}</p>
       <Link href="/famille/proches/nouveau">
-        <Button className="inline-flex items-center gap-2 shadow-[0_6px_18px_rgba(37,99,235,.3)]">
+        <Button className="inline-flex items-center gap-2 shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)]">
           <Plus size={16} aria-hidden />
           {t("proches.ajouterPersonne")}
         </Button>

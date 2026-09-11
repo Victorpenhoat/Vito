@@ -196,7 +196,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
           </label>
 
           {state && "error" in state && state.error && <p role="alert" className="text-danger">{state.error}</p>}
-          <Button type="submit" pending={pending} className="w-full py-3.5 shadow-[0_6px_18px_rgba(37,99,235,.3)]">{t("tunnel.dEnregistrer")}</Button>
+          <Button type="submit" pending={pending} className="w-full py-3.5 shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)]">{t("tunnel.dEnregistrer")}</Button>
         </form>
       )}
     </div>
