@@ -12,6 +12,7 @@
   --accent: #4F8BF0; --accent-hover: #6BA0F5;
   --accent-50: rgba(79,139,240,0.14); --accent-600: #6BA0F5;
   --ink: #F2EDE3; --muted: #A39A8A; --faint: #6E665A;
+  --on-fill: #0A1220; --shadow: rgba(0,0,0,.5);
   --badge: #26211A; --gold: #E9B949; --danger: #F2998E; --danger-bg: rgba(244,63,63,0.14);
   --kpi-green: #7BE0A0; --kpi-green-bg: rgba(34,197,94,0.14);
   --kpi-blue: #4F8BF0; --kpi-blue-bg: rgba(79,139,240,0.14);
@@ -28,6 +29,7 @@
   --accent: #2563EB; --accent-hover: #1D4ED8;
   --accent-50: #E6EDFC; --accent-600: #1D4ED8;
   --ink: #211E1A; --muted: #7A736A; --faint: #9A9081;
+  --on-fill: #FFFFFF; --shadow: rgba(16,24,40,.12);
   --badge: #F0EBE0; --gold: #E9B949; --danger: #B3261E; --danger-bg: #FEF3F2;
   --kpi-green: #15803D; --kpi-green-bg: #E7F2EB;
   --kpi-blue: #2563EB; --kpi-blue-bg: #E6EDFC;
@@ -54,6 +56,8 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
+  --color-on-fill: var(--on-fill);
+  --color-shadow: var(--shadow);
   --color-badge: var(--badge);
   --color-kpi-green: var(--kpi-green);
   --color-kpi-green-bg: var(--kpi-green-bg);
@@ -63,9 +67,12 @@
   --color-kpi-amber-bg: var(--kpi-amber-bg);
   --color-kpi-violet: var(--kpi-violet);
   --color-kpi-violet-bg: var(--kpi-violet-bg);
+  --color-hero-from: var(--hero-from);
+  --color-hero-to: var(--hero-to);
   --radius-card: 4px;
   --radius-tile: 4px;
   --radius-control: 3px;
+  --radius-pill: 999px;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, serif;
 }
