@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { Inter, Newsreader } from "next/font/google";
-import { cookies } from "next/headers";
 import { routing } from "@/lib/i18n/routing";
+import { themeServeur } from "@/lib/platform/theme";
 import { PwaRegister } from "./pwa-register";
 import { LiensProfonds } from "@/features/shell/ui/LiensProfonds";
 import { SentryClientInit } from "@/lib/observability/sentryClient";
@@ -48,12 +48,9 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
-  const cookieStore = await cookies();
-  // Le SOMBRE est le défaut depuis la refonte v3 (décision PO du 2026-09-11) :
-  // toutes les maquettes du canevas sont sombres, et le clair n'y est qu'une
-  // contrepartie que le designer a explicitement reportée. Le clair reste à un
-  // clic, et le choix est mémorisé par le cookie.
-  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
+  // Défaut et lecture du cookie : voir `src/lib/platform/theme.ts`, partagé
+  // avec `global-not-found.tsx` qui contourne ce layout.
+  const theme = await themeServeur();
   return (
     <html lang={locale} data-theme={theme} className={`${inter.variable} ${newsreader.variable}`}>
       <body>
