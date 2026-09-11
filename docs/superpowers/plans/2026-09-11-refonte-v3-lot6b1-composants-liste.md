@@ -866,10 +866,29 @@ et le rail des vues par :
 
 La carte reste un segment : la sortir du commutateur appartient au lot 4.
 
-Les clés `effacer`, `vueListe`, `vueVignettes` et `vueCarte` **existent déjà**
-dans les quatre langues (vérifié). Vérifier seulement leur espace de noms :
-`CategoryTabs` emploie deux fonctions de traduction, `t` et `tr`, et prendre la
-mauvaise donne une clé brute à l'écran sans casser aucun test.
+**Les espaces de noms, vérifiés clé par clé dans les quatre langues** —
+`CategoryTabs` emploie DEUX fonctions de traduction, `t = useTranslations("places")`
+et `tr = useTranslations(config.ns)` où `config.ns` vaut `restos` ou `hotels`.
+Prendre la mauvaise donne une clé brute à l'écran sans casser aucun test :
+
+| Clé | Où elle est | À employer |
+|---|---|---|
+| `places.vueListe` / `vueVignettes` / `vueCarte` | existe | `t("vueListe")`… |
+| `places.tagTous` | existe | `t("tagTous")` |
+| `restos.rechercherPlaceholder` / `hotels.…` | existe | `tr("rechercherPlaceholder")` |
+| `places.effacer` | **N'EXISTE PAS** | à créer |
+| `restos.onglets.aria` / `hotels.onglets.aria` | **N'EXISTE PAS** | à créer |
+
+Créer les deux clés manquantes dans **les quatre** fichiers `messages/*.json` :
+
+- `places.effacer` — « Effacer la recherche » (fr), et sa traduction en en/es/it.
+  Il existe déjà un `famille.proches.effacer` = « Effacer la recherche » dont on
+  peut reprendre les quatre valeurs.
+- `restos.onglets.aria` **et** `hotels.onglets.aria` — le nom accessible du
+  groupe d'onglets, ex. « Filtrer les adresses ». Un `role="tablist"` sans nom
+  est annoncé comme un groupe anonyme.
+
+Sans elles, `next-intl` affiche la clé brute à l'écran et aucun test ne bronche.
 
 - [ ] **Step 3 : les filtres de tags et de statut**
 
