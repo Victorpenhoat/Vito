@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { SRC, fichiersSources } from "./fichiersSources";
+import { SRC, fichiersSources, sansCommentaires } from "./fichiersSources";
 
 // Liste CLOSE, chaque entrée avec sa raison. C'est une liste de FICHIERS et non
 // un motif : un nouveau fichier qui code une teinte doit faire échouer ce test
@@ -28,7 +28,7 @@ describe("aucune teinte littérale hors de la table", () => {
   it("ne trouve de couleur en dur que dans les fichiers autorisés", () => {
     const coupables = fichiersSources()
       .filter((f) => !(f in AUTORISES))
-      .filter((f) => TEINTE.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => TEINTE.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(coupables).toEqual([]);
   });
@@ -39,7 +39,7 @@ describe("aucune teinte littérale hors de la table", () => {
   // page hors ligne ne sont pas concernés : ils vivent hors de Tailwind.
   it("ne laisse aucun rayon littéral dans une classe Tailwind", () => {
     const coupables = fichiersSources()
-      .filter((f) => /rounded-\[/.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => /rounded-\[/.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(coupables).toEqual([]);
   });

@@ -15,3 +15,23 @@ export function fichiersSources(): string[] {
     .map((e) => path.relative(SRC, path.join(e.parentPath, e.name)))
     .filter((p) => !/\.(test|stories)\.tsx?$/.test(p));
 }
+
+/**
+ * Le code d'un fichier, ses commentaires retirés.
+ *
+ * Un garde-fou qui lit les commentaires ne peut pas être expliqué : le
+ * commentaire qui dit « n'écrivez pas `text-white` » compte alors comme un
+ * `text-white`. Pire, il maintient son fichier en dette une fois celle-ci
+ * payée, et le test qui surveille la dette se tait.
+ *
+ * On ne retire que les blocs et les lignes ENTIÈREMENT commentées : un `//` en
+ * milieu de ligne est le plus souvent un `https://`, et le retirer masquerait
+ * ce qui suit.
+ */
+export function sansCommentaires(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .split("\n")
+    .filter((l) => !/^\s*(\/\/|\*)/.test(l))
+    .join("\n");
+}
