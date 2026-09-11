@@ -22,7 +22,9 @@ exposées via `@theme`), Vitest, Storybook, Playwright.
 - **Aucune teinte littérale** ni **aucun rayon littéral** : `src/test/teintes-litterales.test.ts` les refuse, notations courtes (`#fff`) comprises.
 - **Aucun `text-white`** hors de la liste close de `src/test/texte-sur-aplat.test.ts`. `--on-fill` est le rôle du texte sur un aplat.
 - Les valeurs viennent du canevas `refonte v3 - ecrans.dc.html`, bloc `data-screen-label="Composants"`, complété par l'écran `M · Fiche adresse`. Ce qui n'y est pas est **dérivé**, et doit être signalé comme tel.
-- Tout garde-fou ajouté doit être **éprouvé par cassure délibérée** : le voir rougir, puis verdir.
+- Tout garde-fou ajouté doit être **éprouvé par cassure délibérée** : le voir rougir, puis verdir. La cassure doit faire échouer **l'assertion visée**, pas une assertion antérieure du même test — sinon la preuve ne prouve rien.
+- Pour déclencher un événement dans un test : `fireEvent` de `@testing-library/react`. **Jamais** `@testing-library/user-event` (non déclaré dans `package.json`, il ne se résout que par hoisting depuis storybook), ni `element.click()` natif.
+- Toute prop de l'interface publique doit avoir un test qui échoue si elle cesse de fonctionner. Un `data-testid` ou un attribut ARIA doit être éprouvé **sur l'élément interactif**, pas « quelque part dans la sortie ».
 - Un composant ne doit **jamais** être migré à moitié : si un site résiste, le laisser en dette plutôt que de tordre le composant.
 - Français dans les commentaires, les noms de test et les messages de commit.
 
@@ -466,6 +468,16 @@ describe("ViewSwitcher", () => {
     expect(onChange).toHaveBeenCalledWith("vignettes");
   });
 
+  // Les e2e cliquent les segments par leur data-testid (`view-carte`…) : il doit
+  // siéger sur le BOUTON, pas sur le rail qui les contient. Écrit de façon à
+  // échouer si on le déplaçait sur l'enveloppe — constater sa simple présence
+  // quelque part ne protégerait de rien.
+  it("place testId sur le segment interactif", () => {
+    render(<ViewSwitcher options={OPTIONS} valeur="liste" onChange={() => {}}
+      testId={(v) => `view-${v}`} />);
+    expect(screen.getByRole("button", { name: "Liste" }).getAttribute("data-testid")).toBe("view-liste");
+  });
+
   // Le composant ne décide pas du nombre de vues : la carte en est une chez
   // Restos tant que le lot 4 ne l'a pas sortie du commutateur.
   it("rend autant de segments qu'on lui en donne", () => {
@@ -522,7 +534,7 @@ export function ViewSwitcher<T extends string>({
 - [ ] **Step 4 : lancer**
 
 Run : `npx vitest run src/features/shared/ui/ViewSwitcher.test.tsx`
-Expected : PASS, 3 tests.
+Expected : PASS, 4 tests.
 
 - [ ] **Step 5 : la story**
 
@@ -610,6 +622,15 @@ describe("SearchField", () => {
     expect(onChange).toHaveBeenCalledWith("");
   });
 
+  // Les e2e ciblent le champ par son data-testid (`places-search`) : il doit
+  // siéger sur l'<input>, pas sur le <label> qui l'enveloppe. Écrit de façon à
+  // échouer si on le déplaçait.
+  it("place testId sur le champ, pas sur son étiquette", () => {
+    render(<SearchField valeur="" onChange={() => {}} placeholder="Nom…"
+      libelleEffacer="Effacer" testId="places-search" />);
+    expect(screen.getByRole("searchbox").getAttribute("data-testid")).toBe("places-search");
+  });
+
   // Hors connexion, le champ doit être inerte POUR DE BON : un champ
   // simplement grisé se laisse encore remplir, et la frappe part dans le vide.
   it("est réellement inerte hors connexion", () => {
@@ -676,7 +697,7 @@ export function SearchField({
 - [ ] **Step 4 : lancer**
 
 Run : `npx vitest run src/features/shared/ui/SearchField.test.tsx`
-Expected : PASS, 3 tests.
+Expected : PASS, 4 tests.
 
 - [ ] **Step 5 : la story**
 
@@ -782,8 +803,27 @@ Expected : **FAIL**, avec environ soixante fichiers.
 
 Recopier la liste et remplir `DETTE`, chaque entrée portant sa famille et donc
 son lot : `"6B-2"` pour la famille A (pastille interactive), `"6B-3"` pour les
-familles B et C. En cas de doute sur un fichier qui contient les deux, marquer
-le lot le plus tardif — il faut que le fichier sorte de la dette en une fois.
+familles B et C.
+
+**La règle de classement n'est pas « quelle famille domine » mais « le fichier
+sort-il de la dette en une fois ».** Le second test de ce garde-fou exige qu'une
+entrée retirée n'ait PLUS AUCUNE pastille faite main. Un fichier qui en contient
+une interactive et une descriptive ne peut donc pas sortir en 6B-2 : il va en
+**6B-3**. Seuls les fichiers dont TOUTES les pastilles sont interactives vont en
+6B-2.
+
+Relevé attendu, mesuré le 2026-09-11 : **57 fichiers**, dont **23** purement
+interactifs (6B-2) et **34** mixtes ou descriptifs (6B-3). Un classement
+pré-calculé est disponible dans le dossier de travail SDD
+(`dette-t5.txt`), avec pour chaque fichier le compte `n/m interactives`.
+
+**C'est une heuristique, pas une mesure.** Elle lit une fenêtre de quelques
+lignes autour de chaque `rounded-*…px-` et y cherche `<button`, `<label`,
+`aria-pressed`, `role="tab"`, `onClick` ou un ternaire de classe. Une première
+version qui ne regardait QUE la ligne du `rounded-full` classait
+`FiltresActivites` en descriptif alors qu'il porte des filtres cliquables — le
+ternaire d'état actif vivait sur la ligne suivante. Vérifier au cas par cas en
+6B-2 et 6B-3 ; ce classement sert à ordonner le travail, pas à le dispenser.
 
 Ne rien inventer : si la sortie contient un fichier que le tri n'a pas classé,
 le dire dans le rapport plutôt que de le ranger au jugé.
