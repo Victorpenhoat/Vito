@@ -7,12 +7,20 @@ export function initials(name: string): string {
 
 export type Tone = "green" | "blue" | "amber" | "violet";
 
-export function toneClasses(tone: Tone): { bg: string; text: string } {
-  const map: Record<Tone, { bg: string; text: string }> = {
-    green: { bg: "bg-kpi-green-bg", text: "text-kpi-green" },
-    blue: { bg: "bg-kpi-blue-bg", text: "text-kpi-blue" },
-    amber: { bg: "bg-kpi-amber-bg", text: "text-kpi-amber" },
-    violet: { bg: "bg-kpi-violet-bg", text: "text-kpi-violet" },
+/**
+ * Les classes de fond et de bordure d'une tuile, par ton.
+ *
+ * Le canevas veut un fond à 10 % et une bordure à 24 % ; aucun jeton ne porte
+ * la bordure. Le modificateur d'opacité de Tailwind s'applique au jeton de ton,
+ * ce qui évite d'ajouter quatre rôles — et d'écrire un littéral, que le
+ * garde-fou des teintes refuserait.
+ */
+export function toneClasses(tone: Tone): string {
+  const map: Record<Tone, string> = {
+    green: "bg-kpi-green/10 border-kpi-green/24",
+    blue: "bg-kpi-blue/10 border-kpi-blue/24",
+    amber: "bg-kpi-amber/10 border-kpi-amber/24",
+    violet: "bg-kpi-violet/10 border-kpi-violet/24",
   };
   return map[tone];
 }

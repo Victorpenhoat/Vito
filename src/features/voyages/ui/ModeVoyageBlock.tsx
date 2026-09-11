@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/features/shared/ui/Button";
 import { useFormatter, useTranslations } from "next-intl";
 import { Plane, Check, X, Download, Trash2 } from "lucide-react";
 import { enregistrerCarnet, etatCarnet, retirerCarnet } from "../data/horsLigneClient";
@@ -96,12 +97,12 @@ export function ModeVoyageBlock({ voyageId, locale, documentIds, enCours, destin
             </button>
           </>
         ) : (
-          <button type="button" onClick={telecharger} disabled={phase === "travail"}
+          <Button type="button" onClick={telecharger} disabled={phase === "travail"}
             data-testid="mode-voyage-telecharger"
-            className="inline-flex items-center gap-1.5 rounded-control bg-accent px-3 py-1.5 text-[11.5px] font-semibold text-white hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60">
+            className="gap-1.5 px-3 py-1.5 text-[11.5px]">
             <Download size={13} aria-hidden />
             {phase === "travail" ? t("horsLigne.enCours") : t("horsLigne.telecharger")}
-          </button>
+          </Button>
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useActionState, useState } from "react";
+import { Button } from "@/features/shared/ui/Button";
 import { useTranslations } from "next-intl";
 import { creerCompteAvecInvitation } from "../data/actions";
 
@@ -56,11 +57,10 @@ export function CreerCompteTunnel({ token, emailIndice, emailImpose }: {
               data-testid="compte-mot-de-passe" onChange={(e) => setMotDePasse(e.target.value)} className={champ} />
           </label>
           <p className="text-[11.5px] text-faint">{t("identite.motDePasseAide")}</p>
-          <button type="button" disabled={!etape1Ok} data-testid="etape-suivante"
-            onClick={() => setEtape(2)}
-            className="rounded-control bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60">
+          <Button type="button" disabled={!etape1Ok} data-testid="etape-suivante"
+            onClick={() => setEtape(2)}>
             {t("continuer")}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -84,10 +84,10 @@ export function CreerCompteTunnel({ token, emailIndice, emailImpose }: {
             <button type="button" onClick={() => setEtape(1)} className="text-[12.5px] text-muted hover:text-ink">
               {t("retour")}
             </button>
-            <button type="button" disabled={!etape2Ok} data-testid="etape-suivante" onClick={() => setEtape(3)}
-              className="ml-auto rounded-control bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60">
+            <Button type="button" disabled={!etape2Ok} data-testid="etape-suivante" onClick={() => setEtape(3)}
+              className="ml-auto">
               {t("continuer")}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -119,10 +119,10 @@ export function CreerCompteTunnel({ token, emailIndice, emailImpose }: {
             <button type="button" onClick={() => setEtape(2)} className="text-[12.5px] text-muted hover:text-ink">
               {t("retour")}
             </button>
-            <button type="submit" disabled={pending} data-testid="creer-compte"
-              className="ml-auto rounded-control bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60">
+            <Button type="submit" disabled={pending} data-testid="creer-compte"
+              className="ml-auto">
               {t("commencer")}
-            </button>
+            </Button>
           </div>
         </div>
       )}

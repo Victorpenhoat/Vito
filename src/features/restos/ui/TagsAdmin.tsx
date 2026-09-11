@@ -60,11 +60,11 @@ export function TagsAdmin({ tags }: { tags: TagAdmin[] }) {
         ))}
       </ul>
 
-      <button type="button" data-testid="tag-nouveau" onClick={() => setCreation(true)}
-        className="inline-flex items-center gap-2 self-start rounded-control bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent">
+      <Button type="button" data-testid="tag-nouveau" onClick={() => setCreation(true)}
+        className="self-start">
         <Plus size={15} aria-hidden />
         {t("tags.nouveau")}
-      </button>
+      </Button>
 
       <Modal open={creation} onClose={() => setCreation(false)} title={t("tags.nouveau")}>
         <TagForm mode="create" onDone={() => setCreation(false)} t={t} />

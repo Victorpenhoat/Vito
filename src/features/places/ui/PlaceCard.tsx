@@ -1,7 +1,7 @@
 "use client";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/routing";
-import { Badge } from "@/features/shared/ui/Badge";
+import { CountBadge } from "@/features/shared/ui/CountBadge";
 import { Avatar } from "@/features/shared/ui/Avatar";
 import { avatarColor } from "@/features/famille/domain/avatarColor";
 import type { Place } from "../domain/filterPlaces";
@@ -49,9 +49,9 @@ export function PlaceCard({ place, variant = "liste" }: { place: Place; variant?
   const chips = visibleTags.length > 0 && (
     <div className="flex flex-wrap gap-1">
       {visibleTags.map((tag) => (
-        <Badge key={tag.slug} style={tag.color ? { backgroundColor: tag.color } : undefined} className={tag.color ? "text-white" : ""}>
+        <CountBadge key={tag.slug} style={tag.color ? { backgroundColor: tag.color } : undefined} className={tag.color ? "text-white" : ""}>
           {tag.label}
-        </Badge>
+        </CountBadge>
       ))}
     </div>
   );

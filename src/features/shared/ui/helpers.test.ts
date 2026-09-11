@@ -10,7 +10,7 @@ describe("initials", () => {
 
 describe("toneClasses", () => {
   it("mappe chaque tone", () => {
-    expect(toneClasses("green")).toEqual({ bg: "bg-kpi-green-bg", text: "text-kpi-green" });
-    expect(toneClasses("violet")).toEqual({ bg: "bg-kpi-violet-bg", text: "text-kpi-violet" });
+    expect(toneClasses("green")).toBe("bg-kpi-green/10 border-kpi-green/24");
+    expect(toneClasses("violet")).toBe("bg-kpi-violet/10 border-kpi-violet/24");
   });
 });

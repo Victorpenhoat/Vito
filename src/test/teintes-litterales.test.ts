@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { SRC, fichiersSources } from "./fichiersSources";
+import { SRC, fichiersSources, sansCommentaires } from "./fichiersSources";
 
 // Liste CLOSE, chaque entrée avec sa raison. C'est une liste de FICHIERS et non
 // un motif : un nouveau fichier qui code une teinte doit faire échouer ce test
@@ -22,13 +22,16 @@ const AUTORISES: Record<string, string> = {
 // blancs soulignés (`16px_rgba(...)`), et `_` est un caractère de mot — la
 // limite ne mordrait donc pas, et TOUTE la famille des ombres passerait au
 // travers. Ce piège a été mesuré en écrivant ce plan, pas supposé.
-const TEINTE = /#[0-9A-Fa-f]{6}(?![0-9A-Fa-f])|rgba?\(\s*\d/;
+// `{3,6}` et non `{6}` : une notation courte est une teinte comme une autre, et
+// quatre `#fff` ont vécu dans des pastilles de carte sans que ce test les voie.
+// Deux d'entre eux posaient du blanc sur l'accent — 2,48:1.
+const TEINTE = /#[0-9A-Fa-f]{3,6}(?![0-9A-Fa-f])|rgba?\(\s*\d/;
 
 describe("aucune teinte littérale hors de la table", () => {
   it("ne trouve de couleur en dur que dans les fichiers autorisés", () => {
     const coupables = fichiersSources()
       .filter((f) => !(f in AUTORISES))
-      .filter((f) => TEINTE.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => TEINTE.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(coupables).toEqual([]);
   });
@@ -39,7 +42,7 @@ describe("aucune teinte littérale hors de la table", () => {
   // page hors ligne ne sont pas concernés : ils vivent hors de Tailwind.
   it("ne laisse aucun rayon littéral dans une classe Tailwind", () => {
     const coupables = fichiersSources()
-      .filter((f) => /rounded-\[/.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => /rounded-\[/.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(coupables).toEqual([]);
   });

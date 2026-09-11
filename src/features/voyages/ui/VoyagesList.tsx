@@ -92,7 +92,7 @@ function Carte({ voyage: v, t, locale, today }: {
       <Link href={`/voyages/${v.id}`} className="block overflow-hidden rounded-card border border-line bg-surface focus-visible:outline-2 focus-visible:outline-accent">
         <VoyageCover photoRef={v.cover_photo_ref} url={v.cover_url} statut={v.statut} className="h-[150px]">
           {dans !== null && (
-            <span className="absolute left-3 top-3 rounded-full bg-accent/95 px-2.5 py-1 text-[10.5px] font-semibold text-white">
+            <span className="absolute left-3 top-3 rounded-full bg-accent/95 px-2.5 py-1 text-[10.5px] font-semibold text-on-fill">
               {t("dansNJours", { n: dans })}
             </span>
           )}

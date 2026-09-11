@@ -373,10 +373,15 @@ trois nouveaux seuils.
 
 - [ ] **Step 7 : prouver que les seuils mordent**
 
-Remplacer temporairement `--accent-active: #4D8DFF` par `#B9D4FF` (un bleu trop
-clair), lancer.
+Remplacer temporairement `--accent-active: #4D8DFF` par `#1E3A6B` (un bleu
+**sombre**), lancer.
 Expected : FAIL, `on-fill sur accent-active tient 4.5:1`. Remettre, PASS.
 Recopier les deux sorties.
+
+Le mutant doit être sombre, pas clair : `--on-fill` est lui-même sombre en
+thème sombre, donc un bleu CLAIR augmente le contraste au lieu de le réduire et
+le test passe — mesuré, `#B9D4FF` donne 12,43:1. Une mutation mal choisie fait
+croire qu'un seuil ne mord pas alors qu'il n'a rien eu à mordre.
 
 - [ ] **Step 8 : vérification complète et commit**
 

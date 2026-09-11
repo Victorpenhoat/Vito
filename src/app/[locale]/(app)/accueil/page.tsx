@@ -4,7 +4,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { Link } from "@/lib/i18n/routing";
 import { Card } from "@/features/shared/ui/Card";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
-import { Badge } from "@/features/shared/ui/Badge";
+import { CountBadge } from "@/features/shared/ui/CountBadge";
 import { Fab } from "@/features/shared/ui/Fab";
 import { HeroCard } from "@/features/accueil/ui/HeroCard";
 import { StatsRow } from "@/features/accueil/ui/StatsRow";
@@ -63,7 +63,7 @@ export default async function AccueilPage() {
               {todo.map((it) => (
                 <li key={it.key} className="flex items-center justify-between text-sm text-ink">
                   <span>{t(`todo.${it.key}`)}</span>
-                  <Badge>{it.count}</Badge>
+                  <CountBadge>{it.count}</CountBadge>
                 </li>
               ))}
             </ul>

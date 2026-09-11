@@ -10,7 +10,12 @@ const DIM: Record<"sm" | "md" | "lg" | "xl", string> = {
 export function Avatar({ name, size = "md", color }: { name: string; size?: "sm" | "md" | "lg" | "xl"; color?: string }) {
   return (
     <span
-      className={`inline-grid place-items-center rounded-full font-semibold text-white ${DIM[size]} ${color ? "" : "bg-accent"}`}
+      // Deux textes, parce qu'il y a deux fonds. Sur une teinte de la palette
+      // d'avatars, le blanc tient 4,47 à 5,88:1 et --on-fill n'y ferait que
+      // 3,19 à 4,19:1 ; sur le repli en accent, c'est exactement l'inverse
+      // (2,48:1 contre 7,54:1). Un seul texte pour les deux fonds dégraderait
+      // forcément l'un des deux.
+      className={`inline-grid place-items-center rounded-full font-semibold ${DIM[size]} ${color ? "text-white" : "bg-accent text-on-fill"}`}
       style={color ? { backgroundColor: color } : undefined}
       aria-hidden="true"
     >

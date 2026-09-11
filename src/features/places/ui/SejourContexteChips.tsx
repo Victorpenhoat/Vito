@@ -131,7 +131,7 @@ function Calendrier({ plage, onJour, onSansDates }: {
                     <button key={k} type="button" data-testid={`jour-${jour}`} onClick={() => onJour(jour)}
                       aria-pressed={arrivee || depart}
                       className={`rounded-card py-1.5 text-[12px] focus-visible:outline-2 focus-visible:outline-accent ${
-                        arrivee || depart ? "bg-accent font-semibold text-white"
+                        arrivee || depart ? "bg-accent font-semibold text-on-fill"
                         : dedans ? "bg-accent-50 text-accent" : "text-ink hover:bg-surface-hover"
                       }`}>
                       {Number(jour.slice(8))}

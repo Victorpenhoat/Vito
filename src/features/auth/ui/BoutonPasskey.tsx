@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Button } from "@/features/shared/ui/Button";
 import { useTranslations } from "next-intl";
 import { Fingerprint } from "lucide-react";
 import { useRouter } from "@/lib/i18n/routing";
@@ -58,11 +59,10 @@ export function BoutonPasskey({ onEchec }: { onEchec?: (message: string) => void
   }
 
   return (
-    <button type="button" data-testid="connexion-passkey" disabled={enCours}
-      onClick={() => void connecter()}
-      className="inline-flex items-center justify-center gap-2 rounded-control bg-accent px-4 py-2.5 font-semibold text-white disabled:opacity-60">
+    <Button type="button" data-testid="connexion-passkey" disabled={enCours}
+      onClick={() => void connecter()}>
       <Fingerprint size={16} aria-hidden />
       {t("continuerAvec", { moyen: t(libelle) })}
-    </button>
+    </Button>
   );
 }

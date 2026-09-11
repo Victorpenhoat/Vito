@@ -97,7 +97,7 @@ export async function VoyageDetail({ id }: { id: string }) {
           </div>
         </div>
         <div className="absolute inset-x-5 bottom-4 text-white">
-          <span className="rounded-full bg-accent/95 px-2.5 py-1 text-[10px] font-semibold">
+          <span className="rounded-full bg-accent/95 px-2.5 py-1 text-[10px] font-semibold text-on-fill">
             {t(`chips.${chip}`)}{dans !== null ? ` · ${t("dansNJoursCourt", { n: dans })}` : ""}
           </span>
           <h1 className="mt-2 font-serif text-3xl font-medium md:text-4xl">{voyage.titre}</h1>
