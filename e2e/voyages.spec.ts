@@ -329,7 +329,7 @@ test("le planning est un calendrier : mois, semaine, et la frise en vue Année",
 
   // vue Mois par défaut : un vrai calendrier, avec la zone scolaire annoncée
   await expect(page.getByTestId("planning-calendrier")).toBeVisible();
-  await expect(page.getByTestId("planning-zone")).toContainText("C");
+  await expect(page.getByTestId("planning-zone")).toContainText("Zone A");
   const semainesDuMois = await page.getByTestId("planning-semaine").count();
   expect(semainesDuMois).toBeGreaterThanOrEqual(4);
   await expect(page.getByTestId("planning-legende")).toBeVisible();

@@ -3,7 +3,7 @@ import { AlertTriangle, Plane, Sun } from "lucide-react";
 import { Link } from "@/lib/i18n/routing";
 import { getActivitesSemaine } from "../data/queries";
 import { getMesVoyages } from "@/features/voyages/data/queries";
-import { VACANCES_ZONE_C, ZONE_SCOLAIRE } from "@/features/voyages/data/vacancesScolaires";
+import { getVacances, getZoneDuFoyer } from "@/features/voyages/data/vacances";
 import {
   joursDeLaSemaine, semaineVoisine, occurrencesDuJour, conflitsDuJour, signauxDuJour,
 } from "../domain/semaine";
@@ -17,7 +17,8 @@ import { GrilleSemaine } from "./GrilleSemaine";
  *
  * Il dit où il faut être — et surtout où il faut être DEUX FOIS en même temps.
  * Les vacances scolaires viennent de la MÊME source que le planning des
- * voyages : deux calendriers finiraient par se contredire.
+ * voyages — le calendrier du ministère, mis en cache, et la zone du foyer :
+ * deux calendriers finiraient par se contredire.
  */
 export async function VueSemaine({ semaine, aujourdhui }: {
   /** Date de référence : n'importe quel jour de la semaine à afficher. */
@@ -31,10 +32,15 @@ export async function VueSemaine({ semaine, aujourdhui }: {
   // clics rapprochés perdaient la seconde navigation douce.
   const versSemaine = (jour: string) => `/${locale}/activites?onglet=semaine&semaine=${jour}`;
   const jours = joursDeLaSemaine(semaine);
-  const [{ activites, exceptions }, voyages] = await Promise.all([
+  const [{ activites, exceptions }, voyages, zone] = await Promise.all([
     getActivitesSemaine(jours[0]!, jours[6]!),
     getMesVoyages(),
+    getZoneDuFoyer(),
   ]);
+  // Sans zone du foyer, aucun calendrier à consulter : la semaine se lit
+  // quand même, simplement sans le repère des vacances (c'est l'écran des
+  // Réglages qui demande la zone, pas celui-ci).
+  const vacances = zone ? await getVacances(zone, jours[0]!, jours[6]!) : [];
 
   const periodes = voyages.map((v) => ({ id: v.id, titre: v.titre, debut: v.date_debut, fin: v.date_fin }));
   const jourLong = (j: string) =>
@@ -47,7 +53,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
     return {
       jour,
       occurrences,
-      signaux: signauxDuJour(jour, VACANCES_ZONE_C, periodes),
+      signaux: signauxDuJour(jour, vacances, periodes),
       // Calculés une fois : la liste et la grille montrent les mêmes conflits.
       conflits: new Set(conflitsDuJour(occurrences).flat().map((o) => o.creneauId)),
     };
@@ -78,7 +84,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
           et un rail horaire. La liste par jour reste sur téléphone, où une
           grille de douze heures serait illisible. */}
       {!vide && (
-        <GrilleSemaine jours={contenu} aujourdhui={aujourdhui} zone={ZONE_SCOLAIRE} />
+        <GrilleSemaine jours={contenu} aujourdhui={aujourdhui} zone={zone} />
       )}
 
       {vide ? (
@@ -100,11 +106,16 @@ export async function VueSemaine({ semaine, aujourdhui }: {
               }`}>
               <header className="flex flex-wrap items-center gap-2">
                 <h3 className="text-[13px] font-semibold text-ink first-letter:uppercase">{jourLong(jour)}</h3>
-                {signaux.vacances && (
+                {/* `&& zone` n'est pas une garde redondante : `signaux.
+                    vacances` est certes toujours nul sans zone (la liste des
+                    périodes est vide), mais c'est ce test qui donne à
+                    TypeScript le `string` que réclame le libellé ci-dessous.
+                    Le retirer casse la compilation, pas le rendu. */}
+                {signaux.vacances && zone && (
                   <span data-testid="jour-vacances"
                     className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
                     <Sun size={10} aria-hidden />
-                    {t("semaine.vacances", { zone: ZONE_SCOLAIRE })}
+                    {t("semaine.vacances", { zone })}
                   </span>
                 )}
                 {signaux.voyage && (

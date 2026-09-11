@@ -733,7 +733,9 @@
       "pendantVacances": "durante {libelle}",
       "horsFenetre": "{titre} — fuori dai dodici mesi mostrati",
       "aucunVoyageDate": "Nessun viaggio con date da collocare sulla linea del tempo.",
-      "zone": "Vacanze · Zona {zone}",
+      "zone": "Vacanze · {zone}",
+      "choisirZone": "Scegli la tua zona",
+      "autresZones": "Mostra anche le altre zone",
       "vues": {
         "semaine": "Settimana",
         "mois": "Mese",
@@ -756,7 +758,8 @@
         "a_venir": "In arrivo",
         "en_cours": "In corso",
         "en_preparation": "In preparazione / idea",
-        "vacances": "Vacanze scolastiche (zona {zone})"
+        "vacances": "Vacanze scolastiche ({zone})",
+        "autresZones": "Vacanze delle altre zone"
       },
       "anneeScolaire": "Anno scolastico",
       "creerIdee": "Crea un'idea"
@@ -771,6 +774,13 @@
       "expire": "scade il {date}",
       "copieImpossible": "Copia non riuscita: seleziona il link a mano.",
       "echec": "Creazione del link non possibile al momento."
+    },
+    "zone": {
+      "titre": "Zona di vacanze scolastiche",
+      "deduite": "{zone}, dedotta dal tuo indirizzo. Confermala o cambiala.",
+      "inconnue": "Non siamo riusciti a dedurre la tua zona. Scegliela per vedere le vacanze nella pianificazione.",
+      "enregistrer": "Salva",
+      "enregistree": "Zona salvata"
     }
   },
   "depenses": {
@@ -1471,7 +1481,8 @@
       "abonnement": "Abbonamento",
       "abonnementSous": "Piano e fatturazione",
       "comptes": "Account",
-      "comptesSous": "Gestire gli accessi — mai i contenuti"
+      "comptesSous": "Gestire gli accessi — mai i contenuti",
+      "vacances": "Vacanze scolastiche"
     },
     "verrou": {
       "titre": "Blocca Vito",
@@ -1875,7 +1886,7 @@
       "du": "{debut} – {fin}",
       "precedente": "Settimana precedente",
       "suivante": "Settimana successiva",
-      "vacances": "Vacanze scolastiche · zona {zone}",
+      "vacances": "Vacanze scolastiche · {zone}",
       "conflit": "Conflitto — due tragitti alle {heure}",
       "jusqua": "fino alle {heure}",
       "manquee": "Persa · {voyage}",
@@ -1887,7 +1898,7 @@
       "legende": {
         "conflit": "Conflitto di orari",
         "voyage": "Viaggio — lezione persa",
-        "vacances": "Vacanze scolastiche (zona {zone})"
+        "vacances": "Vacanze scolastiche ({zone})"
       }
     },
     "carte": {

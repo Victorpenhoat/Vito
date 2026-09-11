@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(101);
+select plan(107);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -676,6 +676,46 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
   'with u as (update public.quotas set compteur = 0 returning 1) select count(*) from u'),
   0::bigint, 'on ne remet pas son compteur à zéro');
+
+-- ── Calendrier scolaire (00063) ─────────────────────────────────────────────
+select has_table('public', 'vacances_scolaires', 'la table du calendrier scolaire existe');
+
+insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+values ('2026-2027', 'Zone C', 'pgtap Noël', '2026-12-19', '2027-01-04');
+
+-- Données publiques pour qui est connecté : tout le monde lit le même calendrier.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+  'select count(*) from public.vacances_scolaires where libelle = ''pgtap Noël'''),
+  1::bigint, 'un compte connecté lit le calendrier');
+
+-- anon ne voit rien : l'écran qui l'affiche est derrière la connexion.
+select is(tests.count_as_anon('select count(*) from public.vacances_scolaires'),
+  0::bigint, 'anon ne lit rien du calendrier');
+
+-- Le calendrier ne s'écrit pas depuis le navigateur : il vient de la source.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+        values (''2026-2027'', ''Zone A'', ''pgtap faux'', ''2026-01-01'', ''2026-01-02'')') $$,
+  '42501', null, 'un compte connecté n''écrit pas dans le calendrier');
+
+-- ── Bornes d'une période (00065) ────────────────────────────────────────────
+-- Le rôle de service contourne la RLS, donc la seule barrière qui lui reste
+-- est la contrainte. Elle compte : la dérivée d'été pose la fin au 31 août,
+-- ce qui serait AVANT le début pour un été austral, et une coquille du
+-- ministère produirait la même chose. Une ligne à l'envers écrite une fois
+-- survivrait à la correction du code — le cache ne se relit pas.
+select throws_ok(
+  $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+     values ('2026-2027', 'Réunion', 'pgtap à l''envers', '2026-12-18', '2026-08-31') $$,
+  '23514', null, 'une période qui finit avant de commencer est refusée');
+
+-- Et l'égalité reste permise : le Pont de l'Ascension des zones A, B et C
+-- tient en un seul jour, début et fin confondus.
+select lives_ok(
+  $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
+     values ('2026-2027', 'Zone A', 'pgtap un seul jour', '2027-05-07', '2027-05-07') $$,
+  'une période d''un seul jour est acceptée');
 
 select finish();
 rollback;

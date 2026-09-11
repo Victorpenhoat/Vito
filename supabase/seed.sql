@@ -41,6 +41,10 @@ values
 -- Attribution des rôles privilégiés (le trigger a tout créé en 'client').
 update public.profiles set role = 'agence' where id = '22222222-2222-2222-2222-222222222222';
 update public.profiles set role = 'admin'  where id = '33333333-3333-3333-3333-333333333333';
+-- Une zone SANS voisine, pour éprouver le cas : la Corse et l'outre-mer n'ont
+-- pas de « zone A/B/C » à comparer, et le planning n'y propose donc pas
+-- l'interrupteur « montrer aussi les autres zones ».
+update public.profiles set zone_scolaire = 'Corse' where id = '33333333-3333-3333-3333-333333333333';
 
 -- (Les tags système d'ambiance sont désormais dans la migration 00004_system_tags.sql
 -- — données de référence livrées avec le schéma, présentes aussi en prod.)
@@ -267,9 +271,11 @@ insert into public.family_members (id, user_id, first_name, last_name, relation,
 
 -- La fiche « Moi » du compte de démonstration, avec son adresse SITUÉE : c'est
 -- le point de départ des « ~22 min depuis chez nous ».
+-- Le code postal n'est pas décoratif : c'est de lui que se déduit la zone de
+-- vacances scolaires du foyer (33 → Zone A, cf. domain/zoneScolaire.ts).
 insert into public.family_members (id, user_id, first_name, last_name, relation, circle, avatar_color, address, lat, lng) values
   ('f1111111-1111-4111-8111-111111111110', '11111111-1111-1111-1111-111111111111',
-   'Victor', 'Durand', 'moi', 'proche', '#2563EB', '10 cours du Chapeau Rouge, Bordeaux', 44.8424, -0.5747);
+   'Victor', 'Durand', 'moi', 'proche', '#2563EB', '10 cours du Chapeau Rouge, 33000 Bordeaux', 44.8424, -0.5747);
 
 -- Un second enfant : sans lui, le groupement par membre de l'onglet Activités
 -- n'aurait rien à grouper.
@@ -499,3 +505,68 @@ insert into public.invitations (id, token, email, role_vise, voyage_id, cree_par
   -- invitation à un voyage : l'invité ne verra que celui-là
   ('1a000001-0000-4000-8000-000000000003', 'e2e-invitation-voyage-000000000001', null, 'invite',
    '11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', now() + interval '14 days');
+
+-- ── Calendrier scolaire (00063) ─────────────────────────────────────────────
+-- La table est un CACHE : sans ces lignes, le premier rendu du planning irait
+-- interroger data.education.gouv.fr. Ce serait vrai en dev comme en e2e, et
+-- lier la CI à la disponibilité d'un site tiers donne des builds rouges qui
+-- n'apprennent rien — on finit par les ignorer.
+--
+-- Ce ne sont pas des dates inventées : elles viennent du jeu
+-- fr-en-calendrier-scolaire, relevé le 2026-09-10, normalisées comme le fait
+-- le fournisseur (heure de PARIS, une ligne par zone et non par académie,
+-- toute population « Enseignant… » écartée).
+--
+-- L'été des quatre zones est la période DÉRIVÉE : la source ne publie pour
+-- 2026-2027 qu'un `Début des Vacances d'Été` d'un seul jour, et le
+-- fournisseur en fait un `Vacances d'Été` qui court jusqu'au 31 août (cf.
+-- `deriverEte` dans educationGouv.ts). Ce seed reste donc un instantané de ce
+-- que le fournisseur produit, pas un calendrier écrit à la main.
+--
+-- ⚠ La dérivée ne se corrigera pas toute seule : le cache ne rafraîchit que
+-- ce qui manque, donc le jour où le ministère publiera la vraie plage d'été
+-- 2026-2027, la ligne ci-dessous restera celle du 31 août. L'écart est d'un
+-- ou deux jours et va dans le sens sûr (la vraie rentrée est plus tard) ; le
+-- remède, en dev comme en prod, est de supprimer les lignes de l'année pour
+-- que la prochaine ouverture du planning les reprenne à la source.
+--
+-- Quatre zones, celles que les comptes de test habitent : le foyer de
+-- client@vito.test est à Bordeaux (Zone A) et l'interrupteur montre les deux
+-- voisines ; admin@vito.test est en Corse, une zone SANS voisine. Une zone ou
+-- une année absente n'est pas un bug — le cache ira la chercher à la source,
+-- ce qui est exactement son travail.
+--
+-- ⚠ Dès OCTOBRE 2026 — pas « passé l'été 2027 » — la fenêtre de douze mois
+-- atteint 2027-2028, et le planning ira la chercher à l'API. Cette année-là
+-- existe déjà dans la source au 2026-09-10, mais garnie de Mayotte et de la
+-- Polynésie SEULEMENT : la récupération réussira, écrira ces deux zones, et
+-- la relecture pour une zone métropolitaine rendra toujours zéro ligne. Le
+-- mémo en mémoire de processus de `getVacances` borne la rafale (une
+-- tentative toutes les six heures par (année, zone)), il ne la supprime pas.
+-- Quand le ministère publiera les zones métropolitaines de 2027-2028, les
+-- ajouter ici.
+insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin) values
+ ('2026-2027','Zone A','Vacances de la Toussaint','2026-10-17','2026-11-02'),
+ ('2026-2027','Zone A','Vacances de Noël','2026-12-19','2027-01-04'),
+ ('2026-2027','Zone A','Vacances d''Hiver','2027-02-13','2027-03-01'),
+ ('2026-2027','Zone A','Vacances de Printemps','2027-04-10','2027-04-26'),
+ ('2026-2027','Zone A','Pont de l''Ascension','2027-05-07','2027-05-07'),
+ ('2026-2027','Zone A','Vacances d''Été','2027-07-03','2027-08-31'),
+ ('2026-2027','Zone B','Vacances de la Toussaint','2026-10-17','2026-11-02'),
+ ('2026-2027','Zone B','Vacances de Noël','2026-12-19','2027-01-04'),
+ ('2026-2027','Zone B','Vacances d''Hiver','2027-02-20','2027-03-08'),
+ ('2026-2027','Zone B','Vacances de Printemps','2027-04-17','2027-05-03'),
+ ('2026-2027','Zone B','Pont de l''Ascension','2027-05-07','2027-05-07'),
+ ('2026-2027','Zone B','Vacances d''Été','2027-07-03','2027-08-31'),
+ ('2026-2027','Zone C','Vacances de la Toussaint','2026-10-17','2026-11-02'),
+ ('2026-2027','Zone C','Vacances de Noël','2026-12-19','2027-01-04'),
+ ('2026-2027','Zone C','Vacances d''Hiver','2027-02-06','2027-02-22'),
+ ('2026-2027','Zone C','Vacances de Printemps','2027-04-03','2027-04-19'),
+ ('2026-2027','Zone C','Pont de l''Ascension','2027-05-07','2027-05-07'),
+ ('2026-2027','Zone C','Vacances d''Été','2027-07-03','2027-08-31'),
+ ('2026-2027','Corse','Vacances de la Toussaint','2026-10-17','2026-11-02'),
+ ('2026-2027','Corse','Vacances de Noël','2026-12-19','2027-01-04'),
+ ('2026-2027','Corse','Vacances d''Hiver','2027-02-13','2027-03-01'),
+ ('2026-2027','Corse','Vacances de Printemps','2027-04-10','2027-04-26'),
+ ('2026-2027','Corse','Pont de l''Ascension','2027-05-07','2027-05-10'),
+ ('2026-2027','Corse','Vacances d''Été','2027-07-03','2027-08-31');

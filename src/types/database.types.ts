@@ -1567,6 +1567,7 @@ export type Database = {
           suppression_demandee_le: string | null
           suspendu_le: string | null
           verrou_delai_minutes: number
+          zone_scolaire: string | null
         }
         Insert: {
           biometrie_activee?: boolean
@@ -1581,6 +1582,7 @@ export type Database = {
           suppression_demandee_le?: string | null
           suspendu_le?: string | null
           verrou_delai_minutes?: number
+          zone_scolaire?: string | null
         }
         Update: {
           biometrie_activee?: boolean
@@ -1595,6 +1597,7 @@ export type Database = {
           suppression_demandee_le?: string | null
           suspendu_le?: string | null
           verrou_delai_minutes?: number
+          zone_scolaire?: string | null
         }
         Relationships: []
       }
@@ -1951,6 +1954,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vacances_scolaires: {
+        Row: {
+          annee_scolaire: string
+          debut: string
+          fin: string
+          id: string
+          libelle: string
+          recupere_le: string
+          zone: string
+        }
+        Insert: {
+          annee_scolaire: string
+          debut: string
+          fin: string
+          id?: string
+          libelle: string
+          recupere_le?: string
+          zone: string
+        }
+        Update: {
+          annee_scolaire?: string
+          debut?: string
+          fin?: string
+          id?: string
+          libelle?: string
+          recupere_le?: string
+          zone?: string
+        }
+        Relationships: []
       }
       vins: {
         Row: {

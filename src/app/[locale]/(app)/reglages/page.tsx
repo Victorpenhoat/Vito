@@ -11,6 +11,8 @@ import { TotpSection } from "@/features/compte/ui/TotpSection";
 import { SessionsSection } from "@/features/compte/ui/SessionsSection";
 import { getInventaireCompte, getMesConnexions, getMesSessions } from "@/features/compte/data/sessions";
 import { DonneesSection } from "@/features/compte/ui/DonneesSection";
+import { getZoneDeduiteDuFoyer } from "@/features/voyages/data/vacances";
+import { ZoneScolaireSection } from "@/features/voyages/ui/ZoneScolaireSection";
 
 // Réglages (design Onboarding_Compte, écran 13). Premier lot : profil, sommaire
 // des sections et apparence ; Sécurité / Appareils / Partages / Données arrivent
@@ -22,6 +24,12 @@ export default async function ReglagesPage() {
   ]);
   // Le layout (app) garde déjà la session ; sans profil, la page n'a pas de sens.
   if (!profil) notFound();
+
+  // La zone déduite de l'adresse du foyer. Lue par un helper GARDÉ : cette page
+  // lisait `family_members` en direct, sans `getCachedUser`, et rejouait donc
+  // le défaut des PR #61 et #63 — page et layout rendent en parallèle, et la
+  // RLS refuse la lecture à `anon` plutôt que de rendre zéro ligne.
+  const zoneDeduite = await getZoneDeduiteDuFoyer();
 
   return (
     <main className="flex flex-col gap-6 p-4 md:p-8 lg:mx-auto lg:w-full lg:max-w-[900px]">
@@ -42,6 +50,14 @@ export default async function ReglagesPage() {
       <section className="flex flex-col gap-2.5">
         <SectionLabel>{t("sections.appareils")}</SectionLabel>
         <SessionsSection sessions={sessions} connexions={connexions} />
+      </section>
+
+      <section className="flex flex-col gap-2.5">
+        <SectionLabel>{t("sections.vacances")}</SectionLabel>
+        <ZoneScolaireSection
+          zoneEnregistree={profil.zone_scolaire ?? null}
+          zoneDeduite={zoneDeduite}
+        />
       </section>
 
       <section className="flex flex-col gap-2.5">

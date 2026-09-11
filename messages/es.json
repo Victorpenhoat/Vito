@@ -733,7 +733,9 @@
       "pendantVacances": "durante {libelle}",
       "horsFenetre": "{titre}: fuera de los doce meses mostrados",
       "aucunVoyageDate": "Ningún viaje con fechas que situar en la línea de tiempo.",
-      "zone": "Vacaciones · Zona {zone}",
+      "zone": "Vacaciones · {zone}",
+      "choisirZone": "Elige tu zona",
+      "autresZones": "Mostrar también las demás zonas",
       "vues": {
         "semaine": "Semana",
         "mois": "Mes",
@@ -756,7 +758,8 @@
         "a_venir": "Próximo",
         "en_cours": "En curso",
         "en_preparation": "En preparación / idea",
-        "vacances": "Vacaciones escolares (zona {zone})"
+        "vacances": "Vacaciones escolares ({zone})",
+        "autresZones": "Vacaciones de las demás zonas"
       },
       "anneeScolaire": "Curso escolar",
       "creerIdee": "Crear una idea"
@@ -771,6 +774,13 @@
       "expire": "caduca el {date}",
       "copieImpossible": "No se puede copiar: selecciona el enlace a mano.",
       "echec": "No se puede crear el enlace por ahora."
+    },
+    "zone": {
+      "titre": "Zona de vacaciones escolares",
+      "deduite": "{zone}, deducida de tu dirección. Confírmala o cámbiala.",
+      "inconnue": "No hemos podido deducir tu zona. Elígela para ver las vacaciones en la planificación.",
+      "enregistrer": "Guardar",
+      "enregistree": "Zona guardada"
     }
   },
   "depenses": {
@@ -1471,7 +1481,8 @@
       "abonnement": "Suscripción",
       "abonnementSous": "Plan y facturación",
       "comptes": "Cuentas",
-      "comptesSous": "Gestionar accesos — nunca contenidos"
+      "comptesSous": "Gestionar accesos — nunca contenidos",
+      "vacances": "Vacaciones escolares"
     },
     "verrou": {
       "titre": "Bloquear Vito",
@@ -1875,7 +1886,7 @@
       "du": "{debut} – {fin}",
       "precedente": "Semana anterior",
       "suivante": "Semana siguiente",
-      "vacances": "Vacaciones escolares · zona {zone}",
+      "vacances": "Vacaciones escolares · {zone}",
       "conflit": "Conflicto — dos trayectos a las {heure}",
       "jusqua": "hasta las {heure}",
       "manquee": "Perdida · {voyage}",
@@ -1887,7 +1898,7 @@
       "legende": {
         "conflit": "Conflicto de horarios",
         "voyage": "Viaje — clase perdida",
-        "vacances": "Vacaciones escolares (zona {zone})"
+        "vacances": "Vacaciones escolares ({zone})"
       }
     },
     "carte": {

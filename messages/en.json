@@ -733,7 +733,9 @@
       "pendantVacances": "during {libelle}",
       "horsFenetre": "{titre} — outside the twelve months shown",
       "aucunVoyageDate": "No dated trip to place on the timeline.",
-      "zone": "School holidays · Zone {zone}",
+      "zone": "School holidays · {zone}",
+      "choisirZone": "Choose your zone",
+      "autresZones": "Also show the other zones",
       "vues": {
         "semaine": "Week",
         "mois": "Month",
@@ -756,7 +758,8 @@
         "a_venir": "Upcoming",
         "en_cours": "Under way",
         "en_preparation": "Planning / idea",
-        "vacances": "School holidays (zone {zone})"
+        "vacances": "School holidays ({zone})",
+        "autresZones": "Other zones' holidays"
       },
       "anneeScolaire": "School year",
       "creerIdee": "Create an idea"
@@ -771,6 +774,13 @@
       "expire": "expires on {date}",
       "copieImpossible": "Cannot copy — select the link manually.",
       "echec": "Cannot create the link right now."
+    },
+    "zone": {
+      "titre": "School holiday zone",
+      "deduite": "{zone}, inferred from your address. Confirm or change it.",
+      "inconnue": "We could not infer your zone. Choose it to see holidays in the planner.",
+      "enregistrer": "Save",
+      "enregistree": "Zone saved"
     }
   },
   "depenses": {
@@ -1471,7 +1481,8 @@
       "abonnement": "Subscription",
       "abonnementSous": "Plan and billing",
       "comptes": "Accounts",
-      "comptesSous": "Manage access — never content"
+      "comptesSous": "Manage access — never content",
+      "vacances": "School holidays"
     },
     "verrou": {
       "titre": "Lock Vito",
@@ -1875,7 +1886,7 @@
       "du": "{debut} – {fin}",
       "precedente": "Previous week",
       "suivante": "Next week",
-      "vacances": "School holidays · zone {zone}",
+      "vacances": "School holidays · {zone}",
       "conflit": "Clash — two trips at {heure}",
       "jusqua": "until {heure}",
       "manquee": "Missed · {voyage}",
@@ -1887,7 +1898,7 @@
       "legende": {
         "conflit": "Schedule clash",
         "voyage": "Trip — class missed",
-        "vacances": "School holidays (zone {zone})"
+        "vacances": "School holidays ({zone})"
       }
     },
     "carte": {
