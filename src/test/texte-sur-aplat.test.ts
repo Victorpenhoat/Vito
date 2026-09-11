@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { SRC, fichiersSources } from "./fichiersSources";
+import { SRC, fichiersSources, sansCommentaires } from "./fichiersSources";
 
 // `--on-fill` est le rôle du texte posé sur un aplat, et il s'inverse avec le
 // thème. `text-white` ne s'inverse pas : c'est la façon de contourner le rôle
@@ -34,8 +34,6 @@ const AUTORISES: Record<string, string> = {
 // filtrait sur `px-|py-` et manquait les boutons ronds, d'où seize fichiers
 // annoncés au plan pour vingt-cinq réels.
 const DETTE: Record<string, string> = {
-  // tâche 4 — le composant lui-même
-  "features/shared/ui/Button.tsx": "tâche 4",
   // tâche 5 — les primitives qui portent leur propre copie
   "features/shared/ui/Fab.tsx": "tâche 5",
   "features/shared/ui/NavItem.tsx": "tâche 5",
@@ -61,12 +59,36 @@ const DETTE: Record<string, string> = {
   "features/voyages/ui/VoyagesList.tsx": "tâche 6",
 };
 
+describe("sansCommentaires", () => {
+  // Le garde-fou ci-dessous serait inexplicable sans ça : le commentaire qui
+  // dit « n'écrivez pas text-white » compterait comme un text-white, et
+  // maintiendrait son fichier en dette une fois celle-ci payée. C'est arrivé.
+  it("retire les lignes et les blocs commentés", () => {
+    const src = [
+      "// text-white interdit ici",
+      "  * text-white dans un bloc jsdoc",
+      "/* text-white en bloc */",
+      'const a = "text-on-fill";',
+    ].join("\n");
+    expect(sansCommentaires(src)).not.toMatch(/text-white/);
+    expect(sansCommentaires(src)).toContain("text-on-fill");
+  });
+
+  // Un `//` en milieu de ligne est presque toujours un `https://`. Le traiter
+  // comme un commentaire masquerait tout ce qui le suit — un garde-fou aveugle
+  // est pire qu'aucun garde-fou.
+  it("ne coupe pas une ligne sur le // d'une URL", () => {
+    const src = 'const u = "https://x.test"; const c = "text-white";';
+    expect(sansCommentaires(src)).toContain("text-white");
+  });
+});
+
 describe("le texte posé sur un aplat", () => {
   it("n'emploie `text-white` que là où aucun rôle ne convient", () => {
     const connus = { ...AUTORISES, ...DETTE };
     const coupables = fichiersSources()
       .filter((f) => !(f in connus))
-      .filter((f) => /\btext-white\b/.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => /\btext-white\b/.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(coupables).toEqual([]);
   });
@@ -76,7 +98,7 @@ describe("le texte posé sur un aplat", () => {
   // retirer chaque entrée au moment où sa tâche la règle.
   it("ne garde aucune dette déjà payée", () => {
     const payees = Object.keys(DETTE)
-      .filter((f) => !/\btext-white\b/.test(readFileSync(path.join(SRC, f), "utf8")))
+      .filter((f) => !/\btext-white\b/.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
       .sort();
     expect(payees).toEqual([]);
   });
