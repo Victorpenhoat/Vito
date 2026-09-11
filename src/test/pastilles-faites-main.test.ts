@@ -62,7 +62,13 @@ const DETTE: Record<string, string> = {
   "features/famille/ui/FichePersonne.tsx": "6B-3", // 0/1 interactives
   "features/famille/ui/ProcheForm.tsx": "6B-2", // 2/2 interactives
   "features/places/ui/CategoryDiscovery.tsx": "6B-3", // 3/4 interactives
-  "features/places/ui/CategoryTabs.tsx": "6B-2", // 8/8 interactives
+  // Les sous-onglets, le champ, le commutateur et les 4 groupes de filtres SONT
+  // migrés (lot 6B-1). Restent 3 pastilles d'une autre nature : une chip
+  // descriptive teintée que TagChip ne sait pas rendre, et deux BOUTONS
+  // D'ACTION ronds (« marquer la visite », « passer en favori ») qui ne sont pas
+  // des chips. L'heuristique les comptait « interactives » ; elle confondait
+  // pastille interactive et bouton d'action en forme de pastille.
+  "features/places/ui/CategoryTabs.tsx": "6B-3", // 3 restantes, dont 2 boutons d'action
   "features/places/ui/ExperienceForm.tsx": "6B-2", // 2/2 interactives
   "features/places/ui/SejourContexteChips.tsx": "6B-2", // 1/1 interactives
   "features/places/ui/SejoursAVenirBlock.tsx": "6B-2", // 2/2 interactives

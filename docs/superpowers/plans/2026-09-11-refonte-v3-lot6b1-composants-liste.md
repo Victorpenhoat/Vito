@@ -973,9 +973,21 @@ sur `selectionne` — la nuance distingue un filtre exclusif (un seul tag) d'un
 filtre cumulatif (plusieurs statuts à la fois). Ajouter un ton `actif-doux` à
 `TagChip` et le dire dans le rapport.
 
-- [ ] **Step 4 : retirer `CategoryTabs` de la dette**
+- [ ] **Step 4 : `CategoryTabs` RESTE en dette — ne pas retirer son entrée**
 
-Le second test du garde-fou échoue tant que l'entrée reste. C'est voulu.
+Écrit d'abord à l'envers dans ce plan, et corrigé après mesure. Le fichier porte
+**trois autres pastilles** que cette tâche ne touche pas :
+
+- une chip descriptive teintée pour l'origine (`bg-kpi-amber-bg`), que `TagChip`
+  ne sait pas rendre — il n'a pas de ton coloré ;
+- deux **boutons d'action** en forme de pastille (« marquer la visite » en vert,
+  « passer en favori » en accent), qui ne sont pas des chips : les verser dans
+  `TagChip` serait le détournement que son contrat refuse.
+
+La règle de la dette s'applique telle quelle : un fichier ne sort qu'une fois
+**entièrement** propre, donc `CategoryTabs` attend 6B-3. Ne pas céder à la
+tentation de vider une ligne de liste en tordant un composant — c'est
+exactement l'inverse de ce que ce lot construit.
 
 - [ ] **Step 5 : les tests de l'écran**
 
