@@ -33,7 +33,7 @@ export function NavItem({
       <span className="flex-1">{label}</span>
       {badge != null && badge > 0 && (
         <span data-testid={dataTestId ? `${dataTestId}-badge` : undefined}
-          className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[10.5px] font-semibold text-white">
+          className="ml-auto min-w-5 rounded-full bg-accent px-1.5 py-0.5 text-center text-[10.5px] font-semibold text-on-fill">
           {badge}
         </span>
       )}

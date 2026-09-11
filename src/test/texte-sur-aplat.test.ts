@@ -34,9 +34,6 @@ const AUTORISES: Record<string, string> = {
 // filtrait sur `px-|py-` et manquait les boutons ronds, d'où seize fichiers
 // annoncés au plan pour vingt-cinq réels.
 const DETTE: Record<string, string> = {
-  // tâche 5 — les primitives qui portent leur propre copie
-  "features/shared/ui/Fab.tsx": "tâche 5",
-  "features/shared/ui/NavItem.tsx": "tâche 5",
   // tâche 6 — les aplats d'accent recopiés à la main
   "app/[locale]/(app)/abonnement/page.tsx": "tâche 6",
   "app/[locale]/(app)/famille/page.tsx": "tâche 6",
