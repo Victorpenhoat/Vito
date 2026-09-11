@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 export function ThemeToggle() {
   const t = useTranslations("shell");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
     // Sync the real theme after hydration (must run post-mount to avoid a

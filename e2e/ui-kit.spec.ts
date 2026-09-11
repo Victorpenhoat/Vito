@@ -9,12 +9,22 @@ test("la page kit UI s'affiche", async ({ page }) => {
 test("le toggle de thème bascule data-theme sur <html>", async ({ page }) => {
   await page.goto("/fr/ui-kit");
   const html = page.locator("html");
-  // Le CLAIR est le défaut (aucun cookie → clair), comme les maquettes.
-  await expect(html).toHaveAttribute("data-theme", "light");
-  await page.getByTestId("theme-toggle").click();
+  // Le SOMBRE est le défaut (aucun cookie → sombre), comme les maquettes.
   await expect(html).toHaveAttribute("data-theme", "dark");
   await page.getByTestId("theme-toggle").click();
   await expect(html).toHaveAttribute("data-theme", "light");
+  await page.getByTestId("theme-toggle").click();
+  await expect(html).toHaveAttribute("data-theme", "dark");
+});
+
+test("sans cookie, le HTML servi est déjà sombre", async ({ page, context }) => {
+  // On lit le HTML SERVI, pas le DOM : c'est le rendu serveur qui doit être
+  // sombre. Si le défaut n'était corrigé qu'après hydratation, la page
+  // clignoterait en clair à chaque ouverture et ce test ne le verrait pas.
+  await context.clearCookies();
+  const reponse = await page.goto("/fr/login");
+  const html = await reponse!.text();
+  expect(html).toContain('data-theme="dark"');
 });
 
 test("la modale s'ouvre et se ferme", async ({ page }) => {

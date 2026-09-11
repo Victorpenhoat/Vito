@@ -23,8 +23,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   // Le fond du carnet, pas un gris arbitraire : c'est cette couleur que
   // remplissent la barre d'état iOS et la barre d'onglets Android autour de
-  // l'app. Le thème clair est le défaut (cf. plus bas).
-  themeColor: "#FBF9F3",
+  // l'app. Valeur du thème SOMBRE, qui est le défaut ; notre thème vient d'un
+  // cookie et non du réglage système, donc un `themeColor` discriminé par
+  // `media` ne le suivrait pas. Le lecteur qui choisit le clair garde donc une
+  // barre sombre — écart assumé, cf. le spec du lot 0.
+  themeColor: "#080D16",
   // La page occupe l'écran entier, encoche et barre home comprises. Sans cela,
   // iOS laisse deux bandes de la couleur du fond et l'app ressemble à une page
   // web posée dans un cadre. Les retraits sont rendus aux éléments qui en ont
@@ -46,11 +49,11 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   const cookieStore = await cookies();
-  // Le CLAIR est le défaut : toutes les maquettes (docs/design/*.dc.html) sont
-  // claires, sans une seule variante sombre. Un visiteur qui découvre Vito doit
-  // voir ce qui a été dessiné ; le sombre reste à un clic, et le choix est
-  // mémorisé par le cookie.
-  const theme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
+  // Le SOMBRE est le défaut depuis la refonte v3 (décision PO du 2026-09-11) :
+  // toutes les maquettes du canevas sont sombres, et le clair n'y est qu'une
+  // contrepartie que le designer a explicitement reportée. Le clair reste à un
+  // clic, et le choix est mémorisé par le cookie.
+  const theme = cookieStore.get("theme")?.value === "light" ? "light" : "dark";
   return (
     <html lang={locale} data-theme={theme} className={`${inter.variable} ${newsreader.variable}`}>
       <body>
