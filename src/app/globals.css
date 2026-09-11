@@ -25,19 +25,24 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  --app: #FBF9F3; --sidebar: #F4F1E9;
-  --surface: #FFFFFF; --surface-hover: #F4F1E9;
-  --line: #E4DDD0; --line-soft: #F0EBE0;
-  --accent: #2563EB; --accent-hover: #1D4ED8;
-  --accent-50: #E6EDFC; --accent-600: #1D4ED8;
-  --ink: #211E1A; --muted: #7A736A; --faint: #9A9081;
+  /* Contrepartie FROIDE de la palette v3. Le designer a reporté le clair ; on
+     le garde tenable en réassignant la table, pas en le redessinant. Les
+     valeurs ne sont pas celles du sombre inversées : l'accent #6BA5FF tombe à
+     2,48:1 sur blanc (2,34:1 sur le fond clair #F6F8FC) et échoue au texte,
+     d'où #2E6FD9 (4,78:1). */
+  --app: #F6F8FC; --sidebar: #EDF1F8;
+  --surface: #FFFFFF; --surface-hover: #EDF1F8;
+  --line: #DCE3ED; --line-soft: #EAEFF6;
+  --accent: #2E6FD9; --accent-hover: #1F57B4;
+  --accent-50: #E8F0FE; --accent-600: #1F57B4;
+  --ink: #0A1220; --muted: #55617A; --faint: #7C8799;
   --on-fill: #FFFFFF; --shadow: rgba(16,24,40,.12);
-  --badge: #F0EBE0; --gold: #E9B949; --danger: #B3261E; --danger-bg: #FEF3F2;
-  --kpi-green: #15803D; --kpi-green-bg: #E7F2EB;
-  --kpi-blue: #2563EB; --kpi-blue-bg: #E6EDFC;
-  --kpi-amber: #B45309; --kpi-amber-bg: #FBF0DF;
-  --kpi-violet: #9333EA; --kpi-violet-bg: #F3E8FF;
-  --hero-from: #E4DDD0; --hero-to: #FBF9F3;
+  --badge: #EAEFF6; --gold: #A97A10; --danger: #B3261E; --danger-bg: #FDECEA;
+  --kpi-green: #10814F; --kpi-green-bg: #E6F5EE;
+  --kpi-blue: #2E6FD9; --kpi-blue-bg: #E8F0FE;
+  --kpi-amber: #A85F18; --kpi-amber-bg: #FBEEE2;
+  --kpi-violet: #7B3FBF; --kpi-violet-bg: #F1E9FB;
+  --hero-from: #DCE3ED; --hero-to: #F6F8FC;
 }
 
 @theme {

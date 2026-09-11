@@ -65,7 +65,8 @@ export function contraste(a: string, b: string): number {
 
 // Les seuils ne sont pas décoratifs : ce sont eux qui ont imposé de NE PAS
 // reprendre l'accent #6BA5FF de la maquette dans le thème clair, où il tombe
-// à 3,0:1 sur blanc. Une valeur dérivée à l'œil passerait sans eux.
+// à 2,48:1 sur blanc (2,34:1 sur le fond clair #F6F8FC) et échoue largement
+// au texte, d'où #2E6FD9 (4,78:1). Une valeur dérivée à l'œil passerait sans eux.
 const SEUILS: [string, string, number][] = [
   ["ink", "surface", 7],
   ["muted", "surface", 4.5],
