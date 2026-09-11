@@ -10,7 +10,10 @@ export function rolesDuBloc(css: string, ouverture: string): Map<string, string>
   if (debut === -1) throw new Error(`bloc introuvable : ${ouverture}`);
   const accolade = css.indexOf("{", debut);
   const fin = css.indexOf("\n}", accolade);
-  const corps = css.slice(accolade + 1, fin);
+  // Un commentaire peut citer un rôle (ex. « jadis : --hero-glow: … retiré »)
+  // sans le déclarer : on le retire avant d'extraire les déclarations actives,
+  // sinon ce rôle fantôme est pris pour une déclaration réelle.
+  const corps = css.slice(accolade + 1, fin).replace(/\/\*[\s\S]*?\*\//g, "");
   const out = new Map<string, string>();
   for (const m of corps.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/g)) out.set(m[1]!, m[2]!.trim());
   return out;
@@ -42,5 +45,23 @@ describe("la table des jetons", () => {
     const exposes = new Set([...CSS.matchAll(/--color-[a-z0-9-]+:\s*var\(--([a-z0-9-]+)\)/g)].map((m) => m[1]!));
     const couleurs = [...sombre.keys()].filter((k) => !k.startsWith("radius") && k !== "color-scheme");
     expect(couleurs.filter((c) => !exposes.has(c))).toEqual([]);
+  });
+});
+
+describe("rolesDuBloc face à un commentaire", () => {
+  // Un rôle cité dans un commentaire (ex. « jadis : --hero-glow: … retiré »)
+  // ne doit pas être confondu avec une déclaration active : ni ajouté comme
+  // rôle existant, ni signalé comme rôle manquant ou orphelin ailleurs.
+  it("ne retient pas un rôle mentionné seulement dans un commentaire", () => {
+    const css = `
+      :root {
+        --vrai: 1px;
+        /* jadis : --hero-glow: #4F8BF0; retiré en 2025 */
+        --autre: 2px;
+      }
+    `;
+    const roles = rolesDuBloc(css, ":root");
+    expect(roles.has("hero-glow")).toBe(false);
+    expect([...roles.keys()].sort()).toEqual(["autre", "vrai"]);
   });
 });
