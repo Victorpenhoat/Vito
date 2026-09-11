@@ -142,26 +142,30 @@ l'être — c'est précisément ce que « nommer par rôle » permet.
 
 ## Les rayons
 
-Question ouverte que le relevé impose, et que le périmètre approuvé ne
-couvrait pas explicitement. Nos jetons disent `--radius-card: 4px`,
+**Tranché par le PO le 2026-09-11 : les rayons entrent dans ce lot.** Le
+relevé l'imposait, et le périmètre approuvé au départ ne les couvrait pas.
+Nos jetons disent `--radius-card: 4px`,
 `--radius-tile: 4px`, `--radius-control: 3px`. La maquette compte 129 rayons à
 `12px`, 46 à `9px`, 24 à `11px`, 22 à `10px`, et **153 à `999px`**.
 
 Ce n'est pas un détail : la v3 est une interface ronde, la nôtre est carrée, et
 la différence saute plus aux yeux que la couleur.
 
-**Recommandation : les inclure dans ce lot.** Ils vivent dans la même table,
-la bascule est du même geste, et l'objet du lot est que l'app *ait l'air* de la
-refonte avant qu'on reconstruise quoi que ce soit. `--radius-card: 12px`,
-`--radius-tile: 12px`, `--radius-control: 10px`, et un `--radius-pill: 999px`
-nouveau, que 153 occurrences justifient.
+Ils vivent dans la même table, la bascule est du même geste, et l'objet du lot
+est que l'app *ait l'air* de la refonte avant qu'on reconstruise quoi que ce
+soit. Les valeurs retenues : `--radius-card: 12px`, `--radius-tile: 12px`,
+`--radius-control: 10px`, et un `--radius-pill: 999px` **nouveau**, que 153
+occurrences justifient.
+
+Contrairement aux couleurs, les rayons ne dépendent pas du thème : ils vivent
+dans `@theme` et non dans les deux blocs, donc ils n'ont pas de contrepartie
+claire à écrire.
 
 Le risque est faible et visible : arrondir davantage peut révéler un rognage
 sur un contenu qui débordait déjà. Le contraire — un jeton de rayon changé qui
-casse une mise en page — n'existe pas.
-
-**Si le PO préfère les garder pour le lot des composants**, ce lot livre la
-couleur seule et le spec suivant reprend ce paragraphe tel quel.
+casse une mise en page — n'existe pas. Le filet est le même que pour les
+teintes dérivées : le PO regarde un écran réel avant qu'on passe au lot
+suivant (cf. « Vérification »).
 
 ## Ce qui code une teinte en dur
 
