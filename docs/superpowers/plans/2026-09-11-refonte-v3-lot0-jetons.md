@@ -217,7 +217,9 @@ describe.each([
 - [ ] **Step 2 : lancer et vérifier l'échec**
 
 Run : `npx vitest run src/app/theme.test.ts`
-Expected : FAIL — le thème clair actuel a `--accent: #2563EB` sur `--surface: #FFFFFF` (≈ 5,2:1, passe) mais `--faint: #9A9081` sur blanc tombe à ≈ 2,5:1. Au moins une ligne rouge. Noter lesquelles : elles disparaîtront aux tâches 2 et 3.
+Expected : FAIL sur **une seule ligne**, mesurée le 2026-09-11 : « gold sur surface tient 3:1 » dans le thème clair — l'actuel `--gold: #E9B949` ne donne que **1,83:1** sur blanc. Tout le reste de l'ancienne table passe déjà (`accent` 5,17, `muted` 4,68, `faint` 3,14, `ink` 16,6). Si tu vois d'autres lignes rouges, quelque chose a bougé depuis : lis-les avant de continuer.
+
+Cette unique ligne rouge est une bonne nouvelle, pas un contretemps : elle prouve que le seuil mord réellement sur des valeurs réelles, avant même qu'on ait changé la table.
 
 - [ ] **Step 3 : réécrire le bloc sombre**
 
