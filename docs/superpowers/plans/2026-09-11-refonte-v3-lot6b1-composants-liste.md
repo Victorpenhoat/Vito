@@ -61,6 +61,7 @@ liste des exceptions du garde-fou, avec cette raison.
 **Files:**
 - Create: `src/features/shared/ui/TagChip.tsx`
 - Create: `src/features/shared/ui/TagChip.stories.tsx`
+- Test: `src/features/shared/ui/TagChip.test.tsx`
 
 **Interfaces:**
 - Produces :
@@ -259,6 +260,7 @@ git commit -m "feat(design): TagChip, et la décision d'être bouton ou non lui 
 **Files:**
 - Create: `src/features/shared/ui/SubTabPills.tsx`
 - Create: `src/features/shared/ui/SubTabPills.stories.tsx`
+- Test: `src/features/shared/ui/SubTabPills.test.tsx`
 
 **Interfaces:**
 - Consumes : rien.
@@ -412,6 +414,7 @@ git commit -m "feat(design): SubTabPills — des onglets qui s'annoncent, et des
 **Files:**
 - Create: `src/features/shared/ui/ViewSwitcher.tsx`
 - Create: `src/features/shared/ui/ViewSwitcher.stories.tsx`
+- Test: `src/features/shared/ui/ViewSwitcher.test.tsx`
 
 **Interfaces:**
 - Consumes : rien.
@@ -557,6 +560,7 @@ git commit -m "feat(design): ViewSwitcher, qui ne décide pas du nombre de vues"
 **Files:**
 - Create: `src/features/shared/ui/SearchField.tsx`
 - Create: `src/features/shared/ui/SearchField.stories.tsx`
+- Test: `src/features/shared/ui/SearchField.test.tsx`
 
 **Interfaces:**
 - Consumes : rien.
