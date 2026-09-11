@@ -11,7 +11,15 @@
   --app: #080D16; --sidebar: #0C121D;
   --surface: #131A26; --surface-hover: #1C2432;
   --line: rgba(255,255,255,0.08); --line-soft: rgba(255,255,255,0.06);
+  /* La bordure des états survolés : le canevas la monte à 16 % là où --line
+     est à 8 %. Sans ce rôle, le survol d'une pastille ou d'un champ ne se
+     distingue plus du repos en thème clair. */
+  --line-strong: rgba(255,255,255,0.16);
   --accent: #6BA5FF; --accent-hover: #8FBCFF;
+  /* Le bleu de l'état PRESSÉ, relevé au canevas. Sans ce rôle, le pressé ne
+     peut s'écrire qu'en dur — ce que le garde-fou des teintes interdit — ou
+     disparaître. */
+  --accent-active: #4D8DFF;
   --accent-50: rgba(107,165,255,0.14); --accent-600: #8FBCFF;
   --ink: #EEF2F9; --muted: #93A0B8; --faint: #6E7C95;
   --on-fill: #0A1220; --shadow: rgba(0,0,0,.5);
@@ -33,7 +41,13 @@
   --app: #F6F8FC; --sidebar: #EDF1F8;
   --surface: #FFFFFF; --surface-hover: #EDF1F8;
   --line: #DCE3ED; --line-soft: #EAEFF6;
+  /* DÉRIVÉ, non mesuré : aucun seuil WCAG ne contraint une bordure. À regarder
+     à l'œil, comme les autres rôles dérivés du lot 0. */
+  --line-strong: #C3CDDC;
   --accent: #2E6FD9; --accent-hover: #1F57B4;
+  /* --on-fill clair (#FFFFFF) y donne 8,73:1, et reste distinct de
+     --accent-hover (#1F57B4, 6,82:1) : le pressé se voit. */
+  --accent-active: #17479A;
   --accent-50: #E8F0FE; --accent-600: #1F57B4;
   --ink: #0A1220; --muted: #55617A; --faint: #7C8799;
   --on-fill: #FFFFFF; --shadow: rgba(16,24,40,.12);
@@ -53,11 +67,13 @@
   --color-surface-hover: var(--surface-hover);
   --color-line: var(--line);
   --color-line-soft: var(--line-soft);
+  --color-line-strong: var(--line-strong);
   --color-gold: var(--gold);
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
   --color-accent-50: var(--accent-50);
   --color-accent-600: var(--accent-600);
   --color-ink: var(--ink);
