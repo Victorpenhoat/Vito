@@ -9,9 +9,13 @@ import { MASQUE } from "@/lib/securite/masque";
  * d'autant ce qu'il reste à deviner. Règle commune à toutes les données
  * protégées (docs/security.md §2).
  *
+ * Prend la valeur **telle qu'elle est stockée — chiffrée** : seule sa présence
+ * compte, le masque ne dérive jamais du contenu. C'est ce qui permet à la
+ * requête de page de ne pas déchiffrer du tout.
+ *
  * Rend la chaîne vide quand il n'y a pas de numéro — quatre points diraient
  * qu'un numéro existe.
  */
-export function maskDocNumber(num: string | null): string {
-  return num ? MASQUE : "";
+export function maskDocNumber(valeurStockee: string | null): string {
+  return valeurStockee ? MASQUE : "";
 }
