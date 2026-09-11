@@ -48,7 +48,7 @@
 
 **Interfaces:**
 - Consumes: rien.
-- Produces: les jetons CSS `--on-fill`, `--shadow`, `--radius-pill`, utilisables en Tailwind sous `text-on-fill` / `bg-on-fill`, `var(--color-shadow)`, `rounded-pill`. Et deux fonctions exportées par le test pour les tâches suivantes : aucune — le test est autonome.
+- Produces: les jetons CSS `--on-fill`, `--shadow`, `--radius-pill`, utilisables en Tailwind sous `text-on-fill` / `bg-on-fill`, `var(--color-shadow)`, `rounded-pill`. Et surtout `rolesDuBloc(css, ouverture): Map<string, string>`, exportée par `src/app/theme.test.ts` : **les tâches 2, 4 et 8 l'importent telle quelle**, sa signature ne doit plus bouger.
 
 - [ ] **Step 1 : écrire le test de parité qui échoue**
 
