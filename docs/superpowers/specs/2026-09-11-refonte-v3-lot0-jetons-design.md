@@ -77,6 +77,14 @@ Ce lot **ne remplace pas** les vingt-sept `text-white` : il crée le jeton et le
 documente. Le remplacement appartient aux lots de composants, qui savent
 lesquels sont sur de l'accent et lesquels sur autre chose.
 
+### Un second rôle qui nous manque : `--shadow`
+
+Douze ombres du dépôt codent `rgba(33,30,26,…)`, l'encre chaude du thème clair
+(cf. « Famille 1 » plus bas). La maquette, elle, n'ombre qu'en **noir pur** :
+`rgba(0,0,0,.5)` (26×) et `rgba(0,0,0,.6)` (10×). On ajoute `--shadow`,
+`rgba(0,0,0,.5)` en sombre et `rgba(16,24,40,.12)` en clair — franche sur fond
+nuit, discrète sur blanc.
+
 ### Ce que la maquette ne peint jamais, et que je dérive
 
 Quatre rôles n'apparaissent nulle part dans le canevas. Les inventer au hasard
@@ -131,7 +139,8 @@ accent de sens, contrastes vérifiés sur blanc.
 `--muted` `#55617A` · `--faint` `#7C8799` · `--on-fill` `#FFFFFF` ·
 `--badge` `#EAEFF6` · `--accent` `#2E6FD9` · `--accent-hover` `#1F57B4` ·
 `--accent-50` `#E8F0FE` · `--gold` `#A97A10` · `--danger` `#B3261E` ·
-`--danger-bg` `#FDECEA` · `--kpi-green` `#10814F` / `#E6F5EE` ·
+`--danger-bg` `#FDECEA` · `--shadow` `rgba(16,24,40,.12)` ·
+`--kpi-green` `#10814F` / `#E6F5EE` ·
 `--kpi-amber` `#A85F18` / `#FBEEE2` · `--kpi-blue` `#2E6FD9` / `#E8F0FE` ·
 `--kpi-violet` `#7B3FBF` / `#F1E9FB` · `--hero-from` `#DCE3ED` → `--hero-to`
 `#F6F8FC`.
@@ -169,29 +178,85 @@ suivant (cf. « Vérification »).
 
 ## Ce qui code une teinte en dur
 
-Quarante-quatre occurrences dans `src`. Trois nids comptent, les autres sont
-des retouches.
+Une quarantaine d'occurrences dans `src`, en **cinq familles** — et la
+première est celle que j'avais sous-estimée en présentant ce lot.
 
-**La table dupliquée du carnet hors ligne.** `src/app/[locale]/carnet-hors-ligne/[id]/page.tsx:115-121`
-porte **les deux palettes en entier**, en styles inline. Ce n'est pas une
-négligence : la page vit hors du groupe `(app)` pour que le verrou n'enferme
-pas le lecteur dehors, et elle embarque donc ses styles. Elle doit être
-retendue en même temps, et le spec le dit ici pour qu'on ne l'oublie pas —
-c'est le genre d'oubli qui ne se voit qu'en avion.
+**Règle qui gouverne tout ce chapitre : ce lot dé-littéralise, il ne
+réassigne pas le sens.** Une teinte en dur devient le jeton qui lui
+correspond ; elle ne change pas de signification. Les changements de sens
+(le favori qui passe de l'or à l'accent, le marqueur « testé » qui passe du
+gris au vert) appartiennent aux lots de composants et d'écrans. Sans cette
+règle, le lot 0 deviendrait toute la refonte.
 
-**Deux ombres bleues.** `voyages/page.tsx:25` et `famille/page.tsx:35` portent
-`shadow-[0_6px_16px_rgba(37,99,235,.35)]` : l'ancien accent, figé dans une
-ombre. Invisible à tout grep de jetons, très visible sur fond froid.
+### Famille 1 — douze ombres portent l'ancienne encre chaude
 
-**`statutTint.ts`** peint les couvertures de voyage en dégradés mi-chauds
-mi-froids (`#4a4436`, `#2f5a3f`…), et `VoyageDetail.tsx:126` passe
-`color="#211E1A"` à un `Avatar` — l'encre du thème clair, en dur, donc fausse
-dans le thème sombre.
+`rgba(33,30,26,.35)`, `.22`, `.18`, `.15`, `.1`, `.25`, `.3` : c'est
+`#211E1A`, l'encre du thème clair, figée dans des `shadow-[…]` et dans les
+`drop-shadow` des marqueurs SVG. Sur un fond bleu nuit, une ombre brune se
+voit. Douze sites, dans `CategoryMap.tsx` (5), `CarteActivites.tsx` (3),
+`CaveMap.tsx` (3), `CategoryMapCombined.tsx`, `ChampAdresseClub.tsx`,
+`ReminderToggle.tsx`.
 
-**Le `themeColor`.** `layout.tsx:27` est figé sur `#FBF9F3`, le crème clair,
-avec un commentaire qui dit que le clair est le défaut. C'est la couleur que
-remplissent la barre d'état iOS et la barre d'onglets Android : elle doit
-suivre le thème, pas une constante.
+La maquette tranche : elle n'ombre qu'en **noir pur**, `rgba(0,0,0,.5)`
+(26×) et `rgba(0,0,0,.6)` (10×). On ajoute donc un rôle `--shadow`,
+`rgba(0,0,0,.5)` en sombre et `rgba(16,24,40,.12)` en clair — une ombre
+franche sur fond sombre, discrète sur fond blanc. Les douze sites l'emploient
+via `var(--color-shadow)`.
+
+### Famille 2 — cinq ombres portent l'ancien accent bleu
+
+`rgba(37,99,235,.35)` et `.3`, soit `#2563EB`, l'accent du thème clair.
+`voyages/page.tsx:25`, `famille/page.tsx:35`, `CategoryTabs.tsx:366`,
+`ProcheForm.tsx:77`, `ProchesEmptyState.tsx:23`, `DocumentTunnel.tsx:199`.
+Invisibles à tout grep de jetons, très visibles à l'œil. Elles prennent
+`--accent` à travers une ombre teintée d'accent.
+
+### Famille 3 — les modules de teintes
+
+`statutTint.ts` (6 dégradés de couverture de voyage), `couleurTint.ts`
+(4 dégradés de couleur de vin), `avatarColor.ts` (`AVATAR_PALETTE`, dont
+`#211E1A`). Ce sont des palettes délibérées, pas des oublis : elles doivent
+être retendues en froid, pas remplacées par des jetons — un dégradé « vin
+rouge » n'est pas un rôle de l'interface.
+
+### Famille 4 — la table dupliquée du carnet hors ligne
+
+`src/app/[locale]/carnet-hors-ligne/[id]/page.tsx:115-121` porte **les deux
+palettes en entier**, en styles inline. Ce n'est pas une négligence : la page
+vit hors du groupe `(app)` pour que le verrou n'enferme pas le lecteur dehors,
+et elle embarque donc ses styles. Elle doit être retendue en même temps — c'est
+le genre d'oubli qui ne se voit qu'en avion.
+
+### Famille 5 — les valeurs par défaut éparses
+
+Sept sites qui codent une teinte faute de jeton sous la main :
+`VoyageDetail.tsx:126` et `ProchesEmptyState.tsx:17` passent `color="#211E1A"`
+à un `Avatar` (l'encre du thème clair, donc fausse en sombre) ;
+`CategoryMapCombined.tsx:47` et `CategoryMap.tsx:35` peignent le marqueur
+« testé » en `#8F867A`, un gris chaud ; `CarteActivites.tsx:102` retombe sur
+`#2563EB` ; `TagsAdmin.tsx:104` propose `#5B7F5B` comme couleur de tag par
+défaut ; `TagPicker.tsx:37` retombe sur `#d1d5db`.
+
+Rappel de la règle : on remplace le littéral par le jeton le plus proche, sans
+changer le sens. Le marqueur « testé » prend `--faint` et **reste gris** ; son
+passage au vert `#3ED598` qu'annonce la maquette appartient au lot 4.
+
+Les `fill="#fff"` des marqueurs SVG (`CategoryMap.tsx`, trois fois) sont le cas
+limite : c'est déjà `--on-fill` conceptuellement, mais dans un SVG en chaîne où
+la maquette veut `#0C121D`. Ils passent à `var(--color-on-fill)` — le jeton
+existe alors, et le changement de valeur vient gratuitement avec la table.
+
+### Et le `themeColor`
+
+`layout.tsx:27` est figé sur `#FBF9F3`, le crème clair, avec un commentaire qui
+affirme que le clair est le défaut. C'est la couleur que remplissent la barre
+d'état iOS et la barre d'onglets Android : elle doit suivre le thème. Next
+accepte un tableau de `themeColor` discriminé par `media`, ce qui la fait
+suivre le réglage système — mais notre thème vient d'un **cookie**, pas du
+système. On pose donc la valeur sombre `#080D16` en constante, puisque le
+sombre est désormais le défaut, et on assume l'écart pour le lecteur qui a
+choisi le clair : une barre d'état sombre au-dessus d'une app claire, le temps
+qu'un lot ultérieur rende l'en-tête dynamique s'il le faut.
 
 ## Ce que le lot ne fait pas
 
@@ -210,10 +275,20 @@ suivre le thème, pas une constante.
   rôles déclarés dans chaque bloc de thème, et échoue si l'un existe d'un côté
   sans exister de l'autre. C'est l'erreur qui laisse une variable vide et un
   texte invisible, et elle ne se voit pas à la relecture.
-- **Aucune teinte littérale.** Un test refuse tout `#rrggbb` ou `rgb(a)(…)`
-  dans `src/`, hors `globals.css` et la page du carnet hors ligne, qui sont les
-  deux seuls endroits autorisés à nommer une couleur. Il doit échouer si l'on
-  réintroduit une ombre bleue en dur.
+- **Aucune teinte littérale hors des endroits qui ont le droit.** Un test
+  refuse tout `#rrggbb` et tout `rgb(a)(…)` dans `src/`, sauf dans une liste
+  **close et justifiée**, chaque entrée portant sa raison dans le test :
+  `globals.css` (la table elle-même) ; `carnet-hors-ligne/[id]/page.tsx` (page
+  hors du groupe `(app)`, elle embarque ses styles) ; `statutTint.ts`,
+  `couleurTint.ts` et `avatarColor.ts` (palettes délibérées, pas des rôles
+  d'interface) ; `TagsAdmin.tsx` et `TagPicker.tsx` (une couleur que
+  l'utilisateur choisit lui-même, et son repli).
+  Le test doit échouer si l'on réintroduit une ombre teintée en dur — c'est
+  exactement le défaut qu'il existe pour empêcher, et c'est celui qui a survécu
+  le plus longtemps ici.
+  La liste est une **liste de fichiers**, pas un motif : un nouveau fichier qui
+  code une teinte doit faire échouer le test et obliger à l'ajouter
+  consciemment, ou à employer un jeton.
 - **Le défaut est sombre.** Un test e2e lit le HTML servi et vérifie
   `data-theme="dark"` sans cookie, puis que le commutateur des réglages bascule
   toujours en clair et que le choix survit au rechargement.
