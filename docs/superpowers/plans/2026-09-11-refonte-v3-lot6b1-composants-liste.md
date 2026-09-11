@@ -840,6 +840,14 @@ Remplacer le bloc `sousOnglets` (lignes 107-120) par :
 le panneau de la ligne 215 porte `aria-labelledby={`tab-${onglet}`}`. Les
 omettre romprait le lien onglet/panneau sans qu'aucun test ne bronche.
 
+**PIÈGE — `idOnglet` n'est PAS `tabTestId`.** `tabTestId` (dans
+`categoryUiConfig.ts:81`) remplace les soulignés par des tirets :
+`a_tester` → `tab-a-tester`. L'`id` de l'onglet, lui, garde le souligné
+(`tab-a_tester`), parce que c'est cette forme que le panneau cite dans son
+`aria-labelledby`. Passer `tabTestId` aux deux endroits casserait le lien pour
+un lecteur d'écran, et rien ne le signalerait : les deux attributs existeraient,
+simplement ils ne se répondraient plus.
+
 Si la clé `onglets.aria` n'existe pas, l'ajouter aux **quatre** langues : un
 `role="tablist"` sans nom accessible est annoncé comme un groupe anonyme.
 
