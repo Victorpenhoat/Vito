@@ -46,7 +46,7 @@ export function AuthPanel({ signIn, envoyerLienMagique }: {
         // Vito se rejoint sur invitation (décision PO) : pas de formulaire ici.
         <div data-testid="inscription-sur-invitation" className="flex flex-col gap-3 text-left">
           <p className="text-sm text-muted">{ti("surInvitation.texte")}</p>
-          <Link href="/inscription" className="rounded-control bg-accent px-4 py-2.5 text-center font-semibold text-white">
+          <Link href="/inscription" className="rounded-control bg-accent px-4 py-2.5 text-center font-semibold text-on-fill">
             {ti("surInvitation.titre")}
           </Link>
         </div>

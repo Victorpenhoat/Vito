@@ -105,7 +105,7 @@ export function PlanningCalendrier({
             <button key={v} type="button" data-testid={`vue-${v}`} aria-pressed={vue === v}
               onClick={() => setVue(v)}
               className={`rounded-control px-3 py-1.5 text-[11.5px] font-semibold ${
-                vue === v ? "bg-accent text-white" : "text-muted hover:text-ink"
+                vue === v ? "bg-accent text-on-fill" : "text-muted hover:text-ink"
               }`}>
               {t(`vues.${v}`)}
             </button>
@@ -143,7 +143,7 @@ export function PlanningCalendrier({
                   <span key={j.jour} data-testid={`jour-${j.jour}`}
                     className={`rounded-card py-2 text-center text-[12.5px] ${
                       j.horsMois ? "text-faint/50"
-                      : j.jour === aujourdhui ? "bg-accent font-semibold text-white"
+                      : j.jour === aujourdhui ? "bg-accent font-semibold text-on-fill"
                       : dansVacances(j.jour) ? "bg-kpi-amber-bg text-kpi-amber"
                       : "text-ink"
                     }`}>

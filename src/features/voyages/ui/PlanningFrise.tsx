@@ -130,7 +130,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
                 <li key={v.id} data-testid="planning-voyage" className="relative h-8 rounded-control bg-surface-hover">
                   {barre ? (
                     <Link href={`/voyages/${v.id}`}
-                      className="absolute inset-y-0 flex items-center overflow-hidden rounded-control bg-accent px-2 text-[11.5px] font-semibold text-white hover:bg-accent-hover"
+                      className="absolute inset-y-0 flex items-center overflow-hidden rounded-control bg-accent px-2 text-[11.5px] font-semibold text-on-fill hover:bg-accent-hover"
                       style={{ left: `${barre.gauchePct}%`, width: `${barre.largeurPct}%`, minWidth: "1.25rem" }}>
                       <span className="truncate">{v.titre}</span>
                     </Link>

@@ -215,7 +215,7 @@ function StepIndicator({ step, t }: { step: "A" | "B" | "C" | "D"; t: ReturnType
     <ol className="hidden lg:flex items-center gap-2" aria-hidden="true">
       {steps.map((s, i) => (
         <li key={s.k} className="flex items-center gap-2">
-          <span className={`grid h-6 w-6 place-items-center rounded-full text-xs font-semibold ${i <= currentIdx ? "bg-accent text-white" : "bg-accent-50 text-accent"}`}>{i + 1}</span>
+          <span className={`grid h-6 w-6 place-items-center rounded-full text-xs font-semibold ${i <= currentIdx ? "bg-accent text-on-fill" : "bg-accent-50 text-accent"}`}>{i + 1}</span>
           <span className={`text-sm ${i === currentIdx ? "text-ink font-medium" : "text-muted"}`}>{s.label}</span>
           {i < steps.length - 1 && <span className="mx-1 h-px w-6 bg-line" />}
         </li>

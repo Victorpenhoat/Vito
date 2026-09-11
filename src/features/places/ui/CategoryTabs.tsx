@@ -1,5 +1,6 @@
 "use client";
 import { useActionState, useState } from "react";
+import { Button } from "@/features/shared/ui/Button";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Plus, Search } from "lucide-react";
@@ -142,7 +143,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
             {(["liste", "vignettes", "carte"] as const).map((v) => (
               <button key={v} type="button" data-testid={`view-${v}`} aria-pressed={view === v}
                 aria-label={t(`vue${v.charAt(0).toUpperCase()}${v.slice(1)}`)} onClick={() => setView(v)}
-                className={`rounded-control px-2 py-1.5 text-xs ${view === v ? "bg-accent text-white" : "text-muted"}`}>
+                className={`rounded-control px-2 py-1.5 text-xs ${view === v ? "bg-accent text-on-fill" : "text-muted"}`}>
                 {v === "liste" ? "☰" : v === "vignettes" ? "▦" : "◍"}
               </button>
             ))}
@@ -362,11 +363,11 @@ function EtatVide({ onglet, filtre, q, t, onTrouver }: {
       <p className="mt-2 mb-5 max-w-sm text-sm leading-relaxed text-muted">
         {filtre ? t("vide.aucunResultatTexte", { q: q.trim() }) : t(`vide.${onglet}Texte`)}
       </p>
-      <button type="button" onClick={onTrouver}
-        className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)] focus-visible:outline-2 focus-visible:outline-accent">
+      <Button type="button" onClick={onTrouver}
+        className="px-5 py-3 shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)]">
         <Search size={15} aria-hidden />
         {filtre && q.trim() ? t("vide.chercherExterne", { q: q.trim() }) : t("trouverTitre")}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -22,7 +22,7 @@ export default async function VoyagesPage() {
           <a
             href="#nouveau"
             aria-label={t("create")}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-white shadow-[0_6px_16px_color-mix(in_srgb,var(--color-accent)_35%,transparent)] transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-on-fill shadow-[0_6px_16px_color-mix(in_srgb,var(--color-accent)_35%,transparent)] transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-accent"
           >
             <Plus size={18} aria-hidden />
           </a>

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Button } from "@/features/shared/ui/Button";
 import { redirect } from "@/lib/i18n/routing";
 import { getLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
@@ -28,9 +29,9 @@ export default async function InscriptionPage() {
             <input name="code" required data-testid="champ-code"
               className="rounded-control border border-line bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:outline-2 focus:outline-accent" />
           </label>
-          <button type="submit" className="rounded-control bg-accent px-4 py-2.5 font-semibold text-white">
+          <Button type="submit">
             {t("continuer")}
-          </button>
+          </Button>
         </form>
         <Link href="/login" className="mt-4 inline-block text-[12.5px] text-muted hover:text-ink">
           {t("surInvitation.dejaCompte")}
