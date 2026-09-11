@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ReponseForm } from "./ReponseForm";
-import { Badge } from "@/features/shared/ui/Badge";
+import { CountBadge } from "@/features/shared/ui/CountBadge";
 
 type Etab = { nom: string; ville: string | null } | { nom: string; ville: string | null }[] | null;
 type Demande = { id: string; type: string; statut: string; commentaire: string | null; etablissement: Etab };
@@ -19,7 +19,7 @@ export async function ConciergeInbox({ demandes }: { demandes: Demande[] }) {
         <li key={d.id} data-testid="demande-row" className="rounded-card border border-line bg-surface p-4">
           <div className="flex items-center justify-between gap-2">
             <p><span className="font-medium">{t(`types.${d.type}`)}</span> — {etabNom(d.etablissement)}</p>
-            <Badge><span data-testid="demande-statut">{t(`statuts.${d.statut}`)}</span></Badge>
+            <CountBadge><span data-testid="demande-statut">{t(`statuts.${d.statut}`)}</span></CountBadge>
           </div>
           {d.commentaire && <p className="text-sm text-muted">{d.commentaire}</p>}
           <ReponseForm demandeId={d.id} />

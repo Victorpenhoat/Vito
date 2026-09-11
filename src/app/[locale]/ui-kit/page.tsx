@@ -1,6 +1,6 @@
 import { Home, Wine } from "lucide-react";
 import { Button } from "@/features/shared/ui/Button";
-import { Badge } from "@/features/shared/ui/Badge";
+import { CountBadge } from "@/features/shared/ui/CountBadge";
 import { Card } from "@/features/shared/ui/Card";
 import { SectionLabel } from "@/features/shared/ui/SectionLabel";
 import { Tile } from "@/features/shared/ui/Tile";
@@ -25,7 +25,7 @@ export default function UiKitPage() {
             <Button variant="primary">Primaire</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="subtle">Subtle</Button>
-            <Badge>3</Badge>
+            <CountBadge>3</CountBadge>
           </div>
         </Card>
 
