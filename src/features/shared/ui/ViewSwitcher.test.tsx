@@ -38,4 +38,11 @@ describe("ViewSwitcher", () => {
       testId={(cle) => `vue-${cle}`} />);
     expect(screen.getByRole("button", { name: "Vignettes" }).getAttribute("data-testid")).toBe("vue-vignettes");
   });
+
+  // L'icône fait partie de l'interface publique : si un futur édit la retire
+  // du bouton, ce test doit casser, pas seulement les tests sur le libellé.
+  it("affiche l'icône dans le bouton", () => {
+    render(<ViewSwitcher options={OPTIONS} valeur="liste" onChange={() => {}} />);
+    expect(screen.getByRole("button", { name: "Liste" }).textContent).toContain("☰");
+  });
 });
