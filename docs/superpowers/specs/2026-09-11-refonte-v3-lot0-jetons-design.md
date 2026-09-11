@@ -145,8 +145,10 @@ accent de sens, contrastes vérifiés sur blanc.
 `--kpi-violet` `#7B3FBF` / `#F1E9FB` · `--hero-from` `#DCE3ED` → `--hero-to`
 `#F6F8FC`.
 
-L'accent clair n'est **pas** `#6BA5FF` : à 3,0:1 sur blanc il échoue au texte.
-`#2E6FD9` passe. Le sens de la teinte est conservé, sa valeur ne peut pas
+L'accent clair n'est **pas** `#6BA5FF` : à **2,48:1** sur blanc il échoue
+largement au texte (`#2E6FD9` donne 4,78:1). Le premier chiffre écrit ici
+était 3,0:1 — faux, et corrigé après recalcul : l'écart est pire que je ne
+l'avais dit, donc l'argument tient mieux, pas moins bien. Le sens de la teinte est conservé, sa valeur ne peut pas
 l'être — c'est précisément ce que « nommer par rôle » permet.
 
 ## Les rayons
