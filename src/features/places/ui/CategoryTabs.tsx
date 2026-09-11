@@ -142,7 +142,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
             {(["liste", "vignettes", "carte"] as const).map((v) => (
               <button key={v} type="button" data-testid={`view-${v}`} aria-pressed={view === v}
                 aria-label={t(`vue${v.charAt(0).toUpperCase()}${v.slice(1)}`)} onClick={() => setView(v)}
-                className={`rounded-[2px] px-2 py-1.5 text-xs ${view === v ? "bg-accent text-white" : "text-muted"}`}>
+                className={`rounded-control px-2 py-1.5 text-xs ${view === v ? "bg-accent text-white" : "text-muted"}`}>
                 {v === "liste" ? "☰" : v === "vignettes" ? "▦" : "◍"}
               </button>
             ))}
@@ -233,7 +233,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           <ul className="divide-y divide-line">
             {triees.map((p) => (
               <li key={p.id} data-selected={p.etablissement.id === selectedId ? "true" : undefined}
-                className={`relative ${p.etablissement.id === selectedId ? "rounded-[6px] bg-accent-50/60 ring-1 ring-accent/20" : ""}`}>
+                className={`relative ${p.etablissement.id === selectedId ? "rounded-card bg-accent-50/60 ring-1 ring-accent/20" : ""}`}>
                 <ul><PlaceCard place={p} variant="liste" /></ul>
                 <RowExtras place={p} onglet={onglet} slugTeste={config.slugTeste} tr={tr} onVisite={() => setVisitePour(p)} />
               </li>
@@ -363,7 +363,7 @@ function EtatVide({ onglet, filtre, q, t, onTrouver }: {
         {filtre ? t("vide.aucunResultatTexte", { q: q.trim() }) : t(`vide.${onglet}Texte`)}
       </p>
       <button type="button" onClick={onTrouver}
-        className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(37,99,235,.3)] focus-visible:outline-2 focus-visible:outline-accent">
+        className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_color-mix(in_srgb,var(--color-accent)_30%,transparent)] focus-visible:outline-2 focus-visible:outline-accent">
         <Search size={15} aria-hidden />
         {filtre && q.trim() ? t("vide.chercherExterne", { q: q.trim() }) : t("trouverTitre")}
       </button>

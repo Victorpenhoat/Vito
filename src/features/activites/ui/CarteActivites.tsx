@@ -32,7 +32,7 @@ function epingle(couleur: string, enPause: boolean) {
     className: "",
     html: `<span style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
       background:${enPause ? "var(--surface)" : couleur};border:2px solid ${couleur};
-      box-shadow:0 2px 6px rgba(33,30,26,.35);"></span>`,
+      box-shadow:0 2px 6px var(--color-shadow);"></span>`,
     iconSize: [26, 26],
     iconAnchor: [13, 13],
   });
@@ -62,7 +62,7 @@ function AutourDeMoi({ label }: { label: string }) {
         const pos = await positionActuelle();
         if (pos) map.setView([pos.lat, pos.lng], 13);
       }}
-      className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_rgba(33,30,26,.15)] focus-visible:outline-2 focus-visible:outline-accent">
+      className="absolute bottom-4 right-3 z-[1000] inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[0_4px_12px_var(--color-shadow)] focus-visible:outline-2 focus-visible:outline-accent">
       <LocateFixed size={13} className="text-accent" aria-hidden />
       {label}
     </button>
@@ -99,7 +99,7 @@ export function CarteActivites({ points, sansAdresse }: {
             <Marker
               key={p.id}
               position={[p.lat, p.lng]}
-              icon={epingle(p.membres[0]?.couleur ?? "#2563EB", p.statut !== "en_cours")}
+              icon={epingle(p.membres[0]?.couleur ?? "var(--accent)", p.statut !== "en_cours")}
               eventHandlers={{ click: () => setChoisie(p) }}
             />
           ))}
@@ -107,7 +107,7 @@ export function CarteActivites({ points, sansAdresse }: {
         </MapContainer>
 
         {choisie && (
-          <div data-testid="carte-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex flex-col gap-1 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_rgba(33,30,26,.22)]">
+          <div data-testid="carte-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex flex-col gap-1 rounded-card border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
             <span className="flex items-center gap-2">
               <span className="min-w-0 flex-1 truncate font-serif text-base text-ink">{choisie.nom}</span>
               {choisie.membres.map((m) => (

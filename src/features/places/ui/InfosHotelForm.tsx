@@ -21,7 +21,7 @@ export function InfosHotelForm({ listeItemId, etoiles, prixNuit, checkin, checko
   const hhmm = (v: string | null) => (v ? v.slice(0, 5) : "");
 
   return (
-    <form action={action} data-testid="infos-hotel-form" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <form action={action} data-testid="infos-hotel-form" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <input type="hidden" name="listeItemId" value={listeItemId} />
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("infos.titre")}</span>

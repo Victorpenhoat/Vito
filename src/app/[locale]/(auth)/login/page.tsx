@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: {
           <div className="font-serif text-[13px] italic text-faint">{t("marqueSous")}</div>
         </div>
         {lien && (
-          <p role="alert" data-testid="lien-invalide" className="mb-3 rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3 py-2 text-[12.5px] text-kpi-amber">
+          <p role="alert" data-testid="lien-invalide" className="mb-3 rounded-card border border-current/20 bg-kpi-amber-bg px-3 py-2 text-[12.5px] text-kpi-amber">
             {t("lienExpire")}
           </p>
         )}

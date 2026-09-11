@@ -107,6 +107,17 @@ for (const [chemin, lang, titre] of ATTENDU) {
   });
 }
 
+test("sans cookie, le 404 global servi est déjà sombre", async ({ request }) => {
+  // `global-not-found.tsx` contourne le layout [locale] : il a sa propre coque
+  // HTML et a déjà porté sa propre copie (divergente) du défaut de thème. On
+  // lit le HTML SERVI, comme pour /fr/login : un 404 est justement une page
+  // qu'on n'hydrate pas forcément avant de la voir.
+  const reponse = await request.get("/fr/ceci-nexiste-pas");
+  expect(reponse.status()).toBe(404);
+  const html = await reponse.text();
+  expect(html).toContain('data-theme="dark"');
+});
+
 // Dix pages appellent notFound() pour une fiche absente ou appartenant à un
 // autre compte. C'est le 404 qu'un vrai lecteur rencontre — pas l'URL tapée de
 // travers. Il se rend dans le layout [locale], donc traduit ET nonçé, là où le

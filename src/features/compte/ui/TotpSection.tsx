@@ -90,7 +90,7 @@ export function TotpSection() {
   }
 
   return (
-    <div data-testid="totp-section" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <div data-testid="totp-section" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-[13.5px] text-ink">{t("totp.titre")}</div>
@@ -108,7 +108,7 @@ export function TotpSection() {
           <p className="text-[12px] text-muted">{t("totp.scanner")}</p>
           {qr && (
             // eslint-disable-next-line @next/next/no-img-element -- QR fourni en data-URI par le SDK
-            <img src={qr} alt={t("totp.titre")} data-testid="totp-qr" className="h-40 w-40 self-start rounded-[5px] bg-white p-2" />
+            <img src={qr} alt={t("totp.titre")} data-testid="totp-qr" className="h-40 w-40 self-start rounded-card bg-white p-2" />
           )}
           {secret && (
             <p className="text-[11px] text-faint">

@@ -71,13 +71,13 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
           </div>
 
           {/* Bande des vacances scolaires */}
-          <div className="relative mt-2 h-6 rounded-[4px] bg-surface-hover">
+          <div className="relative mt-2 h-6 rounded-control bg-surface-hover">
             {periodes.map((p) => {
               const barre = barrePour(p.debut, p.fin, fenetre);
               if (!barre) return null;
               return (
                 <span key={p.id} data-testid="planning-vacances" title={p.libelle}
-                  className="absolute inset-y-0 rounded-[4px] bg-kpi-amber/25"
+                  className="absolute inset-y-0 rounded-control bg-kpi-amber/25"
                   style={{ left: `${barre.gauchePct}%`, width: `${barre.largeurPct}%` }}>
                   <span className="pointer-events-none absolute inset-0 flex items-center justify-center truncate px-1 text-[10px] font-semibold text-kpi-amber">
                     {p.libelle}
@@ -98,7 +98,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
               être lues aussi souvent, d'où le rang inférieur. */}
           {autresZones.map(({ zone: autre, periodes: leurs }) => (
             <div key={autre} data-testid="piste-zone-autre"
-              className="relative mt-1 h-3.5 rounded-[3px] bg-surface-hover/60">
+              className="relative mt-1 h-3.5 rounded-control bg-surface-hover/60">
               {/* Une étiquette d'un caractère est tout ce que ces pistes fines
                   peuvent porter — mais une zone sans lettre n'en reçoit
                   aucune plutôt qu'une fausse (le nom reste dans l'infobulle
@@ -114,7 +114,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
                 if (!barre) return null;
                 return (
                   <span key={p.id} title={`${autre} · ${p.libelle}`}
-                    className="absolute inset-y-0 rounded-[3px] bg-kpi-amber/15"
+                    className="absolute inset-y-0 rounded-control bg-kpi-amber/15"
                     style={{ left: `${barre.gauchePct}%`, width: `${barre.largeurPct}%` }} />
                 );
               })}
@@ -127,10 +127,10 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
               const barre = barrePour(v.debut, v.fin, fenetre);
               const pendant = vacancesDuVoyage({ debut: v.debut, fin: v.fin }, vacances);
               return (
-                <li key={v.id} data-testid="planning-voyage" className="relative h-8 rounded-[4px] bg-surface-hover">
+                <li key={v.id} data-testid="planning-voyage" className="relative h-8 rounded-control bg-surface-hover">
                   {barre ? (
                     <Link href={`/voyages/${v.id}`}
-                      className="absolute inset-y-0 flex items-center overflow-hidden rounded-[4px] bg-accent px-2 text-[11.5px] font-semibold text-white hover:bg-accent-hover"
+                      className="absolute inset-y-0 flex items-center overflow-hidden rounded-control bg-accent px-2 text-[11.5px] font-semibold text-white hover:bg-accent-hover"
                       style={{ left: `${barre.gauchePct}%`, width: `${barre.largeurPct}%`, minWidth: "1.25rem" }}>
                       <span className="truncate">{v.titre}</span>
                     </Link>

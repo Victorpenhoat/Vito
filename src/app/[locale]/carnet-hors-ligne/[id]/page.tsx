@@ -110,15 +110,19 @@ export default async function CarnetHorsLignePage({
   );
 }
 
-// Repli des jetons de l'application, valeurs identiques à globals.css.
+// Repli des jetons de l'application. Cette page vit HORS du groupe (app) pour
+// que le verrou n'enferme pas le lecteur dehors : elle n'hérite donc pas de
+// globals.css et embarque ses styles. Les valeurs doivent rester identiques à
+// celles de globals.css — c'est le genre d'écart qui ne se voit qu'en avion,
+// et `theme.test.ts` est la seule chose qui empêche les deux copies de diverger.
 const CSS = `
-.carnet { --c-app:#161310; --c-surface:#1E1A14; --c-ink:#F2EDE3; --c-muted:#A39A8A;
-  --c-faint:#6E665A; --c-line:rgba(255,255,255,.08); --c-accent:#4F8BF0;
+.carnet { --c-app:#080D16; --c-surface:#131A26; --c-ink:#EEF2F9; --c-muted:#93A0B8;
+  --c-faint:#6E7C95; --c-line:rgba(255,255,255,0.08); --c-accent:#6BA5FF;
   background:var(--c-app); color:var(--c-ink); min-height:100dvh;
   margin:0 auto; max-width:44rem; padding:1.5rem 1.25rem 3rem;
   font-family:var(--font-inter,system-ui,-apple-system,sans-serif); font-size:14px; line-height:1.5; }
-[data-theme="light"] .carnet { --c-app:#FBF9F3; --c-surface:#FFFFFF; --c-ink:#211E1A;
-  --c-muted:#7A736A; --c-faint:#9A9081; --c-line:#E4DDD0; --c-accent:#2563EB; }
+[data-theme="light"] .carnet { --c-app:#F6F8FC; --c-surface:#FFFFFF; --c-ink:#0A1220;
+  --c-muted:#55617A; --c-faint:#7C8799; --c-line:#DCE3ED; --c-accent:#2E6FD9; }
 .carnet-tete { border-bottom:1px solid var(--c-line); padding-bottom:1rem; margin-bottom:1.25rem; }
 .carnet-kicker { margin:0; font-size:10.5px; font-weight:600; letter-spacing:.12em;
   text-transform:uppercase; color:var(--c-faint); }

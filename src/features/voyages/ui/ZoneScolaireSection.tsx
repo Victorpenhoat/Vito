@@ -18,7 +18,7 @@ export function ZoneScolaireSection({ zoneEnregistree, zoneDeduite }: {
   const valeur = zoneEnregistree ?? zoneDeduite ?? "";
 
   return (
-    <form action={action} data-testid="zone-scolaire-section" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <form action={action} data-testid="zone-scolaire-section" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div className="text-[13.5px] text-ink">{t("zone.titre")}</div>
 
       <select name="zone" defaultValue={valeur} data-testid="zone-scolaire-select"

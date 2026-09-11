@@ -95,7 +95,7 @@ export function CreerCompteTunnel({ token, emailIndice, emailImpose }: {
       {etape === 3 && (
         <div className="flex flex-col gap-3">
           <h2 className="font-serif text-xl text-ink">{t("confidentialite.titre")}</h2>
-          <div className="rounded-[5px] border border-line bg-surface px-3.5 py-3">
+          <div className="rounded-card border border-line bg-surface px-3.5 py-3">
             <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("confidentialite.fait")}</div>
             <ul className="mt-1.5 flex flex-col gap-1 text-[12.5px] text-ink">
               <li>{t("confidentialite.conserve")}</li>

@@ -40,7 +40,7 @@ export function SejoursAVenirBlock({
 
   return (
     <div data-testid="sejours-reserves" className="flex flex-col gap-1.5">
-      <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+      <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
         {reservations.map((r) => {
           const etat = etatReservation(r, aujourdhui);
           const aProposer = basculeProposee(r, sejours, aujourdhui) && listeItemId != null;

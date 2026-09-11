@@ -76,7 +76,7 @@ export function ChampAdresseClub({ nomChamp = "adresse" }: { nomChamp?: string }
 
       {afficher && (
         <ul data-testid="adresse-suggestions"
-          className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-control border border-line bg-surface shadow-[0_8px_24px_rgba(33,30,26,.18)]">
+          className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-control border border-line bg-surface shadow-[0_8px_24px_var(--color-shadow)]">
           {suggestions.map((s) => (
             <li key={s.placeId}>
               <button type="button" data-testid="adresse-suggestion"

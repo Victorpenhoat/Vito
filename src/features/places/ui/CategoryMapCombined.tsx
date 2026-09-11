@@ -44,12 +44,12 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
   const DOT: Record<RestoStatut, string> = {
     favori: "var(--accent)",
     a_tester: "var(--kpi-amber)",
-    teste: "#8F867A",
+    teste: "var(--color-faint)",
   };
 
   const chipCls = (active: boolean) =>
     `inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-      active ? "border-line bg-surface text-ink shadow-[0_2px_6px_rgba(33,30,26,.1)]" : "border-line bg-surface text-faint opacity-60"
+      active ? "border-line bg-surface text-ink shadow-[0_2px_6px_var(--color-shadow)]" : "border-line bg-surface text-faint opacity-60"
     }`;
 
   return (
@@ -59,7 +59,7 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
         {RESTO_STATUTS.map((s) => (
           <button key={s} type="button" data-testid={`map-statut-${s}`} aria-pressed={actifs.has(s)}
             onClick={() => toggleStatut(s)} className={chipCls(actifs.has(s))}>
-            <span className={`h-2 w-2 ${s === "teste" ? "rounded-[2px]" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
+            <span className={`h-2 w-2 ${s === "teste" ? "rounded-control" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
             {tr(`onglets.${s === "favori" ? "favoris" : s === "teste" ? config.slugTeste : "a_tester"}`)}
           </button>
         ))}
@@ -99,7 +99,7 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
                   onMouseEnter={() => setSurbrillance(p.id)} onMouseLeave={() => setSurbrillance(null)}
                   className={`border-b border-line-soft py-2 ${surbrillance === p.id ? "bg-surface-hover" : ""}`}>
                   <Link href={`${config.basePath}/${p.etablissement.id}`} className="flex items-center gap-2 text-sm text-accent hover:underline">
-                    <span className={`h-2 w-2 shrink-0 ${s === "teste" ? "rounded-[2px]" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
+                    <span className={`h-2 w-2 shrink-0 ${s === "teste" ? "rounded-control" : "rounded-full"}`} style={{ backgroundColor: DOT[s] }} aria-hidden />
                     <span className="truncate">
                       {p.etablissement.nom}
                       {p.etablissement.ville ? <span className="text-muted"> · {p.etablissement.ville}</span> : null}

@@ -6,34 +6,43 @@
   /* Les widgets natifs (icône du date-picker, dropdowns de select, scrollbars)
      suivent le thème — sinon ils restent clairs sur fond sombre. */
   color-scheme: dark;
-  --app: #161310; --sidebar: #110E0A;
-  --surface: #1E1A14; --surface-hover: #26211A;
+  /* Palette de la refonte v3, relevée dans le canevas et non devinée :
+     cf. docs/superpowers/specs/2026-09-11-refonte-v3-lot0-jetons-design.md */
+  --app: #080D16; --sidebar: #0C121D;
+  --surface: #131A26; --surface-hover: #1C2432;
   --line: rgba(255,255,255,0.08); --line-soft: rgba(255,255,255,0.06);
-  --accent: #4F8BF0; --accent-hover: #6BA0F5;
-  --accent-50: rgba(79,139,240,0.14); --accent-600: #6BA0F5;
-  --ink: #F2EDE3; --muted: #A39A8A; --faint: #6E665A;
-  --badge: #26211A; --gold: #E9B949; --danger: #F2998E; --danger-bg: rgba(244,63,63,0.14);
-  --kpi-green: #7BE0A0; --kpi-green-bg: rgba(34,197,94,0.14);
-  --kpi-blue: #4F8BF0; --kpi-blue-bg: rgba(79,139,240,0.14);
-  --kpi-amber: #E9B949; --kpi-amber-bg: rgba(233,185,73,0.14);
-  --kpi-violet: #C9A0F5; --kpi-violet-bg: rgba(168,85,247,0.14);
-  --hero-from: #26211A; --hero-to: #161310;
+  --accent: #6BA5FF; --accent-hover: #8FBCFF;
+  --accent-50: rgba(107,165,255,0.14); --accent-600: #8FBCFF;
+  --ink: #EEF2F9; --muted: #93A0B8; --faint: #6E7C95;
+  --on-fill: #0A1220; --shadow: rgba(0,0,0,.5);
+  --badge: #232D3E; --gold: #E9B949; --danger: #F2707F; --danger-bg: rgba(242,112,127,0.14);
+  --kpi-green: #3ED598; --kpi-green-bg: rgba(62,213,152,0.14);
+  --kpi-blue: #6BA5FF; --kpi-blue-bg: rgba(107,165,255,0.14);
+  --kpi-amber: #F5A65B; --kpi-amber-bg: rgba(245,166,91,0.14);
+  --kpi-violet: #C9A0F5; --kpi-violet-bg: rgba(201,160,245,0.14);
+  --hero-from: #1C2432; --hero-to: #080D16;
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --app: #FBF9F3; --sidebar: #F4F1E9;
-  --surface: #FFFFFF; --surface-hover: #F4F1E9;
-  --line: #E4DDD0; --line-soft: #F0EBE0;
-  --accent: #2563EB; --accent-hover: #1D4ED8;
-  --accent-50: #E6EDFC; --accent-600: #1D4ED8;
-  --ink: #211E1A; --muted: #7A736A; --faint: #9A9081;
-  --badge: #F0EBE0; --gold: #E9B949; --danger: #B3261E; --danger-bg: #FEF3F2;
-  --kpi-green: #15803D; --kpi-green-bg: #E7F2EB;
-  --kpi-blue: #2563EB; --kpi-blue-bg: #E6EDFC;
-  --kpi-amber: #B45309; --kpi-amber-bg: #FBF0DF;
-  --kpi-violet: #9333EA; --kpi-violet-bg: #F3E8FF;
-  --hero-from: #E4DDD0; --hero-to: #FBF9F3;
+  /* Contrepartie FROIDE de la palette v3. Le designer a reporté le clair ; on
+     le garde tenable en réassignant la table, pas en le redessinant. Les
+     valeurs ne sont pas celles du sombre inversées : l'accent #6BA5FF tombe à
+     2,48:1 sur blanc (2,34:1 sur le fond clair #F6F8FC) et échoue au texte,
+     d'où #2E6FD9 (4,78:1). */
+  --app: #F6F8FC; --sidebar: #EDF1F8;
+  --surface: #FFFFFF; --surface-hover: #EDF1F8;
+  --line: #DCE3ED; --line-soft: #EAEFF6;
+  --accent: #2E6FD9; --accent-hover: #1F57B4;
+  --accent-50: #E8F0FE; --accent-600: #1F57B4;
+  --ink: #0A1220; --muted: #55617A; --faint: #7C8799;
+  --on-fill: #FFFFFF; --shadow: rgba(16,24,40,.12);
+  --badge: #EAEFF6; --gold: #A97A10; --danger: #B3261E; --danger-bg: #FDECEA;
+  --kpi-green: #10814F; --kpi-green-bg: #E6F5EE;
+  --kpi-blue: #2E6FD9; --kpi-blue-bg: #E8F0FE;
+  --kpi-amber: #A85F18; --kpi-amber-bg: #FBEEE2;
+  --kpi-violet: #7B3FBF; --kpi-violet-bg: #F1E9FB;
+  --hero-from: #DCE3ED; --hero-to: #F6F8FC;
 }
 
 @theme {
@@ -54,6 +63,8 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
+  --color-on-fill: var(--on-fill);
+  --color-shadow: var(--shadow);
   --color-badge: var(--badge);
   --color-kpi-green: var(--kpi-green);
   --color-kpi-green-bg: var(--kpi-green-bg);
@@ -63,9 +74,12 @@
   --color-kpi-amber-bg: var(--kpi-amber-bg);
   --color-kpi-violet: var(--kpi-violet);
   --color-kpi-violet-bg: var(--kpi-violet-bg);
-  --radius-card: 4px;
-  --radius-tile: 4px;
-  --radius-control: 3px;
+  --color-hero-from: var(--hero-from);
+  --color-hero-to: var(--hero-to);
+  --radius-card: 12px;
+  --radius-tile: 12px;
+  --radius-control: 10px;
+  --radius-pill: 999px;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, serif;
 }

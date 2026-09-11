@@ -66,7 +66,7 @@ export function HebergementPicker({ choisi, onChoisir }: {
         <p className="text-[11.5px] text-faint">{t("hebergement.aucun")}</p>
       )}
       {resultats.length > 0 && (
-        <ul className="flex max-h-44 flex-col overflow-y-auto rounded-[5px] border border-line bg-surface">
+        <ul className="flex max-h-44 flex-col overflow-y-auto rounded-card border border-line bg-surface">
           {resultats.map((r) => (
             <li key={r.placeId}>
               <button type="button" data-testid="hebergement-resultat"

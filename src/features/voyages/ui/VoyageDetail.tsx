@@ -18,6 +18,7 @@ import { getDepensesVoyage } from "../data/queries";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { resumeDetails, heureDeReservation } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
+import { AVATAR_PALETTE } from "@/features/famille/domain/avatarColor";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
 import { PartageParLien } from "./PartageParLien";
@@ -119,11 +120,11 @@ export async function VoyageDetail({ id }: { id: string }) {
       <div className="mt-4 flex flex-col gap-4">
         <div>
           <SectionLabel>{t("fiche.participants")}</SectionLabel>
-          <div className="flex items-center gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+          <div className="flex items-center gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
             <div className="flex">
               {membres.slice(0, 4).map((m, i) => (
                 <span key={m.profile_id} className={i > 0 ? "-ml-2" : ""}>
-                  <Avatar name={m.display_name ?? "?"} size="sm" color={m.role === "owner" ? "#211E1A" : undefined} />
+                  <Avatar name={m.display_name ?? "?"} size="sm" color={m.role === "owner" ? AVATAR_PALETTE[0] : undefined} />
                 </span>
               ))}
             </div>
@@ -139,7 +140,7 @@ export async function VoyageDetail({ id }: { id: string }) {
         {prochaine && (
           <div>
             <SectionLabel>{t("fiche.prochaineEtape")}</SectionLabel>
-            <div className="flex items-center gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+            <div className="flex items-center gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
               <ProchaineIcone type={prochaine.type} />
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[13.5px] font-semibold text-ink">
@@ -152,11 +153,11 @@ export async function VoyageDetail({ id }: { id: string }) {
         )}
 
         <div className="grid grid-cols-2 gap-2.5">
-          <a href="#reservations" className="rounded-[5px] border border-line bg-surface px-3.5 py-3 focus-visible:outline-2 focus-visible:outline-accent">
+          <a href="#reservations" className="rounded-card border border-line bg-surface px-3.5 py-3 focus-visible:outline-2 focus-visible:outline-accent">
             <div className="text-[11px] text-faint">{t("reservations")}</div>
             <div className="mt-0.5 font-serif text-xl text-ink">{reservations.length}</div>
           </a>
-          <a href="#documents" className="rounded-[5px] border border-line bg-surface px-3.5 py-3 focus-visible:outline-2 focus-visible:outline-accent">
+          <a href="#documents" className="rounded-card border border-line bg-surface px-3.5 py-3 focus-visible:outline-2 focus-visible:outline-accent">
             <div className="text-[11px] text-faint">{t("documents.titre")}</div>
             <div className="mt-0.5 font-serif text-xl text-ink">{documents.length}</div>
           </a>

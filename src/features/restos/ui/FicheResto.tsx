@@ -138,7 +138,7 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
           réservation ne dépendent pas des données Places. */}
       {(etab.adresse || etab.telephone || etab.website || !isResto) && (
         <section>
-          <div className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+          <div className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
             {etab.adresse && (
               <div className="flex items-center justify-between gap-3 px-3.5 py-3">
                 <span className="min-w-0 text-[13px] text-ink">{etab.adresse}</span>
@@ -233,7 +233,7 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
               aujourdhui={new Date().toISOString().slice(0, 10)} />
           )}
           {visites.length > 0 && (
-            <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+            <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
               {visites.map((v) => {
                 const voyage = Array.isArray(v.voyage) ? v.voyage[0] : v.voyage;
                 const n = !isResto ? nuitsEntre(v.visite_le, v.date_fin) : null;

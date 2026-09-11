@@ -89,7 +89,7 @@ function Carte({ voyage: v, t, locale, today }: {
   const sub = [dates || v.periode_texte, n ? t("nuits", { n }) : null].filter(Boolean).join(" · ");
   return (
     <li data-testid="voyage-card" className={chip === "termines" ? "opacity-70" : ""}>
-      <Link href={`/voyages/${v.id}`} className="block overflow-hidden rounded-[6px] border border-line bg-surface focus-visible:outline-2 focus-visible:outline-accent">
+      <Link href={`/voyages/${v.id}`} className="block overflow-hidden rounded-card border border-line bg-surface focus-visible:outline-2 focus-visible:outline-accent">
         <VoyageCover photoRef={v.cover_photo_ref} url={v.cover_url} statut={v.statut} className="h-[150px]">
           {dans !== null && (
             <span className="absolute left-3 top-3 rounded-full bg-accent/95 px-2.5 py-1 text-[10.5px] font-semibold text-white">
@@ -115,7 +115,7 @@ function IdeeRow({ voyage: v, t }: { voyage: VoyageRow; t: ReturnType<typeof use
   return (
     <li data-testid="voyage-card">
       <Link href={`/voyages/${v.id}`}
-        className="flex items-center gap-2.5 rounded-[6px] border border-dashed border-line px-3.5 py-3 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent">
+        className="flex items-center gap-2.5 rounded-card border border-dashed border-line px-3.5 py-3 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent">
         <Sparkles size={18} className="shrink-0 text-faint" aria-hidden />
         <span className="min-w-0 flex-1 truncate">
           <span className="text-[13px] font-medium text-ink">{v.titre}</span>

@@ -210,7 +210,7 @@ export function DepensesVoyageBlock({
         {(["depenses", "equilibres"] as const).map((o) => (
           <button key={o} type="button" data-testid={`onglet-${o}`} aria-pressed={onglet === o}
             onClick={() => setOnglet(o)}
-            className={`rounded-[3px] px-3 py-1.5 text-[11.5px] font-semibold ${
+            className={`rounded-control px-3 py-1.5 text-[11.5px] font-semibold ${
               onglet === o ? "bg-accent text-white" : "text-muted hover:text-ink"
             }`}>
             {t(`onglets.${o}`)}

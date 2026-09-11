@@ -39,10 +39,10 @@ export function TagsAdmin({ tags }: { tags: TagAdmin[] }) {
         ))}
       </div>
 
-      <ul className="divide-y divide-line-soft overflow-hidden rounded-[6px] border border-line bg-surface">
+      <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
         {shown.map((tg) => (
           <li key={tg.id} data-testid="tag-row" className="flex items-center gap-3 px-3.5 py-3">
-            <span className="h-3.5 w-3.5 shrink-0 rounded-[4px]" style={{ backgroundColor: tg.color ?? "var(--line)" }} aria-hidden />
+            <span className="h-3.5 w-3.5 shrink-0 rounded-control" style={{ backgroundColor: tg.color ?? "var(--line)" }} aria-hidden />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-medium text-ink">{tg.label}</div>
               <div className="mt-0.5 text-[11px] text-faint">

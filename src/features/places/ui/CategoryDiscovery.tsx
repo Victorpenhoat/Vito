@@ -140,7 +140,7 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
             {prix ? "€".repeat(prix) : tr("recherche.prix")} ▾
           </button>
           {prixOuvert && (
-            <div className="absolute z-10 mt-1 flex flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-lg">
+            <div className="absolute z-10 mt-1 flex flex-col overflow-hidden rounded-card border border-line bg-surface shadow-lg">
               {[null, 1, 2, 3, 4].map((n) => (
                 <button key={String(n)} type="button"
                   className="px-4 py-2 text-left text-sm text-ink hover:bg-surface-hover"
@@ -156,7 +156,7 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
             {cuisine ? tr(`${config.typeChipsNs}.${cuisine}`) : tr(config.typeFiltreKeys.label)} ▾
           </button>
           {cuisineOuverte && (
-            <div className="absolute z-10 mt-1 flex flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-lg">
+            <div className="absolute z-10 mt-1 flex flex-col overflow-hidden rounded-card border border-line bg-surface shadow-lg">
               <button type="button" className="px-4 py-2 text-left text-sm text-ink hover:bg-surface-hover"
                 onClick={() => { setCuisine(null); setCuisineOuverte(false); if (searched) setTimeout(() => runSearch(q), 0); }}>
                 {tr(config.typeFiltreKeys.tous)}
@@ -289,7 +289,7 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
                         <ChevronDown size={12} aria-hidden />
                       </button>
                       {menuOuvert === r.placeId && (
-                        <span className="absolute right-0 top-9 z-10 flex w-36 flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-lg">
+                        <span className="absolute right-0 top-9 z-10 flex w-36 flex-col overflow-hidden rounded-card border border-line bg-surface shadow-lg">
                           {RESTO_STATUTS.map((s) => (
                             <form key={s} action={(fd) => start(async () => {
                               setMenuOuvert(null);

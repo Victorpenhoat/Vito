@@ -1,8 +1,8 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
-import { cookies } from "next/headers";
 import { Inter, Newsreader } from "next/font/google";
 import { Introuvable } from "@/features/shell/ui/Introuvable";
+import { themeServeur } from "@/lib/platform/theme";
 import "./globals.css";
 
 // 404 des URL qui ne correspondent à AUCUNE route. Next les traite au niveau du
@@ -30,7 +30,10 @@ export default async function GlobalNotFound() {
   // La locale vient du proxy next-intl (`x-next-intl-locale`), qui l'a lue dans
   // l'URL : /en/nimportequoi rend bien un 404 anglais.
   const locale = await getLocale();
-  const theme = (await cookies()).get("theme")?.value === "dark" ? "dark" : "light";
+  // Défaut et lecture du cookie : voir `src/lib/platform/theme.ts`, partagé
+  // avec `[locale]/layout.tsx` — cette page le contourne (cf. plus haut) mais
+  // doit servir le même thème par défaut, cookie absent ou non.
+  const theme = await themeServeur();
   return (
     <html lang={locale} data-theme={theme} className={`${inter.variable} ${newsreader.variable}`}>
       <body>

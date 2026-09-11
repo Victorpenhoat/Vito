@@ -24,7 +24,7 @@ export function SessionsSection({ sessions, connexions }: {
   const Icone = { mobile: Smartphone, tablette: Tablet, ordinateur: Laptop } as const;
 
   return (
-    <div data-testid="sessions-section" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <div data-testid="sessions-section" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div>
         <div className="text-[13.5px] text-ink">{t("sessions.titre")}</div>
         <p className="mt-0.5 text-[11.5px] text-muted">{t("sessions.explication")}</p>
