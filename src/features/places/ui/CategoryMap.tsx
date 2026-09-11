@@ -32,7 +32,7 @@ function pinHtml(statut: RestoStatut, surbrillance: boolean): string {
   if (statut === "a_tester") {
     return `<svg width="26" height="31" viewBox="0 0 30 34" style="filter:drop-shadow(0 3px 5px var(--color-shadow));${scale}"><path d="M15 2 27 23.5c1 1.9-.4 4.5-2.6 4.5H5.6C3.4 28 2 25.4 3 23.5L15 2Z" fill="var(--kpi-amber)"/><circle cx="15" cy="21" r="3.2" fill="var(--color-on-fill)"/></svg>`;
   }
-  return `<svg width="20" height="20" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px var(--color-shadow));opacity:.85;${scale}"><rect x="3" y="3" width="18" height="18" rx="4" fill="#8F867A"/><path d="m8 12.5 3 3 5.5-6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" style="filter:drop-shadow(0 2px 4px var(--color-shadow));opacity:.85;${scale}"><rect x="3" y="3" width="18" height="18" rx="4" fill="var(--color-faint)"/><path d="m8 12.5 3 3 5.5-6" stroke="var(--color-on-fill)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
 /** Pastille d'un groupe : son compte, et la ville dominante quand on la connaît. */

@@ -18,6 +18,7 @@ import { getDepensesVoyage } from "../data/queries";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { resumeDetails, heureDeReservation } from "../domain/reservationDetails";
 import { getProches } from "@/features/famille/data/queries";
+import { AVATAR_PALETTE } from "@/features/famille/domain/avatarColor";
 import { ShareForm } from "./ShareForm";
 import { MembersList } from "./MembersList";
 import { PartageParLien } from "./PartageParLien";
@@ -123,7 +124,7 @@ export async function VoyageDetail({ id }: { id: string }) {
             <div className="flex">
               {membres.slice(0, 4).map((m, i) => (
                 <span key={m.profile_id} className={i > 0 ? "-ml-2" : ""}>
-                  <Avatar name={m.display_name ?? "?"} size="sm" color={m.role === "owner" ? "#211E1A" : undefined} />
+                  <Avatar name={m.display_name ?? "?"} size="sm" color={m.role === "owner" ? AVATAR_PALETTE[0] : undefined} />
                 </span>
               ))}
             </div>

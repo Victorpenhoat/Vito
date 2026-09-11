@@ -44,7 +44,7 @@ export function CategoryMapCombined({ places, categorie = "resto" }: { places: P
   const DOT: Record<RestoStatut, string> = {
     favori: "var(--accent)",
     a_tester: "var(--kpi-amber)",
-    teste: "#8F867A",
+    teste: "var(--color-faint)",
   };
 
   const chipCls = (active: boolean) =>
