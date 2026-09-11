@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { SubTabPills } from "./SubTabPills";
 
 const OPTIONS = [
@@ -21,7 +21,8 @@ describe("SubTabPills", () => {
   it("émet la clé choisie, pas l'index", () => {
     const onChange = vi.fn();
     render(<SubTabPills options={OPTIONS} valeur="favoris" onChange={onChange} ariaLabel="Vue" />);
-    screen.getByRole("tab", { name: /À tester/ }).click();
+    const tabATestrer = screen.getByRole("tab", { name: /À tester/ });
+    fireEvent.click(tabATestrer);
     expect(onChange).toHaveBeenCalledWith("a_tester");
   });
 
@@ -31,5 +32,34 @@ describe("SubTabPills", () => {
     render(<SubTabPills options={[{ cle: "x" as const, libelle: "Vide", compte: 0 }]}
       valeur="x" onChange={() => {}} ariaLabel="Vue" />);
     expect(screen.getByRole("tab").textContent).toContain("0");
+  });
+
+  // Les props de configuration (testId, idOnglet, ariaControls) doivent siéger
+  // sur l'élément interactif (button), pas sur le wrapper tablist. Les tests e2e
+  // cliquent sur getByRole("tab"), et aria-labelledby/aria-controls établissent
+  // la relation onglet/panneau uniquement si ces attributs sont sur le tab lui-même.
+  it("place testId, idOnglet et ariaControls sur l'onglet interactif", () => {
+    render(
+      <SubTabPills
+        options={OPTIONS}
+        valeur="favoris"
+        onChange={() => {}}
+        ariaLabel="Vue"
+        testId={(cle) => `tab-${cle}`}
+        idOnglet={(cle) => `onglet-${cle}`}
+        ariaControls="panel-contenu"
+      />
+    );
+    const onglets = screen.getAllByRole("tab");
+
+    // Première pastille : testId, idOnglet, ariaControls sur le button lui-même
+    expect(onglets[0]!.getAttribute("data-testid")).toBe("tab-favoris");
+    expect(onglets[0]!.getAttribute("id")).toBe("onglet-favoris");
+    expect(onglets[0]!.getAttribute("aria-controls")).toBe("panel-contenu");
+
+    // Deuxième pastille : idem
+    expect(onglets[1]!.getAttribute("data-testid")).toBe("tab-a_tester");
+    expect(onglets[1]!.getAttribute("id")).toBe("onglet-a_tester");
+    expect(onglets[1]!.getAttribute("aria-controls")).toBe("panel-contenu");
   });
 });
