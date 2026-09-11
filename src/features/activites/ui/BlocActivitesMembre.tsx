@@ -31,7 +31,7 @@ export async function BlocActivitesMembre({ membreId }: { membreId: string }) {
           {t("membre.toutVoir")} →
         </Link>
       </div>
-      <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+      <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
         {activites.map((a) => (
           <li key={a.id} data-testid="membre-activite-row">
             <Link href={`/activites/${a.id}`} className="flex items-center justify-between gap-3 px-3.5 py-3">
@@ -47,7 +47,7 @@ export async function BlocActivitesMembre({ membreId }: { membreId: string }) {
         // Ce qui traîne se dit ici aussi : on ne vient pas sur cette fiche pour
         // découvrir un certificat expiré ailleurs.
         <Link href="/activites/alertes" data-testid="membre-activites-alertes"
-          className="mt-2 flex items-center justify-between gap-2 rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3 py-2 text-[12px] font-semibold text-kpi-amber">
+          className="mt-2 flex items-center justify-between gap-2 rounded-card border border-current/20 bg-kpi-amber-bg px-3 py-2 text-[12px] font-semibold text-kpi-amber">
           {t("membre.aTraiter", { n: aTraiter.length })}
           <span className="shrink-0">{t("alertes.traiter")} →</span>
         </Link>

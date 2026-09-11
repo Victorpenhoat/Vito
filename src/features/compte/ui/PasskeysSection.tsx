@@ -81,7 +81,7 @@ export function PasskeysSection() {
   }
 
   return (
-    <div data-testid="passkeys-section" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <div data-testid="passkeys-section" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div>
         <div className="text-[13.5px] text-ink">{t("passkeys.titre")}</div>
         <p className="mt-0.5 text-[11.5px] text-muted">{t("passkeys.explication")}</p>

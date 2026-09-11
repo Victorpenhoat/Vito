@@ -33,7 +33,7 @@ export function ComptesTable({ comptes }: { comptes: Ligne[] }) {
       {state && "error" in state && state.error && (
         <p role="alert" className="text-sm text-danger">{state.error}</p>
       )}
-      <ul data-testid="comptes-liste" className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+      <ul data-testid="comptes-liste" className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
         {comptes.map((c) => {
           const nom = c.display_name?.trim() || c.email || "—";
           const suspendu = c.statut === "suspendu";

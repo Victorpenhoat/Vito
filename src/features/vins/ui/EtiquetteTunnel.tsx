@@ -188,7 +188,7 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
           )}
 
           {illisible ? (
-            <div data-testid="etiquette-illisible" className="rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
+            <div data-testid="etiquette-illisible" className="rounded-card border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
               <p className="text-[13px] font-semibold text-kpi-amber">{t("etiquette.illisibleTitre")}</p>
               <p className="mt-1 text-[12.5px] text-ink">{t("etiquette.illisibleTexte")}</p>
               <div className="mt-2 flex gap-2">
@@ -204,7 +204,7 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
           )}
 
           {connu && (
-            <div data-testid="vin-deja-bu" className="rounded-[5px] border border-accent/25 bg-accent-50 px-3.5 py-2.5 text-[12.5px] text-ink">
+            <div data-testid="vin-deja-bu" className="rounded-card border border-accent/25 bg-accent-50 px-3.5 py-2.5 text-[12.5px] text-ink">
               {t("etiquette.dejaBu", { n: connu.nb })}
               {connu.dernier ? ` — ${t("etiquette.dernierLieu", { lieu: connu.dernier })}` : ""}
             </div>

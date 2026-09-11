@@ -24,7 +24,7 @@ export async function ReglagesSections({ role }: { role: string }) {
   const visibles = SECTIONS.filter((s) => !s.adminSeul || role === "admin");
 
   return (
-    <nav data-testid="reglages-sections" className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+    <nav data-testid="reglages-sections" className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
       {visibles.map((s) => {
         const contenu = (
           <>

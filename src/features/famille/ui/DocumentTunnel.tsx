@@ -134,7 +134,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
               </div>
             </div>
           )}
-          <label className="flex cursor-pointer flex-col items-center gap-1 rounded-[6px] border border-dashed border-line bg-surface-hover p-7 text-center">
+          <label className="flex cursor-pointer flex-col items-center gap-1 rounded-card border border-dashed border-line bg-surface-hover p-7 text-center">
             <Camera size={22} className="mb-1 text-faint" aria-hidden />
             <span className="text-ink">{t("tunnel.bDepose")}</span>
             <span className="text-sm text-muted">{t("tunnel.bOu")}</span>
@@ -181,7 +181,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
           <Field name="issue_place" label={t("tunnel.dLieu")} def={fields.issue_place} auto={!manual && !!fields.issue_place} t={t} />
 
           {/* verso optionnel (design : recto puis verso) — hors OCR, simple seconde face */}
-          <label className="flex cursor-pointer items-center justify-between gap-3 rounded-[6px] border border-dashed border-line bg-surface-hover px-3.5 py-3">
+          <label className="flex cursor-pointer items-center justify-between gap-3 rounded-card border border-dashed border-line bg-surface-hover px-3.5 py-3">
             <span className="flex flex-col">
               <span className="text-sm font-medium text-ink">{t("tunnel.versoOptionnel")}</span>
               <span className="text-xs text-muted">{verso ? verso.name : t("tunnel.bContraintes")}</span>

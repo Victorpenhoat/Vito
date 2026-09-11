@@ -213,11 +213,11 @@ export function CategoryMap({ places, surbrillanceId, categorie = "resto", onZon
 
         {/* fiche compacte du marqueur sélectionné */}
         {selection && (
-          <div data-testid="marqueur-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex gap-3 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
+          <div data-testid="marqueur-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex gap-3 rounded-card border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
             {selection.etablissement.photo_ref && (
               // eslint-disable-next-line @next/next/no-img-element -- proxy privé no-store
               <img src={`/api/places/photo?ref=${encodeURIComponent(selection.etablissement.photo_ref)}&w=200`}
-                alt="" className="h-[54px] w-[54px] shrink-0 rounded-[5px] object-cover" />
+                alt="" className="h-[54px] w-[54px] shrink-0 rounded-card object-cover" />
             )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">

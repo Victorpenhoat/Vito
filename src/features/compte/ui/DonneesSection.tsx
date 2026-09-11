@@ -30,7 +30,7 @@ export function DonneesSection({ inventaire, suppressionDemandeeLe, delaiJours }
   if (suppressionDemandeeLe) {
     const echeance = new Date(new Date(suppressionDemandeeLe).getTime() + delaiJours * 86_400_000);
     return (
-      <div data-testid="suppression-en-cours" className="flex flex-col gap-3 rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
+      <div data-testid="suppression-en-cours" className="flex flex-col gap-3 rounded-card border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
         <div>
           <div className="text-[13.5px] font-semibold text-kpi-amber">{t("donnees.suppressionEnCours")}</div>
           <p className="mt-1 text-[12.5px] text-ink">
@@ -51,7 +51,7 @@ export function DonneesSection({ inventaire, suppressionDemandeeLe, delaiJours }
   }
 
   return (
-    <div data-testid="donnees-section" className="flex flex-col gap-4 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <div data-testid="donnees-section" className="flex flex-col gap-4 rounded-card border border-line bg-surface px-3.5 py-3">
       <div className="flex flex-col gap-2">
         <div>
           <div className="text-[13.5px] text-ink">{t("donnees.exportTitre")}</div>

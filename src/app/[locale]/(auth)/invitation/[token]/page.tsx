@@ -52,7 +52,7 @@ export default async function InvitationPage({ params }: { params: Promise<{ tok
             <b>{invitation.invite_par}</b> {t("vousInvite")}
           </p>
           {invitation.voyage_titre && (
-            <div className="mt-2 rounded-[5px] border border-accent/25 bg-accent-50 px-3.5 py-2.5">
+            <div className="mt-2 rounded-card border border-accent/25 bg-accent-50 px-3.5 py-2.5">
               <div className="font-serif text-lg text-ink">{invitation.voyage_titre}</div>
               {periode && <div className="text-[12px] text-muted">{periode}</div>}
               <p className="mt-1.5 text-[11.5px] text-muted">{t("accesLimite")}</p>

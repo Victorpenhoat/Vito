@@ -132,7 +132,7 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
               <span data-testid="sejour-nuits" className="-mt-2 text-[11px] text-faint">{t("visite.nuits", { n: nuits })}</span>
             )}
             {voyageLie && (
-              <div data-testid="voyage-lie" className="flex items-center gap-2.5 rounded-[5px] border border-accent/25 bg-accent-50 px-3.5 py-2.5">
+              <div data-testid="voyage-lie" className="flex items-center gap-2.5 rounded-card border border-accent/25 bg-accent-50 px-3.5 py-2.5">
                 <span className="min-w-0 flex-1 text-[12px] text-ink">
                   {t("visite.voyageDetecte")} <b>{voyageLie.titre}</b>
                 </span>

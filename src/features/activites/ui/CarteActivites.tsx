@@ -107,7 +107,7 @@ export function CarteActivites({ points, sansAdresse }: {
         </MapContainer>
 
         {choisie && (
-          <div data-testid="carte-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex flex-col gap-1 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
+          <div data-testid="carte-fiche" className="absolute inset-x-3 bottom-3 z-[1000] flex flex-col gap-1 rounded-card border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
             <span className="flex items-center gap-2">
               <span className="min-w-0 flex-1 truncate font-serif text-base text-ink">{choisie.nom}</span>
               {choisie.membres.map((m) => (

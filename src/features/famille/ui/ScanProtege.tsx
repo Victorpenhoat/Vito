@@ -20,7 +20,7 @@ export function ScanProtege({ docId, face, mime, caption, apercu, voirLabel }: {
 
   return (
     <figure className="m-0">
-      <div className="relative overflow-hidden rounded-[6px] border border-line bg-badge">
+      <div className="relative overflow-hidden rounded-card border border-line bg-badge">
         {src ? (
           <>
             {isImage ? (

@@ -36,7 +36,7 @@ export function VinsDeLaVisite({ dejaNotes, vinsConnus, tags, etablissementId, e
         <ul className="flex flex-col gap-1">
           {vins.map((v, i) => (
             <li key={`${v.intitule}-${i}`} data-testid="vin-de-la-visite"
-              className="flex items-center gap-2 rounded-[5px] border border-line bg-surface-hover px-2.5 py-1.5">
+              className="flex items-center gap-2 rounded-card border border-line bg-surface-hover px-2.5 py-1.5">
               <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink">{v.intitule || t("busIci.vinSansNom")}</span>
               <VerresLecture note={v.note} taille={11} />
             </li>

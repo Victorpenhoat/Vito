@@ -27,7 +27,7 @@ export function OrigineBlock({
     : origine.type === "voyage" ? t("origines.viaVoyage", { titre: origine.qui ?? "—" })
     : t("origines.aucune");
   return (
-    <div data-testid="origine-block" className="rounded-[5px] border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
+    <div data-testid="origine-block" className="rounded-card border border-current/20 bg-kpi-amber-bg px-3.5 py-3">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-kpi-amber">{t("origines.titre")}</span>
         <button type="button" onClick={() => setOpen(true)}

@@ -59,7 +59,7 @@ export default async function DocumentDetailPage({ params }: { params: Promise<{
       </div>
 
       {/* champs */}
-      <div className="mt-4 overflow-hidden rounded-[5px] border border-line bg-surface">
+      <div className="mt-4 overflow-hidden rounded-card border border-line bg-surface">
         {doc.doc_number_masque && (
           <div className="flex items-center justify-between gap-3 border-b border-line-soft px-3.5 py-3">
             <div className="min-w-0 flex-1">

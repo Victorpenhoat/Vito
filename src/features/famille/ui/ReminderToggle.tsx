@@ -22,7 +22,7 @@ export function ReminderToggle({ docId, initial }: { docId: string; initial: boo
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <div className="flex items-center justify-between gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div>
         <div className="text-[13px] font-medium text-ink">{t("doc.rappelTitre")}</div>
         <div className="mt-0.5 text-[11.5px] text-faint">{t("doc.rappelTexte")}</div>

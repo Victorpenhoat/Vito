@@ -17,7 +17,7 @@ export default async function ComptesPage() {
   return (
     <main className="flex flex-col gap-6 p-4 md:p-8 lg:mx-auto lg:w-full lg:max-w-[1000px]">
       <PageHeader eyebrow={t("comptes.eyebrow")} title={t("comptes.titre")} />
-      <div data-testid="comptes-avertissement" className="rounded-[5px] border border-accent/25 bg-accent-50 px-3.5 py-3">
+      <div data-testid="comptes-avertissement" className="rounded-card border border-accent/25 bg-accent-50 px-3.5 py-3">
         <p className="text-[12.5px] text-ink">{t("comptes.gereLesAcces")}</p>
         <p className="mt-1 text-[11.5px] text-muted">{t("comptes.aucunContenu")}</p>
       </div>

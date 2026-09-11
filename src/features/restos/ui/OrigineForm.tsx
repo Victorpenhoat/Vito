@@ -48,14 +48,14 @@ export function OrigineForm({
 
       <div className="flex gap-2">
         <button type="button" aria-pressed={type === "reco"} onClick={() => setType("reco")}
-          className={`flex-1 rounded-[6px] border px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${
+          className={`flex-1 rounded-card border px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${
             type === "reco" ? "border-kpi-amber bg-kpi-amber-bg" : "border-line bg-surface"
           }`}>
           <span className="block text-[13px] font-semibold text-ink">{t("origines.reco")}</span>
           <span className="mt-0.5 block text-[11px] text-faint">{t("origines.recoSous")}</span>
         </button>
         <button type="button" aria-pressed={type === "trouve"} onClick={() => setType("trouve")}
-          className={`flex-1 rounded-[6px] border px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${
+          className={`flex-1 rounded-card border px-3.5 py-3 text-left focus-visible:outline-2 focus-visible:outline-accent ${
             type === "trouve" ? "border-kpi-amber bg-kpi-amber-bg" : "border-line bg-surface"
           }`}>
           <span className="block text-[13px] font-semibold text-ink">{t("origines.trouve")}</span>

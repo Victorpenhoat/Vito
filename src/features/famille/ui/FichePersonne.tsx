@@ -92,7 +92,7 @@ export async function FichePersonne({
         {(proche.phone || proche.email || address || proche.birth_date) && (
           <section className="flex flex-col">
             <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("fiche.contact")}</h2>
-            <div className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+            <div className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
               {proche.phone && <ContactRow label={t("form.telephone")} value={proche.phone} copy />}
               {proche.email && <ContactRow label={t("form.email")} value={proche.email} copy />}
               {address && (
@@ -112,7 +112,7 @@ export async function FichePersonne({
         <div className="flex flex-col gap-6">
           {documents.length === 0 ? (
             /* état vide (écran 7b) */
-            <div className="flex flex-col items-center rounded-[6px] border border-dashed border-line bg-surface px-6 py-8 text-center">
+            <div className="flex flex-col items-center rounded-card border border-dashed border-line bg-surface px-6 py-8 text-center">
               <FileText size={30} className="text-faint" aria-hidden />
               <div className="mt-3 font-serif text-lg text-ink">{t("fiche.aucunDocTitre")}</div>
               <p className="mt-1.5 mb-4 max-w-xs text-[12.5px] leading-relaxed text-muted">{t("fiche.aucunDocTexte")}</p>
@@ -128,7 +128,7 @@ export async function FichePersonne({
               {identite.length > 0 && (
                 <section className="flex flex-col">
                   <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("fiche.identite")}</h2>
-                  <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+                  <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
                     {identite.map((d) => <DocumentRow key={d.id} doc={d} memberId={proche.id} />)}
                   </ul>
                 </section>
@@ -142,7 +142,7 @@ export async function FichePersonne({
                   </Link>
                 </div>
                 {complementaires.length > 0 ? (
-                  <ul className="divide-y divide-line-soft overflow-hidden rounded-[5px] border border-line bg-surface">
+                  <ul className="divide-y divide-line-soft overflow-hidden rounded-card border border-line bg-surface">
                     {complementaires.map((d) => <DocumentRow key={d.id} doc={d} memberId={proche.id} />)}
                   </ul>
                 ) : (

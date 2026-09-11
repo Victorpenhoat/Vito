@@ -130,7 +130,7 @@ function Calendrier({ plage, onJour, onSansDates }: {
                   return (
                     <button key={k} type="button" data-testid={`jour-${jour}`} onClick={() => onJour(jour)}
                       aria-pressed={arrivee || depart}
-                      className={`rounded-[6px] py-1.5 text-[12px] focus-visible:outline-2 focus-visible:outline-accent ${
+                      className={`rounded-card py-1.5 text-[12px] focus-visible:outline-2 focus-visible:outline-accent ${
                         arrivee || depart ? "bg-accent font-semibold text-white"
                         : dedans ? "bg-accent-50 text-accent" : "text-ink hover:bg-surface-hover"
                       }`}>

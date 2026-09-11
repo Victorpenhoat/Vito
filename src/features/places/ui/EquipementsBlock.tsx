@@ -10,7 +10,7 @@ export async function EquipementsBlock({ equipements }: { equipements: Record<st
   const connus = CLES.filter((k) => typeof equipements?.[k] === "boolean");
   if (connus.length === 0) return null;
   return (
-    <section data-testid="equipements-block" className="rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <section data-testid="equipements-block" className="rounded-card border border-line bg-surface px-3.5 py-3">
       <div className="flex items-center justify-between">
         <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">{t("equipements.titre")}</span>
         <span className="text-[10px] text-faint">{t("equipements.fournisseur")}</span>

@@ -36,7 +36,7 @@ export function StatutChip({ listeItemId, statut, categorie = "resto" }: {
         <ChevronDown size={11} aria-hidden />
       </button>
       {open && (
-        <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-lg">
+        <div className="absolute right-0 z-10 mt-1 flex w-40 flex-col overflow-hidden rounded-card border border-line bg-surface shadow-lg">
           {RESTO_STATUTS.filter((s) => s !== statut).map((s) => (
             <form key={s} action={action} onSubmit={() => setOpen(false)}>
               <input type="hidden" name="listeItemId" value={listeItemId} />

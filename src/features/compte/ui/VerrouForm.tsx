@@ -11,7 +11,7 @@ export function VerrouForm({ delaiMinutes }: { delaiMinutes: number }) {
   const [state, action, pending] = useActionState(setPreferencesVerrou, undefined);
 
   return (
-    <form action={action} data-testid="verrou-form" className="flex flex-col gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3">
+    <form action={action} data-testid="verrou-form" className="flex flex-col gap-3 rounded-card border border-line bg-surface px-3.5 py-3">
       <div>
         <div className="text-[13.5px] text-ink">{t("verrou.titre")}</div>
         <p className="mt-0.5 text-[11.5px] text-muted">{t("verrou.explication")}</p>

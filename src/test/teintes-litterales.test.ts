@@ -40,4 +40,15 @@ describe("aucune teinte littérale hors de la table", () => {
       .sort();
     expect(coupables).toEqual([]);
   });
+
+  // Un rayon en dur ne suit pas la table : c'est ainsi que l'app s'est
+  // retrouvée avec 79 valeurs figées entre 2 et 8 px pendant que les jetons
+  // passaient à 12. Les `border-radius` inline des marqueurs Leaflet et de la
+  // page hors ligne ne sont pas concernés : ils vivent hors de Tailwind.
+  it("ne laisse aucun rayon littéral dans une classe Tailwind", () => {
+    const coupables = fichiers(SRC)
+      .filter((f) => /rounded-\[/.test(readFileSync(path.join(SRC, f), "utf8")))
+      .sort();
+    expect(coupables).toEqual([]);
+  });
 });

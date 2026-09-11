@@ -104,7 +104,7 @@ export function PlanningCalendrier({
           {(["semaine", "mois", "annee"] as const).map((v) => (
             <button key={v} type="button" data-testid={`vue-${v}`} aria-pressed={vue === v}
               onClick={() => setVue(v)}
-              className={`rounded-[3px] px-3 py-1.5 text-[11.5px] font-semibold ${
+              className={`rounded-control px-3 py-1.5 text-[11.5px] font-semibold ${
                 vue === v ? "bg-accent text-white" : "text-muted hover:text-ink"
               }`}>
               {t(`vues.${v}`)}
@@ -141,7 +141,7 @@ export function PlanningCalendrier({
               <div className="grid grid-cols-7 gap-1">
                 {semaine.map((j) => (
                   <span key={j.jour} data-testid={`jour-${j.jour}`}
-                    className={`rounded-[5px] py-2 text-center text-[12.5px] ${
+                    className={`rounded-card py-2 text-center text-[12.5px] ${
                       j.horsMois ? "text-faint/50"
                       : j.jour === aujourdhui ? "bg-accent font-semibold text-white"
                       : dansVacances(j.jour) ? "bg-kpi-amber-bg text-kpi-amber"
@@ -175,7 +175,7 @@ export function PlanningCalendrier({
                 const complet = voyages.find((x) => x.id === v.id);
                 return (
                   <Link key={v.id} href={`/voyages/${v.id}`} data-testid="planning-bande"
-                    className={`flex items-center gap-2 rounded-[5px] border px-2.5 py-1.5 text-[11.5px] font-semibold ${TEINTE[etat] ?? TEINTE.a_venir}`}>
+                    className={`flex items-center gap-2 rounded-card border px-2.5 py-1.5 text-[11.5px] font-semibold ${TEINTE[etat] ?? TEINTE.a_venir}`}>
                     <span className="truncate">{v.titre}</span>
                     <span className="ml-auto shrink-0 font-normal opacity-80">
                       {v.debut && v.fin ? `${jourCourt(v.debut)} → ${jourCourt(v.fin)}`
@@ -193,13 +193,13 @@ export function PlanningCalendrier({
           <ul data-testid="planning-legende" className="mt-1 flex flex-wrap gap-3 text-[11px] text-muted">
             {(["a_venir", "en_cours", "en_preparation"] as const).map((e) => (
               <li key={e} className="flex items-center gap-1.5">
-                <span className={`h-2.5 w-2.5 rounded-[3px] border ${TEINTE[e]}`} aria-hidden />
+                <span className={`h-2.5 w-2.5 rounded-control border ${TEINTE[e]}`} aria-hidden />
                 {t(`legende.${e}`)}
               </li>
             ))}
             {zone && (
               <li className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-[3px] bg-kpi-amber-bg" aria-hidden />
+                <span className="h-2.5 w-2.5 rounded-control bg-kpi-amber-bg" aria-hidden />
                 {t("legende.vacances", { zone })}
               </li>
             )}

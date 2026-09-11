@@ -76,7 +76,7 @@ export async function VinFiche({ id }: { id: string }) {
               {/* L'avertissement reste affiché en permanence : la fiche est
                   générée, et rien ne doit se faire passer pour une certitude. */}
               <p data-testid="analyse-avertissement"
-                className="flex items-start gap-2 rounded-[5px] border border-line bg-surface-hover px-3 py-2 text-[11.5px] text-muted">
+                className="flex items-start gap-2 rounded-card border border-line bg-surface-hover px-3 py-2 text-[11.5px] text-muted">
                 <Sparkles size={13} className="mt-0.5 shrink-0 text-accent" aria-hidden />
                 {t("analyse.avertissement")}
               </p>
@@ -149,7 +149,7 @@ export async function VinFiche({ id }: { id: string }) {
             // Sans analyse, la fiche doit tout de même donner la main : corriger les
             // champs lus, et lancer une première analyse. Sinon un vin saisi à la
             // main resterait figé, sans aucun moyen d'être complété.
-            <div data-testid="analyse-absente" className="flex flex-wrap items-center justify-between gap-2 rounded-[5px] border border-line bg-surface-hover px-3 py-2">
+            <div data-testid="analyse-absente" className="flex flex-wrap items-center justify-between gap-2 rounded-card border border-line bg-surface-hover px-3 py-2">
               <p className="text-[12px] text-muted">{t("analyse.absente")}</p>
               <CorrigerButton vin={correction} />
             </div>

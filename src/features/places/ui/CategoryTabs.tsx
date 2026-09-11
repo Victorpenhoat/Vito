@@ -142,7 +142,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
             {(["liste", "vignettes", "carte"] as const).map((v) => (
               <button key={v} type="button" data-testid={`view-${v}`} aria-pressed={view === v}
                 aria-label={t(`vue${v.charAt(0).toUpperCase()}${v.slice(1)}`)} onClick={() => setView(v)}
-                className={`rounded-[2px] px-2 py-1.5 text-xs ${view === v ? "bg-accent text-white" : "text-muted"}`}>
+                className={`rounded-control px-2 py-1.5 text-xs ${view === v ? "bg-accent text-white" : "text-muted"}`}>
                 {v === "liste" ? "☰" : v === "vignettes" ? "▦" : "◍"}
               </button>
             ))}
@@ -233,7 +233,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
           <ul className="divide-y divide-line">
             {triees.map((p) => (
               <li key={p.id} data-selected={p.etablissement.id === selectedId ? "true" : undefined}
-                className={`relative ${p.etablissement.id === selectedId ? "rounded-[6px] bg-accent-50/60 ring-1 ring-accent/20" : ""}`}>
+                className={`relative ${p.etablissement.id === selectedId ? "rounded-card bg-accent-50/60 ring-1 ring-accent/20" : ""}`}>
                 <ul><PlaceCard place={p} variant="liste" /></ul>
                 <RowExtras place={p} onglet={onglet} slugTeste={config.slugTeste} tr={tr} onVisite={() => setVisitePour(p)} />
               </li>

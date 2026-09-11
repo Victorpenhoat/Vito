@@ -70,7 +70,7 @@ export function CaveMap({ lieux }: { lieux: LieuCarte[] }) {
 
       {selection && (
         <div data-testid="cave-marqueur-fiche"
-          className="absolute inset-x-3 bottom-3 z-[1000] flex items-start gap-3 rounded-[8px] border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
+          className="absolute inset-x-3 bottom-3 z-[1000] flex items-start gap-3 rounded-card border border-line bg-surface p-3 shadow-[0_10px_30px_var(--color-shadow)]">
           <div className="min-w-0 flex-1">
             <div className="truncate font-serif text-base text-ink">{selection.nom}</div>
             <div className="mt-0.5 flex items-center gap-2 text-[11.5px] text-faint">

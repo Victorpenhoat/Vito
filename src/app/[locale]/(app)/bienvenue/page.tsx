@@ -30,7 +30,7 @@ export default async function BienvenuePage() {
         {pistes.map(({ cle, href, Icone }) => (
           <li key={cle}>
             <Link href={href}
-              className="flex items-center gap-3 rounded-[5px] border border-line bg-surface px-3.5 py-3 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent">
+              className="flex items-center gap-3 rounded-card border border-line bg-surface px-3.5 py-3 hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-accent">
               <Icone size={18} className="shrink-0 text-accent" aria-hidden />
               <span className="min-w-0">
                 <span className="block text-[13.5px] text-ink">{t(`bienvenue.${cle}`)}</span>

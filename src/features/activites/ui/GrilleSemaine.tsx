@@ -81,7 +81,7 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
 
         {jours.map(({ jour, occurrences, signaux, conflits }) => (
           <div key={jour} data-testid="grille-colonne"
-            className={`relative h-[520px] rounded-[6px] border border-line ${
+            className={`relative h-[520px] rounded-card border border-line ${
               jour === aujourdhui ? "bg-accent-50/40" : "bg-surface"
             }`}>
             {GRADUATIONS.slice(1, -1).map((h) => (
@@ -106,7 +106,7 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
                     left: `calc(${(rang / total) * 100}% + 2px)`,
                     width: `calc(${100 / total}% - 4px)`,
                   }}
-                  className={`absolute flex flex-col overflow-hidden rounded-[4px] border px-1.5 py-1 text-[10.5px] leading-tight ${
+                  className={`absolute flex flex-col overflow-hidden rounded-control border px-1.5 py-1 text-[10.5px] leading-tight ${
                     enConflit
                       ? "border-danger/40 bg-danger-bg text-danger"
                       : signaux.voyage
@@ -133,18 +133,18 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
       {/* Légende : les trois teintes de la grille, nommées une fois. */}
       <ul data-testid="grille-legende" className="flex flex-wrap gap-3 text-[11px] text-muted">
         <li className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-[3px] border border-danger/40 bg-danger-bg" aria-hidden />
+          <span className="h-2.5 w-2.5 rounded-control border border-danger/40 bg-danger-bg" aria-hidden />
           {t("semaine.legende.conflit")}
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-[3px] border border-accent/30 bg-accent-50" aria-hidden />
+          <span className="h-2.5 w-2.5 rounded-control border border-accent/30 bg-accent-50" aria-hidden />
           {t("semaine.legende.voyage")}
         </li>
         {/* Sans zone, aucune case n'est teintée : la légende n'aurait rien à
             nommer. */}
         {zone && (
           <li className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-[3px] border border-current/20 bg-kpi-amber-bg" aria-hidden />
+            <span className="h-2.5 w-2.5 rounded-control border border-current/20 bg-kpi-amber-bg" aria-hidden />
             {t("semaine.legende.vacances", { zone })}
           </li>
         )}
