@@ -760,11 +760,14 @@ const PASTILLE = /rounded-(pill|full)[^"'`]*\bpx-/;
 
 // Liste CLOSE. Chaque entrée porte sa raison.
 const AUTORISES: Record<string, string> = {
+  // Seuls les composants que le motif attrape RÉELLEMENT figurent ici. Vérifié
+  // sur l'arbre : ViewSwitcher et SearchField n'y sont pas, leurs éléments ronds
+  // n'ayant pas de padding horizontal. Les y inscrire « au cas où » accorderait
+  // d'avance une permission que personne n'aurait examinée — c'est précisément
+  // la pourriture que ce garde-fou existe pour empêcher.
   "features/shared/ui/TagChip.tsx": "le composant lui-même",
   "features/shared/ui/SubTabPills.tsx": "le composant lui-même",
-  "features/shared/ui/ViewSwitcher.tsx": "le composant lui-même",
   "features/shared/ui/CountBadge.tsx": "le composant lui-même",
-  "features/shared/ui/SearchField.tsx": "le bouton d'effacement, rond par nature",
   "features/places/ui/CategoryMap.tsx": "bouton d'action flottant sur la carte (« Autour de moi »), rond par commodité et non pastille",
   "features/places/ui/CategoryMapCombined.tsx": "idem, carte combinée",
   "features/vins/ui/CaveMap.tsx": "idem, carte de la cave",

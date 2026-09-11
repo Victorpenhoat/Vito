@@ -53,4 +53,31 @@ describe("SearchField", () => {
       <SearchField valeur="" onChange={() => {}} placeholder="Nom…" libelleEffacer="Effacer" className="w-80" />);
     expect(container.querySelector("label")).toHaveClass("w-80");
   });
+
+  // Avec un libellé unique ("Effacer") partout ailleurs, ce test passerait
+  // même si le composant codait ce texte en dur. Un libellé différent isole
+  // le fait que le nom accessible du bouton suit réellement la prop.
+  it("nomme la croix selon libelleEffacer, pas un texte figé", () => {
+    render(<SearchField valeur="coréen" onChange={() => {}} placeholder="Nom…" libelleEffacer="Vider" />);
+    expect(screen.getByRole("button", { name: "Vider" })).toBeTruthy();
+  });
+
+  // La frappe au clavier est le seul point d'entrée réel d'un champ de
+  // recherche : sans ce test, un composant qui n'écoute plus l'input et ne
+  // notifie que le bouton d'effacement passerait toute la suite.
+  it("émet la valeur tapée dans le champ", () => {
+    const onChange = vi.fn();
+    render(<SearchField valeur="" onChange={onChange} placeholder="Nom…" libelleEffacer="Effacer" />);
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "sushi" } });
+    expect(onChange).toHaveBeenCalledWith("sushi");
+  });
+
+  // Le test hors-ligne précédent porte sur un champ vide : la croix y est
+  // déjà absente parce qu'il n'y a rien à effacer, ce qui ne prouve rien sur
+  // horsLigne. Avec du texte présent, seul horsLigne peut expliquer son
+  // absence.
+  it("masque aussi la croix hors connexion même quand il y a du texte", () => {
+    render(<SearchField valeur="coréen" onChange={() => {}} placeholder="Nom…" libelleEffacer="Effacer" horsLigne />);
+    expect(screen.queryByRole("button", { name: "Effacer" })).toBeNull();
+  });
 });
