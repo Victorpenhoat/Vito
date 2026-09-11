@@ -15,7 +15,7 @@ export function BuyButton({ url }: { url: string | null }) {
       <label className="text-muted">{t("quantite")}
         <Input type="number" min={1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className="w-16 ml-1" />
       </label>
-      <LienExterne data-testid="buy-button" href={href} className="rounded-control px-4 py-2.5 text-sm font-semibold bg-accent text-white hover:bg-accent-hover transition-colors">{t("acheter")}</LienExterne>
+      <LienExterne data-testid="buy-button" href={href} className="rounded-control px-4 py-2.5 text-sm font-semibold bg-accent text-on-fill hover:bg-accent-hover transition-colors">{t("acheter")}</LienExterne>
     </div>
   );
 }

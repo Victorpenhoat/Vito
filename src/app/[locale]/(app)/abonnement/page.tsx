@@ -67,7 +67,7 @@ export default async function AbonnementPage() {
         </div>
         <div data-testid="plan-actuel" className="relative rounded-card border-[1.5px] border-accent bg-surface p-7">
           {isPremium && (
-            <span data-testid="premium-badge" className="absolute right-5 top-5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-white">{t("premium")}</span>
+            <span data-testid="premium-badge" className="absolute right-5 top-5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-on-fill">{t("premium")}</span>
           )}
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">{t("premium")}</div>
           <div className="mt-2 font-serif text-3xl font-medium text-ink">{t("prixMois")}</div>

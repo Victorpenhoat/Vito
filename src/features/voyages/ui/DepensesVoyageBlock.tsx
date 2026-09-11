@@ -211,7 +211,7 @@ export function DepensesVoyageBlock({
           <button key={o} type="button" data-testid={`onglet-${o}`} aria-pressed={onglet === o}
             onClick={() => setOnglet(o)}
             className={`rounded-control px-3 py-1.5 text-[11.5px] font-semibold ${
-              onglet === o ? "bg-accent text-white" : "text-muted hover:text-ink"
+              onglet === o ? "bg-accent text-on-fill" : "text-muted hover:text-ink"
             }`}>
             {t(`onglets.${o}`)}
           </button>
