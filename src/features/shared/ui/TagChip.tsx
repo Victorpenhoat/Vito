@@ -19,13 +19,23 @@ const TON: Record<TonChip, string> = {
   suggere: "border border-line bg-surface text-muted hover:border-accent/30 hover:text-ink",
 };
 
+// Union discriminée : `libelleRetrait` est obligatoire avec `onRetirer`, interdit sans lui.
+// La première branche rend un chip sans croix de retrait ; la seconde le rend avec.
+type TagChipProps =
+  | {
+    ton?: TonChip; couleur?: string; compte?: number;
+    onClick?: () => void; onRetirer?: never; libelleRetrait?: never;
+    testId?: string; children: ReactNode;
+  }
+  | {
+    ton?: TonChip; couleur?: string; compte?: number;
+    onClick?: () => void; onRetirer: () => void; libelleRetrait: string;
+    testId?: string; children: ReactNode;
+  };
+
 export function TagChip({
   ton = "defaut", couleur, compte, onClick, onRetirer, libelleRetrait, testId, children,
-}: {
-  ton?: TonChip; couleur?: string; compte?: number;
-  onClick?: () => void; onRetirer?: () => void; libelleRetrait?: string;
-  testId?: string; children: ReactNode;
-}) {
+}: TagChipProps) {
   const classe = `inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-xs transition-colors ${TON[ton]}`;
   const contenu = (
     <>
@@ -45,8 +55,12 @@ export function TagChip({
       onClick={onClick}
       data-testid={testId}
       // Un chip de filtre est un interrupteur : sans aria-pressed, un lecteur
-      // d'écran ne dit pas si le filtre est posé.
-      aria-pressed={ton === "selectionne" || ton === "actif-doux"}
+      // d'écran ne dit pas si le filtre est posé. Les tons de basculement sont
+      // `defaut` (off), `selectionne` (on) et `actif-doux` (on). Les tones
+      // `ajout` et `suggere` sont des actions uniques, jamais des toggles.
+      {...(ton === "defaut" || ton === "selectionne" || ton === "actif-doux" ? {
+        "aria-pressed": ton === "selectionne" || ton === "actif-doux",
+      } : {})}
       disabled={ton === "vide"}
       className={`${classe} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none`}
     >

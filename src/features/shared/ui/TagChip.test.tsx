@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { TagChip } from "./TagChip";
 
 describe("TagChip", () => {
@@ -15,10 +16,13 @@ describe("TagChip", () => {
 
   // Un chip « vide » annonce zéro : le rendre cliquable promet un filtre qui
   // ne filtrera rien.
-  it("refuse le clic quand il est vide", () => {
+  it("est désactivé quand il est vide et empêche le clic", async () => {
     const clic = vi.fn();
     render(<TagChip ton="vide" onClick={clic}>Coréen</TagChip>);
-    expect(screen.getByRole("button").hasAttribute("disabled")).toBe(true);
+    const btn = screen.getByRole("button");
+    expect(btn.hasAttribute("disabled")).toBe(true);
+    await userEvent.click(btn);
+    expect(clic).not.toHaveBeenCalled();
   });
 
   // La croix est une seconde action DANS le chip : imbriquer un <button> dans
@@ -28,5 +32,47 @@ describe("TagChip", () => {
     render(<TagChip onClick={() => {}} onRetirer={() => {}} libelleRetrait="Retirer Terrasse">Terrasse</TagChip>);
     const retrait = screen.getByRole("button", { name: "Retirer Terrasse" });
     expect(retrait.closest("button")).toBe(retrait);
+  });
+
+  // L'attribut `data-testid` porté par le bouton principal permet aux tests e2e
+  // de cliquer le chip directement ; s'il glisse sur le wrapper, le clic rate.
+  it("porte data-testid sur le bouton principal, pas sur un wrapper", () => {
+    render(<TagChip testId="test-chip" onClick={() => {}}>Terrasse</TagChip>);
+    const btn = screen.getByTestId("test-chip");
+    expect(btn.tagName).toBe("BUTTON");
+  });
+
+  // Le chip avec retrait contient un wrapper <span> ; `data-testid` doit rester
+  // sur le bouton de contenu, pas migrer sur le wrapper.
+  it("porte data-testid sur le bouton même avec onRetirer", () => {
+    render(<TagChip testId="test-chip" onClick={() => {}} onRetirer={() => {}} libelleRetrait="Retirer">Terrasse</TagChip>);
+    const btn = screen.getByTestId("test-chip");
+    expect(btn.tagName).toBe("BUTTON");
+    expect(btn.textContent).toContain("Terrasse");
+  });
+
+  // Un chip de filtre est un interrupteur ; `aria-pressed` l'annonce. Le lecteur
+  // d'écran dit alors que c'est un toggle. Sur un chip sans toggle (ajout,
+  // suggestion), l'absence de `aria-pressed` indique une action unique.
+  it("porte aria-pressed uniquement sur les tons qui basculent", () => {
+    // Ton qui bascule: aria-pressed="false"
+    const { rerender } = render(<TagChip ton="defaut" onClick={() => {}}>Terrasse</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "false");
+
+    // Ton qui bascule: aria-pressed="true"
+    rerender(<TagChip ton="selectionne" onClick={() => {}}>Terrasse</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+
+    // Ton qui bascule: aria-pressed="true"
+    rerender(<TagChip ton="actif-doux" onClick={() => {}}>Terrasse</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+
+    // Ton d'action : pas de aria-pressed
+    rerender(<TagChip ton="ajout" onClick={() => {}}>+ Ajouter</TagChip>);
+    expect(screen.getByRole("button")).not.toHaveAttribute("aria-pressed");
+
+    // Ton d'action : pas de aria-pressed
+    rerender(<TagChip ton="suggere" onClick={() => {}}>Occasion</TagChip>);
+    expect(screen.getByRole("button")).not.toHaveAttribute("aria-pressed");
   });
 });
