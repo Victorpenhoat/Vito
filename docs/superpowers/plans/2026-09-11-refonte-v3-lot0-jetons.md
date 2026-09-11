@@ -803,3 +803,80 @@ git commit -m "test(design): une teinte en dur hors de la table fait désormais 
 - Le favori reste doré, le marqueur « testé » reste gris.
 - Les tuiles OpenStreetMap restent claires : la carte sera une fenêtre lumineuse dans une coque nuit, et le choix des tuiles appartient au lot 4.
 - `TagsAdmin.tsx` garde son `#5B7F5B` : c'est une couleur d'utilisateur, pas un jeton.
+
+---
+
+### Task 10 : les soixante-dix-neuf rayons littéraux
+
+**Files:**
+- Modify: tous les fichiers de `src/` portant un `rounded-[Npx]` (79 occurrences, des dizaines de fichiers)
+- Test: `src/test/teintes-litterales.test.ts` (étendre)
+
+**Interfaces:**
+- Consumes: `rounded-card` (12px) et `rounded-control` (10px), posés par la tâche 4.
+- Produces: rien.
+
+Tâche ajoutée après coup. Le spec recensait cinq familles de **couleurs** en dur et jamais les rayons : la tâche 4 a fait passer les jetons à 12/10/999 px, mais 79 usages codent leur rayon en dur et resteront à 2-8 px. L'application afficherait donc un mélange visible — exactement l'incohérence que la refonte veut supprimer, et le lot livrerait pire que ce qu'il a trouvé.
+
+**Le mappage, établi en lisant ce que chaque bande habille :**
+
+| Littéral | Devient | Pourquoi |
+|---|---|---|
+| `rounded-[8px]` (3) | `rounded-card` | panneaux bordés `border-line bg-surface p-3` |
+| `rounded-[6px]` (16) | `rounded-card` | panneaux bordés, dont des boutons-panneaux |
+| `rounded-[5px]` (42) | `rounded-card` | panneaux bordés `border border-line bg-surface` |
+| `rounded-[4px]` (6) | `rounded-control` | petits blocs pleins (`bg-surface-hover`, `bg-kpi-amber/25`) |
+| `rounded-[3px]` (9) | `rounded-control` | puces et badges (`px-3 py-1.5 text-[11.5px]`) |
+| `rounded-[2px]` (3) | `rounded-control` | segments d'un commutateur de vues |
+
+**Ne PAS transformer en `rounded-pill`.** La maquette arrondit ses pastilles à 999 px, mais passer une puce de 3 px à une pastille change sa forme, pas sa valeur : c'est réassigner le sens, et la contrainte globale du lot l'interdit. Cela appartient au lot 6.
+
+- [ ] **Step 1 : remplacer les six bandes**
+
+Six remplacements mécaniques sur `src/`, en ne touchant que les classes Tailwind (pas les `border-radius` inline, pas `rounded-full`) :
+
+```bash
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[8px\]' src | xargs sed -i '' 's/rounded-\[8px\]/rounded-card/g'
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[6px\]' src | xargs sed -i '' 's/rounded-\[6px\]/rounded-card/g'
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[5px\]' src | xargs sed -i '' 's/rounded-\[5px\]/rounded-card/g'
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[4px\]' src | xargs sed -i '' 's/rounded-\[4px\]/rounded-control/g'
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[3px\]' src | xargs sed -i '' 's/rounded-\[3px\]/rounded-control/g'
+grep -rl --include='*.tsx' --include='*.ts' 'rounded-\[2px\]' src | xargs sed -i '' 's/rounded-\[2px\]/rounded-control/g'
+```
+
+- [ ] **Step 2 : vérifier qu'il n'en reste aucun**
+
+```bash
+grep -rn --include='*.tsx' --include='*.ts' 'rounded-\[' src
+```
+
+Expected : aucune sortie. S'il en reste, ce sont des valeurs hors des six bandes : les traiter une par une selon la même logique (panneau → `rounded-card`, contrôle → `rounded-control`) et le dire dans le rapport.
+
+- [ ] **Step 3 : étendre le garde-fou**
+
+Dans `src/test/teintes-litterales.test.ts`, ajouter un second test — un rayon littéral est le même genre de dette qu'une teinte littérale, et rien ne l'empêchait jusqu'ici :
+
+```ts
+// Un rayon en dur ne suit pas la table : c'est ainsi que l'app s'est
+// retrouvée avec 79 valeurs figées entre 2 et 8 px pendant que les jetons
+// passaient à 12. Les `border-radius` inline des marqueurs Leaflet et de la
+// page hors ligne ne sont pas concernés : ils vivent hors de Tailwind.
+it("ne laisse aucun rayon littéral dans une classe Tailwind", () => {
+  const coupables = fichiers(SRC)
+    .filter((f) => /rounded-\[/.test(readFileSync(path.join(SRC, f), "utf8")))
+    .sort();
+  expect(coupables).toEqual([]);
+});
+```
+
+- [ ] **Step 4 : prouver qu'il mord**
+
+Remettre temporairement un `rounded-[5px]` dans un fichier, lancer, montrer le rouge ; retirer, montrer le vert. Recopier les deux sorties.
+
+- [ ] **Step 5 : vérification complète et commit**
+
+```bash
+npm run lint && npx tsc --noEmit && npm test && npx knip
+git add -A
+git commit -m "fix(design): soixante-dix-neuf rayons en dur ne suivaient pas la table"
+```
