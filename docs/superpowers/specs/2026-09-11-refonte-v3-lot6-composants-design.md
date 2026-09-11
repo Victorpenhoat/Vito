@@ -36,14 +36,18 @@ cas, l'a couvert d'un seuil de test… et **rien ne l'utilise**. Le canevas, lui
 Et ce n'est pas un défaut isolé. `text-white` posé sur un aplat d'accent
 apparaît dans **27 fichiers** ; `text-white` tout court, 39 fois sur 33
 fichiers. `Button` a 68 consommateurs et une seule édition les corrige — mais
-**16 de ces aplats sont des boutons faits main qui contournent `Button`**
+**19 de ces aplats sont des copies faites à la main qui contournent `Button`**
 (`bg-accent px-4 py-2.5 font-semibold text-white` recopié à la main), plus
 `Fab`, `Avatar` et `NavItem`, qui ont chacun leur propre copie.
 
-C'est la mesure qui l'a montré : compter les consommateurs de `Button` donnait
-« une édition, 68 fichiers réparés » et aurait laissé les 16 autres intacts.
-Corriger le composant ne suffit donc pas — il faut aussi ramener à lui ceux qui
-l'évitent, et un garde-fou pour que le 17e ne s'écrive pas.
+C'est la mesure qui l'a montré, et à deux reprises : compter les consommateurs
+de `Button` donnait « une édition, 68 fichiers réparés » et aurait laissé les 19
+autres intacts ; puis un premier relevé au `grep`, filtré sur `px-|py-`, n'en
+comptait que 16 — il manquait les boutons ronds, qui n'ont pas de padding. C'est
+le garde-fou lui-même qui a donné le bon nombre.
+
+Corriger le composant ne suffit donc pas : il faut aussi ramener à lui ceux qui
+l'évitent, et un garde-fou pour que le vingtième ne s'écrive pas.
 
 ### 2. La pastille de cluster refait le même défaut, et le garde-fou est aveugle
 
@@ -264,7 +268,7 @@ changement de `bg-line/60` avec la même attention qu'une écriture en base.
 - **6A — les primitives déjà là, et la fin du blanc sur accent.** `Button`,
   `Skeleton`, `SectionLabel`, `StatTile`, `CountBadge`, plus les deux rôles de
   table et l'élargissement du garde-fou aux hexadécimaux à trois chiffres. Y
-  compris le ramassage des **16 boutons faits main** vers `Button`, et de
+  compris le ramassage des **19 aplats d'accent faits main** vers `Button`, et de
   `Fab` / `Avatar` / `NavItem` vers `--on-fill`. C'est le sous-lot qui rend le
   2,48:1 impossible à réécrire.
 - **6B — les composants de liste et de filtre.** `TagChip`, `SearchField`,

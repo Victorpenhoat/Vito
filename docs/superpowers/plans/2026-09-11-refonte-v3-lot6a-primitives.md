@@ -206,7 +206,7 @@ const DETTE: Record<string, string> = {
   // … une ligne par fichier de la sortie, avec la tâche qui l'emporte :
   //   tâche 2 : SousOnglets, FiltresActivites, DonneesSection
   //   tâche 5 : Fab, NavItem  (Avatar est dans AUTORISES, pas ici)
-  //   tâche 6 : les seize boutons faits main et les badges
+  //   tâche 6 : les dix-neuf aplats d'accent faits main et les badges
 };
 ```
 
@@ -586,35 +586,47 @@ git commit -m "fix(design): trois primitives portaient leur propre copie du blan
 
 ---
 
-### Task 6 : les seize boutons faits main
+### Task 6 : les dix-neuf aplats d'accent recopiés à la main
 
 **Files:**
-- Modify: `src/app/[locale]/(auth)/inscription/page.tsx:31`
-- Modify: `src/features/auth/ui/ConnexionPanel.tsx:56`
-- Modify: `src/features/auth/ui/BoutonPasskey.tsx:63`
-- Modify: `src/features/auth/ui/AuthPanel.tsx:49`
-- Modify: `src/features/invitations/ui/CreerCompteTunnel.tsx:61,88,123`
-- Modify: `src/features/restos/ui/TagsAdmin.tsx:64`
-- Modify: `src/features/restos/ui/VisiteCta.tsx:22`
-- Modify: `src/features/vins/ui/BuyButton.tsx:18`
-- Modify: `src/features/voyages/ui/ModeVoyageBlock.tsx:101`
-- Modify: `src/features/voyages/ui/PlanningFrise.tsx:133`
-- Modify: `src/features/voyages/ui/VoyagesList.tsx:95`
-- Modify: `src/features/voyages/ui/VoyageDetail.tsx:100`
-- Modify: `src/features/places/ui/CategoryTabs.tsx:145,366`
-- Modify: `src/app/[locale]/(app)/abonnement/page.tsx:70`
+- Modify: `src/app/[locale]/(app)/abonnement/page.tsx`
+- Modify: `src/app/[locale]/(app)/famille/page.tsx`
+- Modify: `src/app/[locale]/(app)/voyages/page.tsx`
+- Modify: `src/app/[locale]/(auth)/inscription/page.tsx`
+- Modify: `src/features/auth/ui/AuthPanel.tsx`
+- Modify: `src/features/auth/ui/BoutonPasskey.tsx`
+- Modify: `src/features/auth/ui/ConnexionPanel.tsx`
+- Modify: `src/features/famille/ui/DocumentTunnel.tsx`
+- Modify: `src/features/invitations/ui/CreerCompteTunnel.tsx`
+- Modify: `src/features/places/ui/CategoryTabs.tsx`
+- Modify: `src/features/places/ui/SejourContexteChips.tsx`
+- Modify: `src/features/restos/ui/TagsAdmin.tsx`
+- Modify: `src/features/restos/ui/VisiteCta.tsx`
+- Modify: `src/features/vins/ui/BuyButton.tsx`
+- Modify: `src/features/voyages/ui/DepensesVoyageBlock.tsx`
+- Modify: `src/features/voyages/ui/ModeVoyageBlock.tsx`
+- Modify: `src/features/voyages/ui/PlanningCalendrier.tsx`
+- Modify: `src/features/voyages/ui/PlanningFrise.tsx`
+- Modify: `src/features/voyages/ui/VoyagesList.tsx`
+- Modify: `src/features/voyages/ui/VoyageDetail.tsx:100` (la pastille seule — voir step 3)
+- Modify: `src/test/texte-sur-aplat.test.ts` (vider `DETTE`)
 
 **Interfaces:**
 - Consumes: `Button` (tâche 4).
 - Produces: rien.
 
-Seize aplats d'accent recopiés à la main. Corriger leur `text-white` suffirait
-au contraste — mais laisserait seize copies libres de rediverger au prochain
-changement de bouton.
+Dix-neuf aplats d'accent recopiés à la main. Corriger leur `text-white`
+suffirait au contraste — mais laisserait dix-neuf copies libres de rediverger au
+prochain changement de bouton.
+
+**Le plan annonçait seize.** Le premier comptage filtrait sur `px-|py-` et
+manquait les boutons ronds (`h-11 w-11`, sans padding) ainsi que quatre écrans.
+C'est le garde-fou de la tâche 1 qui a donné le bon nombre : sa liste de dette
+fait foi, pas ce paragraphe.
 
 - [ ] **Step 1 : trier avant de migrer**
 
-Les seize ne sont pas tous des boutons. Les classer en trois familles :
+Les dix-neuf ne sont pas tous des boutons. Les classer en trois familles :
 
 - **de vrais boutons ou liens d'action** (`inscription/page.tsx`,
   `ConnexionPanel`, `BoutonPasskey`, `AuthPanel`, `CreerCompteTunnel` ×3,
@@ -704,7 +716,7 @@ PASS. Recopier les deux sorties.
 ```bash
 npm run lint && npx tsc --noEmit && npm test && npx knip
 git add -A
-git commit -m "fix(design): seize boutons recopiés à la main rejoignent le composant"
+git commit -m "fix(design): dix-neuf boutons recopiés à la main rejoignent le composant"
 ```
 
 ---
