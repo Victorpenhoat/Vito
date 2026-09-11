@@ -76,9 +76,9 @@
   --color-kpi-violet-bg: var(--kpi-violet-bg);
   --color-hero-from: var(--hero-from);
   --color-hero-to: var(--hero-to);
-  --radius-card: 4px;
-  --radius-tile: 4px;
-  --radius-control: 3px;
+  --radius-card: 12px;
+  --radius-tile: 12px;
+  --radius-control: 10px;
   --radius-pill: 999px;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, serif;

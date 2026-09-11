@@ -110,3 +110,15 @@ describe("rolesDuBloc face à un commentaire", () => {
     expect([...roles.keys()].sort()).toEqual(["autre", "vrai"]);
   });
 });
+
+describe("les rayons", () => {
+  // La v3 est une interface RONDE : le canevas compte 129 rayons à 12px et 153
+  // à 999px, là où nos jetons disaient 4px et 3px. L'écart se voit plus que la
+  // couleur, et un jeton de rayon ne casse aucune mise en page.
+  it("porte les rayons de la refonte v3", () => {
+    const rayons = Object.fromEntries(
+      [...CSS.matchAll(/--radius-([a-z]+):\s*([^;]+);/g)].map((m) => [m[1]!, m[2]!.trim()]),
+    );
+    expect(rayons).toMatchObject({ card: "12px", tile: "12px", control: "10px", pill: "999px" });
+  });
+});
