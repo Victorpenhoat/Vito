@@ -78,6 +78,12 @@ const SEUILS: [string, string, number][] = [
   ["kpi-green", "surface", 4.5],
   ["kpi-amber", "surface", 4.5],
   ["kpi-violet", "surface", 4.5],
+  // Les trois aplats que le lot 6A fait porter du texte. Sans ces lignes, rien
+  // ne tient --on-fill sur eux : c'est précisément l'angle mort qui a laissé
+  // `text-white` s'installer sur l'accent sans qu'aucun test ne bronche.
+  ["on-fill", "accent-active", 4.5],
+  ["on-fill", "kpi-amber", 4.5],
+  ["on-fill", "kpi-green", 4.5],
 ];
 
 describe.each([
