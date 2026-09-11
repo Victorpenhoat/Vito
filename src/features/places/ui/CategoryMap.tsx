@@ -47,7 +47,7 @@ function pastille(groupe: Groupe): L.DivIcon {
     html:
       `<div data-testid="cluster-pastille" data-nb="${groupe.nb}" ` +
       `style="display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 ${large ? 9 : 0}px;` +
-      `border-radius:999px;background:var(--accent);color:#fff;border:2px solid #fff;` +
+      `border-radius:999px;background:var(--color-surface);color:var(--color-ink);border:2px solid var(--accent);` +
       `box-shadow:0 3px 6px var(--color-shadow);justify-content:center;">` +
       `<span style="font:700 13px/1 ui-sans-serif,system-ui">${groupe.nb}</span>${libelle}</div>`,
     iconSize: [largeur, 30],

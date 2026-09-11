@@ -19,8 +19,8 @@ function pastille(nb: number, actif: boolean): L.DivIcon {
   return L.divIcon({
     className: "",
     html:
-      `<div style="width:${taille}px;height:${taille}px;border-radius:999px;background:var(--accent);color:#fff;` +
-      `display:grid;place-items:center;font:600 13px/1 ui-sans-serif,system-ui;border:2px solid #fff;` +
+      `<div style="width:${taille}px;height:${taille}px;border-radius:999px;background:var(--color-surface);color:var(--color-ink);` +
+      `display:grid;place-items:center;font:600 13px/1 ui-sans-serif,system-ui;border:2px solid var(--accent);` +
       `box-shadow:0 3px 6px var(--color-shadow);${actif ? "transform:scale(1.15);" : ""}">${nb}</div>`,
     iconSize: [taille, taille],
     iconAnchor: [taille / 2, taille / 2],
