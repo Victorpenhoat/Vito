@@ -48,6 +48,50 @@ describe("la table des jetons", () => {
   });
 });
 
+const canal = (c: number) => {
+  const s = c / 255;
+  return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+};
+/** Luminance relative WCAG d'un `#rrggbb`. */
+export function luminance(hex: string): number {
+  const n = parseInt(hex.slice(1), 16);
+  return 0.2126 * canal((n >> 16) & 255) + 0.7152 * canal((n >> 8) & 255) + 0.0722 * canal(n & 255);
+}
+/** Rapport de contraste WCAG entre deux `#rrggbb`. */
+export function contraste(a: string, b: string): number {
+  const [haut, bas] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
+  return (haut + 0.05) / (bas + 0.05);
+}
+
+// Les seuils ne sont pas décoratifs : ce sont eux qui ont imposé de NE PAS
+// reprendre l'accent #6BA5FF de la maquette dans le thème clair, où il tombe
+// à 3,0:1 sur blanc. Une valeur dérivée à l'œil passerait sans eux.
+const SEUILS: [string, string, number][] = [
+  ["ink", "surface", 7],
+  ["muted", "surface", 4.5],
+  ["faint", "surface", 3],
+  ["accent", "surface", 4.5],
+  ["on-fill", "accent", 4.5],
+  ["gold", "surface", 3],
+  ["danger", "surface", 4.5],
+  ["kpi-green", "surface", 4.5],
+  ["kpi-amber", "surface", 4.5],
+  ["kpi-violet", "surface", 4.5],
+];
+
+describe.each([
+  ["sombre", ':root,\n[data-theme="dark"]'],
+  ["clair", '[data-theme="light"]'],
+])("contrastes du thème %s", (_nom, ouverture) => {
+  const roles = rolesDuBloc(CSS, ouverture);
+  it.each(SEUILS)("%s sur %s tient %s:1", (avant, fond, seuil) => {
+    const [a, b] = [roles.get(avant)!, roles.get(fond)!];
+    expect(a, `--${avant} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(b, `--${fond} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(contraste(a, b)).toBeGreaterThanOrEqual(seuil);
+  });
+});
+
 describe("rolesDuBloc face à un commentaire", () => {
   // Un rôle cité dans un commentaire (ex. « jadis : --hero-glow: … retiré »)
   // ne doit pas être confondu avec une déclaration active : ni ajouté comme

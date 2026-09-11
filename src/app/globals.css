@@ -6,19 +6,21 @@
   /* Les widgets natifs (icône du date-picker, dropdowns de select, scrollbars)
      suivent le thème — sinon ils restent clairs sur fond sombre. */
   color-scheme: dark;
-  --app: #161310; --sidebar: #110E0A;
-  --surface: #1E1A14; --surface-hover: #26211A;
+  /* Palette de la refonte v3, relevée dans le canevas et non devinée :
+     cf. docs/superpowers/specs/2026-09-11-refonte-v3-lot0-jetons-design.md */
+  --app: #080D16; --sidebar: #0C121D;
+  --surface: #131A26; --surface-hover: #1C2432;
   --line: rgba(255,255,255,0.08); --line-soft: rgba(255,255,255,0.06);
-  --accent: #4F8BF0; --accent-hover: #6BA0F5;
-  --accent-50: rgba(79,139,240,0.14); --accent-600: #6BA0F5;
-  --ink: #F2EDE3; --muted: #A39A8A; --faint: #6E665A;
+  --accent: #6BA5FF; --accent-hover: #8FBCFF;
+  --accent-50: rgba(107,165,255,0.14); --accent-600: #8FBCFF;
+  --ink: #EEF2F9; --muted: #93A0B8; --faint: #6E7C95;
   --on-fill: #0A1220; --shadow: rgba(0,0,0,.5);
-  --badge: #26211A; --gold: #E9B949; --danger: #F2998E; --danger-bg: rgba(244,63,63,0.14);
-  --kpi-green: #7BE0A0; --kpi-green-bg: rgba(34,197,94,0.14);
-  --kpi-blue: #4F8BF0; --kpi-blue-bg: rgba(79,139,240,0.14);
-  --kpi-amber: #E9B949; --kpi-amber-bg: rgba(233,185,73,0.14);
-  --kpi-violet: #C9A0F5; --kpi-violet-bg: rgba(168,85,247,0.14);
-  --hero-from: #26211A; --hero-to: #161310;
+  --badge: #232D3E; --gold: #E9B949; --danger: #F2707F; --danger-bg: rgba(242,112,127,0.14);
+  --kpi-green: #3ED598; --kpi-green-bg: rgba(62,213,152,0.14);
+  --kpi-blue: #6BA5FF; --kpi-blue-bg: rgba(107,165,255,0.14);
+  --kpi-amber: #F5A65B; --kpi-amber-bg: rgba(245,166,91,0.14);
+  --kpi-violet: #C9A0F5; --kpi-violet-bg: rgba(201,160,245,0.14);
+  --hero-from: #1C2432; --hero-to: #080D16;
 }
 
 [data-theme="light"] {
