@@ -123,8 +123,19 @@ Attendu : `Result: PASS`, 109 tests. Ce vert ne prouve **rien** encore — anon 
 ```bash
 docker exec -i supabase_db_Vito psql -U postgres -d postgres -Atc \
   "create policy pgtap_fuite_anon on public.voyages for select to anon using (true);"
+docker exec -i supabase_db_Vito psql -U postgres -d postgres -Atc \
+  "grant select on public.voyages to anon;"
 npx supabase test db 2>&1 | grep -E "^not ok|# +Failed|^Result:"
 ```
+
+> **Le `grant` n'est pas décoratif — vérifié le 2026-09-12.** La policy seule ne
+> fuit pas : `00025_revoke_anon_grants.sql` a fait un `revoke all … from anon`
+> global, et Postgres bloque au niveau GRANT avant même d'évaluer la RLS. Sans
+> la seconde ligne, la suite reste verte et la « preuve » ne prouve rien.
+> C'est une bonne nouvelle pour la sécurité (anon est arrêté deux fois) et un
+> piège pour qui écrit la preuve. Les tâches 2 à 4 ne sont pas concernées :
+> elles balaient sous l'identité `free`, de rôle `authenticated`, qui détient
+> bien ses GRANT.
 
 Attendu : l'échec nomme **l'assertion « anon ne voit aucune ligne… »** et la sortie `is()` liste `{voyages}`. Vérifier que c'est bien CETTE assertion qui tombe, et pas une antérieure — relever son numéro et le comparer au fichier. Une preuve qui tombe ailleurs ne prouve rien de ce qu'elle annonce.
 
