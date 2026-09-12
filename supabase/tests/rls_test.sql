@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(107);
+select plan(109);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -716,6 +716,59 @@ select lives_ok(
   $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
      values ('2026-2027', 'Zone A', 'pgtap un seul jour', '2027-05-07', '2027-05-07') $$,
   'une période d''un seul jour est acceptée');
+
+-- ============================================================
+-- SOCLE — balayages pilotés par le catalogue
+-- ============================================================
+-- Écrit ici, en FIN de fichier, délibérément : le fichier est une seule
+-- transaction, donc les fixtures posées plus haut (participants de voyage,
+-- dépenses, codes d'activité, journal d'accès…) existent encore. Placé en tête,
+-- le balayage trouverait 19 tables vides et se prononcerait sur du néant.
+
+-- Visite chaque table du schéma public sous une identité, et rend ce qu'elle y
+-- voit. `p_uid` null = anon. Un refus au niveau GRANT vaut 0 ligne exposée :
+-- l'invariant est « rien ne fuit », pas « la requête aboutit ».
+create function tests.balayage(p_uid uuid, p_exceptions text[])
+returns table(nom text, lignes bigint) language plpgsql as $$
+declare t text; n bigint;
+begin
+  for t in select tablename from pg_tables
+           where schemaname = 'public'
+             and tablename <> all(p_exceptions)
+           order by tablename
+  loop
+    begin
+      if p_uid is null then
+        perform set_config('request.jwt.claims', '{"role":"anon"}', true);
+        set local role anon;
+      else
+        perform set_config('request.jwt.claims',
+          json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+        set local role authenticated;
+      end if;
+      execute format('select count(*) from public.%I', t) into n;
+      reset role;
+    exception when insufficient_privilege then
+      reset role; n := 0;
+    end;
+    nom := t; lignes := n; return next;
+  end loop;
+end $$;
+
+create temp table socle_anon as select * from tests.balayage(null, '{}');
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_anon where lignes > 0),
+  '{}'::text[],
+  'anon ne voit aucune ligne, dans aucune table du schéma public');
+
+-- Garde-fou NON NÉGOCIABLE : sans lui, un filtre trop zélé (schéma renommé,
+-- `where` mal écrit) rendrait l'assertion ci-dessus verte EN NE BALAYANT RIEN.
+-- C'est le motif exact des tests vides : le test reproduit la garde qu'il
+-- prétend éprouver. 48 = compte relevé au catalogue le 2026-09-12.
+select cmp_ok(
+  (select count(*) from socle_anon), '>=', 48::bigint,
+  'le balayage anon a bien visité tout le schéma');
 
 select finish();
 rollback;
