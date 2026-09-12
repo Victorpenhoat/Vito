@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(147);
+select plan(148);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1089,6 +1089,18 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
           0::bigint, 'depense_groupes : le co-membre VOIT et MODIFIE, mais ne SUPPRIME pas');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un groupe que PERSONNE ne peut supprimer. Une absence n'est une
+-- preuve que si son contraire est aussi vrai pour quelqu'un.
+-- ORDRE : DERNIÈRE assertion de la section — cette suppression emporte en
+-- cascade la dépense, la part et le remboursement créés plus haut ; aucune
+-- assertion sur depenses/depense_parts/remboursements ne doit la suivre. On
+-- ne supprime pas pour de bon : la transaction du fichier est annulée à la
+-- fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le propriétaire, lui, peut supprimer');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
