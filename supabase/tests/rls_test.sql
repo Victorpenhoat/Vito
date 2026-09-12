@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(148);
+select plan(156);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1101,6 +1101,76 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
           'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
           1::bigint, 'depense_groupes : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille CERCLE (can_access_famille) ─────────────────────────────
+-- Troisième et dernière occurrence du même motif. Le foyer vient du lot 1 :
+-- famille_membres porte un UNIQUE(profile_id), donc demo ne peut pas en
+-- posséder deux — on réutilise plutôt que de dupliquer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'familles : le co-membre voit le foyer partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : un non-membre ne voit pas le foyer');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'famille_membres : le co-membre voit les deux membres');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'famille_restos : le co-membre voit l''adresse partagée au foyer');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_restos : un non-membre n''en voit aucune');
+
+-- VOIR N'EST PAS SUPPRIMER : familles_delete exige is_famille_owner. Sans
+-- contrepartie, cette absence serait aussi verte si PERSONNE (propriétaire
+-- compris) ne pouvait supprimer le foyer — le témoin positif juste après
+-- ferme ce trou.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'familles : le co-membre VOIT mais ne peut pas SUPPRIMER le foyer');
+
+-- Témoin positif, et DERNIÈRE assertion de la section : le propriétaire, lui,
+-- peut supprimer le foyer — la suppression emporte en cascade
+-- famille_membres et famille_restos (FK ... on delete cascade).
+--
+-- PIÈGE PROPRE À CETTE FAMILLE, absent des deux occurrences précédentes
+-- (voyage, dépenses) : familles, famille_membres et famille_restos n'ont
+-- AUCUNE ligne de seed — mesuré à zéro avant nos fixtures (cf. rapport). Un
+-- DELETE qui aboutit ici, même annulé par le rollback final du fichier, laisse
+-- ces trois tables vides pour tout ce qui s'exécute APRÈS ce point dans la
+-- même transaction — en particulier le garde-fou de vacuité du bloc SOCLE,
+-- en fin de fichier, qui échouerait en les nommant. On RE-CRÉE donc,
+-- immédiatement après, les trois lignes : le foyer (même id, pour que toute
+-- policy qui le référence encore par cet identifiant retrouve la même
+-- ligne), la ligne famille_restos, et SEULEMENT le co-membre — le trigger
+-- add_famille_owner_membre (on_famille_created, cf. 00013_famille.sql)
+-- réinscrit automatiquement demo comme owner dans famille_membres dès
+-- l'insert ci-dessous ; l'ajouter à la main lèverait sur l'UNIQUE(profile_id).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : le propriétaire, lui, peut supprimer le foyer');
+
+-- Re-création : voir le commentaire ci-dessus. Reprend exactement la forme
+-- des fixtures posées plus haut dans ce fichier (foyer et famille_restos au
+-- socle, co-membre au décor de profondeur du lot 2).
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
