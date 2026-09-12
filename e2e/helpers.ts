@@ -102,3 +102,26 @@ export async function ouvrirModale(page: Page, bouton: string, modale: string): 
     await expect(page.getByTestId(modale)).toBeVisible({ timeout: 2_000 });
   }).toPass({ timeout: 30_000 });
 }
+
+/**
+ * Une date ISO à J+n, en UTC.
+ *
+ * Le seed place le voyage « Week-end à Rome » à J+30 en `current_date + N`
+ * plutôt qu'en dates figées : le 2026-09-12 en dur a fait tomber la suite le
+ * jour où il est arrivé, `voyageChip` classant le voyage en `en_cours` quand la
+ * liste affiche `a_venir` par défaut.
+ *
+ * Réserve : Postgres calcule `current_date` dans SON fuseau, ce calcul-ci en
+ * UTC. Un décalage d'un jour reste possible à quelques minutes de minuit si la
+ * base n'est pas en UTC — infiniment moins probable qu'une date figée qui
+ * pourrit à coup sûr.
+ */
+export function jourDans(n: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Les bornes du voyage « Week-end à Rome » du seed. Toujours à venir. */
+export const VOYAGE_ROME_DEBUT = jourDans(30);
+export const VOYAGE_ROME_FIN = jourDans(33);

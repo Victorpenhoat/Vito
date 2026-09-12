@@ -101,7 +101,7 @@ test("le programme : onglets par jour, étape typée, réservation qui s'y invit
   await login(page, "client@vito.test");
   await page.goto(`/fr/voyages/${VOYAGE_ROME}`);
 
-  // du 12 au 15 septembre : quatre onglets, avec leur résumé
+  // quatre jours (J+30 → J+33) : quatre onglets, avec leur résumé
   await expect(page.getByTestId("programme-onglet-jour")).toHaveCount(4);
   await expect(page.getByTestId("programme-onglets")).toContainText("arrivée");
   await expect(page.getByTestId("programme-onglets")).toContainText("retour");

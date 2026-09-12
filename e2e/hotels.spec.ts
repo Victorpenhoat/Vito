@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { expectCountWithReload, expectVisibleWithReload, login } from "./helpers";
+import { expectCountWithReload, expectVisibleWithReload, login, jourDans, VOYAGE_ROME_DEBUT, VOYAGE_ROME_FIN } from "./helpers";
 
 // Hôtels v2 : l'onglet est rendu par la brique générique CategoryTabs
 // (sous-onglets ?onglet= URL-driven — navigation par URL, jamais par clic
@@ -26,7 +26,7 @@ test("Séjours : le séjour seedé (Hôtel Démo 2) est listé avec sa note", as
   const row = page.getByTestId("place-card").filter({ hasText: "Hôtel Démo 2" }).first();
   await expectVisibleWithReload(page, row);
   // RowExtras : dernier séjour (date + note /10) + « Passer en favori »
-  await expect(page.getByText("séjour le 2026-09-12")).toBeVisible();
+  await expect(page.getByText(`séjour le ${VOYAGE_ROME_DEBUT}`)).toBeVisible();
   await expect(page.getByTestId("passer-favori").first()).toBeVisible();
 });
 
@@ -99,9 +99,9 @@ test("séjour : dates arrivée→départ, voyage détecté, enregistrement", asy
   await page.getByTestId("visite-cta").click();
   const form = page.getByTestId("sejour-form");
   await expect(form).toBeVisible();
-  // le voyage « Week-end à Rome » du seed couvre 2026-09-12 → 2026-09-15
-  await form.locator('input[name="visiteLe"]').fill("2026-09-12");
-  await form.locator('input[name="dateFin"]').fill("2026-09-15");
+  // le voyage « Week-end à Rome » du seed couvre J+30 → J+33 (dates relatives)
+  await form.locator('input[name="visiteLe"]').fill(VOYAGE_ROME_DEBUT);
+  await form.locator('input[name="dateFin"]').fill(VOYAGE_ROME_FIN);
   await expect(page.getByTestId("sejour-nuits")).toHaveText(/3/);
   await expect(page.getByTestId("voyage-lie")).toContainText("Rome");
 
@@ -127,12 +127,6 @@ test("carte hôtels : légende par statut et compteur", async ({ page }) => {
 // Lot H4 : dates + occupation de la recherche. Rien n'est envoyé au
 // fournisseur (Google Places New n'en veut pas) — le contexte sert à
 // préremplir le séjour, et c'est ce report que ce test vérifie.
-const jourDans = (n: number) => {
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() + n);
-  return d.toISOString().slice(0, 10);
-};
-
 test("recherche hôtel : les dates et l'occupation choisies préremplissent le séjour", async ({ page }) => {
   await login(page);
   await page.goto("/fr/hotels?onglet=a_tester");
@@ -209,7 +203,7 @@ test("carte restos : pas de regroupement (config map.clusters = false)", async (
 
 // Lot H6 : une réservation d'hébergement fait entrer l'hôtel au carnet, et son
 // séjour à venir se lit sur la fiche. Le voyage « Week-end à Rome » du seed
-// appartient au client et court du 12 au 15 septembre 2026.
+// appartient au client et court de J+30 à J+33 (dates relatives du seed).
 const VOYAGE_ROME = "11111111-2222-4333-8444-555555555555";
 
 /** Réserve « Grand Hôtel Riviera » (mock) sur ce voyage, et renvoie la ligne créée. */
@@ -232,7 +226,7 @@ async function reserverRiviera(page: import("@playwright/test").Page, debut: str
 test("réserver un hôtel dans un voyage le fait entrer au carnet, avec son séjour à venir", async ({ page }) => {
   await login(page);
   // dates du voyage : la réservation est donc à venir
-  await reserverRiviera(page, "2026-09-12", "2026-09-15");
+  await reserverRiviera(page, VOYAGE_ROME_DEBUT, VOYAGE_ROME_FIN);
 
   const ligne = page.getByTestId("reservation-row").filter({ hasText: "Riviera" }).first();
   await expectVisibleWithReload(page, ligne, { timeout: 15_000 });
