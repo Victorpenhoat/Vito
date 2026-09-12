@@ -1293,6 +1293,7 @@ export type Database = {
       }
       invitations: {
         Row: {
+          code: string | null
           consomme_le: string | null
           consomme_par: string | null
           created_at: string
@@ -1301,6 +1302,7 @@ export type Database = {
           expire_le: string
           family_member_id: string | null
           id: string
+          relation: string | null
           role_vise: string
           token: string
           usages: number
@@ -1308,6 +1310,7 @@ export type Database = {
           voyage_id: string | null
         }
         Insert: {
+          code?: string | null
           consomme_le?: string | null
           consomme_par?: string | null
           created_at?: string
@@ -1316,6 +1319,7 @@ export type Database = {
           expire_le?: string
           family_member_id?: string | null
           id?: string
+          relation?: string | null
           role_vise?: string
           token: string
           usages?: number
@@ -1323,6 +1327,7 @@ export type Database = {
           voyage_id?: string | null
         }
         Update: {
+          code?: string | null
           consomme_le?: string | null
           consomme_par?: string | null
           created_at?: string
@@ -1331,6 +1336,7 @@ export type Database = {
           expire_le?: string
           family_member_id?: string | null
           id?: string
+          relation?: string | null
           role_vise?: string
           token?: string
           usages?: number
@@ -2677,7 +2683,12 @@ export type Database = {
       is_groupe_owner: { Args: { g_id: string }; Returns: boolean }
       is_premium: { Args: { uid: string }; Returns: boolean }
       is_voyage_owner: { Args: { v_id: string }; Returns: boolean }
+      lien_infos: { Args: { p_code: string }; Returns: Json }
       lier_client: { Args: { p_email: string }; Returns: string }
+      lier_comptes: {
+        Args: { p_code: string; p_relation: string }
+        Returns: Json
+      }
       mes_connexions_recentes: {
         Args: { p_limite?: number }
         Returns: {

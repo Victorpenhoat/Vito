@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(107);
+select plan(120);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -32,6 +32,18 @@ begin
   return n;
 exception when insufficient_privilege then
   reset role; return 0; -- refusé au niveau grant = 0 donnée exposée, invariant respecté
+end $$;
+
+-- Résultat texte d'une requête exécutée sous une identité : les RPC de lien
+-- renvoient du jsonb, et count_as ne sait compter que des lignes.
+create function tests.text_as(p_uid uuid, p_sql text) returns text language plpgsql as $$
+declare v text;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into v;
+  reset role;
+  return v;
 end $$;
 
 -- IDs du seed
@@ -716,6 +728,125 @@ select lives_ok(
   $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
      values ('2026-2027', 'Zone A', 'pgtap un seul jour', '2027-05-07', '2027-05-07') $$,
   'une période d''un seul jour est acceptée');
+
+-- ── Lier deux comptes existants (00067) ─────────────────────────────────────
+-- Ce bloc POSE DES FIXTURES (invitations, fiches rattachées). Un balayage
+-- global du schéma — du type « aucune table n'est vide, personne ne voit les
+-- lignes d'autrui » — doit donc rester APRÈS lui, en queue de fichier : le
+-- fichier est une seule transaction, et un balayage placé avant verrait vides
+-- des tables qui ne le sont plus trois assertions plus loin.
+-- Deux personnes qui ont chacune un compte se lient par un code court : la
+-- fiche de l'une pointe vers le compte de l'autre, DES DEUX CÔTÉS. Ce qui se
+-- vérifie ici : le code ne vaut qu'une fois, il ne dit rien à qui ne l'a pas,
+-- et il n'écrit jamais dans le carnet d'un tiers.
+
+-- Quatre codes émis par le client (11111111…) : le premier vise la fiche de
+-- Camille, le deuxième ne vise personne, le troisième sert à l'auto-liaison,
+-- le quatrième est déjà expiré.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', $q$
+  with i as (
+    insert into public.invitations (token, role_vise, code, relation, family_member_id, cree_par, expire_le)
+    values ('pgtap-lien-token-aaaaaaaaaaaaaaaaaa', 'cercle', 'PGTAPAAA', 'conjoint',
+            'f1111111-1111-4111-8111-111111111112', '11111111-1111-1111-1111-111111111111',
+            now() + interval '15 minutes'),
+           ('pgtap-lien-token-bbbbbbbbbbbbbbbbbb', 'cercle', 'PGTAPBBB', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() + interval '15 minutes'),
+           ('pgtap-lien-token-cccccccccccccccccc', 'cercle', 'PGTAPCCC', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() + interval '15 minutes'),
+           ('pgtap-lien-token-dddddddddddddddddd', 'cercle', 'PGTAPDDD', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() - interval '1 minute')
+    returning 1)
+  select count(*) from i $q$), 4::bigint, 'quatre codes de lien émis pour le test');
+
+-- anon n'appelle pas la liaison (aucun grant)
+select is(tests.count_as_anon(
+  $q$ select case when (public.lier_comptes('PGTAPAAA', 'conjoint') ->> 'ok')::boolean then 1 else 0 end $q$),
+  0::bigint, 'anon ne peut pas lier des comptes');
+
+-- anti-énumération : un code expiré et un code inconnu se répondent pareil
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444', $q$ select public.lien_infos('PGTAPDDD')::text $q$),
+  tests.text_as('44444444-4444-4444-8444-444444444444', $q$ select public.lien_infos('ZZZZZZZZ')::text $q$),
+  'un code expiré et un code inconnu donnent la même réponse');
+
+-- un code valide annonce la relation proposée par l'émetteur
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lien_infos('PGTAPAAA') ->> 'relation_proposee' $q$),
+  'conjoint', 'le code valide annonce la relation proposée');
+
+-- on ne se lie pas à soi-même
+select is(
+  tests.text_as('11111111-1111-1111-1111-111111111111',
+    $q$ select public.lier_comptes('PGTAPCCC', 'ami') ->> 'motif' $q$),
+  'soi_meme', 'l''émetteur ne peut pas consommer son propre code');
+
+-- « moi » désigne sa propre fiche : impossible de la donner à autrui
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lier_comptes('PGTAPAAA', 'moi') ->> 'motif' $q$),
+  'relation_invalide', '« moi » est refusé comme relation de liaison');
+
+-- la liaison réussit
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select (public.lier_comptes('PGTAPAAA', 'parent') ->> 'ok') $q$),
+  'true', 'le code valide lie les deux comptes');
+
+-- côté émetteur : la fiche visée porte désormais le compte de l'invité
+select is((select count(*) from public.family_members
+           where id = 'f1111111-1111-4111-8111-111111111112'
+             and profile_id = '44444444-4444-4444-8444-444444444444'), 1::bigint,
+          'la fiche visée est rattachée au compte de l''invité');
+
+-- côté invité : une fiche est apparue, avec la relation qu'il a choisie
+select is((select count(*) from public.family_members
+           where user_id = '44444444-4444-4444-8444-444444444444'
+             and profile_id = '11111111-1111-1111-1111-111111111111'
+             and relation = 'parent'), 1::bigint,
+          'l''invité a une fiche réciproque, avec la relation qu''il a choisie');
+
+-- la fiche réciproque prend le NOM DU PROFIL de l'émetteur, pas un libellé
+-- inventé — et un compte sans nom de famille n'écrit pas de tiret.
+-- Le nom vient du COMPTE, et rien n'est inventé quand il manque : beaucoup de
+-- profils n'ont qu'un prénom, et un tiret de remplissage afficherait
+-- « Camille — » dans le carnet. Formulé en invariant, pas en valeur de seed.
+select ok(
+  (select fm.last_name = '' and p.display_name like fm.first_name || '%'
+     from public.family_members fm
+     join public.profiles p on p.id = fm.profile_id
+    where fm.user_id = '44444444-4444-4444-8444-444444444444'
+      and fm.profile_id = '11111111-1111-1111-1111-111111111111'),
+  'la fiche réciproque prend le nom du compte, sans nom de famille inventé');
+
+-- le code est brûlé : il ne vaut pas deux fois
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lier_comptes('PGTAPAAA', 'parent') ->> 'motif' $q$),
+  'invalide', 'un code déjà consommé ne vaut plus rien');
+
+-- un second code entre les deux mêmes comptes ne duplique aucune fiche
+select is(tests.count_as('44444444-4444-4444-8444-444444444444', $q$
+  with l as (select public.lier_comptes('PGTAPBBB', 'ami'))
+  select count(*) from public.family_members, l
+   where user_id = '44444444-4444-4444-8444-444444444444'
+     and profile_id = '11111111-1111-1111-1111-111111111111' $q$),
+  1::bigint, 'se relier une seconde fois ne crée pas de doublon');
+
+-- Force brute : le code est court, donc les tentatives sont plafonnées.
+--
+-- On compte les onze réponses au lieu de chercher « au moins un plafonnement » :
+-- cette dernière formulation resterait verte si le quota de ce compte était
+-- DÉJÀ épuisé par une assertion ajoutée plus haut un jour (0 essai utile, 11
+-- refus), et elle ne dirait rien du rang où le plafond tombe. « 10/1 » ne peut
+-- être vrai que si les dix premiers essais ont réellement été servis.
+select is(
+  tests.text_as('22222222-2222-2222-2222-222222222222', $q$
+    select (count(*) filter (where m = 'invalide'))::text || '/' ||
+           (count(*) filter (where m = 'trop_de_tentatives'))::text
+      from (select public.lier_comptes('ZZZZZZZZ', 'ami') ->> 'motif' as m
+              from generate_series(1, 11)) t $q$),
+  '10/1', 'dix essais sont servis, le onzième est plafonné');
 
 select finish();
 rollback;
