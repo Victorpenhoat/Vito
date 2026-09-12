@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(166);
+select plan(171);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -971,6 +971,52 @@ insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
 
+-- ── Lot 2 / l'étranger qui est membre d'AUTRE CHOSE (agence) ───────────────
+-- POURQUOI CES TROIS-LÀ, à côté des douze refus « deadbeef » qui suivent :
+-- ce n'est PAS une redondance, ne les supprimez pas.
+--
+-- Les trois prédicats éprouvés plus bas ont tous exactement la même forme :
+--   exists (select 1 from <table_membres> where <cle> = <id>
+--                                          and profile_id = auth.uid())
+-- La régression la plus VRAISEMBLABLE sur cette forme n'est pas la perte du
+-- filtre d'identité (`profile_id = auth.uid()`), c'est la perte du filtre
+-- d'OBJET (`and voyage_id = v_id`) — la clause qu'un remaniement, une
+-- extraction de sous-requête ou une jointure mal recollée laissent tomber sans
+-- bruit. Le prédicat devient alors « est membre de QUELQUE CHOSE », et ouvre
+-- le voyage de demo à tout compte membre d'un AUTRE voyage.
+--
+-- `deadbeef-0000-4000-8000-000000000000` est INCAPABLE de voir ce bug : il
+-- n'est membre de rien, donc « membre de quelque chose » reste faux pour lui.
+-- Les douze assertions qui suivent — et le balayage du SOCLE en fin de
+-- fichier, qui emploie le même uuid — resteraient toutes VERTES.
+--
+-- `agence` (22222222-…) le voit : le seed en fait un membre du voyage
+-- 11111111-2222-4333-8444-555555555555 et de deux groupes de dépenses
+-- (66666666-… et d2000001-…), tout en la laissant hors de nos fixtures.
+-- « Membre d'autre chose » est vrai pour elle, « membre de CECI » faux :
+-- exactement le témoin qui manquait.
+--
+-- Le troisième cas est plus faible, et il faut le dire plutôt que de le
+-- laisser croire : agence n'est membre d'AUCUN foyer et n'en possède aucun,
+-- donc cette assertion-là n'éprouve pas le filtre d'objet de
+-- can_access_famille. Elle garde une valeur propre : agence est un compte
+-- RÉELLEMENT présent dans `profiles`, là où deadbeef n'y a aucune ligne — le
+-- refus n'est donc pas l'artefact d'une identité inexistante. La rendre aussi
+-- probante que les deux autres exigerait un second foyer, que
+-- l'UNIQUE(profile_id) de famille_membres interdit ici.
+--
+-- ORDRE : placées AVANT les suppressions de ce lot (voyage, groupe, foyer) ;
+-- après, elles compteraient 0 pour la mauvaise raison.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : membre d''un AUTRE voyage, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : membre d''AUTRES groupes, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : compte réel mais étranger au foyer, agence ne le voit pas');
+
 -- ── Lot 2 / famille VOYAGE (can_access_voyage) ─────────────────────────────
 -- Cinq tables suspendues au même prédicat. Le co-membre accède, l'étranger est
 -- refusé, et surtout : voir le voyage ne donne pas le droit de le supprimer.
@@ -1007,10 +1053,17 @@ select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
 -- en ÉCRITURE, avec les deux voyageurs pgtap A/B comme source déterministe
 -- (ronde de correction 1). Une violation de WITH CHECK LÈVE une erreur
 -- (42501, « new row violates row-level security policy ») — elle ne rend pas
--- 0 ligne. tests.count_as n'a pas de gestionnaire d'exception : si l'insert
--- levait sous son toit, le `reset role` ne s'exécuterait jamais et
--- l'identité deadbeef fuiterait sur toutes les assertions suivantes. throws_ok
--- est l'outil correct : il piège l'erreur dans sa propre savepoint.
+-- 0 ligne.
+-- C'est LÀ qu'est le motif, et pas ailleurs : une assertion qui attend un
+-- COMPTE (`is(..., 0)`) est structurellement incapable de constater une
+-- LEVÉE. Elle n'observerait rien du tout — l'erreur remonterait avant le
+-- moindre comptage. (Le motif qu'on lisait ici auparavant — « sinon le reset
+-- role ne s'exécuterait jamais et l'identité fuiterait sur les assertions
+-- suivantes » — était faux : une erreur non rattrapée avorte la transaction
+-- entière, donc il n'y a précisément PAS d'assertion suivante à polluer.)
+-- throws_ok est l'outil correct : il piège la levée dans sa propre savepoint
+-- et vérifie en plus que c'est bien 42501 — un refus de RLS, pas une
+-- violation de clé étrangère qui passerait pour de la sécurité.
 select throws_ok(
   $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
        'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
@@ -1066,10 +1119,12 @@ select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
 
 -- remboursements : vide pour ce groupe, donc éprouvée en ÉCRITURE. Une
 -- violation de WITH CHECK LÈVE une erreur (42501), elle ne rend pas 0 ligne —
--- tests.count_as n'a pas de gestionnaire d'exception : si l'insert levait sous
--- son toit, le `reset role` ne s'exécuterait jamais et l'identité deadbeef
--- fuirait sur toutes les assertions suivantes. throws_ok piège l'erreur dans
--- sa propre savepoint.
+-- et une assertion qui attend un COMPTE ne peut pas constater une levée :
+-- l'erreur remonterait avant tout comptage. C'est le seul motif qui tienne
+-- (et non « sinon le reset role ne courrait jamais et l'identité fuiterait
+-- sur les assertions suivantes » : une erreur non rattrapée avorte la
+-- transaction entière, il n'y a donc pas d'assertion suivante). throws_ok
+-- piège la levée dans sa propre savepoint et en vérifie le code.
 select throws_ok(
   $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
        'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
@@ -1082,6 +1137,16 @@ select throws_ok(
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
           1::bigint, 'remboursements : le co-membre, lui, peut en créer un');
+
+-- La moitié COLLABORATIVE du prédicat, d'abord : le co-membre MODIFIE bien le
+-- groupe — depense_groupes_update porte can_access_groupe en using ET en with
+-- check, donc l'update aboutit sans lever. Sans cette assertion, le libellé
+-- « VOIT et MODIFIE, mais ne SUPPRIME pas » juste en dessous promettrait un
+-- MODIFIE que rien n'éprouve : l'asymétrie ne serait qu'à moitié gravée.
+-- ORDRE : avant la suppression par le propriétaire, qui emporte la ligne.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.depense_groupes set titre = ''pgtap groupe modifié par le co-membre'' where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le co-membre MODIFIE le groupe (can_access_groupe)');
 
 -- VOIR N'EST PAS SUPPRIMER : depense_groupes_delete exige is_groupe_owner,
 -- alors que l'UPDATE se contente de can_access_groupe. Un co-membre modifie
@@ -1231,18 +1296,42 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 --
 -- Le filtre exclut `SELECT` plutôt que d'énumérer INSERT/UPDATE/DELETE.
 -- Raison : `cmd` peut aussi valoir `ALL` — l'idiome dominant du projet pour
--- les policies « propriétaire » (29 tables du schéma déclarent leur policy en
--- `for all`, ex. reservations_all, vins_all_owner). Une liste de verbes
+-- les policies « propriétaire » (30 tables du schéma déclarent leur policy en
+-- `for all`, ex. reservations_all, vins_all_owner ; compté au catalogue :
+-- select count(distinct tablename) from pg_policies where schemaname =
+-- 'public' and cmd = 'ALL'). Une liste de verbes
 -- d'écriture ne matcherait jamais `ALL` et laisserait passer, silencieuse,
 -- la forme de policy la plus probable si quelqu'un en ajoutait une demain sur
 -- etablissements. Exclure la lecture dit l'invariant tel qu'il est —
 -- « rien d'autre que du SELECT » — et reste fail-closed : toute valeur de
 -- `cmd` non encore vue (y compris une future) est comptée et fait échouer
 -- l'assertion bruyamment plutôt que de passer inaperçue.
+-- TÉMOIN DU TÉMOIN, à lire avec l'assertion qui le suit immédiatement — les
+-- deux ne valent que par paire, ne séparez pas l'une de l'autre.
+-- L'assertion déclarative ci-dessous exige zéro. Or zéro est exactement ce
+-- que rendrait un `where` qui ne désigne plus rien : table renommée, schéma
+-- déplacé, faute de frappe dans un remaniement. Elle passerait au vert
+-- **sans avoir mesuré la moindre policy** — la forme creuse précise que le
+-- bloc SOCLE, quelques lignes plus bas, condamne.
+-- Celle-ci compte les policies d'`etablissements` TOUTES catégories
+-- confondues et en exige strictement plus de zéro. Partage du travail :
+-- celle-ci prouve qu'on REGARDE quelque chose, celle d'après dit ce qu'on y
+-- VOIT. Si le nom de la table cesse de correspondre, c'est celle-ci qui
+-- rougit, et le diagnostic est immédiat.
+select ok(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements') > 0,
+  'etablissements : le catalogue expose bien au moins une policy (témoin du test suivant)');
+
+-- `is distinct from` et non `<>` : `NULL <> ''SELECT''` rend NULL, donc une
+-- ligne dont `cmd` serait NULL serait EXCLUE du compte — l'inverse exact de
+-- ce que le commentaire ci-dessus promet (« toute valeur non encore vue est
+-- comptée »). `is distinct from` rend true face à NULL et tient la promesse,
+-- sans rien coûter.
 select is(
   (select count(*) from pg_policies
     where schemaname = 'public' and tablename = 'etablissements'
-      and cmd <> 'SELECT')::bigint,
+      and cmd is distinct from 'SELECT')::bigint,
   0::bigint,
   'etablissements : aucune policy autre que SELECT n''existe au catalogue');
 
