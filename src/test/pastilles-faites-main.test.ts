@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { SRC, fichiersSources, sansCommentaires } from "./fichiersSources";
 
@@ -7,7 +7,20 @@ import { SRC, fichiersSources, sansCommentaires } from "./fichiersSources";
 // copies existaient dans 65 fichiers, et rien n'empêchait la 108e. `rounded-pill`
 // seul ne suffit pas à incriminer — c'est la conjonction avec un padding
 // horizontal qui fait une pastille plutôt qu'un rond.
-const PASTILLE = /rounded-(pill|full)[^"'`]*\bpx-/;
+//
+// Le motif accepte les deux ordres : `rounded-pill ... px-4` (le rayon avant
+// le padding) ET `px-4 ... rounded-pill` (un ternaire de classes, ou un
+// padding composé avant le rayon, met parfois le padding en premier). Un seul
+// des deux ordres laissait passer une pastille faite main sans que ce
+// garde-fou ne la voie. `[^>]` et non `[\s\S]` : la fenêtre reste À L'INTÉRIEUR
+// d'une balise JSX. Un `[\s\S]{0,200}` sans borne franchit le `>` qui ferme la
+// balise et va chercher son padding dans l'élément SUIVANT — mesuré sur
+// l'arbre, ça incrimine à tort un avatar `rounded-full` sans padding pour le
+// seul crime d'être à moins de 200 caractères d'un `px-` appartenant à un
+// tout autre élément (`ListeActivites.tsx`, `ProchesEmptyState.tsx`). Vérifié
+// après coup : avec `[^>]`, l'ensemble des fichiers incriminés est identique à
+// celui de l'ancien motif.
+const PASTILLE = /rounded-(pill|full)[^>]{0,200}?\bpx-|\bpx-[^>]{0,200}?rounded-(pill|full)/;
 
 // Liste CLOSE. Chaque entrée porte sa raison.
 //
@@ -118,10 +131,20 @@ describe("les pastilles", () => {
   // Une dette qu'on oublie de vider redevient une liste d'exceptions, et la
   // dette est alors payée sans que personne ne le sache. Ce test force à retirer
   // chaque entrée au moment où sa tâche la règle.
+  //
+  // Un fichier de `DETTE` peut aussi disparaître (renommage, suppression) sans
+  // que l'entrée soit retirée : `readFileSync` lèverait alors ENOENT et ferait
+  // planter tout le test, masquant les vraies entrées payées derrière une
+  // erreur de plomberie. `existsSync` transforme ce cas en une entrée obsolète
+  // détectée comme telle, avec un message clair plutôt qu'un crash.
   it("ne gardent aucune dette déjà payée", () => {
     const payees = Object.keys(DETTE)
-      .filter((f) => !PASTILLE.test(sansCommentaires(readFileSync(path.join(SRC, f), "utf8"))))
+      .filter((f) => {
+        const chemin = path.join(SRC, f);
+        if (!existsSync(chemin)) return true; // entrée obsolète : fichier renommé ou supprimé
+        return !PASTILLE.test(sansCommentaires(readFileSync(chemin, "utf8")));
+      })
       .sort();
-    expect(payees).toEqual([]);
+    expect(payees, "entrée(s) de DETTE obsolète(s) ou payée(s) — à retirer de la liste").toEqual([]);
   });
 });

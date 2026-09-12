@@ -51,7 +51,7 @@ describe("SearchField", () => {
   it("applique className passé par l'appelant", () => {
     const { container } = render(
       <SearchField valeur="" onChange={() => {}} placeholder="Nom…" libelleEffacer="Effacer" className="w-80" />);
-    expect(container.querySelector("label")).toHaveClass("w-80");
+    expect(container.querySelector("div")).toHaveClass("w-80");
   });
 
   // Avec un libellé unique ("Effacer") partout ailleurs, ce test passerait
@@ -70,6 +70,15 @@ describe("SearchField", () => {
     render(<SearchField valeur="" onChange={onChange} placeholder="Nom…" libelleEffacer="Effacer" />);
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "sushi" } });
     expect(onChange).toHaveBeenCalledWith("sushi");
+  });
+
+  // La visibilité de la croix suit la prop `valeur`, pas le DOM : si `value`
+  // disparaissait de l'<input>, le champ deviendrait non contrôlé et TOUS les
+  // tests ci-dessus resteraient verts. Seule une assertion sur le DOM lui-même
+  // peut trahir la régression.
+  it("reflète valeur dans le DOM du champ (composant contrôlé)", () => {
+    render(<SearchField valeur="coréen" onChange={() => {}} placeholder="Nom…" libelleEffacer="Effacer" />);
+    expect(screen.getByRole("searchbox")).toHaveValue("coréen");
   });
 
   // Le test hors-ligne précédent porte sur un champ vide : la croix y est

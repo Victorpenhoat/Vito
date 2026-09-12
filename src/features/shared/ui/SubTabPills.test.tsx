@@ -21,8 +21,8 @@ describe("SubTabPills", () => {
   it("émet la clé choisie, pas l'index", () => {
     const onChange = vi.fn();
     render(<SubTabPills options={OPTIONS} valeur="favoris" onChange={onChange} ariaLabel="Vue" />);
-    const tabATestrer = screen.getByRole("tab", { name: /À tester/ });
-    fireEvent.click(tabATestrer);
+    const tabATester = screen.getByRole("tab", { name: /À tester/ });
+    fireEvent.click(tabATester);
     expect(onChange).toHaveBeenCalledWith("a_tester");
   });
 

@@ -1,8 +1,10 @@
 import { Search, X } from "lucide-react";
 
-// Quatre états au canevas : repos, survol, focus (bordure 1,5 px en accent et
-// halo --accent-50), hors connexion (éteint). Le focus est porté par
-// `focus-within` parce que c'est le CONTENEUR qui se pare, pas l'input nu.
+// Quatre états au canevas : repos, survol, focus (le focus garde l'épaisseur
+// de bordure à 1 px, seule sa couleur passe à l'accent, plus un halo
+// --accent-50 ; le canevas prescrit 1,5 px, écart assumé pour rester sur
+// l'échelle Tailwind par défaut), hors connexion (éteint). Le focus est porté
+// par `focus-within` parce que c'est le CONTENEUR qui se pare, pas l'input nu.
 export function SearchField({
   valeur, onChange, placeholder, horsLigne, libelleEffacer, testId, className = "",
 }: {
@@ -10,7 +12,11 @@ export function SearchField({
   horsLigne?: boolean; libelleEffacer: string; testId?: string; className?: string;
 }) {
   return (
-    <label
+    // `<div>` et non `<label>` : le modèle de contenu HTML n'autorise qu'un
+    // seul élément « labelable » dans un <label>, et ce conteneur porte à la
+    // fois l'<input> et le <button> d'effacement. L'input garde son propre
+    // aria-label (le placeholder) ; rien n'est perdu à l'accessibilité.
+    <div
       className={`flex min-w-0 items-center gap-2.5 rounded-card border bg-surface-hover px-3.5 py-2.5 transition-colors ${
         horsLigne
           ? "border-line-soft opacity-60"
@@ -38,6 +44,6 @@ export function SearchField({
           <X size={9} aria-hidden />
         </button>
       )}
-    </label>
+    </div>
   );
 }

@@ -91,6 +91,39 @@ describe("TagChip", () => {
     const btn = screen.getByRole("button", { name: "Terrasse" });
     expect(btn).toHaveAttribute("aria-pressed", "true");
   });
+
+  // Un compte à zéro est une information (« aucun résultat »), pas une
+  // absence : le masquer ferait disparaître le chiffre au moment précis où il
+  // explique le vide.
+  it("affiche un compte à zéro", () => {
+    render(<TagChip compte={0}>Coréen</TagChip>);
+    expect(screen.getByText("Coréen").closest("span")).toHaveTextContent("Coréen0");
+  });
+
+  // `couleur` pose un point coloré décoratif à côté du libellé ; `aria-hidden`
+  // dit au lecteur d'écran de l'ignorer, le libellé porte déjà le sens.
+  it("rend le point de couleur en aria-hidden quand couleur est fourni", () => {
+    render(<TagChip couleur="#2f855a">Valeur sûre</TagChip>);
+    const chip = screen.getByText("Valeur sûre").closest("span");
+    const point = chip!.querySelector("[aria-hidden='true']");
+    expect(point).not.toBeNull();
+    expect(point).toHaveStyle({ background: "#2f855a" });
+  });
+
+  // `pressed` doit l'emporter sur la dérivation par `ton`, dans les deux sens.
+  it("laisse pressed remplacer la valeur dérivée du ton", () => {
+    // Ton d'action, sans pressed : pas de aria-pressed (comportement dérivé).
+    const { rerender } = render(<TagChip ton="ajout" onClick={() => {}} pressed>+ Ajouter</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+
+    // Ton qui bascule normalement vers "true", explicitement forcé à "false".
+    rerender(<TagChip ton="selectionne" onClick={() => {}} pressed={false}>Terrasse</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "false");
+
+    // Omis : le comportement dérivé d'avant reste inchangé.
+    rerender(<TagChip ton="selectionne" onClick={() => {}}>Terrasse</TagChip>);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+  });
 });
 
 // Tests de typage : l'union discriminée doit rejeter les appels invalides.

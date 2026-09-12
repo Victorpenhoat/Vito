@@ -23,18 +23,18 @@ const TON: Record<TonChip, string> = {
 // La première branche rend un chip sans croix de retrait ; la seconde le rend avec.
 type TagChipProps =
   | {
-    ton?: TonChip; couleur?: string; compte?: number;
+    ton?: TonChip; couleur?: string; compte?: number; pressed?: boolean;
     onClick?: () => void; onRetirer?: never; libelleRetrait?: never;
     testId?: string; children: ReactNode;
   }
   | {
-    ton?: TonChip; couleur?: string; compte?: number;
+    ton?: TonChip; couleur?: string; compte?: number; pressed?: boolean;
     onClick?: () => void; onRetirer: () => void; libelleRetrait: string;
     testId?: string; children: ReactNode;
   };
 
 export function TagChip({
-  ton = "defaut", couleur, compte, onClick, onRetirer, libelleRetrait, testId, children,
+  ton = "defaut", couleur, compte, pressed, onClick, onRetirer, libelleRetrait, testId, children,
 }: TagChipProps) {
   const classe = `inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-xs transition-colors ${TON[ton]}`;
   const contenu = (
@@ -49,18 +49,32 @@ export function TagChip({
 
   // Un chip qui décrit n'est pas cliquable : le rendre bouton promettrait une
   // action qui n'existe pas, et le lecteur d'écran l'annoncerait comme telle.
+  //
+  // Un chip de filtre est un interrupteur : sans aria-pressed, un lecteur
+  // d'écran ne dit pas si le filtre est posé. Les tons de basculement sont
+  // `defaut` (off), `selectionne` (on) et `actif-doux` (on). Les tones
+  // `ajout` et `suggere` sont des actions uniques, jamais des toggles — d'où
+  // la valeur dérivée par défaut, ci-dessous.
+  //
+  // `pressed` est une échappatoire explicite : dériver l'état depuis `ton`
+  // couple la sémantique (bascule ou non) à la présentation (couleur). Un chip
+  // d'action ponctuelle qui emprunte par ailleurs un ton `defaut` ou
+  // `selectionne` — par exemple pour matcher une palette — se ferait sinon
+  // annoncer à tort comme un interrupteur. `pressed`, quand il est fourni
+  // (y compris `false`), l'emporte sur la dérivation ; omis, le comportement
+  // actuel est inchangé.
+  const pressedDerive =
+    ton === "defaut" || ton === "selectionne" || ton === "actif-doux"
+      ? ton === "selectionne" || ton === "actif-doux"
+      : undefined;
+  const pressedFinal = pressed ?? pressedDerive;
+
   const principal = onClick ? (
     <button
       type="button"
       onClick={onClick}
       data-testid={testId}
-      // Un chip de filtre est un interrupteur : sans aria-pressed, un lecteur
-      // d'écran ne dit pas si le filtre est posé. Les tons de basculement sont
-      // `defaut` (off), `selectionne` (on) et `actif-doux` (on). Les tones
-      // `ajout` et `suggere` sont des actions uniques, jamais des toggles.
-      {...(ton === "defaut" || ton === "selectionne" || ton === "actif-doux" ? {
-        "aria-pressed": ton === "selectionne" || ton === "actif-doux",
-      } : {})}
+      {...(pressedFinal !== undefined ? { "aria-pressed": pressedFinal } : {})}
       disabled={ton === "vide"}
       className={`${classe} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none`}
     >

@@ -857,7 +857,6 @@ git commit -m "test(design): une pastille dessinée à la main fait désormais �
 
 **Files:**
 - Modify: `src/features/places/ui/CategoryTabs.tsx` (lignes 107-120, 128-152, 155-196)
-- Modify: `src/test/pastilles-faites-main.test.ts` (retirer son entrée de `DETTE`)
 
 **Interfaces:**
 - Consumes : `TagChip`, `SubTabPills`, `ViewSwitcher`, `SearchField` (tâches 1 à 4).
