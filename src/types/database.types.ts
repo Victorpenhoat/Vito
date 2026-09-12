@@ -1129,6 +1129,7 @@ export type Database = {
           doc_label: string | null
           doc_number: string | null
           doc_number_chiffre: string | null
+          doc_number_present: boolean | null
           doc_type: string
           expiry_date: string | null
           holder_name: string | null
@@ -1154,6 +1155,7 @@ export type Database = {
           doc_label?: string | null
           doc_number?: string | null
           doc_number_chiffre?: string | null
+          doc_number_present?: boolean | null
           doc_type: string
           expiry_date?: string | null
           holder_name?: string | null
@@ -1179,6 +1181,7 @@ export type Database = {
           doc_label?: string | null
           doc_number?: string | null
           doc_number_chiffre?: string | null
+          doc_number_present?: boolean | null
           doc_type?: string
           expiry_date?: string | null
           holder_name?: string | null

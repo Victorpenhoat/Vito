@@ -128,7 +128,7 @@ export async function getProche(
   // jamais contenu_chiffre(_verso) hors route API — taille_verso suffit pour has_verso
   const { data: docs, error: dErr } = await supabase
     .from("family_documents")
-    .select("id, doc_type, doc_label, doc_number_chiffre, country, holder_name, issue_date, expiry_date, issue_place, mime_type, reminder, taille_verso")
+    .select("id, doc_type, doc_label, doc_number_present, country, holder_name, issue_date, expiry_date, issue_place, mime_type, reminder, taille_verso")
     .eq("member_id", id)
     .order("expiry_date", { ascending: true, nullsFirst: false });
   if (dErr) throw dErr;
@@ -149,10 +149,11 @@ export async function getProche(
       id: d.id,
       doc_type: d.doc_type,
       doc_label: d.doc_label,
-      // Masque calculé serveur, SANS déchiffrer : le masque est une constante,
-      // seule la présence d'un numéro compte. Le clair ne sort qu'en réponse de
-      // `revelerNumero`, après vérification du mot de passe (docs/security.md §2).
-      doc_number_masque: maskDocNumber(d.doc_number_chiffre),
+      // Masque calculé serveur à partir de la seule PRÉSENCE d'un numéro : la
+      // colonne chiffrée n'est même pas demandée à la base (colonne générée,
+      // migration 00068). Le clair ne sort qu'en réponse de `revelerNumero`,
+      // après vérification du mot de passe (docs/security.md §2).
+      doc_number_masque: maskDocNumber(d.doc_number_present),
       country: d.country,
       holder_name: d.holder_name,
       issue_date: d.issue_date,
