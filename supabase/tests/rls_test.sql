@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(192);
+select plan(194);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1497,6 +1497,26 @@ select throws_ok(
   '42501',
   null,
   'conciergerie : un compte non abonné ne peut pas ouvrir de demande');
+
+-- ── Lot 3 / handle_new_user : le rôle ne vient jamais du client ────────────
+-- L'invariant est écrit dans le commentaire de la fonction : raw_user_meta_data
+-- est contrôlé par le client, donc le rôle n'en est JAMAIS tiré. Jusqu'ici rien
+-- ne le gardait. Un compte qui s'inscrirait en réclamant « role: admin » dans
+-- ses métadonnées doit ressortir « client ».
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-00000000000f', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-escalade@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb,
+        '{"role":"admin","display_name":"Escalade"}'::jsonb, now(), now());
+
+select is((select role::text from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'client',
+          'handle_new_user : un compte qui réclame « admin » dans ses métadonnées naît client');
+select is((select display_name from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'Escalade',
+          'handle_new_user : mais le nom affiché, lui, est bien repris des métadonnées');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
