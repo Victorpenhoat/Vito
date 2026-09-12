@@ -1,5 +1,6 @@
 "use client";
 import { useRouter, usePathname } from "@/lib/i18n/routing";
+import { TagChip } from "@/features/shared/ui/TagChip";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Input } from "@/features/shared/ui/Input";
@@ -29,15 +30,13 @@ export function RechercheForm() {
         {typeTabs.map((it) => {
           const active = currentType === it.key;
           return (
-            <button
+            <TagChip
               key={it.key || "tous"}
-              type="button"
               onClick={() => set("type", it.key)}
-              aria-pressed={active}
-              className={`rounded-full border px-3 py-1 text-sm ${active ? "border-accent bg-accent-50 text-ink" : "border-line text-muted hover:bg-surface-hover"}`}
+              ton={active ? "actif-doux" : "defaut"}
             >
               {it.label}
-            </button>
+            </TagChip>
           );
         })}
       </div>
