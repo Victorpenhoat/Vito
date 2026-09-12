@@ -134,6 +134,20 @@ Trois déclencheurs `*_lock_owner` empêchent de changer le propriétaire d'un o
 
 ```sql
 -- ── Lot 3 / les déclencheurs ───────────────────────────────────────────────
+-- FIXTURES PROPRES À CE LOT, et c'est délibéré. Le lot 2 crée un voyage
+-- `bb…0001` et un groupe `bb…0002`, mais les SUPPRIME en fin de ses sections
+-- (c'est son témoin positif : le propriétaire, lui, peut supprimer). Ils
+-- n'existent donc plus à cet endroit du fichier — vérifié, la dernière
+-- occurrence de chacun est un DELETE. Seul le foyer `fa…0001` survit, parce que
+-- le lot 2 le re-crée pour ne pas vider les tables du Cercle.
+-- D'où la règle, encore : la ligne qu'on éprouve, on la crée.
+insert into public.voyages (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 groupe');
+
 -- Un déclencheur ne s'appelle pas : on éprouve son EFFET. Les trois verrous
 -- d'owner lèvent « owner_id immuable » — vérifié au catalogue. Chaque refus est
 -- apparié à une modification LÉGITIME qui doit passer : sans elle, « on ne peut
@@ -142,20 +156,20 @@ Trois déclencheurs `*_lock_owner` empêchent de changer le propriétaire d'un o
 
 select throws_ok(
   $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
-       'with u as (update public.voyages set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+       'with u as (update public.voyages set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
   'owner_id immuable',
   'voyages : le propriétaire ne peut pas se dessaisir du voyage');
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
-          'with u as (update public.voyages set titre = ''pgtap renomme'' where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          'with u as (update public.voyages set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
           1::bigint, 'voyages : mais il peut le renommer — le verrou ne bloque que l''owner');
 
 select throws_ok(
   $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
-       'with u as (update public.depense_groupes set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u') $$,
+       'with u as (update public.depense_groupes set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u') $$,
   'owner_id immuable',
   'depense_groupes : le propriétaire ne peut pas se dessaisir du groupe');
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
-          'with u as (update public.depense_groupes set titre = ''pgtap renomme'' where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          'with u as (update public.depense_groupes set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
           1::bigint, 'depense_groupes : mais il peut le renommer');
 
 select throws_ok(
