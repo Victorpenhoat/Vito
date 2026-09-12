@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(126);
+select plan(129);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -904,6 +904,36 @@ insert into public.activite_creneau_exceptions (creneau_id, date, type)
 select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
 
 -- ============================================================
+-- ── Témoin de présence du numéro (00068) ────────────────────────────────────
+-- La page ne lit plus que ce témoin : le masque ne dérive plus du contenu, et
+-- la colonne chiffrée n'est même plus demandée. Le témoin ne vaut donc que s'il
+-- SUIT la valeur sans jamais pouvoir en diverger — ce que garantit une colonne
+-- générée, et rien d'autre. Le jour où quelqu'un la remplacerait par un booléen
+-- ordinaire tenu à jour à la main, ces trois assertions tomberaient.
+
+select is(tests.text_as('11111111-1111-1111-1111-111111111111', $q$
+  insert into public.family_documents
+    (id, user_id, member_id, doc_type, doc_number_chiffre, contenu_chiffre, mime_type, taille)
+  values ('fd000068-0000-4000-8000-000000000001',
+          '11111111-1111-1111-1111-111111111111',
+          'f1111111-1111-4111-8111-111111111112',
+          'passeport', 'pgtap-blob-chiffre', 'pgtap-contenu', 'application/pdf', 1)
+  returning doc_number_present::text $q$),
+  'true', 'un numéro chiffré allume le témoin de présence');
+
+select is(tests.text_as('11111111-1111-1111-1111-111111111111', $q$
+  update public.family_documents set doc_number_chiffre = null
+   where id = 'fd000068-0000-4000-8000-000000000001'
+  returning doc_number_present::text $q$),
+  'false', 'effacer le numéro éteint le témoin, sans que personne ait à y penser');
+
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (update public.family_documents set doc_number_present = true
+                    where id = ''fd000068-0000-4000-8000-000000000001'' returning 1)
+        select count(*) from u') $$,
+  '428C9', null, 'le témoin ne s''écrit pas à la main : il est généré');
+
 -- SOCLE — balayages pilotés par le catalogue
 -- ============================================================
 -- UNE RÈGLE GOUVERNE TOUT CE BLOC, et elle se reperd à chaque relecture pressée :

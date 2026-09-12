@@ -4,26 +4,21 @@ import { maskDocNumber } from "./mask";
 // Le masque est calculé SERVEUR : c'est la seule forme qui parvient au
 // navigateur tant que l'identité n'a pas été vérifiée (lot O-D).
 //
-// La règle est posée par docs/security.md §2 et vaut pour TOUTE donnée
-// protégée — les codes d'accès des Activités l'appliquent déjà
-// (`activites/domain/protege.ts`). Elle tient en deux interdits : le masque ne
-// laisse filtrer aucun caractère, et il n'annonce pas la longueur.
+// Depuis la migration 00068, la fonction ne reçoit plus la valeur du tout,
+// seulement sa présence : « le masque ne laisse filtrer aucun caractère et
+// n'annonce pas la longueur » n'est donc plus une propriété à éprouver ici,
+// c'est la signature qui l'impose. Ce qui reste à tenir, et que ces deux cas
+// verrouillent, c'est qu'un masque ne s'affiche QUE là où il y a quelque chose
+// à masquer. L'invariant « la page ne demande pas la colonne chiffrée », lui,
+// est éprouvé dans `data/queries.test.ts`, au seul endroit où il peut l'être.
 describe("maskDocNumber", () => {
-  it("ne laisse filtrer aucun caractère de la valeur", () => {
-    expect(maskDocNumber("19FR99892")).toBe("••••");
+  it("montre quatre points quand un numéro existe", () => {
+    expect(maskDocNumber(true)).toBe("••••");
   });
 
-  it("fait quatre points quelle que soit la longueur réelle", () => {
-    // Deux numéros de longueurs très différentes rendent le MÊME masque : un
-    // masque qui suit la longueur annonce combien de caractères chercher.
-    expect(maskDocNumber("AB")).toBe("••••");
-    expect(maskDocNumber("CI-778812")).toBe("••••");
-    expect(maskDocNumber("X".repeat(40))).toBe("••••");
-  });
-
-  it("rend une chaîne vide sans numéro", () => {
-    // Pas de masque sans valeur : quatre points diraient qu'un numéro existe.
+  it("ne montre rien quand il n'y en a pas", () => {
+    // Quatre points sur un document sans numéro annonceraient un secret absent.
+    expect(maskDocNumber(false)).toBe("");
     expect(maskDocNumber(null)).toBe("");
-    expect(maskDocNumber("")).toBe("");
   });
 });
