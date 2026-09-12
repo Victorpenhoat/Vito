@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(126);
+select plan(171);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -902,6 +902,438 @@ select id, 'pgtap cotisation', 12000 from public.activites order by id limit 1;
 -- `type` est contraint à 'annulation' ou 'ponctuelle' (CHECK) — pas 'annule'.
 insert into public.activite_creneau_exceptions (creneau_id, date, type)
 select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
+
+-- ============================================================
+-- Lot 2 — fixtures de profondeur : un porteur, un co-membre, un étranger
+-- ============================================================
+-- Trois familles d'accès (voyage, groupe de dépenses, foyer) régies par trois
+-- prédicats structurellement identiques : owner OR membre. On monte donc le
+-- même décor trois fois — demo possède, client est co-membre, et personne
+-- d'autre n'a de lien.
+--
+-- Tout est borné à ces identifiants : les assertions qui suivent comptent des
+-- lignes DE CES FIXTURES, jamais des totaux. Un décompte absolu encoderait
+-- l'état du seed et tomberait au premier run e2e.
+
+-- Voyage. demo est premium (vérifié), donc enforce_voyage_limit ne s'y oppose
+-- pas ; le trigger add_voyage_owner_membre inscrit demo dans voyage_membres.
+insert into public.voyages (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap voyage profondeur');
+
+insert into public.voyage_membres (voyage_id, profile_id, role)
+values ('bb000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.reservations (voyage_id, created_by)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.voyage_documents (voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by)
+values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 4, 'AAAA',
+        'de110000-0000-4000-8000-000000000000');
+
+-- Deux voyageurs SANS COMPTE, source pour l'assertion voyage_remboursements
+-- ci-dessous (ronde de correction 1 : la version précédente n'avait aucune
+-- ligne de voyage_participants rattachée à CE voyage, donc l'insert de preuve
+-- portait sur 0 ligne quelle que soit la policy — verte pour la mauvaise
+-- raison).
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000b', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap A', 'de110000-0000-4000-8000-000000000000');
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000c', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap B', 'de110000-0000-4000-8000-000000000000');
+
+-- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
+insert into public.depense_groupes (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap groupe profondeur');
+
+insert into public.depense_groupe_membres (groupe_id, profile_id)
+values ('bb000000-0000-4000-8000-000000000002',
+        '11111111-1111-1111-1111-111111111111');
+
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, created_by)
+values ('bb000000-0000-4000-8000-00000000000a',
+        'bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap dépense', 1000,
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.depense_parts (depense_id, profile_id, part_cents)
+values ('bb000000-0000-4000-8000-00000000000a',
+        '11111111-1111-1111-1111-111111111111', 500);
+
+-- Foyer : on RÉUTILISE celui du lot 1 (familles.famille_membres porte un
+-- UNIQUE(profile_id), donc demo ne peut pas posséder deux foyers). On n'ajoute
+-- que le co-membre.
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+-- ── Lot 2 / l'étranger qui est membre d'AUTRE CHOSE (agence) ───────────────
+-- POURQUOI CES TROIS-LÀ, à côté des douze refus « deadbeef » qui suivent :
+-- ce n'est PAS une redondance, ne les supprimez pas.
+--
+-- Les trois prédicats éprouvés plus bas ont tous exactement la même forme :
+--   exists (select 1 from <table_membres> where <cle> = <id>
+--                                          and profile_id = auth.uid())
+-- La régression la plus VRAISEMBLABLE sur cette forme n'est pas la perte du
+-- filtre d'identité (`profile_id = auth.uid()`), c'est la perte du filtre
+-- d'OBJET (`and voyage_id = v_id`) — la clause qu'un remaniement, une
+-- extraction de sous-requête ou une jointure mal recollée laissent tomber sans
+-- bruit. Le prédicat devient alors « est membre de QUELQUE CHOSE », et ouvre
+-- le voyage de demo à tout compte membre d'un AUTRE voyage.
+--
+-- `deadbeef-0000-4000-8000-000000000000` est INCAPABLE de voir ce bug : il
+-- n'est membre de rien, donc « membre de quelque chose » reste faux pour lui.
+-- Les douze assertions qui suivent — et le balayage du SOCLE en fin de
+-- fichier, qui emploie le même uuid — resteraient toutes VERTES.
+--
+-- `agence` (22222222-…) le voit : le seed en fait un membre du voyage
+-- 11111111-2222-4333-8444-555555555555 et de deux groupes de dépenses
+-- (66666666-… et d2000001-…), tout en la laissant hors de nos fixtures.
+-- « Membre d'autre chose » est vrai pour elle, « membre de CECI » faux :
+-- exactement le témoin qui manquait.
+--
+-- Le troisième cas est plus faible, et il faut le dire plutôt que de le
+-- laisser croire : agence n'est membre d'AUCUN foyer et n'en possède aucun,
+-- donc cette assertion-là n'éprouve pas le filtre d'objet de
+-- can_access_famille. Elle garde une valeur propre : agence est un compte
+-- RÉELLEMENT présent dans `profiles`, là où deadbeef n'y a aucune ligne — le
+-- refus n'est donc pas l'artefact d'une identité inexistante. La rendre aussi
+-- probante que les deux autres exigerait un second foyer, que
+-- l'UNIQUE(profile_id) de famille_membres interdit ici.
+--
+-- ORDRE : placées AVANT les suppressions de ce lot (voyage, groupe, foyer) ;
+-- après, elles compteraient 0 pour la mauvaise raison.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : membre d''un AUTRE voyage, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : membre d''AUTRES groupes, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : compte réel mais étranger au foyer, agence ne le voit pas');
+
+-- ── Lot 2 / famille VOYAGE (can_access_voyage) ─────────────────────────────
+-- Cinq tables suspendues au même prédicat. Le co-membre accède, l'étranger est
+-- refusé, et surtout : voir le voyage ne donne pas le droit de le supprimer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage : le co-membre voit le voyage partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : un non-membre ne voit pas le voyage');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'voyage_membres : le co-membre voit les deux membres (demo + lui)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage_documents : le co-membre voit la pièce jointe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_documents : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'reservations : le co-membre voit la réservation');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'reservations : un non-membre n''en voit aucune');
+
+-- voyage_remboursements : la table est vide pour ce voyage, donc on l'éprouve
+-- en ÉCRITURE, avec les deux voyageurs pgtap A/B comme source déterministe
+-- (ronde de correction 1). Une violation de WITH CHECK LÈVE une erreur
+-- (42501, « new row violates row-level security policy ») — elle ne rend pas
+-- 0 ligne.
+-- C'est LÀ qu'est le motif, et pas ailleurs : une assertion qui attend un
+-- COMPTE (`is(..., 0)`) est structurellement incapable de constater une
+-- LEVÉE. Elle n'observerait rien du tout — l'erreur remonterait avant le
+-- moindre comptage. (Le motif qu'on lisait ici auparavant — « sinon le reset
+-- role ne s'exécuterait jamais et l'identité fuiterait sur les assertions
+-- suivantes » — était faux : une erreur non rattrapée avorte la transaction
+-- entière, donc il n'y a précisément PAS d'assertion suivante à polluer.)
+-- throws_ok est l'outil correct : il piège la levée dans sa propre savepoint
+-- et vérifie en plus que c'est bien 42501 — un refus de RLS, pas une
+-- violation de clé étrangère qui passerait pour de la sécurité.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'voyage_remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement (can_access_voyage est collaboratif, pas réservé au owner).
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'voyage_remboursements : le co-membre peut créer un remboursement');
+
+-- VOIR N'EST PAS ÉCRIRE. Le co-membre voit le voyage (assertion 1) mais
+-- voyages_delete exige is_voyage_owner : sa suppression doit porter sur 0 ligne.
+-- C'est la frontière que rien ne tenait avant ce lot.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'voyage : le co-membre VOIT mais ne peut pas SUPPRIMER');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un voyage que PERSONNE ne peut supprimer. On ne supprime pas pour de
+-- bon : la transaction du fichier est annulée à la fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyage : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille DÉPENSES (can_access_groupe) ───────────────────────────
+-- Même prédicat, même trio d'invariants. Particularité : depense_parts ne
+-- porte pas le groupe, elle le rejoint par la dépense — c'est le chemin le plus
+-- long du schéma, donc celui qui se casse le plus discrètement.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depense_groupes : le co-membre voit le groupe partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : un non-membre ne voit pas le groupe');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depenses : le co-membre voit la dépense du groupe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depenses : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          1::bigint, 'depense_parts : le co-membre voit sa part (jointure via la dépense)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          0::bigint, 'depense_parts : un non-membre n''en voit aucune');
+
+-- remboursements : vide pour ce groupe, donc éprouvée en ÉCRITURE. Une
+-- violation de WITH CHECK LÈVE une erreur (42501), elle ne rend pas 0 ligne —
+-- et une assertion qui attend un COMPTE ne peut pas constater une levée :
+-- l'erreur remonterait avant tout comptage. C'est le seul motif qui tienne
+-- (et non « sinon le reset role ne courrait jamais et l'identité fuiterait
+-- sur les assertions suivantes » : une erreur non rattrapée avorte la
+-- transaction entière, il n'y a donc pas d'assertion suivante). throws_ok
+-- piège la levée dans sa propre savepoint et en vérifie le code.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'remboursements : le co-membre, lui, peut en créer un');
+
+-- La moitié COLLABORATIVE du prédicat, d'abord : le co-membre MODIFIE bien le
+-- groupe — depense_groupes_update porte can_access_groupe en using ET en with
+-- check, donc l'update aboutit sans lever. Sans cette assertion, le libellé
+-- « VOIT et MODIFIE, mais ne SUPPRIME pas » juste en dessous promettrait un
+-- MODIFIE que rien n'éprouve : l'asymétrie ne serait qu'à moitié gravée.
+-- ORDRE : avant la suppression par le propriétaire, qui emporte la ligne.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.depense_groupes set titre = ''pgtap groupe modifié par le co-membre'' where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le co-membre MODIFIE le groupe (can_access_groupe)');
+
+-- VOIR N'EST PAS SUPPRIMER : depense_groupes_delete exige is_groupe_owner,
+-- alors que l'UPDATE se contente de can_access_groupe. Un co-membre modifie
+-- donc le groupe mais ne l'efface pas — asymétrie voulue, jamais testée.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          0::bigint, 'depense_groupes : le co-membre VOIT et MODIFIE, mais ne SUPPRIME pas');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un groupe que PERSONNE ne peut supprimer. Une absence n'est une
+-- preuve que si son contraire est aussi vrai pour quelqu'un.
+-- ORDRE : DERNIÈRE assertion de la section — cette suppression emporte en
+-- cascade la dépense, la part et le remboursement créés plus haut ; aucune
+-- assertion sur depenses/depense_parts/remboursements ne doit la suivre. On
+-- ne supprime pas pour de bon : la transaction du fichier est annulée à la
+-- fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille CERCLE (can_access_famille) ─────────────────────────────
+-- Troisième et dernière occurrence du même motif. Le foyer vient du lot 1 :
+-- famille_membres porte un UNIQUE(profile_id), donc demo ne peut pas en
+-- posséder deux — on réutilise plutôt que de dupliquer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'familles : le co-membre voit le foyer partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : un non-membre ne voit pas le foyer');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'famille_membres : le co-membre voit les deux membres');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'famille_restos : le co-membre voit l''adresse partagée au foyer');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_restos : un non-membre n''en voit aucune');
+
+-- VOIR N'EST PAS SUPPRIMER : familles_delete exige is_famille_owner. Sans
+-- contrepartie, cette absence serait aussi verte si PERSONNE (propriétaire
+-- compris) ne pouvait supprimer le foyer — le témoin positif juste après
+-- ferme ce trou.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'familles : le co-membre VOIT mais ne peut pas SUPPRIMER le foyer');
+
+-- Témoin positif, et DERNIÈRE assertion de la section : le propriétaire, lui,
+-- peut supprimer le foyer — la suppression emporte en cascade
+-- famille_membres et famille_restos (FK ... on delete cascade).
+--
+-- PIÈGE PROPRE À CETTE FAMILLE, absent des deux occurrences précédentes
+-- (voyage, dépenses) : familles, famille_membres et famille_restos n'ont
+-- AUCUNE ligne de seed — mesuré à zéro avant nos fixtures (cf. rapport). Un
+-- DELETE qui aboutit ici, même annulé par le rollback final du fichier, laisse
+-- ces trois tables vides pour tout ce qui s'exécute APRÈS ce point dans la
+-- même transaction — en particulier le garde-fou de vacuité du bloc SOCLE,
+-- en fin de fichier, qui échouerait en les nommant. On RE-CRÉE donc,
+-- immédiatement après, les trois lignes : le foyer (même id, pour que toute
+-- policy qui le référence encore par cet identifiant retrouve la même
+-- ligne), la ligne famille_restos, et SEULEMENT le co-membre — le trigger
+-- add_famille_owner_membre (on_famille_created, cf. 00013_famille.sql)
+-- réinscrit automatiquement demo comme owner dans famille_membres dès
+-- l'insert ci-dessous ; l'ajouter à la main lèverait sur l'UNIQUE(profile_id).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : le propriétaire, lui, peut supprimer le foyer');
+
+-- Re-création : voir le commentaire ci-dessus. Reprend exactement la forme
+-- des fixtures posées plus haut dans ce fichier (foyer et famille_restos au
+-- socle, co-membre au décor de profondeur du lot 2).
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
+
+-- ── Lot 2 / les quatre cas particuliers ────────────────────────────────────
+
+-- agence_clients : lien SYMÉTRIQUE (agence_id = uid OR client_id = uid). Les
+-- deux parties voient, et elles seules. La fixture vient du lot 1 : agence
+-- suit client.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : l''agence voit le lien vers son client');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : le client voit aussi le lien — la relation est symétrique');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'agence_clients : un tiers ne voit pas qui suit qui');
+
+-- subscriptions : strictement owner (+ admin). Pas de co-membre ici — c'est
+-- l'argent de quelqu'un, il ne se partage pas.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'subscriptions : chacun voit son propre abonnement');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'subscriptions : personne ne voit l''abonnement d''un autre');
+
+-- avis : owner strict. La fixture vient du lot 1 (demo a noté un établissement).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'avis : l''auteur voit son avis');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'avis : personne ne lit l''avis d''un autre');
+
+-- etablissements : LE cas inversé. SELECT USING (true) pour tout compte
+-- connecté — et AUCUNE policy d'écriture, relevé au catalogue. La RLS refuse
+-- donc par défaut : le catalogue ne se modifie que par upsert_etablissement
+-- (SECURITY DEFINER). C'est l'invariant que ce lot grave, parce qu'il ne tient
+-- aujourd'hui qu'à une ABSENCE de policy — et une absence s'ajoute par
+-- distraction.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : un compte connecté ne modifie pas le catalogue');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : ni ne l''efface');
+
+-- Les deux assertions ci-dessus ne sondent qu'UNE ligne (celle prise par
+-- `order by id limit 1`) : elles prouvent que l'écriture est refusée À
+-- L'EXÉCUTION sur cette ligne-là, pas qu'aucune policy ne pourrait un jour
+-- l'autoriser sur une AUTRE ligne. Une policy d'écriture future mal cadrée
+-- (qui viserait par erreur seulement les lignes ajoutées après coup, par
+-- exemple) romprait l'invariant sans faire rougir ces deux tests. D'où cette
+-- troisième assertion, déclarative et indépendante de toute ligne : elle
+-- compte les policies d'écriture sur `etablissements` dans le catalogue et
+-- exige zéro. Les trois se complètent : les deux premières prouvent le
+-- comportement observé, celle-ci grave l'absence structurelle qui le
+-- garantit pour toutes les lignes, présentes et futures.
+--
+-- Le filtre exclut `SELECT` plutôt que d'énumérer INSERT/UPDATE/DELETE.
+-- Raison : `cmd` peut aussi valoir `ALL` — l'idiome dominant du projet pour
+-- les policies « propriétaire » (30 tables du schéma déclarent leur policy en
+-- `for all`, ex. reservations_all, vins_all_owner ; compté au catalogue :
+-- select count(distinct tablename) from pg_policies where schemaname =
+-- 'public' and cmd = 'ALL'). Une liste de verbes
+-- d'écriture ne matcherait jamais `ALL` et laisserait passer, silencieuse,
+-- la forme de policy la plus probable si quelqu'un en ajoutait une demain sur
+-- etablissements. Exclure la lecture dit l'invariant tel qu'il est —
+-- « rien d'autre que du SELECT » — et reste fail-closed : toute valeur de
+-- `cmd` non encore vue (y compris une future) est comptée et fait échouer
+-- l'assertion bruyamment plutôt que de passer inaperçue.
+-- TÉMOIN DU TÉMOIN, à lire avec l'assertion qui le suit immédiatement — les
+-- deux ne valent que par paire, ne séparez pas l'une de l'autre.
+-- L'assertion déclarative ci-dessous exige zéro. Or zéro est exactement ce
+-- que rendrait un `where` qui ne désigne plus rien : table renommée, schéma
+-- déplacé, faute de frappe dans un remaniement. Elle passerait au vert
+-- **sans avoir mesuré la moindre policy** — la forme creuse précise que le
+-- bloc SOCLE, quelques lignes plus bas, condamne.
+-- Celle-ci compte les policies d'`etablissements` TOUTES catégories
+-- confondues et en exige strictement plus de zéro. Partage du travail :
+-- celle-ci prouve qu'on REGARDE quelque chose, celle d'après dit ce qu'on y
+-- VOIT. Si le nom de la table cesse de correspondre, c'est celle-ci qui
+-- rougit, et le diagnostic est immédiat.
+select ok(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements') > 0,
+  'etablissements : le catalogue expose bien au moins une policy (témoin du test suivant)');
+
+-- `is distinct from` et non `<>` : `NULL <> ''SELECT''` rend NULL, donc une
+-- ligne dont `cmd` serait NULL serait EXCLUE du compte — l'inverse exact de
+-- ce que le commentaire ci-dessus promet (« toute valeur non encore vue est
+-- comptée »). `is distinct from` rend true face à NULL et tient la promesse,
+-- sans rien coûter.
+select is(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements'
+      and cmd is distinct from 'SELECT')::bigint,
+  0::bigint,
+  'etablissements : aucune policy autre que SELECT n''existe au catalogue');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
