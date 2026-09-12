@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(112);
+select plan(113);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -775,6 +775,14 @@ select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
 -- ============================================================
+-- UNE RÈGLE GOUVERNE TOUT CE BLOC, et elle se reperd à chaque relecture pressée :
+-- **une garde négative sans témoin positif ne distingue pas la sécurité de la
+-- panne.** « Personne ne voit rien » est vert quand plus rien ne se lit, comme
+-- « au moins un refus » est vert quand tout est refusé. `is(fuites, '{}')` se
+-- relit pourtant comme une évidence — c'est bien le problème.
+-- D'où, ci-dessous, deux garde-fous de comptage ET un témoin positif ciblé :
+-- chaque assertion d'absence est accompagnée de quelque chose qui tombe si le
+-- mécanisme lui-même s'est éteint.
 -- Écrit ici, en FIN de fichier, délibérément : le fichier est une seule
 -- transaction, donc les fixtures posées plus haut (participants de voyage,
 -- dépenses, codes d'activité, journal d'accès…) existent encore. Placé en tête,
@@ -879,6 +887,43 @@ select is(
 select cmp_ok(
   (select count(*) from socle_etranger), '>=', 45::bigint,
   'le balayage de l''étranger a bien visité tout le schéma, exceptions déduites');
+
+-- TÉMOIN POSITIF. Les deux assertions ci-dessus exigent une ABSENCE, et une
+-- absence est satisfaite par la panne : si les GRANT d'`authenticated` étaient
+-- révoqués, chaque lecture lèverait, chaque table rendrait 0, et le socle
+-- serait VERT en n'ayant rien pu lire. Le garde-fou juste au-dessus ne rattrape
+-- pas ce cas — il compte les tables VISITÉES, pas les lectures RÉUSSIES.
+--
+-- Le témoin doit être CIBLÉ, et c'est le point subtil : asserter « le balayage a
+-- vu au moins une ligne quelque part » ne vaudrait rien, une seule table
+-- publique verdirait la garde pendant que tout le reste serait en panne. On
+-- nomme donc une lecture précise qui DOIT réussir — le catalogue partagé, que
+-- l'étranger a explicitement le droit de voir (c'est même pour ça qu'il figure
+-- en exception).
+-- Pourquoi un helper dédié plutôt que `tests.count_as` : ce dernier laisse
+-- remonter le refus de GRANT, qui AVORTE la suite. Mesuré — on obtient alors
+-- « Bad plan: 113 planifiés, 111 exécutés », c'est-à-dire un diagnostic qui ne
+-- nomme pas le problème. Ici le refus vaut 0, donc le témoin échoue PROPREMENT
+-- (« 0 > 0 est faux ») en portant son libellé. Un garde-fou doit dire ce qu'il
+-- a vu, pas seulement qu'il est tombé.
+create function tests.lecture_toleree(p_uid uuid, p_sql text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into n;
+  reset role;
+  return n;
+exception when insufficient_privilege then
+  reset role; return 0;
+end $$;
+
+select cmp_ok(
+  tests.lecture_toleree('deadbeef-0000-4000-8000-000000000000'::uuid,
+                        'select count(*) from public.etablissements'),
+  '>', 0::bigint,
+  'témoin positif : l''étranger LIT vraiment ce qu''il a le droit de lire');
 
 -- Le piège que ce garde-fou existe pour attraper : « l'étranger voit 0 ligne »
 -- est VRAI d'une table vide, même avec une policy grande ouverte. Sur une base
