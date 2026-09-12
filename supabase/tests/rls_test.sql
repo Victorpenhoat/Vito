@@ -904,6 +904,62 @@ insert into public.activite_creneau_exceptions (creneau_id, date, type)
 select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
 
 -- ============================================================
+-- Lot 2 — fixtures de profondeur : un porteur, un co-membre, un étranger
+-- ============================================================
+-- Trois familles d'accès (voyage, groupe de dépenses, foyer) régies par trois
+-- prédicats structurellement identiques : owner OR membre. On monte donc le
+-- même décor trois fois — demo possède, client est co-membre, et personne
+-- d'autre n'a de lien.
+--
+-- Tout est borné à ces identifiants : les assertions qui suivent comptent des
+-- lignes DE CES FIXTURES, jamais des totaux. Un décompte absolu encoderait
+-- l'état du seed et tomberait au premier run e2e.
+
+-- Voyage. demo est premium (vérifié), donc enforce_voyage_limit ne s'y oppose
+-- pas ; le trigger add_voyage_owner_membre inscrit demo dans voyage_membres.
+insert into public.voyages (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap voyage profondeur');
+
+insert into public.voyage_membres (voyage_id, profile_id, role)
+values ('bb000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.reservations (voyage_id, created_by)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.voyage_documents (voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by)
+values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 4, 'AAAA',
+        'de110000-0000-4000-8000-000000000000');
+
+-- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
+insert into public.depense_groupes (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap groupe profondeur');
+
+insert into public.depense_groupe_membres (groupe_id, profile_id)
+values ('bb000000-0000-4000-8000-000000000002',
+        '11111111-1111-1111-1111-111111111111');
+
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, created_by)
+values ('bb000000-0000-4000-8000-00000000000a',
+        'bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap dépense', 1000,
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.depense_parts (depense_id, profile_id, part_cents)
+values ('bb000000-0000-4000-8000-00000000000a',
+        '11111111-1111-1111-1111-111111111111', 500);
+
+-- Foyer : on RÉUTILISE celui du lot 1 (familles.famille_membres porte un
+-- UNIQUE(profile_id), donc demo ne peut pas posséder deux foyers). On n'ajoute
+-- que le co-membre.
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+-- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
 -- ============================================================
 -- UNE RÈGLE GOUVERNE TOUT CE BLOC, et elle se reperd à chaque relecture pressée :
