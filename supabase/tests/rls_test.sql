@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(120);
+select plan(126);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -847,6 +847,244 @@ select is(
       from (select public.lier_comptes('ZZZZZZZZ', 'ami') ->> 'motif' as m
               from generate_series(1, 11)) t $q$),
   '10/1', 'dix essais sont servis, le onzième est plafonné');
+
+-- ============================================================
+-- Fixtures du socle : donner à chaque table vide une ligne d'autrui
+-- ============================================================
+-- Sans ces lignes, le balayage de l'étranger passe à vide sur neuf tables
+-- (cf. le garde-fou de vacuité). Elles appartiennent toutes à demo ou client,
+-- jamais à free — c'est ce qui rend le balayage probant.
+-- Tout est annulé par le rollback final : rien ne persiste.
+
+-- Un foyer appartenant à demo. Le trigger add_famille_owner_membre y ajoute
+-- automatiquement son propriétaire, ce qui alimente aussi famille_membres.
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+-- Un resto partagé au foyer, et un avis : les deux s'accrochent à un
+-- établissement du seed, pris au hasard mais de façon déterministe.
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
+
+insert into public.avis (user_id, etablissement_id, note)
+select 'de110000-0000-4000-8000-000000000000',
+       id, 4 from public.etablissements order by id limit 1;
+
+-- L'agence suit un client : c'est la table qui porte le lien commercial.
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        '11111111-1111-1111-1111-111111111111');
+
+-- Un remboursement dans un groupe de dépenses du seed.
+insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by)
+select g.id,
+       '11111111-1111-1111-1111-111111111111',
+       'de110000-0000-4000-8000-000000000000',
+       500,
+       'de110000-0000-4000-8000-000000000000'
+from public.depense_groupes g order by g.id limit 1;
+
+-- Un remboursement de voyage, entre deux participants créés plus haut dans ce
+-- fichier (section « dépense partagée entre voyageurs »).
+insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by)
+select p1.voyage_id, p1.id, p2.id, 250, p1.created_by
+from public.voyage_participants p1
+join public.voyage_participants p2
+  on p2.voyage_id = p1.voyage_id and p2.id <> p1.id
+order by p1.id, p2.id limit 1;
+
+-- Une échéance et une exception de créneau sur l'activité créée plus haut.
+insert into public.activite_paiements (activite_id, libelle, montant_cents)
+select id, 'pgtap cotisation', 12000 from public.activites order by id limit 1;
+
+-- `type` est contraint à 'annulation' ou 'ponctuelle' (CHECK) — pas 'annule'.
+insert into public.activite_creneau_exceptions (creneau_id, date, type)
+select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
+
+-- ============================================================
+-- SOCLE — balayages pilotés par le catalogue
+-- ============================================================
+-- UNE RÈGLE GOUVERNE TOUT CE BLOC, et elle se reperd à chaque relecture pressée :
+-- **une garde négative sans témoin positif ne distingue pas la sécurité de la
+-- panne.** « Personne ne voit rien » est vert quand plus rien ne se lit, comme
+-- « au moins un refus » est vert quand tout est refusé. `is(fuites, '{}')` se
+-- relit pourtant comme une évidence — c'est bien le problème.
+-- D'où, ci-dessous, deux garde-fous de comptage ET un témoin positif ciblé :
+-- chaque assertion d'absence est accompagnée de quelque chose qui tombe si le
+-- mécanisme lui-même s'est éteint.
+-- Écrit ici, en FIN de fichier, délibérément : le fichier est une seule
+-- transaction, donc les fixtures posées plus haut (participants de voyage,
+-- dépenses, codes d'activité, journal d'accès…) existent encore. Placé en tête,
+-- le balayage trouverait 19 tables vides et se prononcerait sur du néant.
+
+-- UNE seule source pour « quelles tables balayer ». Deux copies de cette
+-- clause (une par balayage) auraient pu diverger en silence — c'est le défaut
+-- que ce fichier corrige ailleurs, il n'a pas le droit de le commettre ici.
+--
+-- Le `coalesce` n'est pas cosmétique. `(select array_agg(nom) from
+-- socle_exceptions)` rend NULL si la table d'exceptions est vide, et
+-- `tablename <> all(NULL)` est NULL pour CHAQUE ligne : la boucle ne visite
+-- alors AUCUNE table, et les assertions du socle passent au vert sur du néant.
+-- Vider les exceptions doit rendre le socle PLUS sévère, jamais l'éteindre.
+create function tests.tables_a_balayer(p_exceptions text[])
+returns setof text language sql stable as $$
+  select tablename from pg_tables
+  where schemaname = 'public'
+    and tablename <> all(coalesce(p_exceptions, '{}'::text[]))
+  order by tablename
+$$;
+
+-- Visite chaque table du schéma public sous une identité, et rend ce qu'elle y
+-- voit. `p_uid` null = anon. Un refus au niveau GRANT vaut 0 ligne exposée :
+-- l'invariant est « rien ne fuit », pas « la requête aboutit ».
+create function tests.balayage(p_uid uuid, p_exceptions text[])
+returns table(nom text, lignes bigint) language plpgsql as $$
+declare t text; n bigint;
+begin
+  for t in select * from tests.tables_a_balayer(p_exceptions)
+  loop
+    begin
+      if p_uid is null then
+        perform set_config('request.jwt.claims', '{"role":"anon"}', true);
+        set local role anon;
+      else
+        perform set_config('request.jwt.claims',
+          json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+        set local role authenticated;
+      end if;
+      execute format('select count(*) from public.%I', t) into n;
+      reset role;
+    exception when insufficient_privilege then
+      reset role; n := 0;
+    end;
+    nom := t; lignes := n; return next;
+  end loop;
+end $$;
+
+create temp table socle_anon as select * from tests.balayage(null, '{}');
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_anon where lignes > 0),
+  '{}'::text[],
+  'anon ne voit aucune ligne, dans aucune table du schéma public');
+
+-- Garde-fou NON NÉGOCIABLE : sans lui, un filtre trop zélé (schéma renommé,
+-- `where` mal écrit) rendrait l'assertion ci-dessus verte EN NE BALAYANT RIEN.
+-- C'est le motif exact des tests vides : le test reproduit la garde qu'il
+-- prétend éprouver. 48 = compte relevé au catalogue le 2026-09-12.
+select cmp_ok(
+  (select count(*) from socle_anon), '>=', 48::bigint,
+  'le balayage anon a bien visité tout le schéma');
+
+-- L'étranger n'est PAS un compte du seed, et c'est délibéré. Il l'a été
+-- (free@vito.test) jusqu'à ce qu'on mesure : `e2e/abonnement.spec.ts` connecte
+-- `free`, lui fait créer des voyages et souscrire un abonnement. Sur une base
+-- contaminée par un run e2e, l'étranger voyait donc {subscriptions,
+-- voyage_membres, voyages} — SES PROPRES lignes, dans un message rigoureusement
+-- indiscernable d'une vraie fuite RLS. Un socle qui crie au loup pour des
+-- raisons extérieures à la sécurité finit ignoré.
+--
+-- D'où cet uuid SYNTHÉTIQUE, volontairement illisible comme un vrai compte :
+-- il n'existe dans aucune table, aucun seed, aucune suite e2e ne peut le muter.
+-- Les policies ne comparent que des uuid (auth.uid()) — aucune n'exige une
+-- ligne dans auth.users — donc l'identité tient sans compte derrière.
+create temp table socle_exceptions(nom text primary key, raison text);
+insert into socle_exceptions values
+  ('etablissements',     'catalogue partagé, SELECT USING (true) assumé'),
+  ('vacances_scolaires', 'calendrier public pour tout compte connecté'),
+  ('tags',               'les tags système (user_id is null) sont un vocabulaire commun');
+-- `profiles` a quitté cette liste avec le passage à l'étranger synthétique :
+-- l'exception n'existait que parce que `free` y voyait SA ligne. Sans compte
+-- derrière l'uuid, il n'en voit aucune — et le balayage couvre désormais la
+-- table qui porte les noms et les e-mails. Mesuré, pas supposé (cf. rapport).
+
+create temp table socle_etranger as
+  select * from tests.balayage(
+    'deadbeef-0000-4000-8000-000000000000'::uuid,
+    (select array_agg(nom) from socle_exceptions));
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_etranger where lignes > 0),
+  '{}'::text[],
+  'un compte sans aucun lien ne voit aucune ligne d''autrui');
+
+-- Même garde-fou que pour anon, et pour la même raison — il manquait justement
+-- au balayage qui, lui, prend des exceptions : si la liste d'exceptions avalait
+-- tout le schéma (ou si le filtre déraillait), l'assertion ci-dessus serait
+-- verte en n'ayant rien regardé. 45 = 48 tables au catalogue le 2026-09-12,
+-- moins les 3 exceptions déclarées ci-dessus.
+select cmp_ok(
+  (select count(*) from socle_etranger), '>=', 45::bigint,
+  'le balayage de l''étranger a bien visité tout le schéma, exceptions déduites');
+
+-- TÉMOIN POSITIF. Les deux assertions ci-dessus exigent une ABSENCE, et une
+-- absence est satisfaite par la panne : si les GRANT d'`authenticated` étaient
+-- révoqués, chaque lecture lèverait, chaque table rendrait 0, et le socle
+-- serait VERT en n'ayant rien pu lire. Le garde-fou juste au-dessus ne rattrape
+-- pas ce cas — il compte les tables VISITÉES, pas les lectures RÉUSSIES.
+--
+-- Le témoin doit être CIBLÉ, et c'est le point subtil : asserter « le balayage a
+-- vu au moins une ligne quelque part » ne vaudrait rien, une seule table
+-- publique verdirait la garde pendant que tout le reste serait en panne. On
+-- nomme donc une lecture précise qui DOIT réussir — le catalogue partagé, que
+-- l'étranger a explicitement le droit de voir (c'est même pour ça qu'il figure
+-- en exception).
+-- Pourquoi un helper dédié plutôt que `tests.count_as` : ce dernier laisse
+-- remonter le refus de GRANT, qui AVORTE la suite. Mesuré — on obtient alors
+-- « Bad plan: 113 planifiés, 111 exécutés », c'est-à-dire un diagnostic qui ne
+-- nomme pas le problème. Ici le refus vaut 0, donc le témoin échoue PROPREMENT
+-- (« 0 > 0 est faux ») en portant son libellé. Un garde-fou doit dire ce qu'il
+-- a vu, pas seulement qu'il est tombé.
+create function tests.lecture_toleree(p_uid uuid, p_sql text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into n;
+  reset role;
+  return n;
+exception when insufficient_privilege then
+  reset role; return 0;
+end $$;
+
+select cmp_ok(
+  tests.lecture_toleree('deadbeef-0000-4000-8000-000000000000'::uuid,
+                        'select count(*) from public.etablissements'),
+  '>', 0::bigint,
+  'témoin positif : l''étranger LIT vraiment ce qu''il a le droit de lire');
+
+-- Le piège que ce garde-fou existe pour attraper : « l'étranger voit 0 ligne »
+-- est VRAI d'une table vide, même avec une policy grande ouverte. Sur une base
+-- fraîchement seedée, 19 des 48 tables sont vides — le balayage se prononcerait
+-- sur du néant pour 40 % du schéma.
+--
+-- On compte donc hors RLS (le rôle courant est le propriétaire, il la contourne)
+-- et on exige désormais ZÉRO table vide hors exceptions. Neuf tables étaient
+-- autrefois tolérées vides par forfait ; les fixtures posées juste au-dessus
+-- leur ont donné une ligne d'autrui, et la liste des tolérées est tombée à
+-- AUCUNE. `<@ '{}'` n'est donc plus une inclusion mais, le membre droit étant
+-- vide, une égalité au vide — c'est ce que ce test grave : toute table nouvelle
+-- ou vidée le fera échouer tant qu'on ne lui aura pas donné, elle aussi, une
+-- ligne d'autrui à exposer au balayage.
+create function tests.tables_sans_donnees(p_exceptions text[])
+returns text[] language plpgsql as $$
+declare t text; n bigint; vides text[] := '{}';
+begin
+  for t in select * from tests.tables_a_balayer(p_exceptions)
+  loop
+    execute format('select count(*) from public.%I', t) into n;
+    if n = 0 then vides := vides || t; end if;
+  end loop;
+  return vides;
+end $$;
+
+select ok(
+  tests.tables_sans_donnees((select array_agg(nom) from socle_exceptions))
+    <@ '{}'::text[],
+  'aucune table hors exceptions n''est vide : le balayage les éprouve toutes');
 
 select finish();
 rollback;
