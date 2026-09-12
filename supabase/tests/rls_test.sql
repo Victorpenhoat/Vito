@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(194);
+select plan(197);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1517,6 +1517,20 @@ select is((select role::text from public.profiles where id = 'ba000000-0000-4000
 select is((select display_name from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
           'Escalade',
           'handle_new_user : mais le nom affiché, lui, est bien repris des métadonnées');
+
+-- ── Lot 3 / les fonctions de service : la barrière est le GRANT ────────────
+-- Ces deux fonctions suppriment des comptes et des recommandations, et n'ont
+-- AUCUN contrôle interne — c'est correct, puisqu'elles ne sont pas exécutables
+-- par `authenticated`. Mais leur sécurité ne tient alors qu'à une absence de
+-- privilège, qu'un `grant execute on all functions` effacerait sans bruit.
+select ok(not has_function_privilege('authenticated', 'public.purger_comptes_supprimes()', 'execute'),
+          'purger_comptes_supprimes : hors de portée d''un compte connecté');
+select ok(not has_function_privilege('authenticated', 'public.purger_recommandations()', 'execute'),
+          'purger_recommandations : hors de portée d''un compte connecté');
+-- Témoin : sans lui, les deux assertions ci-dessus seraient satisfaites par un
+-- has_function_privilege cassé qui rendrait false pour tout.
+select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
+          'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
