@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(165);
+select plan(166);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1216,6 +1216,24 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
           0::bigint, 'etablissements : ni ne l''efface');
+
+-- Les deux assertions ci-dessus ne sondent qu'UNE ligne (celle prise par
+-- `order by id limit 1`) : elles prouvent que l'écriture est refusée À
+-- L'EXÉCUTION sur cette ligne-là, pas qu'aucune policy ne pourrait un jour
+-- l'autoriser sur une AUTRE ligne. Une policy d'écriture future mal cadrée
+-- (qui viserait par erreur seulement les lignes ajoutées après coup, par
+-- exemple) romprait l'invariant sans faire rougir ces deux tests. D'où cette
+-- troisième assertion, déclarative et indépendante de toute ligne : elle
+-- compte les policies d'écriture sur `etablissements` dans le catalogue et
+-- exige zéro. Les trois se complètent : les deux premières prouvent le
+-- comportement observé, celle-ci grave l'absence structurelle qui le
+-- garantit pour toutes les lignes, présentes et futures.
+select is(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements'
+      and cmd in ('INSERT', 'UPDATE', 'DELETE'))::bigint,
+  0::bigint,
+  'etablissements : aucune policy d''écriture n''existe au catalogue (INSERT/UPDATE/DELETE)');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
