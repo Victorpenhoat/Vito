@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(111);
+select plan(112);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -780,6 +780,23 @@ select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id 
 -- dépenses, codes d'activité, journal d'accès…) existent encore. Placé en tête,
 -- le balayage trouverait 19 tables vides et se prononcerait sur du néant.
 
+-- UNE seule source pour « quelles tables balayer ». Deux copies de cette
+-- clause (une par balayage) auraient pu diverger en silence — c'est le défaut
+-- que ce fichier corrige ailleurs, il n'a pas le droit de le commettre ici.
+--
+-- Le `coalesce` n'est pas cosmétique. `(select array_agg(nom) from
+-- socle_exceptions)` rend NULL si la table d'exceptions est vide, et
+-- `tablename <> all(NULL)` est NULL pour CHAQUE ligne : la boucle ne visite
+-- alors AUCUNE table, et les assertions du socle passent au vert sur du néant.
+-- Vider les exceptions doit rendre le socle PLUS sévère, jamais l'éteindre.
+create function tests.tables_a_balayer(p_exceptions text[])
+returns setof text language sql stable as $$
+  select tablename from pg_tables
+  where schemaname = 'public'
+    and tablename <> all(coalesce(p_exceptions, '{}'::text[]))
+  order by tablename
+$$;
+
 -- Visite chaque table du schéma public sous une identité, et rend ce qu'elle y
 -- voit. `p_uid` null = anon. Un refus au niveau GRANT vaut 0 ligne exposée :
 -- l'invariant est « rien ne fuit », pas « la requête aboutit ».
@@ -787,10 +804,7 @@ create function tests.balayage(p_uid uuid, p_exceptions text[])
 returns table(nom text, lignes bigint) language plpgsql as $$
 declare t text; n bigint;
 begin
-  for t in select tablename from pg_tables
-           where schemaname = 'public'
-             and tablename <> all(p_exceptions)
-           order by tablename
+  for t in select * from tests.tables_a_balayer(p_exceptions)
   loop
     begin
       if p_uid is null then
@@ -825,23 +839,31 @@ select cmp_ok(
   (select count(*) from socle_anon), '>=', 48::bigint,
   'le balayage anon a bien visité tout le schéma');
 
--- L'étranger : free@vito.test ne partage RIEN avec personne (c'est déjà ce que
--- dit le seed). L'invariant est donc uniforme et n'exige de connaître la colonne
--- propriétaire d'aucune table : un compte sans lien ne voit aucune ligne.
+-- L'étranger n'est PAS un compte du seed, et c'est délibéré. Il l'a été
+-- (free@vito.test) jusqu'à ce qu'on mesure : `e2e/abonnement.spec.ts` connecte
+-- `free`, lui fait créer des voyages et souscrire un abonnement. Sur une base
+-- contaminée par un run e2e, l'étranger voyait donc {subscriptions,
+-- voyage_membres, voyages} — SES PROPRES lignes, dans un message rigoureusement
+-- indiscernable d'une vraie fuite RLS. Un socle qui crie au loup pour des
+-- raisons extérieures à la sécurité finit ignoré.
 --
--- Les exceptions sont déclarées ICI, chacune avec sa raison. C'est le point de
--- friction délibéré : une table qui voudrait rejoindre cette liste devra
--- s'expliquer en revue.
+-- D'où cet uuid SYNTHÉTIQUE, volontairement illisible comme un vrai compte :
+-- il n'existe dans aucune table, aucun seed, aucune suite e2e ne peut le muter.
+-- Les policies ne comparent que des uuid (auth.uid()) — aucune n'exige une
+-- ligne dans auth.users — donc l'identité tient sans compte derrière.
 create temp table socle_exceptions(nom text primary key, raison text);
 insert into socle_exceptions values
   ('etablissements',     'catalogue partagé, SELECT USING (true) assumé'),
   ('vacances_scolaires', 'calendrier public pour tout compte connecté'),
-  ('tags',               'les tags système (user_id is null) sont un vocabulaire commun'),
-  ('profiles',           'chacun voit sa propre ligne (id = auth.uid())');
+  ('tags',               'les tags système (user_id is null) sont un vocabulaire commun');
+-- `profiles` a quitté cette liste avec le passage à l'étranger synthétique :
+-- l'exception n'existait que parce que `free` y voyait SA ligne. Sans compte
+-- derrière l'uuid, il n'en voit aucune — et le balayage couvre désormais la
+-- table qui porte les noms et les e-mails. Mesuré, pas supposé (cf. rapport).
 
 create temp table socle_etranger as
   select * from tests.balayage(
-    '44444444-4444-4444-8444-444444444444'::uuid,
+    'deadbeef-0000-4000-8000-000000000000'::uuid,
     (select array_agg(nom) from socle_exceptions));
 
 select is(
@@ -849,22 +871,33 @@ select is(
   '{}'::text[],
   'un compte sans aucun lien ne voit aucune ligne d''autrui');
 
+-- Même garde-fou que pour anon, et pour la même raison — il manquait justement
+-- au balayage qui, lui, prend des exceptions : si la liste d'exceptions avalait
+-- tout le schéma (ou si le filtre déraillait), l'assertion ci-dessus serait
+-- verte en n'ayant rien regardé. 45 = 48 tables au catalogue le 2026-09-12,
+-- moins les 3 exceptions déclarées ci-dessus.
+select cmp_ok(
+  (select count(*) from socle_etranger), '>=', 45::bigint,
+  'le balayage de l''étranger a bien visité tout le schéma, exceptions déduites');
+
 -- Le piège que ce garde-fou existe pour attraper : « l'étranger voit 0 ligne »
 -- est VRAI d'une table vide, même avec une policy grande ouverte. Sur une base
 -- fraîchement seedée, 19 des 48 tables sont vides — le balayage se prononcerait
 -- sur du néant pour 40 % du schéma.
 --
 -- On compte donc hors RLS (le rôle courant est le propriétaire, il la contourne)
--- et on exige que toute table vide soit DÉCLARÉE. `<@` (inclusion) plutôt que
--- l'égalité : ajouter des données ne doit pas casser le test, mais une NOUVELLE
--- table vide doit le faire.
+-- et on exige désormais ZÉRO table vide hors exceptions. Neuf tables étaient
+-- autrefois tolérées vides par forfait ; les fixtures posées juste au-dessus
+-- leur ont donné une ligne d'autrui, et la liste des tolérées est tombée à
+-- AUCUNE. `<@ '{}'` n'est donc plus une inclusion mais, le membre droit étant
+-- vide, une égalité au vide — c'est ce que ce test grave : toute table nouvelle
+-- ou vidée le fera échouer tant qu'on ne lui aura pas donné, elle aussi, une
+-- ligne d'autrui à exposer au balayage.
 create function tests.tables_sans_donnees(p_exceptions text[])
 returns text[] language plpgsql as $$
 declare t text; n bigint; vides text[] := '{}';
 begin
-  for t in select tablename from pg_tables
-           where schemaname = 'public' and tablename <> all(p_exceptions)
-           order by tablename
+  for t in select * from tests.tables_a_balayer(p_exceptions)
   loop
     execute format('select count(*) from public.%I', t) into n;
     if n = 0 then vides := vides || t; end if;
@@ -875,7 +908,7 @@ end $$;
 select ok(
   tests.tables_sans_donnees((select array_agg(nom) from socle_exceptions))
     <@ '{}'::text[],
-  'toute table que le balayage ne peut pas éprouver est déclarée vide ici');
+  'aucune table hors exceptions n''est vide : le balayage les éprouve toutes');
 
 select finish();
 rollback;
