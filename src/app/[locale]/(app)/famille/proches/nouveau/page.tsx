@@ -20,6 +20,14 @@ export default async function NouveauProchePage({
         <span className="text-[15px] font-semibold text-ink">{t("proches.nouveauTitre")}</span>
         <span className="w-16" aria-hidden />
       </div>
+      {/* L'autre chemin d'ajout : la personne a déjà un compte Vito et on se
+          relie, au lieu de saisir une fiche de plus (migration 00067). */}
+      <p className="max-w-md text-[12.5px] text-muted">
+        {t("lien.depuisFormulaire")}{" "}
+        <Link href="/famille/lier" data-testid="vers-lier-compte" className="font-semibold text-accent hover:underline">
+          {t("lien.depuisFormulaireCta")}
+        </Link>
+      </p>
       <ProcheForm mode="create" initialFirstName={prenom?.trim() || undefined} />
     </main>
   );

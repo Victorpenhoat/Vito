@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(107);
+select plan(174);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -32,6 +32,18 @@ begin
   return n;
 exception when insufficient_privilege then
   reset role; return 0; -- refusé au niveau grant = 0 donnée exposée, invariant respecté
+end $$;
+
+-- Résultat texte d'une requête exécutée sous une identité : les RPC de lien
+-- renvoient du jsonb, et count_as ne sait compter que des lignes.
+create function tests.text_as(p_uid uuid, p_sql text) returns text language plpgsql as $$
+declare v text;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into v;
+  reset role;
+  return v;
 end $$;
 
 -- IDs du seed
@@ -716,6 +728,825 @@ select lives_ok(
   $$ insert into public.vacances_scolaires (annee_scolaire, zone, libelle, debut, fin)
      values ('2026-2027', 'Zone A', 'pgtap un seul jour', '2027-05-07', '2027-05-07') $$,
   'une période d''un seul jour est acceptée');
+
+-- ── Lier deux comptes existants (00067) ─────────────────────────────────────
+-- Ce bloc POSE DES FIXTURES (invitations, fiches rattachées). Un balayage
+-- global du schéma — du type « aucune table n'est vide, personne ne voit les
+-- lignes d'autrui » — doit donc rester APRÈS lui, en queue de fichier : le
+-- fichier est une seule transaction, et un balayage placé avant verrait vides
+-- des tables qui ne le sont plus trois assertions plus loin.
+-- Deux personnes qui ont chacune un compte se lient par un code court : la
+-- fiche de l'une pointe vers le compte de l'autre, DES DEUX CÔTÉS. Ce qui se
+-- vérifie ici : le code ne vaut qu'une fois, il ne dit rien à qui ne l'a pas,
+-- et il n'écrit jamais dans le carnet d'un tiers.
+
+-- Quatre codes émis par le client (11111111…) : le premier vise la fiche de
+-- Camille, le deuxième ne vise personne, le troisième sert à l'auto-liaison,
+-- le quatrième est déjà expiré.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111', $q$
+  with i as (
+    insert into public.invitations (token, role_vise, code, relation, family_member_id, cree_par, expire_le)
+    values ('pgtap-lien-token-aaaaaaaaaaaaaaaaaa', 'cercle', 'PGTAPAAA', 'conjoint',
+            'f1111111-1111-4111-8111-111111111112', '11111111-1111-1111-1111-111111111111',
+            now() + interval '15 minutes'),
+           ('pgtap-lien-token-bbbbbbbbbbbbbbbbbb', 'cercle', 'PGTAPBBB', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() + interval '15 minutes'),
+           ('pgtap-lien-token-cccccccccccccccccc', 'cercle', 'PGTAPCCC', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() + interval '15 minutes'),
+           ('pgtap-lien-token-dddddddddddddddddd', 'cercle', 'PGTAPDDD', 'ami', null,
+            '11111111-1111-1111-1111-111111111111', now() - interval '1 minute')
+    returning 1)
+  select count(*) from i $q$), 4::bigint, 'quatre codes de lien émis pour le test');
+
+-- anon n'appelle pas la liaison (aucun grant)
+select is(tests.count_as_anon(
+  $q$ select case when (public.lier_comptes('PGTAPAAA', 'conjoint') ->> 'ok')::boolean then 1 else 0 end $q$),
+  0::bigint, 'anon ne peut pas lier des comptes');
+
+-- anti-énumération : un code expiré et un code inconnu se répondent pareil
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444', $q$ select public.lien_infos('PGTAPDDD')::text $q$),
+  tests.text_as('44444444-4444-4444-8444-444444444444', $q$ select public.lien_infos('ZZZZZZZZ')::text $q$),
+  'un code expiré et un code inconnu donnent la même réponse');
+
+-- un code valide annonce la relation proposée par l'émetteur
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lien_infos('PGTAPAAA') ->> 'relation_proposee' $q$),
+  'conjoint', 'le code valide annonce la relation proposée');
+
+-- on ne se lie pas à soi-même
+select is(
+  tests.text_as('11111111-1111-1111-1111-111111111111',
+    $q$ select public.lier_comptes('PGTAPCCC', 'ami') ->> 'motif' $q$),
+  'soi_meme', 'l''émetteur ne peut pas consommer son propre code');
+
+-- « moi » désigne sa propre fiche : impossible de la donner à autrui
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lier_comptes('PGTAPAAA', 'moi') ->> 'motif' $q$),
+  'relation_invalide', '« moi » est refusé comme relation de liaison');
+
+-- la liaison réussit
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select (public.lier_comptes('PGTAPAAA', 'parent') ->> 'ok') $q$),
+  'true', 'le code valide lie les deux comptes');
+
+-- côté émetteur : la fiche visée porte désormais le compte de l'invité
+select is((select count(*) from public.family_members
+           where id = 'f1111111-1111-4111-8111-111111111112'
+             and profile_id = '44444444-4444-4444-8444-444444444444'), 1::bigint,
+          'la fiche visée est rattachée au compte de l''invité');
+
+-- côté invité : une fiche est apparue, avec la relation qu'il a choisie
+select is((select count(*) from public.family_members
+           where user_id = '44444444-4444-4444-8444-444444444444'
+             and profile_id = '11111111-1111-1111-1111-111111111111'
+             and relation = 'parent'), 1::bigint,
+          'l''invité a une fiche réciproque, avec la relation qu''il a choisie');
+
+-- la fiche réciproque prend le NOM DU PROFIL de l'émetteur, pas un libellé
+-- inventé — et un compte sans nom de famille n'écrit pas de tiret.
+-- Le nom vient du COMPTE, et rien n'est inventé quand il manque : beaucoup de
+-- profils n'ont qu'un prénom, et un tiret de remplissage afficherait
+-- « Camille — » dans le carnet. Formulé en invariant, pas en valeur de seed.
+select ok(
+  (select fm.last_name = '' and p.display_name like fm.first_name || '%'
+     from public.family_members fm
+     join public.profiles p on p.id = fm.profile_id
+    where fm.user_id = '44444444-4444-4444-8444-444444444444'
+      and fm.profile_id = '11111111-1111-1111-1111-111111111111'),
+  'la fiche réciproque prend le nom du compte, sans nom de famille inventé');
+
+-- le code est brûlé : il ne vaut pas deux fois
+select is(
+  tests.text_as('44444444-4444-4444-8444-444444444444',
+    $q$ select public.lier_comptes('PGTAPAAA', 'parent') ->> 'motif' $q$),
+  'invalide', 'un code déjà consommé ne vaut plus rien');
+
+-- un second code entre les deux mêmes comptes ne duplique aucune fiche
+select is(tests.count_as('44444444-4444-4444-8444-444444444444', $q$
+  with l as (select public.lier_comptes('PGTAPBBB', 'ami'))
+  select count(*) from public.family_members, l
+   where user_id = '44444444-4444-4444-8444-444444444444'
+     and profile_id = '11111111-1111-1111-1111-111111111111' $q$),
+  1::bigint, 'se relier une seconde fois ne crée pas de doublon');
+
+-- Force brute : le code est court, donc les tentatives sont plafonnées.
+--
+-- On compte les onze réponses au lieu de chercher « au moins un plafonnement » :
+-- cette dernière formulation resterait verte si le quota de ce compte était
+-- DÉJÀ épuisé par une assertion ajoutée plus haut un jour (0 essai utile, 11
+-- refus), et elle ne dirait rien du rang où le plafond tombe. « 10/1 » ne peut
+-- être vrai que si les dix premiers essais ont réellement été servis.
+select is(
+  tests.text_as('22222222-2222-2222-2222-222222222222', $q$
+    select (count(*) filter (where m = 'invalide'))::text || '/' ||
+           (count(*) filter (where m = 'trop_de_tentatives'))::text
+      from (select public.lier_comptes('ZZZZZZZZ', 'ami') ->> 'motif' as m
+              from generate_series(1, 11)) t $q$),
+  '10/1', 'dix essais sont servis, le onzième est plafonné');
+
+-- ============================================================
+-- Fixtures du socle : donner à chaque table vide une ligne d'autrui
+-- ============================================================
+-- Sans ces lignes, le balayage de l'étranger passe à vide sur neuf tables
+-- (cf. le garde-fou de vacuité). Elles appartiennent toutes à demo ou client,
+-- jamais à free — c'est ce qui rend le balayage probant.
+-- Tout est annulé par le rollback final : rien ne persiste.
+
+-- Un foyer appartenant à demo. Le trigger add_famille_owner_membre y ajoute
+-- automatiquement son propriétaire, ce qui alimente aussi famille_membres.
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+-- Un resto partagé au foyer, et un avis : les deux s'accrochent à un
+-- établissement du seed, pris au hasard mais de façon déterministe.
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
+
+insert into public.avis (user_id, etablissement_id, note)
+select 'de110000-0000-4000-8000-000000000000',
+       id, 4 from public.etablissements order by id limit 1;
+
+-- L'agence suit un client : c'est la table qui porte le lien commercial.
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        '11111111-1111-1111-1111-111111111111');
+
+-- Un remboursement dans un groupe de dépenses du seed.
+insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by)
+select g.id,
+       '11111111-1111-1111-1111-111111111111',
+       'de110000-0000-4000-8000-000000000000',
+       500,
+       'de110000-0000-4000-8000-000000000000'
+from public.depense_groupes g order by g.id limit 1;
+
+-- Un remboursement de voyage, entre deux participants créés plus haut dans ce
+-- fichier (section « dépense partagée entre voyageurs »).
+insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by)
+select p1.voyage_id, p1.id, p2.id, 250, p1.created_by
+from public.voyage_participants p1
+join public.voyage_participants p2
+  on p2.voyage_id = p1.voyage_id and p2.id <> p1.id
+order by p1.id, p2.id limit 1;
+
+-- Une échéance et une exception de créneau sur l'activité créée plus haut.
+insert into public.activite_paiements (activite_id, libelle, montant_cents)
+select id, 'pgtap cotisation', 12000 from public.activites order by id limit 1;
+
+-- `type` est contraint à 'annulation' ou 'ponctuelle' (CHECK) — pas 'annule'.
+insert into public.activite_creneau_exceptions (creneau_id, date, type)
+select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
+
+-- ── Témoin de présence du numéro (00068) ────────────────────────────────────
+-- La page ne lit plus que ce témoin : le masque ne dérive plus du contenu, et
+-- la colonne chiffrée n'est même plus demandée. Le témoin ne vaut donc que s'il
+-- SUIT la valeur sans jamais pouvoir en diverger — ce que garantit une colonne
+-- générée, et rien d'autre. Le jour où quelqu'un la remplacerait par un booléen
+-- ordinaire tenu à jour à la main, ces trois assertions tomberaient.
+
+select is(tests.text_as('11111111-1111-1111-1111-111111111111', $q$
+  insert into public.family_documents
+    (id, user_id, member_id, doc_type, doc_number_chiffre, contenu_chiffre, mime_type, taille)
+  values ('fd000068-0000-4000-8000-000000000001',
+          '11111111-1111-1111-1111-111111111111',
+          'f1111111-1111-4111-8111-111111111112',
+          'passeport', 'pgtap-blob-chiffre', 'pgtap-contenu', 'application/pdf', 1)
+  returning doc_number_present::text $q$),
+  'true', 'un numéro chiffré allume le témoin de présence');
+
+select is(tests.text_as('11111111-1111-1111-1111-111111111111', $q$
+  update public.family_documents set doc_number_chiffre = null
+   where id = 'fd000068-0000-4000-8000-000000000001'
+  returning doc_number_present::text $q$),
+  'false', 'effacer le numéro éteint le témoin, sans que personne ait à y penser');
+
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (update public.family_documents set doc_number_present = true
+                    where id = ''fd000068-0000-4000-8000-000000000001'' returning 1)
+        select count(*) from u') $$,
+  '428C9', null, 'le témoin ne s''écrit pas à la main : il est généré');
+
+-- ============================================================
+-- Lot 2 — fixtures de profondeur : un porteur, un co-membre, un étranger
+-- ============================================================
+-- Trois familles d'accès (voyage, groupe de dépenses, foyer) régies par trois
+-- prédicats structurellement identiques : owner OR membre. On monte donc le
+-- même décor trois fois — demo possède, client est co-membre, et personne
+-- d'autre n'a de lien.
+--
+-- Tout est borné à ces identifiants : les assertions qui suivent comptent des
+-- lignes DE CES FIXTURES, jamais des totaux. Un décompte absolu encoderait
+-- l'état du seed et tomberait au premier run e2e.
+
+-- Voyage. demo est premium (vérifié), donc enforce_voyage_limit ne s'y oppose
+-- pas ; le trigger add_voyage_owner_membre inscrit demo dans voyage_membres.
+insert into public.voyages (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap voyage profondeur');
+
+insert into public.voyage_membres (voyage_id, profile_id, role)
+values ('bb000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.reservations (voyage_id, created_by)
+values ('bb000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.voyage_documents (voyage_id, nom, mime_type, taille, contenu_chiffre, uploaded_by)
+values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 4, 'AAAA',
+        'de110000-0000-4000-8000-000000000000');
+
+-- Deux voyageurs SANS COMPTE, source pour l'assertion voyage_remboursements
+-- ci-dessous (ronde de correction 1 : la version précédente n'avait aucune
+-- ligne de voyage_participants rattachée à CE voyage, donc l'insert de preuve
+-- portait sur 0 ligne quelle que soit la policy — verte pour la mauvaise
+-- raison).
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000b', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap A', 'de110000-0000-4000-8000-000000000000');
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000c', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap B', 'de110000-0000-4000-8000-000000000000');
+
+-- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
+insert into public.depense_groupes (id, owner_id, titre)
+values ('bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap groupe profondeur');
+
+insert into public.depense_groupe_membres (groupe_id, profile_id)
+values ('bb000000-0000-4000-8000-000000000002',
+        '11111111-1111-1111-1111-111111111111');
+
+insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, created_by)
+values ('bb000000-0000-4000-8000-00000000000a',
+        'bb000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap dépense', 1000,
+        'de110000-0000-4000-8000-000000000000');
+
+insert into public.depense_parts (depense_id, profile_id, part_cents)
+values ('bb000000-0000-4000-8000-00000000000a',
+        '11111111-1111-1111-1111-111111111111', 500);
+
+-- Foyer : on RÉUTILISE celui du lot 1 (familles.famille_membres porte un
+-- UNIQUE(profile_id), donc demo ne peut pas posséder deux foyers). On n'ajoute
+-- que le co-membre.
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+-- ── Lot 2 / l'étranger qui est membre d'AUTRE CHOSE (agence) ───────────────
+-- POURQUOI CES TROIS-LÀ, à côté des douze refus « deadbeef » qui suivent :
+-- ce n'est PAS une redondance, ne les supprimez pas.
+--
+-- Les trois prédicats éprouvés plus bas ont tous exactement la même forme :
+--   exists (select 1 from <table_membres> where <cle> = <id>
+--                                          and profile_id = auth.uid())
+-- La régression la plus VRAISEMBLABLE sur cette forme n'est pas la perte du
+-- filtre d'identité (`profile_id = auth.uid()`), c'est la perte du filtre
+-- d'OBJET (`and voyage_id = v_id`) — la clause qu'un remaniement, une
+-- extraction de sous-requête ou une jointure mal recollée laissent tomber sans
+-- bruit. Le prédicat devient alors « est membre de QUELQUE CHOSE », et ouvre
+-- le voyage de demo à tout compte membre d'un AUTRE voyage.
+--
+-- `deadbeef-0000-4000-8000-000000000000` est INCAPABLE de voir ce bug : il
+-- n'est membre de rien, donc « membre de quelque chose » reste faux pour lui.
+-- Les douze assertions qui suivent — et le balayage du SOCLE en fin de
+-- fichier, qui emploie le même uuid — resteraient toutes VERTES.
+--
+-- `agence` (22222222-…) le voit : le seed en fait un membre du voyage
+-- 11111111-2222-4333-8444-555555555555 et de deux groupes de dépenses
+-- (66666666-… et d2000001-…), tout en la laissant hors de nos fixtures.
+-- « Membre d'autre chose » est vrai pour elle, « membre de CECI » faux :
+-- exactement le témoin qui manquait.
+--
+-- Le troisième cas est plus faible, et il faut le dire plutôt que de le
+-- laisser croire : agence n'est membre d'AUCUN foyer et n'en possède aucun,
+-- donc cette assertion-là n'éprouve pas le filtre d'objet de
+-- can_access_famille. Elle garde une valeur propre : agence est un compte
+-- RÉELLEMENT présent dans `profiles`, là où deadbeef n'y a aucune ligne — le
+-- refus n'est donc pas l'artefact d'une identité inexistante. La rendre aussi
+-- probante que les deux autres exigerait un second foyer, que
+-- l'UNIQUE(profile_id) de famille_membres interdit ici.
+--
+-- ORDRE : placées AVANT les suppressions de ce lot (voyage, groupe, foyer) ;
+-- après, elles compteraient 0 pour la mauvaise raison.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : membre d''un AUTRE voyage, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : membre d''AUTRES groupes, agence ne voit pas celui-ci');
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : compte réel mais étranger au foyer, agence ne le voit pas');
+
+-- ── Lot 2 / famille VOYAGE (can_access_voyage) ─────────────────────────────
+-- Cinq tables suspendues au même prédicat. Le co-membre accède, l'étranger est
+-- refusé, et surtout : voir le voyage ne donne pas le droit de le supprimer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage : le co-membre voit le voyage partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : un non-membre ne voit pas le voyage');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'voyage_membres : le co-membre voit les deux membres (demo + lui)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage_documents : le co-membre voit la pièce jointe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_documents : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'reservations : le co-membre voit la réservation');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'reservations : un non-membre n''en voit aucune');
+
+-- voyage_remboursements : la table est vide pour ce voyage, donc on l'éprouve
+-- en ÉCRITURE, avec les deux voyageurs pgtap A/B comme source déterministe
+-- (ronde de correction 1). Une violation de WITH CHECK LÈVE une erreur
+-- (42501, « new row violates row-level security policy ») — elle ne rend pas
+-- 0 ligne.
+-- C'est LÀ qu'est le motif, et pas ailleurs : une assertion qui attend un
+-- COMPTE (`is(..., 0)`) est structurellement incapable de constater une
+-- LEVÉE. Elle n'observerait rien du tout — l'erreur remonterait avant le
+-- moindre comptage. (Le motif qu'on lisait ici auparavant — « sinon le reset
+-- role ne s'exécuterait jamais et l'identité fuiterait sur les assertions
+-- suivantes » — était faux : une erreur non rattrapée avorte la transaction
+-- entière, donc il n'y a précisément PAS d'assertion suivante à polluer.)
+-- throws_ok est l'outil correct : il piège la levée dans sa propre savepoint
+-- et vérifie en plus que c'est bien 42501 — un refus de RLS, pas une
+-- violation de clé étrangère qui passerait pour de la sécurité.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'voyage_remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement (can_access_voyage est collaboratif, pas réservé au owner).
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'voyage_remboursements : le co-membre peut créer un remboursement');
+
+-- VOIR N'EST PAS ÉCRIRE. Le co-membre voit le voyage (assertion 1) mais
+-- voyages_delete exige is_voyage_owner : sa suppression doit porter sur 0 ligne.
+-- C'est la frontière que rien ne tenait avant ce lot.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'voyage : le co-membre VOIT mais ne peut pas SUPPRIMER');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un voyage que PERSONNE ne peut supprimer. On ne supprime pas pour de
+-- bon : la transaction du fichier est annulée à la fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyage : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille DÉPENSES (can_access_groupe) ───────────────────────────
+-- Même prédicat, même trio d'invariants. Particularité : depense_parts ne
+-- porte pas le groupe, elle le rejoint par la dépense — c'est le chemin le plus
+-- long du schéma, donc celui qui se casse le plus discrètement.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depense_groupes : le co-membre voit le groupe partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : un non-membre ne voit pas le groupe');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depenses : le co-membre voit la dépense du groupe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depenses : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          1::bigint, 'depense_parts : le co-membre voit sa part (jointure via la dépense)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          0::bigint, 'depense_parts : un non-membre n''en voit aucune');
+
+-- remboursements : vide pour ce groupe, donc éprouvée en ÉCRITURE. Une
+-- violation de WITH CHECK LÈVE une erreur (42501), elle ne rend pas 0 ligne —
+-- et une assertion qui attend un COMPTE ne peut pas constater une levée :
+-- l'erreur remonterait avant tout comptage. C'est le seul motif qui tienne
+-- (et non « sinon le reset role ne courrait jamais et l'identité fuiterait
+-- sur les assertions suivantes » : une erreur non rattrapée avorte la
+-- transaction entière, il n'y a donc pas d'assertion suivante). throws_ok
+-- piège la levée dans sa propre savepoint et en vérifie le code.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'remboursements : le co-membre, lui, peut en créer un');
+
+-- La moitié COLLABORATIVE du prédicat, d'abord : le co-membre MODIFIE bien le
+-- groupe — depense_groupes_update porte can_access_groupe en using ET en with
+-- check, donc l'update aboutit sans lever. Sans cette assertion, le libellé
+-- « VOIT et MODIFIE, mais ne SUPPRIME pas » juste en dessous promettrait un
+-- MODIFIE que rien n'éprouve : l'asymétrie ne serait qu'à moitié gravée.
+-- ORDRE : avant la suppression par le propriétaire, qui emporte la ligne.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.depense_groupes set titre = ''pgtap groupe modifié par le co-membre'' where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le co-membre MODIFIE le groupe (can_access_groupe)');
+
+-- VOIR N'EST PAS SUPPRIMER : depense_groupes_delete exige is_groupe_owner,
+-- alors que l'UPDATE se contente de can_access_groupe. Un co-membre modifie
+-- donc le groupe mais ne l'efface pas — asymétrie voulue, jamais testée.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          0::bigint, 'depense_groupes : le co-membre VOIT et MODIFIE, mais ne SUPPRIME pas');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un groupe que PERSONNE ne peut supprimer. Une absence n'est une
+-- preuve que si son contraire est aussi vrai pour quelqu'un.
+-- ORDRE : DERNIÈRE assertion de la section — cette suppression emporte en
+-- cascade la dépense, la part et le remboursement créés plus haut ; aucune
+-- assertion sur depenses/depense_parts/remboursements ne doit la suivre. On
+-- ne supprime pas pour de bon : la transaction du fichier est annulée à la
+-- fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille CERCLE (can_access_famille) ─────────────────────────────
+-- Troisième et dernière occurrence du même motif. Le foyer vient du lot 1 :
+-- famille_membres porte un UNIQUE(profile_id), donc demo ne peut pas en
+-- posséder deux — on réutilise plutôt que de dupliquer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'familles : le co-membre voit le foyer partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.familles where id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'familles : un non-membre ne voit pas le foyer');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'famille_membres : le co-membre voit les deux membres');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'famille_restos : le co-membre voit l''adresse partagée au foyer');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_restos where famille_id = ''fa000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'famille_restos : un non-membre n''en voit aucune');
+
+-- VOIR N'EST PAS SUPPRIMER : familles_delete exige is_famille_owner. Sans
+-- contrepartie, cette absence serait aussi verte si PERSONNE (propriétaire
+-- compris) ne pouvait supprimer le foyer — le témoin positif juste après
+-- ferme ce trou.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'familles : le co-membre VOIT mais ne peut pas SUPPRIMER le foyer');
+
+-- Témoin positif, et DERNIÈRE assertion de la section : le propriétaire, lui,
+-- peut supprimer le foyer — la suppression emporte en cascade
+-- famille_membres et famille_restos (FK ... on delete cascade).
+--
+-- PIÈGE PROPRE À CETTE FAMILLE, absent des deux occurrences précédentes
+-- (voyage, dépenses) : familles, famille_membres et famille_restos n'ont
+-- AUCUNE ligne de seed — mesuré à zéro avant nos fixtures (cf. rapport). Un
+-- DELETE qui aboutit ici, même annulé par le rollback final du fichier, laisse
+-- ces trois tables vides pour tout ce qui s'exécute APRÈS ce point dans la
+-- même transaction — en particulier le garde-fou de vacuité du bloc SOCLE,
+-- en fin de fichier, qui échouerait en les nommant. On RE-CRÉE donc,
+-- immédiatement après, les trois lignes : le foyer (même id, pour que toute
+-- policy qui le référence encore par cet identifiant retrouve la même
+-- ligne), la ligne famille_restos, et SEULEMENT le co-membre — le trigger
+-- add_famille_owner_membre (on_famille_created, cf. 00013_famille.sql)
+-- réinscrit automatiquement demo comme owner dans famille_membres dès
+-- l'insert ci-dessous ; l'ajouter à la main lèverait sur l'UNIQUE(profile_id).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.familles where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : le propriétaire, lui, peut supprimer le foyer');
+
+-- Re-création : voir le commentaire ci-dessus. Reprend exactement la forme
+-- des fixtures posées plus haut dans ce fichier (foyer et famille_restos au
+-- socle, co-membre au décor de profondeur du lot 2).
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001',
+        '11111111-1111-1111-1111-111111111111', 'membre');
+
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
+
+-- ── Lot 2 / les quatre cas particuliers ────────────────────────────────────
+
+-- agence_clients : lien SYMÉTRIQUE (agence_id = uid OR client_id = uid). Les
+-- deux parties voient, et elles seules. La fixture vient du lot 1 : agence
+-- suit client.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : l''agence voit le lien vers son client');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : le client voit aussi le lien — la relation est symétrique');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'agence_clients : un tiers ne voit pas qui suit qui');
+
+-- subscriptions : strictement owner (+ admin). Pas de co-membre ici — c'est
+-- l'argent de quelqu'un, il ne se partage pas.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'subscriptions : chacun voit son propre abonnement');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'subscriptions : personne ne voit l''abonnement d''un autre');
+
+-- avis : owner strict. La fixture vient du lot 1 (demo a noté un établissement).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'avis : l''auteur voit son avis');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'avis : personne ne lit l''avis d''un autre');
+
+-- etablissements : LE cas inversé. SELECT USING (true) pour tout compte
+-- connecté — et AUCUNE policy d'écriture, relevé au catalogue. La RLS refuse
+-- donc par défaut : le catalogue ne se modifie que par upsert_etablissement
+-- (SECURITY DEFINER). C'est l'invariant que ce lot grave, parce qu'il ne tient
+-- aujourd'hui qu'à une ABSENCE de policy — et une absence s'ajoute par
+-- distraction.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : un compte connecté ne modifie pas le catalogue');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : ni ne l''efface');
+
+-- Les deux assertions ci-dessus ne sondent qu'UNE ligne (celle prise par
+-- `order by id limit 1`) : elles prouvent que l'écriture est refusée À
+-- L'EXÉCUTION sur cette ligne-là, pas qu'aucune policy ne pourrait un jour
+-- l'autoriser sur une AUTRE ligne. Une policy d'écriture future mal cadrée
+-- (qui viserait par erreur seulement les lignes ajoutées après coup, par
+-- exemple) romprait l'invariant sans faire rougir ces deux tests. D'où cette
+-- troisième assertion, déclarative et indépendante de toute ligne : elle
+-- compte les policies d'écriture sur `etablissements` dans le catalogue et
+-- exige zéro. Les trois se complètent : les deux premières prouvent le
+-- comportement observé, celle-ci grave l'absence structurelle qui le
+-- garantit pour toutes les lignes, présentes et futures.
+--
+-- Le filtre exclut `SELECT` plutôt que d'énumérer INSERT/UPDATE/DELETE.
+-- Raison : `cmd` peut aussi valoir `ALL` — l'idiome dominant du projet pour
+-- les policies « propriétaire » (30 tables du schéma déclarent leur policy en
+-- `for all`, ex. reservations_all, vins_all_owner ; compté au catalogue :
+-- select count(distinct tablename) from pg_policies where schemaname =
+-- 'public' and cmd = 'ALL'). Une liste de verbes
+-- d'écriture ne matcherait jamais `ALL` et laisserait passer, silencieuse,
+-- la forme de policy la plus probable si quelqu'un en ajoutait une demain sur
+-- etablissements. Exclure la lecture dit l'invariant tel qu'il est —
+-- « rien d'autre que du SELECT » — et reste fail-closed : toute valeur de
+-- `cmd` non encore vue (y compris une future) est comptée et fait échouer
+-- l'assertion bruyamment plutôt que de passer inaperçue.
+-- TÉMOIN DU TÉMOIN, à lire avec l'assertion qui le suit immédiatement — les
+-- deux ne valent que par paire, ne séparez pas l'une de l'autre.
+-- L'assertion déclarative ci-dessous exige zéro. Or zéro est exactement ce
+-- que rendrait un `where` qui ne désigne plus rien : table renommée, schéma
+-- déplacé, faute de frappe dans un remaniement. Elle passerait au vert
+-- **sans avoir mesuré la moindre policy** — la forme creuse précise que le
+-- bloc SOCLE, quelques lignes plus bas, condamne.
+-- Celle-ci compte les policies d'`etablissements` TOUTES catégories
+-- confondues et en exige strictement plus de zéro. Partage du travail :
+-- celle-ci prouve qu'on REGARDE quelque chose, celle d'après dit ce qu'on y
+-- VOIT. Si le nom de la table cesse de correspondre, c'est celle-ci qui
+-- rougit, et le diagnostic est immédiat.
+select ok(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements') > 0,
+  'etablissements : le catalogue expose bien au moins une policy (témoin du test suivant)');
+
+-- `is distinct from` et non `<>` : `NULL <> ''SELECT''` rend NULL, donc une
+-- ligne dont `cmd` serait NULL serait EXCLUE du compte — l'inverse exact de
+-- ce que le commentaire ci-dessus promet (« toute valeur non encore vue est
+-- comptée »). `is distinct from` rend true face à NULL et tient la promesse,
+-- sans rien coûter.
+select is(
+  (select count(*) from pg_policies
+    where schemaname = 'public' and tablename = 'etablissements'
+      and cmd is distinct from 'SELECT')::bigint,
+  0::bigint,
+  'etablissements : aucune policy autre que SELECT n''existe au catalogue');
+
+-- ============================================================
+-- SOCLE — balayages pilotés par le catalogue
+-- ============================================================
+-- UNE RÈGLE GOUVERNE TOUT CE BLOC, et elle se reperd à chaque relecture pressée :
+-- **une garde négative sans témoin positif ne distingue pas la sécurité de la
+-- panne.** « Personne ne voit rien » est vert quand plus rien ne se lit, comme
+-- « au moins un refus » est vert quand tout est refusé. `is(fuites, '{}')` se
+-- relit pourtant comme une évidence — c'est bien le problème.
+-- D'où, ci-dessous, deux garde-fous de comptage ET un témoin positif ciblé :
+-- chaque assertion d'absence est accompagnée de quelque chose qui tombe si le
+-- mécanisme lui-même s'est éteint.
+-- Écrit ici, en FIN de fichier, délibérément : le fichier est une seule
+-- transaction, donc les fixtures posées plus haut (participants de voyage,
+-- dépenses, codes d'activité, journal d'accès…) existent encore. Placé en tête,
+-- le balayage trouverait 19 tables vides et se prononcerait sur du néant.
+
+-- UNE seule source pour « quelles tables balayer ». Deux copies de cette
+-- clause (une par balayage) auraient pu diverger en silence — c'est le défaut
+-- que ce fichier corrige ailleurs, il n'a pas le droit de le commettre ici.
+--
+-- Le `coalesce` n'est pas cosmétique. `(select array_agg(nom) from
+-- socle_exceptions)` rend NULL si la table d'exceptions est vide, et
+-- `tablename <> all(NULL)` est NULL pour CHAQUE ligne : la boucle ne visite
+-- alors AUCUNE table, et les assertions du socle passent au vert sur du néant.
+-- Vider les exceptions doit rendre le socle PLUS sévère, jamais l'éteindre.
+create function tests.tables_a_balayer(p_exceptions text[])
+returns setof text language sql stable as $$
+  select tablename from pg_tables
+  where schemaname = 'public'
+    and tablename <> all(coalesce(p_exceptions, '{}'::text[]))
+  order by tablename
+$$;
+
+-- Visite chaque table du schéma public sous une identité, et rend ce qu'elle y
+-- voit. `p_uid` null = anon. Un refus au niveau GRANT vaut 0 ligne exposée :
+-- l'invariant est « rien ne fuit », pas « la requête aboutit ».
+create function tests.balayage(p_uid uuid, p_exceptions text[])
+returns table(nom text, lignes bigint) language plpgsql as $$
+declare t text; n bigint;
+begin
+  for t in select * from tests.tables_a_balayer(p_exceptions)
+  loop
+    begin
+      if p_uid is null then
+        perform set_config('request.jwt.claims', '{"role":"anon"}', true);
+        set local role anon;
+      else
+        perform set_config('request.jwt.claims',
+          json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+        set local role authenticated;
+      end if;
+      execute format('select count(*) from public.%I', t) into n;
+      reset role;
+    exception when insufficient_privilege then
+      reset role; n := 0;
+    end;
+    nom := t; lignes := n; return next;
+  end loop;
+end $$;
+
+create temp table socle_anon as select * from tests.balayage(null, '{}');
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_anon where lignes > 0),
+  '{}'::text[],
+  'anon ne voit aucune ligne, dans aucune table du schéma public');
+
+-- Garde-fou NON NÉGOCIABLE : sans lui, un filtre trop zélé (schéma renommé,
+-- `where` mal écrit) rendrait l'assertion ci-dessus verte EN NE BALAYANT RIEN.
+-- C'est le motif exact des tests vides : le test reproduit la garde qu'il
+-- prétend éprouver. 48 = compte relevé au catalogue le 2026-09-12.
+select cmp_ok(
+  (select count(*) from socle_anon), '>=', 48::bigint,
+  'le balayage anon a bien visité tout le schéma');
+
+-- L'étranger n'est PAS un compte du seed, et c'est délibéré. Il l'a été
+-- (free@vito.test) jusqu'à ce qu'on mesure : `e2e/abonnement.spec.ts` connecte
+-- `free`, lui fait créer des voyages et souscrire un abonnement. Sur une base
+-- contaminée par un run e2e, l'étranger voyait donc {subscriptions,
+-- voyage_membres, voyages} — SES PROPRES lignes, dans un message rigoureusement
+-- indiscernable d'une vraie fuite RLS. Un socle qui crie au loup pour des
+-- raisons extérieures à la sécurité finit ignoré.
+--
+-- D'où cet uuid SYNTHÉTIQUE, volontairement illisible comme un vrai compte :
+-- il n'existe dans aucune table, aucun seed, aucune suite e2e ne peut le muter.
+-- Les policies ne comparent que des uuid (auth.uid()) — aucune n'exige une
+-- ligne dans auth.users — donc l'identité tient sans compte derrière.
+create temp table socle_exceptions(nom text primary key, raison text);
+insert into socle_exceptions values
+  ('etablissements',     'catalogue partagé, SELECT USING (true) assumé'),
+  ('vacances_scolaires', 'calendrier public pour tout compte connecté'),
+  ('tags',               'les tags système (user_id is null) sont un vocabulaire commun');
+-- `profiles` a quitté cette liste avec le passage à l'étranger synthétique :
+-- l'exception n'existait que parce que `free` y voyait SA ligne. Sans compte
+-- derrière l'uuid, il n'en voit aucune — et le balayage couvre désormais la
+-- table qui porte les noms et les e-mails. Mesuré, pas supposé (cf. rapport).
+
+create temp table socle_etranger as
+  select * from tests.balayage(
+    'deadbeef-0000-4000-8000-000000000000'::uuid,
+    (select array_agg(nom) from socle_exceptions));
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_etranger where lignes > 0),
+  '{}'::text[],
+  'un compte sans aucun lien ne voit aucune ligne d''autrui');
+
+-- Même garde-fou que pour anon, et pour la même raison — il manquait justement
+-- au balayage qui, lui, prend des exceptions : si la liste d'exceptions avalait
+-- tout le schéma (ou si le filtre déraillait), l'assertion ci-dessus serait
+-- verte en n'ayant rien regardé. 45 = 48 tables au catalogue le 2026-09-12,
+-- moins les 3 exceptions déclarées ci-dessus.
+select cmp_ok(
+  (select count(*) from socle_etranger), '>=', 45::bigint,
+  'le balayage de l''étranger a bien visité tout le schéma, exceptions déduites');
+
+-- TÉMOIN POSITIF. Les deux assertions ci-dessus exigent une ABSENCE, et une
+-- absence est satisfaite par la panne : si les GRANT d'`authenticated` étaient
+-- révoqués, chaque lecture lèverait, chaque table rendrait 0, et le socle
+-- serait VERT en n'ayant rien pu lire. Le garde-fou juste au-dessus ne rattrape
+-- pas ce cas — il compte les tables VISITÉES, pas les lectures RÉUSSIES.
+--
+-- Le témoin doit être CIBLÉ, et c'est le point subtil : asserter « le balayage a
+-- vu au moins une ligne quelque part » ne vaudrait rien, une seule table
+-- publique verdirait la garde pendant que tout le reste serait en panne. On
+-- nomme donc une lecture précise qui DOIT réussir — le catalogue partagé, que
+-- l'étranger a explicitement le droit de voir (c'est même pour ça qu'il figure
+-- en exception).
+-- Pourquoi un helper dédié plutôt que `tests.count_as` : ce dernier laisse
+-- remonter le refus de GRANT, qui AVORTE la suite. Mesuré — on obtient alors
+-- « Bad plan: 113 planifiés, 111 exécutés », c'est-à-dire un diagnostic qui ne
+-- nomme pas le problème. Ici le refus vaut 0, donc le témoin échoue PROPREMENT
+-- (« 0 > 0 est faux ») en portant son libellé. Un garde-fou doit dire ce qu'il
+-- a vu, pas seulement qu'il est tombé.
+create function tests.lecture_toleree(p_uid uuid, p_sql text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  execute p_sql into n;
+  reset role;
+  return n;
+exception when insufficient_privilege then
+  reset role; return 0;
+end $$;
+
+select cmp_ok(
+  tests.lecture_toleree('deadbeef-0000-4000-8000-000000000000'::uuid,
+                        'select count(*) from public.etablissements'),
+  '>', 0::bigint,
+  'témoin positif : l''étranger LIT vraiment ce qu''il a le droit de lire');
+
+-- Le piège que ce garde-fou existe pour attraper : « l'étranger voit 0 ligne »
+-- est VRAI d'une table vide, même avec une policy grande ouverte. Sur une base
+-- fraîchement seedée, 19 des 48 tables sont vides — le balayage se prononcerait
+-- sur du néant pour 40 % du schéma.
+--
+-- On compte donc hors RLS (le rôle courant est le propriétaire, il la contourne)
+-- et on exige désormais ZÉRO table vide hors exceptions. Neuf tables étaient
+-- autrefois tolérées vides par forfait ; les fixtures posées juste au-dessus
+-- leur ont donné une ligne d'autrui, et la liste des tolérées est tombée à
+-- AUCUNE. `<@ '{}'` n'est donc plus une inclusion mais, le membre droit étant
+-- vide, une égalité au vide — c'est ce que ce test grave : toute table nouvelle
+-- ou vidée le fera échouer tant qu'on ne lui aura pas donné, elle aussi, une
+-- ligne d'autrui à exposer au balayage.
+create function tests.tables_sans_donnees(p_exceptions text[])
+returns text[] language plpgsql as $$
+declare t text; n bigint; vides text[] := '{}';
+begin
+  for t in select * from tests.tables_a_balayer(p_exceptions)
+  loop
+    execute format('select count(*) from public.%I', t) into n;
+    if n = 0 then vides := vides || t; end if;
+  end loop;
+  return vides;
+end $$;
+
+select ok(
+  tests.tables_sans_donnees((select array_agg(nom) from socle_exceptions))
+    <@ '{}'::text[],
+  'aucune table hors exceptions n''est vide : le balayage les éprouve toutes');
 
 select finish();
 rollback;

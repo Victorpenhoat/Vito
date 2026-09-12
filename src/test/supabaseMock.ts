@@ -30,7 +30,9 @@ export function createMockSupabase(opts: Opts = {}) {
       upsert: (payload: unknown) => { state.op = "insert"; state.payload = payload; calls.push({ kind: "table", table, op: "insert", payload }); return q; },
       update: (payload: unknown) => { state.op = "update"; state.payload = payload; calls.push({ kind: "table", table, op: "update", payload }); return q; },
       delete: () => { state.op = "delete"; calls.push({ kind: "table", table, op: "delete" }); return q; },
-      select: () => q,
+      // La projection est enregistrée : c'est la seule façon d'éprouver qu'une
+      // requête de page ne DEMANDE pas une colonne sensible (docs/security.md §2).
+      select: (colonnes?: unknown) => { calls.push({ kind: "table", table, op: "select", payload: colonnes }); return q; },
       eq: () => q,
       in: () => q,
       order: () => q,

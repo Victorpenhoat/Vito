@@ -11,6 +11,7 @@ export const RELATIONS = [
   "moi", "conjoint", "fille", "fils", "pere", "mere",
   "enfant", "parent", "beau_parent", "ami", "autre",
 ] as const;
+export type Relation = (typeof RELATIONS)[number];
 
 export const procheInputSchema = z.object({
   first_name: z.string().min(1).max(120),
