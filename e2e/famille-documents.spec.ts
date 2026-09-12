@@ -70,16 +70,20 @@ test("le numéro n'est pas dans la page, et se révèle après vérification", a
 
   // le numéro seedé n'apparaît nulle part dans le HTML servi
   expect(await page.content()).not.toContain("19FR99892");
-  await expect(page.getByTestId("valeur-protegee")).toContainText("•");
+  // Assertion EXACTE, et pas un simple « contient un point » : le masque a
+  // longtemps laissé passer les trois derniers caractères (« ••••••892 ») sous
+  // un test vert, parce qu'il ne cherchait que le numéro ENTIER. Quatre points,
+  // ni plus ni moins — la longueur ne doit pas non plus transparaître.
+  await expect(page.getByTestId("valeur-protegee")).toHaveText("••••");
 
   await page.getByTestId("reveler-valeur").click();
   await page.getByTestId("reauth-mot-de-passe").fill("password123");
   await page.getByTestId("reauth-form").getByRole("button", { name: "Vérifier" }).click();
 
   await expect(page.getByTestId("valeur-protegee")).toHaveText("19FR99892", { timeout: 15_000 });
-  // on peut le masquer à nouveau
+  // on peut le masquer à nouveau — et le re-masquage rend le MÊME masque
   await page.getByTestId("masquer-valeur").click();
-  await expect(page.getByTestId("valeur-protegee")).toContainText("•");
+  await expect(page.getByTestId("valeur-protegee")).toHaveText("••••");
 });
 
 test("vérifier son mot de passe ne déconnecte pas les autres appareils", async ({ page, browser }) => {

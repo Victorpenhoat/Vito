@@ -332,7 +332,8 @@
       "testes": "Tried",
       "tous": "All",
       "carte": "Map",
-      "cave": "Cellar"
+      "cave": "Cellar",
+      "aria": "Filter places"
     },
     "rechercherPlaceholder": "Name, city, tag…",
     "trouver": "Find",
@@ -1223,7 +1224,8 @@
     "adressesCount": "{n} places",
     "archives": "Archived",
     "archivesVide": "No archived places",
-    "adressesZone": "{n} in the visible area"
+    "adressesZone": "{n} in the visible area",
+    "effacer": "Clear search"
   },
   "hotels": {
     "title": "Hotels",
@@ -1250,7 +1252,8 @@
       "a_tester": "To try",
       "sejours": "Stays",
       "tous": "All",
-      "carte": "Map"
+      "carte": "Map",
+      "aria": "Filter places"
     },
     "rechercherPlaceholder": "Name, city, region, tag…",
     "trouver": "Find",

@@ -127,10 +127,14 @@ insert into public.etablissements (id, place_id, categorie, type, nom, ville, co
 insert into public.profil_gouts (user_id, ambiances, budget_max, types_preferes, zones)
 values ('11111111-1111-1111-1111-111111111111', '{}', 40, '{"bistrot"}', '{"17e"}');
 
--- Voyage de démo du client, partagé avec l'agence (UUID v4 valides)
+-- Voyage de démo du client, partagé avec l'agence (UUID v4 valides).
+-- Dates RELATIVES : le 2026-09-12 en dur a fait tomber la suite e2e le jour où
+-- il est arrivé — `voyageChip` a classé le voyage en `en_cours` alors que la
+-- liste affiche `a_venir` par défaut, et la carte a disparu. J+30 le garde
+-- toujours à venir. Le reste du fichier emploie déjà `current_date + N`.
 insert into public.voyages (id, owner_id, titre, destination, date_debut, date_fin, statut)
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111',
-  'Week-end à Rome', 'Rome', '2026-09-12', '2026-09-15', 'confirme');
+  'Week-end à Rome', 'Rome', current_date + 30, current_date + 33, 'confirme');
 
 -- Le trigger on_voyage_created insère déjà la ligne 'owner' (client). On ajoute juste l'agence.
 insert into public.voyage_membres (voyage_id, profile_id, role) values
@@ -139,7 +143,7 @@ on conflict (voyage_id, profile_id) do nothing;
 
 insert into public.reservations (voyage_id, created_by, type, fournisseur, reference, date_debut, date_fin, conciergerie_tel, conciergerie_mail, lien)
 values ('11111111-2222-4333-8444-555555555555', '11111111-1111-1111-1111-111111111111', 'hotel',
-  'Hotel Roma', 'CONF-123', '2026-09-12', '2026-09-15', '+39 06 0000 0000', 'concierge@hotelroma.test', 'https://airbnb.example/rome');
+  'Hotel Roma', 'CONF-123', current_date + 30, current_date + 33, '+39 06 0000 0000', 'concierge@hotelroma.test', 'https://airbnb.example/rome');
 
 -- Mode voyage hors ligne : une pièce jointe sur le voyage du client, pour que le
 -- carnet emporté ait quelque chose à montrer (image → affichée dans la page).
@@ -155,7 +159,7 @@ insert into public.voyage_documents (id, voyage_id, nom, mime_type, taille, cont
 -- fiche « Mes séjours ».
 insert into public.visites (id, user_id, liste_item_id, note, commentaire, visite_le, date_fin, voyage_id, adultes, enfants)
 values ('cccccccc-cccc-4ccc-8ccc-cccccccc0002', '11111111-1111-1111-1111-111111111111',
-        '22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', 8.5, 'rooftop superbe', '2026-09-12', '2026-09-15',
+        '22222222-aaaa-4aaa-8aaa-bbbbbbbb0002', 8.5, 'rooftop superbe', current_date + 30, current_date + 33,
         '11111111-2222-4333-8444-555555555555', 2, 2);
 
 -- Comptes partagés : groupe lié au voyage Rome, partagé client <-> agence (UUID v4 valides)
@@ -171,7 +175,7 @@ on conflict (groupe_id, profile_id) do nothing;
 -- Dépense 1 : hôtel 200,00 € payé par le client, split égal (100/100)
 insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by)
 values ('66666666-6666-4666-8666-aaaaaaaaaaaa', '66666666-6666-4666-8666-666666666666',
-  '11111111-1111-1111-1111-111111111111', 'Hôtel', 20000, '2026-09-12', 'egal',
+  '11111111-1111-1111-1111-111111111111', 'Hôtel', 20000, current_date + 30, 'egal',
   '11111111-1111-1111-1111-111111111111');
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
   ('66666666-6666-4666-8666-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 10000),
@@ -180,7 +184,7 @@ insert into public.depense_parts (depense_id, profile_id, part_cents) values
 -- Dépense 2 : dîner 90,00 € payé par l'agence, exact (client 50,00 / agence 40,00)
 insert into public.depenses (id, groupe_id, paye_par, libelle, montant_cents, date, mode, created_by)
 values ('66666666-6666-4666-8666-bbbbbbbbbbbb', '66666666-6666-4666-8666-666666666666',
-  '22222222-2222-2222-2222-222222222222', 'Dîner', 9000, '2026-09-13', 'exact',
+  '22222222-2222-2222-2222-222222222222', 'Dîner', 9000, current_date + 31, 'exact',
   '22222222-2222-2222-2222-222222222222');
 insert into public.depense_parts (depense_id, profile_id, part_cents) values
   ('66666666-6666-4666-8666-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 5000),

@@ -1,5 +1,9 @@
 "use client";
 import { useActionState, useState } from "react";
+import { SubTabPills } from "@/features/shared/ui/SubTabPills";
+import { SearchField } from "@/features/shared/ui/SearchField";
+import { ViewSwitcher } from "@/features/shared/ui/ViewSwitcher";
+import { TagChip } from "@/features/shared/ui/TagChip";
 import { Button } from "@/features/shared/ui/Button";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -105,20 +109,18 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
   }
 
   const sousOnglets = (
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 [scrollbar-width:none]" role="tablist">
-        {ONGLETS.map((o) => {
-          const active = onglet === o;
-          return (
-            <button key={o} type="button" role="tab" id={`tab-${o}`} aria-controls={config.panelId}
-              data-testid={tabTestId(o)} aria-selected={active} onClick={() => selectOnglet(o)}
-              className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                active ? "bg-ink font-semibold text-app" : "border border-line bg-surface text-muted hover:bg-surface-hover"
-              }`}>
-              {tr(`onglets.${o}`)}
-            </button>
-          );
-        })}
-      </div>
+    // `idOnglet` garde le SOULIGNÉ (`tab-a_tester`) : c'est cette forme que le
+    // panneau cite dans son aria-labelledby. `tabTestId`, lui, le remplace par
+    // un tiret. Les confondre romprait le lien onglet/panneau en silence.
+    <SubTabPills
+      ariaLabel={tr("onglets.aria")}
+      valeur={onglet}
+      onChange={selectOnglet}
+      testId={tabTestId}
+      idOnglet={(o) => `tab-${o}`}
+      ariaControls={config.panelId}
+      options={ONGLETS.map((o) => ({ cle: o, libelle: tr(`onglets.${o}`) }))}
+    />
   );
 
   // FILTRES — composés plus bas : rail à gauche sur grand écran quand aucune
@@ -128,26 +130,22 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
       {/* recherche interne + Trouver */}
       {onglet !== "carte" && (
         <div className="flex gap-2.5 lg:flex-wrap">
-          <label className="flex min-w-0 flex-1 items-center gap-2.5 rounded-control border border-line bg-surface px-3.5 py-2.5">
-            <Search size={15} className="shrink-0 text-faint" aria-hidden />
-            <input type="search" data-testid="places-search" value={q} onChange={(e) => setQ(e.target.value)}
-              placeholder={tr("rechercherPlaceholder")} aria-label={tr("rechercherPlaceholder")}
-              className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden" />
-          </label>
+          <SearchField className="flex-1" valeur={q} onChange={setQ}
+            placeholder={tr("rechercherPlaceholder")} libelleEffacer={t("effacer")}
+            testId="places-search" />
           <button type="button" data-testid={config.trouverTestId} onClick={() => setRecherche(true)}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-accent/25 bg-accent-50 px-3.5 py-2.5 text-xs font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
             <Plus size={13} aria-hidden />
             {tr("trouver")}
           </button>
-          <div className="flex shrink-0 gap-1 rounded-control border border-line p-0.5">
-            {(["liste", "vignettes", "carte"] as const).map((v) => (
-              <button key={v} type="button" data-testid={`view-${v}`} aria-pressed={view === v}
-                aria-label={t(`vue${v.charAt(0).toUpperCase()}${v.slice(1)}`)} onClick={() => setView(v)}
-                className={`rounded-control px-2 py-1.5 text-xs ${view === v ? "bg-accent text-on-fill" : "text-muted"}`}>
-                {v === "liste" ? "☰" : v === "vignettes" ? "▦" : "◍"}
-              </button>
-            ))}
-          </div>
+          {/* La carte reste un segment : la sortir du commutateur pour en faire une
+              destination est un changement de navigation, donc du lot 4. */}
+          <ViewSwitcher valeur={view} onChange={setView} testId={(v) => `view-${v}`}
+            options={[
+              { cle: "liste", icone: <span aria-hidden>☰</span>, libelle: t("vueListe") },
+              { cle: "vignettes", icone: <span aria-hidden>▦</span>, libelle: t("vueVignettes") },
+              { cle: "carte", icone: <span aria-hidden>◍</span>, libelle: t("vueCarte") },
+            ]} />
         </div>
       )}
 
@@ -155,24 +153,24 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
       {onglet === "a_tester" && (
         <div className="flex gap-1.5">
           {(["toutes", "reco", "trouve"] as const).map((o) => (
-            <button key={o} type="button" data-testid={`origine-${o}`} aria-pressed={origine === o} onClick={() => setOrigine(o)}
-              className={`rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                origine === o ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"
-              }`}>
+            <TagChip key={o} testId={`origine-${o}`} onClick={() => setOrigine(o)}
+              ton={origine === o ? "selectionne" : "defaut"}>
               {tr(`origines.filtre_${o}`)}
-            </button>
+            </TagChip>
           ))}
         </div>
       )}
       {onglet === "tous" && (
         <div className="flex flex-wrap items-center gap-1.5">
           {(["favori", "a_tester", "teste"] as const).map((s) => (
-            <button key={s} type="button" data-testid={`statut-${s}`} aria-pressed={statutsFiltre.has(s)} onClick={() => toggleStatutFiltre(s)}
-              className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                statutsFiltre.has(s) ? "border border-accent/25 bg-accent-50 text-accent" : "border border-line bg-surface-hover text-muted"
-              }`}>
+            // Ton `actif-doux` et non `selectionne` : ces filtres s'ACCUMULENT
+            // (plusieurs statuts à la fois) là où un tag ou une origine s'exclut.
+            // La nuance porte cette différence ; l'aplatir ferait dire à
+            // l'interface qu'un filtre cumulatif est un choix unique.
+            <TagChip key={s} testId={`statut-${s}`} onClick={() => toggleStatutFiltre(s)}
+              ton={statutsFiltre.has(s) ? "actif-doux" : "defaut"}>
               {tr(`statut.${s === "teste" ? "teste" : s}`)}{statutsFiltre.has(s) ? " ✓" : ""}
-            </button>
+            </TagChip>
           ))}
           <span data-testid="tous-count" className="ml-auto text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">
             {t("adressesCount", { n: triees.length })}
@@ -181,15 +179,15 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
       )}
       {onglet !== "carte" && tagsDispo.length > 0 && (
         <div data-testid="list-tag-filter" className="flex flex-wrap items-center gap-1.5">
-          <button type="button" data-testid="list-tag-tous" aria-pressed={tag === null} onClick={() => setTag(null)}
-            className={`rounded-full px-3 py-1 text-[11px] ${tag === null ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"}`}>
+          <TagChip testId="list-tag-tous" onClick={() => setTag(null)}
+            ton={tag === null ? "selectionne" : "defaut"}>
             {t("tagTous")}
-          </button>
+          </TagChip>
           {tagsDispo.map((tg) => (
-            <button key={tg.slug} type="button" data-testid={`list-tag-${tg.slug}`} aria-pressed={tag === tg.slug} onClick={() => setTag(tg.slug)}
-              className={`rounded-full px-3 py-1 text-[11px] ${tag === tg.slug ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"}`}>
+            <TagChip key={tg.slug} testId={`list-tag-${tg.slug}`} onClick={() => setTag(tg.slug)}
+              ton={tag === tg.slug ? "selectionne" : "defaut"}>
               {tg.label}
-            </button>
+            </TagChip>
           ))}
           <Link href={`${config.basePath}/tags`} className="ml-auto text-[11px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
             {tr("tags.gerer")}

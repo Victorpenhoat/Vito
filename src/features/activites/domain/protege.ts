@@ -1,14 +1,6 @@
-// Ce qui entoure les données protégées d'une activité : le masque d'un code, et
-// la validité d'un document.
-
-/**
- * Le masque d'un code d'accès.
- *
- * Toujours QUATRE points, quelle que soit la longueur réelle : un masque qui
- * suit la longueur annonce combien de caractères chercher. C'est peu, mais
- * c'est gratuit à ne pas donner.
- */
-export const MASQUE = "••••";
+// Ce qui entoure les données protégées d'une activité : la validité d'un
+// document. Le masque, lui, est commun à toute l'application —
+// `src/lib/securite/masque.ts`.
 
 /** Seuil des alertes, tel que le montre la maquette (« expire dans 21 jours »). */
 export const JOURS_ALERTE = 30;

@@ -332,7 +332,8 @@
       "testes": "Testés",
       "tous": "Tous",
       "carte": "Carte",
-      "cave": "Cave"
+      "cave": "Cave",
+      "aria": "Filtrer les adresses"
     },
     "rechercherPlaceholder": "Nom, ville, tag…",
     "trouver": "Trouver",
@@ -1223,7 +1224,8 @@
     "adressesCount": "{n} adresses",
     "archives": "Archivés",
     "archivesVide": "Aucun établissement archivé",
-    "adressesZone": "{n} dans la zone visible"
+    "adressesZone": "{n} dans la zone visible",
+    "effacer": "Effacer la recherche"
   },
   "hotels": {
     "title": "Hôtels",
@@ -1250,7 +1252,8 @@
       "a_tester": "À tester",
       "sejours": "Séjours",
       "tous": "Tous",
-      "carte": "Carte"
+      "carte": "Carte",
+      "aria": "Filtrer les adresses"
     },
     "rechercherPlaceholder": "Nom, ville, région, tag…",
     "trouver": "Trouver",

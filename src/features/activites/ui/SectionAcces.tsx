@@ -6,7 +6,7 @@ import { useRouter } from "@/lib/i18n/routing";
 import { ValeurProtegee } from "@/features/shared/ui/ValeurProtegee";
 import { Button } from "@/features/shared/ui/Button";
 import { ajouterCode, revelerCode } from "../data/actionsProtegees";
-import { MASQUE } from "../domain/protege";
+import { MASQUE } from "@/lib/securite/masque";
 
 /**
  * Les codes d'accès : portail, vestiaire, casier.

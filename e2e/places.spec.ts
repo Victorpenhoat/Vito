@@ -109,6 +109,15 @@ test("a11y : le panneau expose role=tabpanel lié au sous-onglet actif", async (
   const panel = page.getByTestId("places-panel");
   await expect(panel).toHaveAttribute("role", "tabpanel");
   await expect(panel).toHaveAttribute("aria-labelledby", "tab-favoris");
+
+  // « À tester » est le seul slug où `testId` (tiret, via `tabTestId`) et
+  // `idOnglet` (souligné, `tab-${onglet}`) divergent — sur "favoris" les deux
+  // formes coïncident et ne peuvent pas trahir une confusion entre elles.
+  // Si `idOnglet` était un jour aligné par erreur sur `tabTestId`, l'assertion
+  // ci-dessus resterait verte par coïncidence ; celle-ci, elle, casserait.
+  await page.getByTestId("tab-a-tester").click();
+  await expect(panel).toHaveAttribute("aria-labelledby", "tab-a_tester");
+  await expect(page.locator("#tab-a_tester")).toHaveAttribute("role", "tab");
 });
 
 test("archivage : vue Archivés + désarchiver inline + ré-archiver depuis la fiche", async ({ page }) => {
