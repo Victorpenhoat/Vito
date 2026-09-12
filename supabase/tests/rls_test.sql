@@ -1378,7 +1378,10 @@ select is(
 -- claim, is_agence() rend false pour TOUTE identité, agence comprise — le
 -- témoin « vrai pour l'agence » serait donc vert pour la mauvaise raison,
 -- exactement le prédicat coincé à false que cette section existe pour
--- attraper. D'où ce helper dédié, même idiome que tests.count_as_admin.
+-- attraper. Et la négative n'est pas mieux lotie : sous bool_as elle dirait
+-- « faux sans claim », pas « faux pour un client », et son uuid ne serait que
+-- décoratif. D'où ce helper dédié — employé des DEUX côtés de chaque paire,
+-- même idiome que tests.count_as_admin.
 create function tests.bool_as_role(p_uid uuid, p_role text, p_sql text) returns boolean language plpgsql as $$
 declare b boolean;
 begin
@@ -1392,20 +1395,19 @@ end $$;
 
 select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()'),
           'is_agence : vrai pour le compte agence');
-select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_agence()'),
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_agence()'),
           'is_agence : faux pour un client');
 
--- Paire incomplète, sciemment : is_concierge() a aujourd'hui le MÊME corps
--- qu'is_agence() (même clause `in ('agence', 'admin')`), aucun rôle
--- « concierge » distinct n'existe dans le schéma ni dans le seed. Il n'y a
--- donc pas de compte pour lequel construire un témoin positif sans inventer
--- une donnée. Les deux assertions ci-dessous ne couvrent que la moitié de
--- l'invariant (faux pour qui n'a pas le droit) ; le jour où un rôle/claim
--- concierge existera réellement, ajouter son témoin « vrai » ici.
-select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_concierge()'),
+-- is_concierge() a aujourd'hui le MÊME corps qu'is_agence() : même clause
+-- `in ('agence', 'admin')` sur le seul claim `user_role`. Elle ne consulte NI
+-- auth.uid() NI profiles — il n'existe donc pas de « compte sans profil » à
+-- éprouver, mais il existe bel et bien un témoin positif : le personnel
+-- agence. La paire ci-dessous éprouve exactement ce que le prédicat décide,
+-- un vrai claim de chaque bord — `agence` rend vrai, `client` rend faux.
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_concierge()'),
+          'is_concierge : vrai pour le personnel agence');
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()'),
           'is_concierge : faux pour un client ordinaire');
-select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000', 'select public.is_concierge()'),
-          'is_concierge : faux pour un compte sans profil');
 
 select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
           'select public.is_premium(''de110000-0000-4000-8000-000000000000'')'),
@@ -1423,7 +1425,7 @@ select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000',
 
 select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
           'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''de110000-0000-4000-8000-000000000000'')'),
-          'is_groupe_membre : vrai pour le propriétaire du groupe');
+          'is_groupe_membre : vrai pour un membre du groupe');
 select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
           'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''deadbeef-0000-4000-8000-000000000000'')'),
           'is_groupe_membre : faux pour un uuid étranger au groupe');
@@ -1489,8 +1491,10 @@ select is(tests.text_as('de110000-0000-4000-8000-000000000000',
           'conciergerie : une demande naît « nouvelle » et sans réponse, quoi qu''en dise le client');
 
 -- Témoin de l'autre bord : un compte NON abonné ne peut pas ouvrir de demande.
--- Sans lui, l'assertion ci-dessus serait satisfaite par une table où personne
--- n'écrit. Le refus vient de la clause WITH CHECK, donc il LÈVE.
+-- Ce n'est PAS un garde-fou de vacuité — l'assertion ci-dessus lit sa valeur
+-- par RETURNING, donc un insert bloqué lèverait et la ferait tomber d'elle-même.
+-- C'est un invariant à part entière : la conciergerie est réservée aux
+-- abonnés. Le refus vient de la clause WITH CHECK, donc il LÈVE.
 select throws_ok(
   $$ select tests.text_as('11111111-1111-1111-1111-111111111111',
        'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, date_resa, heure_resa, nombre_convives) select ''11111111-1111-1111-1111-111111111111'', ''resto'', e.id, ''pgtap'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text) select * from u') $$,
