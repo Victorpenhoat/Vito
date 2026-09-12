@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(156);
+select plan(165);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1171,6 +1171,51 @@ values ('fa000000-0000-4000-8000-000000000001',
 insert into public.famille_restos (famille_id, etablissement_id)
 select 'fa000000-0000-4000-8000-000000000001',
        id from public.etablissements order by id limit 1;
+
+-- ── Lot 2 / les quatre cas particuliers ────────────────────────────────────
+
+-- agence_clients : lien SYMÉTRIQUE (agence_id = uid OR client_id = uid). Les
+-- deux parties voient, et elles seules. La fixture vient du lot 1 : agence
+-- suit client.
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : l''agence voit le lien vers son client');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'agence_clients : le client voit aussi le lien — la relation est symétrique');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.agence_clients where client_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'agence_clients : un tiers ne voit pas qui suit qui');
+
+-- subscriptions : strictement owner (+ admin). Pas de co-membre ici — c'est
+-- l'argent de quelqu'un, il ne se partage pas.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'subscriptions : chacun voit son propre abonnement');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.subscriptions where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'subscriptions : personne ne voit l''abonnement d''un autre');
+
+-- avis : owner strict. La fixture vient du lot 1 (demo a noté un établissement).
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          1::bigint, 'avis : l''auteur voit son avis');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.avis where user_id = ''de110000-0000-4000-8000-000000000000'''),
+          0::bigint, 'avis : personne ne lit l''avis d''un autre');
+
+-- etablissements : LE cas inversé. SELECT USING (true) pour tout compte
+-- connecté — et AUCUNE policy d'écriture, relevé au catalogue. La RLS refuse
+-- donc par défaut : le catalogue ne se modifie que par upsert_etablissement
+-- (SECURITY DEFINER). C'est l'invariant que ce lot grave, parce qu'il ne tient
+-- aujourd'hui qu'à une ABSENCE de policy — et une absence s'ajoute par
+-- distraction.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : un compte connecté ne modifie pas le catalogue');
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
+          0::bigint, 'etablissements : ni ne l''efface');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
