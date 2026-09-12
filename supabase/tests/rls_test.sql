@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(126);
+select plan(137);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -958,6 +958,59 @@ values ('bb000000-0000-4000-8000-00000000000a',
 insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
+
+-- ── Lot 2 / famille VOYAGE (can_access_voyage) ─────────────────────────────
+-- Cinq tables suspendues au même prédicat. Le co-membre accède, l'étranger est
+-- refusé, et surtout : voir le voyage ne donne pas le droit de le supprimer.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage : le co-membre voit le voyage partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage : un non-membre ne voit pas le voyage');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          2::bigint, 'voyage_membres : le co-membre voit les deux membres (demo + lui)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_membres : un non-membre ne voit personne');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'voyage_documents : le co-membre voit la pièce jointe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_documents where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'voyage_documents : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          1::bigint, 'reservations : le co-membre voit la réservation');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.reservations where voyage_id = ''bb000000-0000-4000-8000-000000000001'''),
+          0::bigint, 'reservations : un non-membre n''en voit aucune');
+
+-- voyage_remboursements : la table est vide pour ce voyage, donc on l'éprouve
+-- en ÉCRITURE — un non-membre ne doit pas pouvoir y insérer. Insérer sous une
+-- identité qui n'a pas accès rend 0 ligne (la clause WITH CHECK filtre) ou lève.
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) select ''bb000000-0000-4000-8000-000000000001'', p1.id, p2.id, 100, ''deadbeef-0000-4000-8000-000000000000'' from public.voyage_participants p1, public.voyage_participants p2 where p1.id <> p2.id limit 1 returning 1) select count(*) from u'),
+          0::bigint, 'voyage_remboursements : un non-membre n''y insère rien');
+
+-- VOIR N'EST PAS ÉCRIRE. Le co-membre voit le voyage (assertion 1) mais
+-- voyages_delete exige is_voyage_owner : sa suppression doit porter sur 0 ligne.
+-- C'est la frontière que rien ne tenait avant ce lot.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          0::bigint, 'voyage : le co-membre VOIT mais ne peut pas SUPPRIMER');
+
+-- Et le propriétaire, lui, le peut — sans quoi l'assertion ci-dessus serait
+-- vraie d'un voyage que PERSONNE ne peut supprimer. On ne supprime pas pour de
+-- bon : la transaction du fichier est annulée à la fin.
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyage : le propriétaire, lui, peut supprimer');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
