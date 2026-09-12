@@ -94,17 +94,35 @@ insert into public.voyages (id, owner_id, titre)
 values ('bb000000-0000-4000-8000-000000000001',
         'de110000-0000-4000-8000-000000000000', 'pgtap voyage profondeur');
 
+-- `role` est contraint à 'owner' ou 'membre' (CHECK) — pas 'voyageur'. Vérifié
+-- au schéma le 2026-09-12, après qu'un premier jet s'y soit cassé.
 insert into public.voyage_membres (voyage_id, profile_id, role)
 values ('bb000000-0000-4000-8000-000000000001',
-        '11111111-1111-1111-1111-111111111111', 'voyageur');
+        '11111111-1111-1111-1111-111111111111', 'membre');
 
 insert into public.reservations (voyage_id, created_by)
 values ('bb000000-0000-4000-8000-000000000001',
         'de110000-0000-4000-8000-000000000000');
 
-insert into public.voyage_documents (voyage_id, nom, mime_type, contenu_chiffre, created_by)
-values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 'AAAA',
+-- `voyage_documents` porte `uploaded_by` (et non `created_by`) et exige
+-- `taille`, integer NOT NULL. Deux pièges qu'une requête sur les colonnes
+-- obligatoires ne montre pas : elle ne dit ni les CHECK, ni les noms exacts.
+insert into public.voyage_documents (voyage_id, nom, mime_type, contenu_chiffre, taille, uploaded_by)
+values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 'AAAA', 4,
         'de110000-0000-4000-8000-000000000000');
+
+-- Deux voyageurs SANS COMPTE, rattachés à CE voyage. Ils ne servent aucune
+-- assertion de lecture : ils sont la SOURCE de l'insert de preuve sur
+-- `voyage_remboursements` (Task 2), dont la table est vide pour ce voyage et
+-- qui doit donc être éprouvée en écriture. Sans eux, cet insert porte sur 0
+-- ligne quelle que soit la policy — vert pour la mauvaise raison. Ajoutés en
+-- cours de route (ronde de correction 1), cf. l'encadré ci-dessous.
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000b', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap A', 'de110000-0000-4000-8000-000000000000');
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000c', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap B', 'de110000-0000-4000-8000-000000000000');
 
 -- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
 insert into public.depense_groupes (id, owner_id, titre)
@@ -132,6 +150,31 @@ insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
 ```
+
+> **Ce bloc a été corrigé APRÈS avoir été exécuté** (2026-09-12). Le premier jet
+> portait `'voyageur'` comme rôle et `created_by` sur `voyage_documents` : les
+> deux ont été rejetés par le schéma. La cause est une vérification sautée — pour
+> le lot 1, les fixtures avaient été EXÉCUTÉES contre la base avant d'être
+> écrites ici ; pour celui-ci, on s'était contenté d'une requête sur les colonnes
+> `NOT NULL` sans défaut, qui ne montre **ni les contraintes CHECK, ni les noms
+> de colonnes facultatives**. Le défaut est apparu exactement là où la
+> vérification manquait.
+>
+> **Troisième correction, et la plus instructive : les deux
+> `voyage_participants`.** Les deux premières n'étaient que des erreurs de
+> schéma — bruyantes, rejetées à l'insert, corrigées en une minute. Celle-ci
+> était silencieuse. Le plan d'origine n'avait AUCUNE ligne de
+> `voyage_participants` rattachée au voyage de profondeur ; l'insert de preuve
+> de Task 2 (`insert into voyage_remboursements … from voyage_participants p1,
+> p2 where p1.id <> p2.id limit 1`) portait donc sur **zéro ligne source**, et
+> rendait 0 quelle que soit la policy. Le `throws_ok` attendu ne levait pas, et
+> l'assertion aurait pu être « ajustée » jusqu'au vert sans jamais éprouver la
+> RLS. C'est la cinquième assertion creuse du chantier, et la seule qu'aucun
+> message d'erreur n'aurait dénoncée : **un test d'écriture n'éprouve une
+> policy que si la ligne à écrire est réellement constructible.** D'où les deux
+> voyageurs ci-dessus, aux identifiants fixes (`…-00000000000b` / `…-0000000c`)
+> que l'assertion nomme explicitement, plutôt qu'un `limit 1` sur une table qui
+> peut être vide.
 
 - [ ] **Step 2 : Vérifier que chaque insertion a bien créé sa ligne**
 
