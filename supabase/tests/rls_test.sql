@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(138);
+select plan(147);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1037,6 +1037,58 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
           'with u as (delete from public.voyages where id = ''bb000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
           1::bigint, 'voyage : le propriétaire, lui, peut supprimer');
+
+-- ── Lot 2 / famille DÉPENSES (can_access_groupe) ───────────────────────────
+-- Même prédicat, même trio d'invariants. Particularité : depense_parts ne
+-- porte pas le groupe, elle le rejoint par la dépense — c'est le chemin le plus
+-- long du schéma, donc celui qui se casse le plus discrètement.
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depense_groupes : le co-membre voit le groupe partagé');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depense_groupes : un non-membre ne voit pas le groupe');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          1::bigint, 'depenses : le co-membre voit la dépense du groupe');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depenses where groupe_id = ''bb000000-0000-4000-8000-000000000002'''),
+          0::bigint, 'depenses : un non-membre n''en voit aucune');
+
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          1::bigint, 'depense_parts : le co-membre voit sa part (jointure via la dépense)');
+select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_parts where depense_id = ''bb000000-0000-4000-8000-00000000000a'''),
+          0::bigint, 'depense_parts : un non-membre n''en voit aucune');
+
+-- remboursements : vide pour ce groupe, donc éprouvée en ÉCRITURE. Une
+-- violation de WITH CHECK LÈVE une erreur (42501), elle ne rend pas 0 ligne —
+-- tests.count_as n'a pas de gestionnaire d'exception : si l'insert levait sous
+-- son toit, le `reset role` ne s'exécuterait jamais et l'identité deadbeef
+-- fuirait sur toutes les assertions suivantes. throws_ok piège l'erreur dans
+-- sa propre savepoint.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'', ''de110000-0000-4000-8000-000000000000'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'remboursements : le co-membre, lui, peut en créer un');
+
+-- VOIR N'EST PAS SUPPRIMER : depense_groupes_delete exige is_groupe_owner,
+-- alors que l'UPDATE se contente de can_access_groupe. Un co-membre modifie
+-- donc le groupe mais ne l'efface pas — asymétrie voulue, jamais testée.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (delete from public.depense_groupes where id = ''bb000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          0::bigint, 'depense_groupes : le co-membre VOIT et MODIFIE, mais ne SUPPRIME pas');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
