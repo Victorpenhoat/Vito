@@ -94,16 +94,21 @@ insert into public.voyages (id, owner_id, titre)
 values ('bb000000-0000-4000-8000-000000000001',
         'de110000-0000-4000-8000-000000000000', 'pgtap voyage profondeur');
 
+-- `role` est contraint à 'owner' ou 'membre' (CHECK) — pas 'voyageur'. Vérifié
+-- au schéma le 2026-09-12, après qu'un premier jet s'y soit cassé.
 insert into public.voyage_membres (voyage_id, profile_id, role)
 values ('bb000000-0000-4000-8000-000000000001',
-        '11111111-1111-1111-1111-111111111111', 'voyageur');
+        '11111111-1111-1111-1111-111111111111', 'membre');
 
 insert into public.reservations (voyage_id, created_by)
 values ('bb000000-0000-4000-8000-000000000001',
         'de110000-0000-4000-8000-000000000000');
 
-insert into public.voyage_documents (voyage_id, nom, mime_type, contenu_chiffre, created_by)
-values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 'AAAA',
+-- `voyage_documents` porte `uploaded_by` (et non `created_by`) et exige
+-- `taille`, integer NOT NULL. Deux pièges qu'une requête sur les colonnes
+-- obligatoires ne montre pas : elle ne dit ni les CHECK, ni les noms exacts.
+insert into public.voyage_documents (voyage_id, nom, mime_type, contenu_chiffre, taille, uploaded_by)
+values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 'AAAA', 4,
         'de110000-0000-4000-8000-000000000000');
 
 -- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
@@ -132,6 +137,15 @@ insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
 ```
+
+> **Ce bloc a été corrigé APRÈS avoir été exécuté** (2026-09-12). Le premier jet
+> portait `'voyageur'` comme rôle et `created_by` sur `voyage_documents` : les
+> deux ont été rejetés par le schéma. La cause est une vérification sautée — pour
+> le lot 1, les fixtures avaient été EXÉCUTÉES contre la base avant d'être
+> écrites ici ; pour celui-ci, on s'était contenté d'une requête sur les colonnes
+> `NOT NULL` sans défaut, qui ne montre **ni les contraintes CHECK, ni les noms
+> de colonnes facultatives**. Le défaut est apparu exactement là où la
+> vérification manquait.
 
 - [ ] **Step 2 : Vérifier que chaque insertion a bien créé sa ligne**
 
