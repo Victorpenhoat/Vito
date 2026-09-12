@@ -1228,12 +1228,23 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
 -- exige zéro. Les trois se complètent : les deux premières prouvent le
 -- comportement observé, celle-ci grave l'absence structurelle qui le
 -- garantit pour toutes les lignes, présentes et futures.
+--
+-- Le filtre exclut `SELECT` plutôt que d'énumérer INSERT/UPDATE/DELETE.
+-- Raison : `cmd` peut aussi valoir `ALL` — l'idiome dominant du projet pour
+-- les policies « propriétaire » (29 tables du schéma déclarent leur policy en
+-- `for all`, ex. reservations_all, vins_all_owner). Une liste de verbes
+-- d'écriture ne matcherait jamais `ALL` et laisserait passer, silencieuse,
+-- la forme de policy la plus probable si quelqu'un en ajoutait une demain sur
+-- etablissements. Exclure la lecture dit l'invariant tel qu'il est —
+-- « rien d'autre que du SELECT » — et reste fail-closed : toute valeur de
+-- `cmd` non encore vue (y compris une future) est comptée et fait échouer
+-- l'assertion bruyamment plutôt que de passer inaperçue.
 select is(
   (select count(*) from pg_policies
     where schemaname = 'public' and tablename = 'etablissements'
-      and cmd in ('INSERT', 'UPDATE', 'DELETE'))::bigint,
+      and cmd <> 'SELECT')::bigint,
   0::bigint,
-  'etablissements : aucune policy d''écriture n''existe au catalogue (INSERT/UPDATE/DELETE)');
+  'etablissements : aucune policy autre que SELECT n''existe au catalogue');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
