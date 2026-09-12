@@ -1,14 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { etatValidite, joursAvant, MASQUE } from "./protege";
+import { etatValidite, joursAvant } from "./protege";
 
 const AUJ = "2026-09-07";
-
-describe("MASQUE", () => {
-  it("ne trahit pas la longueur du code", () => {
-    // Un masque qui suit la longueur annonce combien de caractères chercher.
-    expect(MASQUE).toBe("••••");
-  });
-});
 
 describe("etatValidite", () => {
   it("hier : expiré", () => {

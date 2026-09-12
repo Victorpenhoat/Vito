@@ -332,7 +332,8 @@
       "testes": "Provati",
       "tous": "Tutti",
       "carte": "Mappa",
-      "cave": "Cantina"
+      "cave": "Cantina",
+      "aria": "Filtra gli indirizzi"
     },
     "rechercherPlaceholder": "Nome, città, tag…",
     "trouver": "Trova",
@@ -1223,7 +1224,8 @@
     "adressesCount": "{n} indirizzi",
     "archives": "Archiviati",
     "archivesVide": "Nessun locale archiviato",
-    "adressesZone": "{n} nell'area visibile"
+    "adressesZone": "{n} nell'area visibile",
+    "effacer": "Cancella la ricerca"
   },
   "hotels": {
     "title": "Hotel",
@@ -1250,7 +1252,8 @@
       "a_tester": "Da provare",
       "sejours": "Soggiorni",
       "tous": "Tutti",
-      "carte": "Mappa"
+      "carte": "Mappa",
+      "aria": "Filtra gli indirizzi"
     },
     "rechercherPlaceholder": "Nome, città, regione, tag…",
     "trouver": "Trova",

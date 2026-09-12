@@ -332,7 +332,8 @@
       "testes": "Probados",
       "tous": "Todos",
       "carte": "Mapa",
-      "cave": "Bodega"
+      "cave": "Bodega",
+      "aria": "Filtrar las direcciones"
     },
     "rechercherPlaceholder": "Nombre, ciudad, etiqueta…",
     "trouver": "Buscar",
@@ -1223,7 +1224,8 @@
     "adressesCount": "{n} direcciones",
     "archives": "Archivados",
     "archivesVide": "Ningún sitio archivado",
-    "adressesZone": "{n} en la zona visible"
+    "adressesZone": "{n} en la zona visible",
+    "effacer": "Borrar la búsqueda"
   },
   "hotels": {
     "title": "Hoteles",
@@ -1250,7 +1252,8 @@
       "a_tester": "Por probar",
       "sejours": "Estancias",
       "tous": "Todos",
-      "carte": "Mapa"
+      "carte": "Mapa",
+      "aria": "Filtrar las direcciones"
     },
     "rechercherPlaceholder": "Nombre, ciudad, región, etiqueta…",
     "trouver": "Buscar",

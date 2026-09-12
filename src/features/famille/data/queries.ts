@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { dechiffrerChamp } from "@/lib/crypto/champs";
 import { maskDocNumber } from "../domain/mask";
 import { createServerSupabase, getCachedUser } from "@/lib/supabase/server";
 import { expiryStatus, monthsUntil } from "../domain/expiry";
@@ -150,8 +149,10 @@ export async function getProche(
       id: d.id,
       doc_type: d.doc_type,
       doc_label: d.doc_label,
-      // masque calculé serveur : le clair reste en base, chiffré
-      doc_number_masque: maskDocNumber(dechiffrerChamp(d.doc_number_chiffre)),
+      // Masque calculé serveur, SANS déchiffrer : le masque est une constante,
+      // seule la présence d'un numéro compte. Le clair ne sort qu'en réponse de
+      // `revelerNumero`, après vérification du mot de passe (docs/security.md §2).
+      doc_number_masque: maskDocNumber(d.doc_number_chiffre),
       country: d.country,
       holder_name: d.holder_name,
       issue_date: d.issue_date,
