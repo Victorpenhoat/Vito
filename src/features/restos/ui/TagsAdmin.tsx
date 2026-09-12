@@ -1,5 +1,6 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
+import { TagChip } from "@/features/shared/ui/TagChip";
 import { useTranslations } from "next-intl";
 import { MoreHorizontal, Plus } from "lucide-react";
 import { creerTag, updateTag, fusionnerTags, supprimerTag } from "../data/tagActions";
@@ -30,12 +31,10 @@ export function TagsAdmin({ tags }: { tags: TagAdmin[] }) {
     <div data-testid="tags-admin" className="flex flex-col gap-3.5">
       <div className="flex gap-1.5">
         {(["tous", "common", "restaurant", "hotel", "vin"] as const).map((s) => (
-          <button key={s} type="button" aria-pressed={scope === s} onClick={() => setScope(s)}
-            className={`rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-              scope === s ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"
-            }`}>
+          <TagChip key={s} onClick={() => setScope(s)}
+            ton={scope === s ? "selectionne" : "defaut"}>
             {t(`tags.scopes.${s}`)}
-          </button>
+          </TagChip>
         ))}
       </div>
 

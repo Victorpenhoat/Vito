@@ -1,5 +1,6 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
+import { TagChip } from "@/features/shared/ui/TagChip";
 import { useFormatter, useTranslations } from "next-intl";
 import { marquerVisite, marquerSejour } from "@/features/restos/data/actions";
 import { creerTag } from "@/features/restos/data/tagActions";
@@ -177,17 +178,14 @@ export function ExperienceForm({ listeItemId, tags, onDone, categorie = "resto",
           <span className="text-sm font-medium text-muted">{t("visite.verdict")}</span>
           <div className="flex flex-wrap gap-1.5">
             {dispo.map((tg) => (
-              <button key={tg.id} type="button" aria-pressed={selection.has(tg.id)} onClick={() => toggleTag(tg.id)}
-                className={`rounded-full px-3 py-1.5 text-[11.5px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                  selection.has(tg.id) ? "bg-ink font-semibold text-app" : "border border-line bg-surface-hover text-muted"
-                }`}>
+              <TagChip key={tg.id} onClick={() => toggleTag(tg.id)}
+                ton={selection.has(tg.id) ? "selectionne" : "defaut"}>
                 {tg.label}
-              </button>
+              </TagChip>
             ))}
-            <button type="button" data-testid="tag-volee" onClick={() => setNouveau("")}
-              className="rounded-full border border-dashed border-accent/40 bg-accent-50 px-3 py-1.5 text-[11.5px] text-accent focus-visible:outline-2 focus-visible:outline-accent">
+            <TagChip testId="tag-volee" onClick={() => setNouveau("")} ton="ajout">
               {t("tags.ajouterVolee")}
-            </button>
+            </TagChip>
           </div>
         </div>
 
