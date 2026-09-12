@@ -9,13 +9,15 @@ import { MASQUE } from "@/lib/securite/masque";
  * d'autant ce qu'il reste à deviner. Règle commune à toutes les données
  * protégées (docs/security.md §2).
  *
- * Prend la valeur **telle qu'elle est stockée — chiffrée** : seule sa présence
- * compte, le masque ne dérive jamais du contenu. C'est ce qui permet à la
- * requête de page de ne pas déchiffrer du tout.
+ * Ne reçoit QUE la présence d'un numéro — jamais la valeur, ni en clair ni
+ * chiffrée. L'invariant « le masque ne peut rien emprunter à ce qu'il
+ * remplace » cesse ainsi d'être une promesse tenue par la fonction : il est
+ * tenu par sa signature, et la requête de page n'a plus à lire la colonne
+ * chiffrée du tout (colonne générée `doc_number_present`, migration 00068).
  *
  * Rend la chaîne vide quand il n'y a pas de numéro — quatre points diraient
  * qu'un numéro existe.
  */
-export function maskDocNumber(valeurStockee: string | null): string {
-  return valeurStockee ? MASQUE : "";
+export function maskDocNumber(numeroPresent: boolean | null): string {
+  return numeroPresent ? MASQUE : "";
 }
