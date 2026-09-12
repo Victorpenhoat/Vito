@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(174);
+select plan(184);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1364,6 +1364,62 @@ select is(
       and cmd is distinct from 'SELECT')::bigint,
   0::bigint,
   'etablissements : aucune policy autre que SELECT n''existe au catalogue');
+
+-- ── Lot 3 / les prédicats que rien n'exerçait ──────────────────────────────
+-- Cinq prédicats SECURITY DEFINER ne sont cités par aucune policy testée. Ils
+-- ne refusent pas, ils répondent : l'invariant est donc une PAIRE par prédicat.
+-- Un prédicat coincé à false est aussi grave qu'un coincé à true, et seule la
+-- paire attrape les deux — un seul « il rend false pour l'étranger » serait
+-- satisfait par un prédicat qui rend false pour tout le monde.
+
+-- is_agence() lit le même claim JWT « user_role » que is_admin() (posé en
+-- production par custom_access_token_hook, 00002 ; cf. tests.count_as_admin
+-- plus haut). tests.bool_as ne pose que sub/role et JAMAIS user_role : sans ce
+-- claim, is_agence() rend false pour TOUTE identité, agence comprise — le
+-- témoin « vrai pour l'agence » serait donc vert pour la mauvaise raison,
+-- exactement le prédicat coincé à false que cette section existe pour
+-- attraper. D'où ce helper dédié, même idiome que tests.count_as_admin.
+create function tests.bool_as_role(p_uid uuid, p_role text, p_sql text) returns boolean language plpgsql as $$
+declare b boolean;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  execute p_sql into b;
+  reset role;
+  return b;
+end $$;
+
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()'),
+          'is_agence : vrai pour le compte agence');
+select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_agence()'),
+          'is_agence : faux pour un client');
+
+select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_concierge()'),
+          'is_concierge : faux pour un client ordinaire');
+select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000', 'select public.is_concierge()'),
+          'is_concierge : faux pour un compte sans profil');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''de110000-0000-4000-8000-000000000000'')'),
+          'is_premium : vrai pour le compte abonné');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_premium : faux pour un compte sans abonnement');
+
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
+          'est_mon_activite : vrai pour le propriétaire de l''activité');
+select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000',
+          'select public.est_mon_activite((select id from public.activites order by id limit 1))'),
+          'est_mon_activite : faux pour qui n''a pas créé l''activité');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''de110000-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : vrai pour le propriétaire du groupe');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : faux pour un uuid étranger au groupe');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
