@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(191);
+select plan(192);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1472,6 +1472,9 @@ select throws_ok(
        'with u as (update public.familles set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
   'owner_id immuable',
   'familles : le propriétaire ne peut pas se dessaisir du foyer');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.familles set nom = ''pgtap renomme'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : mais il peut le renommer — le verrou ne bloque que l''owner');
 
 -- conciergerie_lock_insert : le demandeur ne se répond pas à lui-même. On insère
 -- une demande EN PRÉTENDANT qu'elle est déjà confirmée et répondue ; le
