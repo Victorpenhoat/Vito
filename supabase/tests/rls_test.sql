@@ -718,6 +718,61 @@ select lives_ok(
   'une période d''un seul jour est acceptée');
 
 -- ============================================================
+-- Fixtures du socle : donner à chaque table vide une ligne d'autrui
+-- ============================================================
+-- Sans ces lignes, le balayage de l'étranger passe à vide sur neuf tables
+-- (cf. le garde-fou de vacuité). Elles appartiennent toutes à demo ou client,
+-- jamais à free — c'est ce qui rend le balayage probant.
+-- Tout est annulé par le rollback final : rien ne persiste.
+
+-- Un foyer appartenant à demo. Le trigger add_famille_owner_membre y ajoute
+-- automatiquement son propriétaire, ce qui alimente aussi famille_membres.
+insert into public.familles (id, owner_id, nom)
+values ('fa000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap foyer');
+
+-- Un resto partagé au foyer, et un avis : les deux s'accrochent à un
+-- établissement du seed, pris au hasard mais de façon déterministe.
+insert into public.famille_restos (famille_id, etablissement_id)
+select 'fa000000-0000-4000-8000-000000000001',
+       id from public.etablissements order by id limit 1;
+
+insert into public.avis (user_id, etablissement_id, note)
+select 'de110000-0000-4000-8000-000000000000',
+       id, 4 from public.etablissements order by id limit 1;
+
+-- L'agence suit un client : c'est la table qui porte le lien commercial.
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        '11111111-1111-1111-1111-111111111111');
+
+-- Un remboursement dans un groupe de dépenses du seed.
+insert into public.remboursements (groupe_id, de_profile_id, vers_profile_id, montant_cents, created_by)
+select g.id,
+       '11111111-1111-1111-1111-111111111111',
+       'de110000-0000-4000-8000-000000000000',
+       500,
+       'de110000-0000-4000-8000-000000000000'
+from public.depense_groupes g order by g.id limit 1;
+
+-- Un remboursement de voyage, entre deux participants créés plus haut dans ce
+-- fichier (section « dépense partagée entre voyageurs »).
+insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by)
+select p1.voyage_id, p1.id, p2.id, 250, p1.created_by
+from public.voyage_participants p1
+join public.voyage_participants p2
+  on p2.voyage_id = p1.voyage_id and p2.id <> p1.id
+order by p1.id, p2.id limit 1;
+
+-- Une échéance et une exception de créneau sur l'activité créée plus haut.
+insert into public.activite_paiements (activite_id, libelle, montant_cents)
+select id, 'pgtap cotisation', 12000 from public.activites order by id limit 1;
+
+-- `type` est contraint à 'annulation' ou 'ponctuelle' (CHECK) — pas 'annule'.
+insert into public.activite_creneau_exceptions (creneau_id, date, type)
+select id, '2027-01-13', 'annulation' from public.activite_creneaux order by id limit 1;
+
+-- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
 -- ============================================================
 -- Écrit ici, en FIN de fichier, délibérément : le fichier est une seule
@@ -819,17 +874,7 @@ end $$;
 
 select ok(
   tests.tables_sans_donnees((select array_agg(nom) from socle_exceptions))
-    <@ array[
-      'activite_creneau_exceptions',
-      'activite_paiements',
-      'agence_clients',
-      'avis',
-      'famille_membres',
-      'famille_restos',
-      'familles',
-      'remboursements',
-      'voyage_remboursements'
-    ]::text[],
+    <@ '{}'::text[],
   'toute table que le balayage ne peut pas éprouver est déclarée vide ici');
 
 select finish();
