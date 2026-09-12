@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(137);
+select plan(138);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -933,6 +933,18 @@ insert into public.voyage_documents (voyage_id, nom, mime_type, taille, contenu_
 values ('bb000000-0000-4000-8000-000000000001', 'pgtap.pdf', 'application/pdf', 4, 'AAAA',
         'de110000-0000-4000-8000-000000000000');
 
+-- Deux voyageurs SANS COMPTE, source pour l'assertion voyage_remboursements
+-- ci-dessous (ronde de correction 1 : la version précédente n'avait aucune
+-- ligne de voyage_participants rattachée à CE voyage, donc l'insert de preuve
+-- portait sur 0 ligne quelle que soit la policy — verte pour la mauvaise
+-- raison).
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000b', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap A', 'de110000-0000-4000-8000-000000000000');
+insert into public.voyage_participants (id, voyage_id, display_name, created_by)
+values ('bb000000-0000-4000-8000-00000000000c', 'bb000000-0000-4000-8000-000000000001',
+        'Voyageur pgtap B', 'de110000-0000-4000-8000-000000000000');
+
 -- Groupe de dépenses. Le trigger add_groupe_owner_membre inscrit demo.
 insert into public.depense_groupes (id, owner_id, titre)
 values ('bb000000-0000-4000-8000-000000000002',
@@ -992,11 +1004,25 @@ select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
           0::bigint, 'reservations : un non-membre n''en voit aucune');
 
 -- voyage_remboursements : la table est vide pour ce voyage, donc on l'éprouve
--- en ÉCRITURE — un non-membre ne doit pas pouvoir y insérer. Insérer sous une
--- identité qui n'a pas accès rend 0 ligne (la clause WITH CHECK filtre) ou lève.
-select is(tests.count_as('deadbeef-0000-4000-8000-000000000000',
-          'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) select ''bb000000-0000-4000-8000-000000000001'', p1.id, p2.id, 100, ''deadbeef-0000-4000-8000-000000000000'' from public.voyage_participants p1, public.voyage_participants p2 where p1.id <> p2.id limit 1 returning 1) select count(*) from u'),
-          0::bigint, 'voyage_remboursements : un non-membre n''y insère rien');
+-- en ÉCRITURE, avec les deux voyageurs pgtap A/B comme source déterministe
+-- (ronde de correction 1). Une violation de WITH CHECK LÈVE une erreur
+-- (42501, « new row violates row-level security policy ») — elle ne rend pas
+-- 0 ligne. tests.count_as n'a pas de gestionnaire d'exception : si l'insert
+-- levait sous son toit, le `reset role` ne s'exécuterait jamais et
+-- l'identité deadbeef fuiterait sur toutes les assertions suivantes. throws_ok
+-- est l'outil correct : il piège l'erreur dans sa propre savepoint.
+select throws_ok(
+  $$ select tests.count_as('deadbeef-0000-4000-8000-000000000000',
+       'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''deadbeef-0000-4000-8000-000000000000'') returning 1) select count(*) from u') $$,
+  '42501', null,
+  'voyage_remboursements : un non-membre n''y insère rien');
+
+-- Témoin positif : sans lui, le refus ci-dessus serait satisfait par une table
+-- où PERSONNE ne peut écrire. Le co-membre, lui, doit pouvoir créer ce
+-- remboursement (can_access_voyage est collaboratif, pas réservé au owner).
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'with u as (insert into public.voyage_remboursements (voyage_id, de_participant_id, vers_participant_id, montant_cents, created_by) values (''bb000000-0000-4000-8000-000000000001'', ''bb000000-0000-4000-8000-00000000000b'', ''bb000000-0000-4000-8000-00000000000c'', 100, ''11111111-1111-1111-1111-111111111111'') returning 1) select count(*) from u'),
+          1::bigint, 'voyage_remboursements : le co-membre peut créer un remboursement');
 
 -- VOIR N'EST PAS ÉCRIRE. Le co-membre voit le voyage (assertion 1) mais
 -- voyages_delete exige is_voyage_owner : sa suppression doit porter sur 0 ligne.
