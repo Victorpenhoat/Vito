@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(109);
+select plan(110);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -769,6 +769,30 @@ select is(
 select cmp_ok(
   (select count(*) from socle_anon), '>=', 48::bigint,
   'le balayage anon a bien visité tout le schéma');
+
+-- L'étranger : free@vito.test ne partage RIEN avec personne (c'est déjà ce que
+-- dit le seed). L'invariant est donc uniforme et n'exige de connaître la colonne
+-- propriétaire d'aucune table : un compte sans lien ne voit aucune ligne.
+--
+-- Les exceptions sont déclarées ICI, chacune avec sa raison. C'est le point de
+-- friction délibéré : une table qui voudrait rejoindre cette liste devra
+-- s'expliquer en revue.
+create temp table socle_exceptions(nom text primary key, raison text);
+insert into socle_exceptions values
+  ('etablissements',     'catalogue partagé, SELECT USING (true) assumé'),
+  ('vacances_scolaires', 'calendrier public pour tout compte connecté'),
+  ('tags',               'les tags système (user_id is null) sont un vocabulaire commun'),
+  ('profiles',           'chacun voit sa propre ligne (id = auth.uid())');
+
+create temp table socle_etranger as
+  select * from tests.balayage(
+    '44444444-4444-4444-8444-444444444444'::uuid,
+    (select array_agg(nom) from socle_exceptions));
+
+select is(
+  (select coalesce(array_agg(nom order by nom), '{}') from socle_etranger where lignes > 0),
+  '{}'::text[],
+  'un compte sans aucun lien ne voit aucune ligne d''autrui');
 
 select finish();
 rollback;
