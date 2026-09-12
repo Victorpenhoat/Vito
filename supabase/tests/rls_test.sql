@@ -1498,11 +1498,20 @@ select throws_ok(
   null,
   'conciergerie : un compte non abonné ne peut pas ouvrir de demande');
 
--- ── Lot 3 / handle_new_user : le rôle ne vient jamais du client ────────────
--- L'invariant est écrit dans le commentaire de la fonction : raw_user_meta_data
--- est contrôlé par le client, donc le rôle n'en est JAMAIS tiré. Jusqu'ici rien
--- ne le gardait. Un compte qui s'inscrirait en réclamant « role: admin » dans
--- ses métadonnées doit ressortir « client ».
+-- ── Lot 3 / handle_new_user : l'invariant tient par OMISSION ───────────────
+-- Le corps réel du déclencheur (migration 00001) n'insère que `id` et
+-- `display_name` — il ne mentionne JAMAIS la colonne `role`. Ce n'est donc PAS
+-- le déclencheur qui écarte un rôle réclamé aux métadonnées : c'est le
+-- `default 'client'` de la colonne `public.profiles.role` qui s'applique,
+-- faute de valeur fournie. L'invariant écrit en commentaire de la fonction
+-- tient aujourd'hui par cette omission, pas par une logique d'écartement.
+-- L'assertion qui suit garde donc le RÉSULTAT (le profil créé porte 'client'),
+-- quel que soit le mécanisme qui le produit. C'est délibéré : si demain le
+-- déclencheur se mettait à écrire `role` depuis les métadonnées — pour un
+-- flux d'invitation, par exemple — le défaut de colonne cesserait de
+-- s'appliquer et le rôle réclamé par le client pourrait passer. Cette
+-- assertion l'attraperait ; un test du mécanisme actuel (« le déclencheur
+-- écarte le rôle ») ne l'aurait pas fait, puisqu'il n'écarte rien.
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
                         email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
                         created_at, updated_at)
@@ -1513,7 +1522,7 @@ values ('ba000000-0000-4000-8000-00000000000f', '00000000-0000-0000-0000-0000000
 
 select is((select role::text from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
           'client',
-          'handle_new_user : un compte qui réclame « admin » dans ses métadonnées naît client');
+          'handle_new_user : le profil créé porte role = client, quel que soit le rôle réclamé aux métadonnées');
 select is((select display_name from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
           'Escalade',
           'handle_new_user : mais le nom affiché, lui, est bien repris des métadonnées');
