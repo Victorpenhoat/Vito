@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(110);
+select plan(111);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -793,6 +793,44 @@ select is(
   (select coalesce(array_agg(nom order by nom), '{}') from socle_etranger where lignes > 0),
   '{}'::text[],
   'un compte sans aucun lien ne voit aucune ligne d''autrui');
+
+-- Le piège que ce garde-fou existe pour attraper : « l'étranger voit 0 ligne »
+-- est VRAI d'une table vide, même avec une policy grande ouverte. Sur une base
+-- fraîchement seedée, 19 des 48 tables sont vides — le balayage se prononcerait
+-- sur du néant pour 40 % du schéma.
+--
+-- On compte donc hors RLS (le rôle courant est le propriétaire, il la contourne)
+-- et on exige que toute table vide soit DÉCLARÉE. `<@` (inclusion) plutôt que
+-- l'égalité : ajouter des données ne doit pas casser le test, mais une NOUVELLE
+-- table vide doit le faire.
+create function tests.tables_sans_donnees(p_exceptions text[])
+returns text[] language plpgsql as $$
+declare t text; n bigint; vides text[] := '{}';
+begin
+  for t in select tablename from pg_tables
+           where schemaname = 'public' and tablename <> all(p_exceptions)
+           order by tablename
+  loop
+    execute format('select count(*) from public.%I', t) into n;
+    if n = 0 then vides := vides || t; end if;
+  end loop;
+  return vides;
+end $$;
+
+select ok(
+  tests.tables_sans_donnees((select array_agg(nom) from socle_exceptions))
+    <@ array[
+      'activite_creneau_exceptions',
+      'activite_paiements',
+      'agence_clients',
+      'avis',
+      'famille_membres',
+      'famille_restos',
+      'familles',
+      'remboursements',
+      'voyage_remboursements'
+    ]::text[],
+  'toute table que le balayage ne peut pas éprouver est déclarée vide ici');
 
 select finish();
 rollback;
