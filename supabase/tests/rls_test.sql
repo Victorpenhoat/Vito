@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(184);
+select plan(191);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1427,6 +1427,73 @@ select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
 select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
           'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''deadbeef-0000-4000-8000-000000000000'')'),
           'is_groupe_membre : faux pour un uuid étranger au groupe');
+
+-- ── Lot 3 / les déclencheurs ───────────────────────────────────────────────
+-- FIXTURES PROPRES À CE LOT, et c'est délibéré. Le lot 2 crée un voyage
+-- `bb…0001` et un groupe `bb…0002`, mais les SUPPRIME en fin de ses sections
+-- (c'est son témoin positif : le propriétaire, lui, peut supprimer). Ils
+-- n'existent donc plus à cet endroit du fichier — vérifié, la dernière
+-- occurrence de chacun est un DELETE. Seul le foyer `fa…0001` survit, parce que
+-- le lot 2 le re-crée pour ne pas vider les tables du Cercle.
+-- D'où la règle, encore : la ligne qu'on éprouve, on la crée.
+insert into public.voyages (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 groupe');
+
+-- Un déclencheur ne s'appelle pas : on éprouve son EFFET. Les trois verrous
+-- d'owner lèvent « owner_id immuable » — vérifié au catalogue. Chaque refus est
+-- apparié à une modification LÉGITIME qui doit passer : sans elle, « on ne peut
+-- pas changer l'owner » serait satisfait par une table qu'on ne peut pas
+-- modifier du tout.
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.voyages set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'voyages : le propriétaire ne peut pas se dessaisir du voyage');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.voyages set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyages : mais il peut le renommer — le verrou ne bloque que l''owner');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.depense_groupes set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'depense_groupes : le propriétaire ne peut pas se dessaisir du groupe');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.depense_groupes set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : mais il peut le renommer');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.familles set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'familles : le propriétaire ne peut pas se dessaisir du foyer');
+
+-- conciergerie_lock_insert : le demandeur ne se répond pas à lui-même. On insère
+-- une demande EN PRÉTENDANT qu'elle est déjà confirmée et répondue ; le
+-- déclencheur doit remettre le statut à « nouvelle » et effacer la réponse.
+--
+-- L'identité est `demo` et non `client` : la policy d'insertion exige
+-- `is_premium(auth.uid())`, et seul demo l'est. C'est un invariant en soi —
+-- la conciergerie est réservée aux abonnés — d'où l'assertion qui suit.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, statut, reponse, date_resa, heure_resa, nombre_convives) select ''de110000-0000-4000-8000-000000000000'', ''resto'', e.id, ''pgtap'', ''confirmee'', ''je me reponds'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text || ''/'' || coalesce(reponse, ''(null)'')) select * from u'),
+          'nouvelle/(null)',
+          'conciergerie : une demande naît « nouvelle » et sans réponse, quoi qu''en dise le client');
+
+-- Témoin de l'autre bord : un compte NON abonné ne peut pas ouvrir de demande.
+-- Sans lui, l'assertion ci-dessus serait satisfaite par une table où personne
+-- n'écrit. Le refus vient de la clause WITH CHECK, donc il LÈVE.
+select throws_ok(
+  $$ select tests.text_as('11111111-1111-1111-1111-111111111111',
+       'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, date_resa, heure_resa, nombre_convives) select ''11111111-1111-1111-1111-111111111111'', ''resto'', e.id, ''pgtap'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text) select * from u') $$,
+  '42501',
+  null,
+  'conciergerie : un compte non abonné ne peut pas ouvrir de demande');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
