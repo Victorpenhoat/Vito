@@ -1395,6 +1395,13 @@ select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', '
 select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_agence()'),
           'is_agence : faux pour un client');
 
+-- Paire incomplète, sciemment : is_concierge() a aujourd'hui le MÊME corps
+-- qu'is_agence() (même clause `in ('agence', 'admin')`), aucun rôle
+-- « concierge » distinct n'existe dans le schéma ni dans le seed. Il n'y a
+-- donc pas de compte pour lequel construire un témoin positif sans inventer
+-- une donnée. Les deux assertions ci-dessous ne couvrent que la moitié de
+-- l'invariant (faux pour qui n'a pas le droit) ; le jour où un rôle/claim
+-- concierge existera réellement, ajouter son témoin « vrai » ici.
 select ok(not tests.bool_as('11111111-1111-1111-1111-111111111111', 'select public.is_concierge()'),
           'is_concierge : faux pour un client ordinaire');
 select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000', 'select public.is_concierge()'),
@@ -1411,7 +1418,7 @@ select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
           'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
           'est_mon_activite : vrai pour le propriétaire de l''activité');
 select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000',
-          'select public.est_mon_activite((select id from public.activites order by id limit 1))'),
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
           'est_mon_activite : faux pour qui n''a pas créé l''activité');
 
 select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
