@@ -35,8 +35,8 @@ const canal = (c: number) => {
   return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
 };
 
-/** Luminance relative WCAG d'un `#rrggbb`. */
-export function luminance(hex: string): number {
+/** Luminance relative WCAG d'un `#rrggbb`. Interne : seul `contraste` la lit. */
+function luminance(hex: string): number {
   const n = parseInt(hex.slice(1), 16);
   return 0.2126 * canal((n >> 16) & 255) + 0.7152 * canal((n >> 8) & 255) + 0.0722 * canal(n & 255);
 }
