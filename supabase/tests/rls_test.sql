@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(222);
+select plan(232);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1846,6 +1846,223 @@ end $$;
 
 select is(tests.creer_voyage_puis_compter('22222222-2222-2222-2222-222222222222', 'agence'),
           1::bigint, 'creer_voyage_pour_client : l''agence, elle, crée bien le voyage pour son client lié');
+
+-- ============================================================
+-- Lot 4 / tâche 4 — les cinq fonctions auto-portées
+-- ============================================================
+-- cancel_subscription, quitter_famille, revoquer_autres_sessions,
+-- mock_subscribe, mes_connexions_recentes agissent TOUTES sur auth.uid() —
+-- aucun argument ne désigne un compte cible. Il n'existe donc PAS d'appelant
+-- « non autorisé » pour elles : un étranger qui les appelle agit sur ses
+-- propres données (inexistantes ou vides), jamais sur celles d'un autre.
+-- Écrire un throws_ok d'autorisation serait FAUX — ce n'est pas leur frontière.
+--
+-- Leur invariant est double : (1) elles n'atteignent JAMAIS les données
+-- d'autrui, et (2) elles refusent l'anonyme. Le comportement anonyme n'est
+-- PAS uniforme — mesuré par exécution (un jeton `authenticated` SANS `sub`,
+-- donc `auth.uid()` réellement NULL dans le corps de la fonction, distinct du
+-- rôle Postgres `anon` que la GRANT bloque de toute façon en amont, avant
+-- même d'atteindre le corps) :
+--   cancel_subscription        -> lève 'authentification requise'
+--   quitter_famille             -> lève 'authentification requise'
+--   mock_subscribe               -> lève 'authentification requise'
+--   revoquer_autres_sessions    -> NE LÈVE PAS, rend 0
+--   mes_connexions_recentes     -> NE LÈVE PAS, rend un ensemble vide (0 ligne)
+-- Vérifié avec tests.count_as/text_as(NULL, …) : NULL comme p_uid pose
+-- {"sub": null, "role": "authenticated"} → auth.uid() = NULL, rôle Postgres
+-- authenticated (donc la GRANT laisse passer, et c'est bien le corps de la
+-- fonction qu'on mesure ici, pas la GRANT).
+
+-- 1) cancel_subscription : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.cancel_subscription()::text') $$,
+  'authentification requise',
+  'cancel_subscription : un jeton sans identité est refusé');
+
+-- 2) cancel_subscription : n'affecte que l'abonnement de l'appelant.
+-- Témoin positif intégré au helper : si l'appel n'a pas RÉELLEMENT annulé
+-- l'abonnement de l'appelant, le helper lève lui-même — l'assertion ne peut
+-- donc pas rester verte sur un no-op. de110000 (démo) porte un abonnement actif
+-- du seed ; 55555555 (premium) sert de témoin, actif et jamais touché ici.
+create function tests.annuler_abonnement_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.cancel_subscription();
+  reset role; -- comptage hors RLS, même précaution que delier_puis_compter plus haut
+  select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'canceled';
+  if n_soi <> 1 then
+    raise exception 'cancel_subscription n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from public.subscriptions where user_id = p_temoin and status = 'active';
+  return n;
+end $$;
+
+select is(tests.annuler_abonnement_puis_compter('de110000-0000-4000-8000-000000000000',
+          '55555555-5555-4555-8555-555555555555'),
+          1::bigint,
+          'cancel_subscription : n''annule que l''abonnement de l''appelant, jamais celui d''autrui');
+
+-- 3) quitter_famille : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.quitter_famille()::text') $$,
+  'authentification requise',
+  'quitter_famille : un jeton sans identité est refusé');
+
+-- 4) quitter_famille : ne retire que l'appelant.
+-- Fixture nécessaire : à ce point du fichier, free (44444444) est l'UNIQUE
+-- membre non-owner du foyer fa000000…0001 (task 3 l'a invité, task 3 a retiré
+-- client). Sans un SECOND membre non-owner, un bug qui oublierait le filtre
+-- `profile_id = auth.uid()` (tout en gardant `role <> 'owner'`) resterait
+-- invisible : free serait la SEULE ligne non-owner de la table, sa suppression
+-- paraîtrait correcte quelle qu'en soit la cause exacte. admin (33333333),
+-- jusqu'ici hors de toute famille, sert de second témoin.
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001', '33333333-3333-3333-3333-333333333333', 'membre');
+
+create function tests.quitter_famille_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.quitter_famille();
+  reset role;
+  select count(*) into n_soi from public.famille_membres where profile_id = p_uid;
+  if n_soi <> 0 then
+    raise exception 'quitter_famille n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from public.famille_membres where profile_id = p_temoin;
+  return n;
+end $$;
+
+select is(tests.quitter_famille_puis_compter('44444444-4444-4444-8444-444444444444',
+          '33333333-3333-3333-3333-333333333333'),
+          1::bigint,
+          'quitter_famille : ne retire que l''appelant, jamais un autre membre du foyer');
+
+-- Fixture posée AVANT l'assertion anonyme (pas seulement avant le self-only,
+-- ci-dessous) : sans sessions RÉELLES déjà présentes, « rend 0 » serait vrai
+-- aussi bien pour un refus qu'un compte authentifié n'ayant simplement aucune
+-- session à révoquer — vacuité mesurée par substitution (cf. rapport). Deux
+-- sessions pour client (11111111), une pour agence (22222222, témoin).
+insert into auth.sessions (id, user_id, created_at, updated_at) values
+  ('aaaaaaaa-0000-4000-8000-0000000005e1', '11111111-1111-1111-1111-111111111111', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e2', '11111111-1111-1111-1111-111111111111', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e3', '22222222-2222-2222-2222-222222222222', now(), now());
+
+-- 5) revoquer_autres_sessions : anonyme — NE LÈVE PAS, rend 0 (mesuré). Mais
+-- rendre 0 ne suffit pas à prouver le refus : un compte réel SANS session à
+-- révoquer rendrait aussi 0. La preuve porte donc sur l'EFFET, pas le retour :
+-- les deux sessions RÉELLES de client doivent survivre intactes à cet appel.
+create function tests.revoquer_sessions_anon_puis_compter() returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', null, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.revoquer_autres_sessions();
+  reset role;
+  select count(*) into n from auth.sessions where user_id = '11111111-1111-1111-1111-111111111111';
+  return n;
+end $$;
+
+select is(tests.revoquer_sessions_anon_puis_compter(),
+          2::bigint,
+          'revoquer_autres_sessions : un jeton sans identité ne révoque aucune session réelle (rend 0, ne lève pas)');
+
+-- 6) revoquer_autres_sessions : ne révoque que les sessions de l'appelant.
+-- Témoin positif intégré au helper (comme ci-dessus) : les 2 sessions de
+-- client doivent RÉELLEMENT disparaître, celle d'agence rester intacte.
+create function tests.revoquer_sessions_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.revoquer_autres_sessions();
+  reset role;
+  select count(*) into n_soi from auth.sessions where user_id = p_uid;
+  if n_soi <> 0 then
+    raise exception 'revoquer_autres_sessions n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from auth.sessions where user_id = p_temoin;
+  return n;
+end $$;
+
+select is(tests.revoquer_sessions_puis_compter('11111111-1111-1111-1111-111111111111',
+          '22222222-2222-2222-2222-222222222222'),
+          1::bigint,
+          'revoquer_autres_sessions : ne révoque que les sessions de l''appelant, jamais celles d''autrui');
+
+-- 7) mock_subscribe : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.mock_subscribe(''monthly'')::text') $$,
+  'authentification requise',
+  'mock_subscribe : un jeton sans identité est refusé');
+
+-- 8) mock_subscribe : ne crée/majore que l'abonnement de l'appelant. client
+-- (11111111) n'a encore AUCUNE ligne subscriptions à ce point (seul de110000
+-- et 55555555 en portent une, et de110000 vient d'être annulée ci-dessus) :
+-- l'effet est une VRAIE insertion, pas un upsert sur une ligne déjà active.
+-- 55555555 (jamais touché dans cette tâche) sert de témoin — SON PERIOD
+-- ('yearly', posé par le seed), pas son statut : un compteur sur `status =
+-- ''active''` collapse à la même valeur (1) que l'appelant soit VRAIMENT
+-- isolé ou que p_temoin désigne l'appelant lui-même — vérifié par
+-- substitution, cf. rapport. `period` distingue les deux : si mock_subscribe
+-- touchait la ligne du témoin, son period deviendrait 'monthly' comme celui
+-- de l'appelant, jamais 'yearly'.
+create function tests.mock_subscribe_puis_compter(p_uid uuid, p_periode text, p_temoin uuid) returns text language plpgsql as $$
+declare v_periode text; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.mock_subscribe(p_periode);
+  reset role;
+  select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'active';
+  if n_soi <> 1 then
+    raise exception 'mock_subscribe n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select period into v_periode from public.subscriptions where user_id = p_temoin;
+  return v_periode;
+end $$;
+
+select is(tests.mock_subscribe_puis_compter('11111111-1111-1111-1111-111111111111', 'monthly',
+          '55555555-5555-4555-8555-555555555555'),
+          'yearly',
+          'mock_subscribe : ne crée/majore que l''abonnement de l''appelant, jamais celui d''autrui');
+
+-- Fixture posée AVANT l'assertion anonyme, même raison que pour
+-- revoquer_autres_sessions ci-dessus : sans lignes RÉELLES déjà présentes,
+-- « rend 0 » serait vrai aussi bien pour un refus que pour un compte réel
+-- n'ayant simplement aucun historique — vacuité mesurée par substitution
+-- (cf. rapport). 2 entrées pour client (11111111), 1 pour agence (22222222,
+-- témoin).
+insert into auth.audit_log_entries (instance_id, id, payload, created_at, ip_address) values
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', '11111111-1111-1111-1111-111111111111', 'action', 'login'), now(), ''),
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', '11111111-1111-1111-1111-111111111111', 'action', 'logout'), now(), ''),
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', '22222222-2222-2222-2222-222222222222', 'action', 'login'), now(), '');
+
+-- 9) mes_connexions_recentes : anonyme — NE LÈVE PAS, rend un ensemble vide,
+-- MALGRÉ les entrées réelles ci-dessus : la preuve porte sur leur absence du
+-- résultat, pas sur un compte qui serait 0 faute d'historique.
+select is(tests.count_as(null, 'select count(*) from public.mes_connexions_recentes(10)'),
+          0::bigint,
+          'mes_connexions_recentes : un jeton sans identité ne voit aucune des connexions réelles existantes');
+
+-- 10) mes_connexions_recentes : ne renvoie que les connexions de l'appelant.
+-- Le compte exact (2, ni 0 ni 3) est la preuve : 0 dirait que la fonction est
+-- cassée (vacuité), 3 dirait qu'elle fuit les entrées d'agence.
+select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+          'select count(*) from public.mes_connexions_recentes(10)'),
+          2::bigint,
+          'mes_connexions_recentes : ne renvoie que les connexions de l''appelant, jamais celles d''autrui');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
