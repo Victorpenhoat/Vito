@@ -1594,9 +1594,13 @@ select throws_ok(
   'non autorisé',
   'unshare_voyage : un non-propriétaire ne retire pas un membre du voyage d''autrui');
 
--- unshare_voyage rend void ; le cast ::text d'un void vaut '' (vérifié), donc
--- l'absence d'exception se lit ici comme un succès explicite, pas seulement
--- par déduction depuis l'effet en base mesuré juste après.
+-- unshare_voyage rend void ; le cast ::text d'un void vaut TOUJOURS '' (vérifié),
+-- succès ou échec silencieux confondus. Cette ligne n'établit donc que l'absence
+-- d'exception — jamais que le membre a été retiré, ce que seule l'assertion de
+-- comptage qui suit prouve (le compte y part de 1, posé par le share_voyage
+-- ci-dessus). On la garde quand même : elle distingue « la fonction a refusé en
+-- levant » de « la fonction a tourné sans rien faire », ce que le comptage seul
+-- ne distinguerait pas.
 select is(tests.text_as('de110000-0000-4000-8000-000000000000',
           'select public.unshare_voyage(''dd000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text'),
           '', 'unshare_voyage : le propriétaire, lui, retire le membre');
@@ -1629,6 +1633,13 @@ select throws_ok(
   'non autorisé',
   'unshare_groupe : un non-propriétaire ne retire pas un membre du groupe d''autrui');
 
+-- unshare_groupe rend void ; le cast ::text d'un void vaut TOUJOURS '' (vérifié),
+-- succès ou échec silencieux confondus. Cette ligne n'établit donc que l'absence
+-- d'exception — jamais que le membre a été retiré, ce que seule l'assertion de
+-- comptage qui suit prouve (le compte y part de 1, posé par le share_groupe
+-- ci-dessus). On la garde quand même : elle distingue « la fonction a refusé en
+-- levant » de « la fonction a tourné sans rien faire », ce que le comptage seul
+-- ne distinguerait pas.
 select is(tests.text_as('de110000-0000-4000-8000-000000000000',
           'select public.unshare_groupe(''dd000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'')::text'),
           '', 'unshare_groupe : le propriétaire, lui, retire le membre');
