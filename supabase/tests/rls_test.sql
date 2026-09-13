@@ -1803,23 +1803,45 @@ begin
   return v;
 end $$;
 
+-- LE CLIENT À LIER EST CRÉÉ ICI, ET CE N'EST PAS UN DOUBLON DU SEED — même
+-- raison qu'au bloc `creer_voyage_pour_client` plus bas. La garde du helper
+-- ci-dessous exige l'ABSENCE du lien avant l'appel ; adossée à un compte du
+-- seed (free@vito.test), cette précondition était la SEULE du fichier que le
+-- fichier ne posait pas lui-même. Mesuré : il suffisait qu'une session de dev
+-- saisisse free@vito.test dans le formulaire agence pour que le lien reste à
+-- demeure et que la suite RLS avorte DÉFINITIVEMENT — 211 ok, 53 instructions
+-- abandonnées, SOCLE compris. Un compte créé ici n'a aucun lien par
+-- construction : la ligne que l'assertion éprouve, elle la crée.
+-- `handle_new_user` pose le profil que la FK d'agence_clients exige, et
+-- lier_client résout son argument par l'e-mail (auth.users), d'où l'e-mail
+-- explicite.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004c2', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-client-a-lier@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Client A Lier"}'::jsonb,
+        now(), now());
+
 -- lier_client : un compte sans le rôle agence ne lie personne. Témoin :
--- l'agence, elle, lie bien un nouveau client (assertion suivante) — free
--- (44444444…), jamais encore lié, pour que l'effet soit une VRAIE insertion et
+-- l'agence, elle, lie bien un nouveau client (assertion suivante), sur le
+-- compte créé juste au-dessus — pour que l'effet soit une VRAIE insertion et
 -- non un `on conflict do nothing` silencieux sur le lien du lot 1.
 select throws_ok(
   $$ select tests.text_as_role('11111111-1111-1111-1111-111111111111', 'client',
-       'select public.lier_client(''free@vito.test'')') $$,
+       'select public.lier_client(''pgtap-client-a-lier@vito.test'')') $$,
   'réservé aux agences',
   'lier_client : un compte sans le rôle agence ne lie pas de client');
 
 -- GARDE INTERNE plutôt qu'assertion nouvelle : lier_client fait `on conflict
 -- (agence_id, client_id) do nothing` et rend 'ok' MÊME si le lien existait
 -- déjà. Le couple « rend ok » + « compte = 1 » est donc satisfaisable par un
--- no-op, et ne tenait que par un fait externe consigné en commentaire (« free
--- jamais encore lié »). Le helper lève si le lien EXISTE avant l'appel et rend
--- le texte que l'assertion compare : la ligne de comptage qui suit est
--- inchangée, et le fait externe est devenu une vérification.
+-- no-op, et ne tenait que par un fait externe consigné en commentaire (« ce
+-- compte n'a jamais été lié »). Le helper lève si le lien EXISTE avant l'appel
+-- et rend le texte que l'assertion compare : la ligne de comptage qui suit est
+-- inchangée, et le fait externe est devenu une vérification — vérification
+-- que le compte créé ci-dessus rend vraie PAR CONSTRUCTION, et non par
+-- l'humeur de la base.
 create function tests.lier_client_puis_texte(p_uid uuid, p_role text, p_email text, p_client uuid) returns text language plpgsql as $$
 declare v text; n_avant bigint;
 begin
@@ -1837,11 +1859,11 @@ begin
 end $$;
 
 select is(tests.lier_client_puis_texte('22222222-2222-2222-2222-222222222222', 'agence',
-          'free@vito.test', '44444444-4444-4444-8444-444444444444'),
+          'pgtap-client-a-lier@vito.test', 'ba000000-0000-4000-8000-0000000004c2'),
           'ok', 'lier_client : l''agence, elle, lie bien un nouveau client');
 
 select is(tests.count_as('22222222-2222-2222-2222-222222222222',
-          'select count(*) from public.agence_clients where agence_id = ''22222222-2222-2222-2222-222222222222'' and client_id = ''44444444-4444-4444-8444-444444444444'''),
+          'select count(*) from public.agence_clients where agence_id = ''22222222-2222-2222-2222-222222222222'' and client_id = ''ba000000-0000-4000-8000-0000000004c2'''),
           1::bigint, 'lier_client : et la liaison a réellement inscrit le lien');
 
 -- creer_voyage_pour_client : DEUX raisons de lever, testées séparément.
