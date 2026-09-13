@@ -1813,8 +1813,31 @@ select throws_ok(
   'réservé aux agences',
   'lier_client : un compte sans le rôle agence ne lie pas de client');
 
-select is(tests.text_as_role('22222222-2222-2222-2222-222222222222', 'agence',
-          'select public.lier_client(''free@vito.test'')'),
+-- GARDE INTERNE plutôt qu'assertion nouvelle : lier_client fait `on conflict
+-- (agence_id, client_id) do nothing` et rend 'ok' MÊME si le lien existait
+-- déjà. Le couple « rend ok » + « compte = 1 » est donc satisfaisable par un
+-- no-op, et ne tenait que par un fait externe consigné en commentaire (« free
+-- jamais encore lié »). Le helper lève si le lien EXISTE avant l'appel et rend
+-- le texte que l'assertion compare : la ligne de comptage qui suit est
+-- inchangée, et le fait externe est devenu une vérification.
+create function tests.lier_client_puis_texte(p_uid uuid, p_role text, p_email text, p_client uuid) returns text language plpgsql as $$
+declare v text; n_avant bigint;
+begin
+  select count(*) into n_avant from public.agence_clients
+   where agence_id = p_uid and client_id = p_client;
+  if n_avant <> 0 then
+    raise exception 'lier_client : le lien existait DÉJÀ avant l''appel, le ''ok'' qui suit ne prouverait aucune insertion : mutation vacueuse';
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  select public.lier_client(p_email) into v;
+  reset role;
+  return v;
+end $$;
+
+select is(tests.lier_client_puis_texte('22222222-2222-2222-2222-222222222222', 'agence',
+          'free@vito.test', '44444444-4444-4444-8444-444444444444'),
           'ok', 'lier_client : l''agence, elle, lie bien un nouveau client');
 
 select is(tests.count_as('22222222-2222-2222-2222-222222222222',
@@ -2204,7 +2227,16 @@ begin
   set local role authenticated;
   perform public.upsert_etablissement(p_payload);
   reset role; -- lecture publique du catalogue (SELECT USING (true)) ; reset par cohérence avec l'idiome du fichier
-  select count(*) into n from public.etablissements where place_id = p_place_id and nom = p_nom;
+  -- Le comptage porte sur `place_id` SEUL : c'est ce que le libellé affirme.
+  -- Avec `and nom = p_nom`, une seconde ligne INSÉRÉE sous le nouveau nom
+  -- rendrait 1 exactement comme une mise à jour en place — le filtre cachait
+  -- le cas même qu'il prétendait exclure. Le nom, lui, reste éprouvé : la
+  -- garde ci-dessous tombe si l'appel n'a pas RÉELLEMENT posé le nom attendu,
+  -- sans quoi « compte = 1 » serait vert sur une fonction qui n'écrit rien.
+  if not exists (select 1 from public.etablissements where place_id = p_place_id and nom = p_nom) then
+    raise exception 'upsert_etablissement n''a produit aucun effet mesurable sur la fiche : mutation vacueuse';
+  end if;
+  select count(*) into n from public.etablissements where place_id = p_place_id;
   return n;
 end $$;
 
@@ -2236,10 +2268,16 @@ select throws_ok(
 -- ailleurs (cf. tête de section delier_client) — testée : elle rend 0, la
 -- fonction n'est JAMAIS appelée, le CTE est élagué. Remède identique : appel
 -- et comptage en deux instructions dans un helper dédié.
--- Cible : la MÊME ligne (`order by id limit 1`) que les deux assertions du
--- lot 2 ci-dessus ("un compte connecté ne modifie pas le catalogue" / "ni ne
--- l'efface") — la preuve que l'écriture directe est refusée ET que la porte
--- prévue fonctionne porte sur LA MÊME ligne.
+-- Cible : la MÊME ligne que les deux assertions du lot 2 ci-dessus ("un compte
+-- connecté ne modifie pas le catalogue" / "ni ne l'efface") — la preuve que
+-- l'écriture directe est refusée ET que la porte prévue fonctionne porte sur LA
+-- MÊME ligne. `order by id limit 1` NE SUFFIT PLUS À LE GARANTIR : `id` a pour
+-- défaut gen_random_uuid(), et upsert_etablissement vient d'insérer
+-- `pgtap-place-1` juste au-dessus — mesuré, 18 fiches au seed, donc environ un
+-- run sur 19 où la fiche pgtap porte l'uuid minimal et vole la cible. Le lot 2
+-- ayant couru AVANT cette insertion, sa ligne est la plus petite du catalogue
+-- HORS pgtap : l'exclure rétablit le bouclage, sans dépendre d'un place_id de
+-- seed que rien n'oblige à rester stable.
 create function tests.cache_photo_puis_compter(p_uid uuid, p_etab uuid, p_ref text) returns bigint language plpgsql as $$
 declare n bigint;
 begin
@@ -2253,7 +2291,8 @@ begin
 end $$;
 
 select is(tests.cache_photo_puis_compter('11111111-1111-1111-1111-111111111111',
-          (select id from public.etablissements order by id limit 1), 'pgtap-ref'),
+          (select id from public.etablissements
+            where place_id is distinct from 'pgtap-place-1' order by id limit 1), 'pgtap-ref'),
           1::bigint,
           'cache_etablissement_photo : le catalogue s''écrit par la porte prévue, là où l''écriture directe est refusée');
 
