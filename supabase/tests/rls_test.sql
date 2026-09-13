@@ -1982,20 +1982,45 @@ select is(tests.quitter_famille_puis_compter('44444444-4444-4444-8444-4444444444
           1::bigint,
           'quitter_famille : ne retire que l''appelant, jamais un autre membre du foyer');
 
+-- DEUX IDENTITÉS CRÉÉES ICI, ET CE N'EST PAS UN DOUBLON DU SEED. Les quatre
+-- assertions qui suivent (sessions et journal d'audit) comptent des lignes de
+-- `auth.sessions` et `auth.audit_log_entries` — deux tables que toute connexion
+-- RÉELLE alimente et que rien ne nettoie. Adossées à `client@vito.test`, elles
+-- exigeaient EXACTEMENT 2 sur un compte que la suite e2e et le développement
+-- local connectent : une seule connexion simulée les faisait rougir toutes deux
+-- (mesuré, cf. rapport) — la classe de flakiness déjà payée deux fois sur ce
+-- projet (« e2e contamine RLS », « jamais de totaux absolus »). Les fonctions
+-- sous test étant AUTO-PORTÉES (elles n'agissent que sur auth.uid()), rien
+-- n'oblige à emprunter les comptes du seed : sur des identités que ce lot crée,
+-- sessions et historique ne contiennent que ce que le lot y met, quelle que
+-- soit la contamination. NE PAS les remplacer par `client`/`agence`.
+-- `handle_new_user` pose les profils ; la FK de auth.sessions exige les comptes.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004a1', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-sessions@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Sessions"}'::jsonb,
+        now(), now()),
+       ('ba000000-0000-4000-8000-0000000004a2', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-sessions-temoin@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Sessions Témoin"}'::jsonb,
+        now(), now());
+
 -- Fixture posée AVANT l'assertion anonyme (pas seulement avant le self-only,
 -- ci-dessous) : sans sessions RÉELLES déjà présentes, « rend 0 » serait vrai
 -- aussi bien pour un refus qu'un compte authentifié n'ayant simplement aucune
 -- session à révoquer — vacuité mesurée par substitution (cf. rapport). Deux
--- sessions pour client (11111111), une pour agence (22222222, témoin).
+-- sessions pour l'appelant créé ci-dessus, une pour son témoin.
 insert into auth.sessions (id, user_id, created_at, updated_at) values
-  ('aaaaaaaa-0000-4000-8000-0000000005e1', '11111111-1111-1111-1111-111111111111', now(), now()),
-  ('aaaaaaaa-0000-4000-8000-0000000005e2', '11111111-1111-1111-1111-111111111111', now(), now()),
-  ('aaaaaaaa-0000-4000-8000-0000000005e3', '22222222-2222-2222-2222-222222222222', now(), now());
+  ('aaaaaaaa-0000-4000-8000-0000000005e1', 'ba000000-0000-4000-8000-0000000004a1', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e2', 'ba000000-0000-4000-8000-0000000004a1', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e3', 'ba000000-0000-4000-8000-0000000004a2', now(), now());
 
 -- 5) revoquer_autres_sessions : anonyme — NE LÈVE PAS, rend 0 (mesuré). Mais
 -- rendre 0 ne suffit pas à prouver le refus : un compte réel SANS session à
 -- révoquer rendrait aussi 0. La preuve porte donc sur l'EFFET, pas le retour :
--- les deux sessions RÉELLES de client doivent survivre intactes à cet appel.
+-- les deux sessions RÉELLES de l'appelant doivent survivre intactes à cet appel.
 create function tests.revoquer_sessions_anon_puis_compter() returns bigint language plpgsql as $$
 declare n bigint;
 begin
@@ -2004,7 +2029,7 @@ begin
   set local role authenticated;
   perform public.revoquer_autres_sessions();
   reset role;
-  select count(*) into n from auth.sessions where user_id = '11111111-1111-1111-1111-111111111111';
+  select count(*) into n from auth.sessions where user_id = 'ba000000-0000-4000-8000-0000000004a1';
   return n;
 end $$;
 
@@ -2014,7 +2039,7 @@ select is(tests.revoquer_sessions_anon_puis_compter(),
 
 -- 6) revoquer_autres_sessions : ne révoque que les sessions de l'appelant.
 -- Témoin positif intégré au helper (comme ci-dessus) : les 2 sessions de
--- client doivent RÉELLEMENT disparaître, celle d'agence rester intacte.
+-- l'appelant doivent RÉELLEMENT disparaître, celle du témoin rester intacte.
 create function tests.revoquer_sessions_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
 declare n bigint; n_soi bigint;
 begin
@@ -2031,8 +2056,8 @@ begin
   return n;
 end $$;
 
-select is(tests.revoquer_sessions_puis_compter('11111111-1111-1111-1111-111111111111',
-          '22222222-2222-2222-2222-222222222222'),
+select is(tests.revoquer_sessions_puis_compter('ba000000-0000-4000-8000-0000000004a1',
+          'ba000000-0000-4000-8000-0000000004a2'),
           1::bigint,
           'revoquer_autres_sessions : ne révoque que les sessions de l''appelant, jamais celles d''autrui');
 
@@ -2078,15 +2103,17 @@ select is(tests.mock_subscribe_puis_compter('11111111-1111-1111-1111-11111111111
 -- revoquer_autres_sessions ci-dessus : sans lignes RÉELLES déjà présentes,
 -- « rend 0 » serait vrai aussi bien pour un refus que pour un compte réel
 -- n'ayant simplement aucun historique — vacuité mesurée par substitution
--- (cf. rapport). 2 entrées pour client (11111111), 1 pour agence (22222222,
--- témoin).
+-- (cf. rapport). 2 entrées pour l'appelant créé plus haut, 1 pour son témoin —
+-- MÊMES identités que les sessions, et pour la même raison : le compte exact
+-- exigé plus bas ne survivrait pas à une connexion réelle de `client@vito.test`,
+-- que rien ne purge de auth.audit_log_entries.
 insert into auth.audit_log_entries (instance_id, id, payload, created_at, ip_address) values
   ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
-   json_build_object('actor_id', '11111111-1111-1111-1111-111111111111', 'action', 'login'), now(), ''),
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a1', 'action', 'login'), now(), ''),
   ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
-   json_build_object('actor_id', '11111111-1111-1111-1111-111111111111', 'action', 'logout'), now(), ''),
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a1', 'action', 'logout'), now(), ''),
   ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
-   json_build_object('actor_id', '22222222-2222-2222-2222-222222222222', 'action', 'login'), now(), '');
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a2', 'action', 'login'), now(), '');
 
 -- 9) mes_connexions_recentes : anonyme — NE LÈVE PAS, rend un ensemble vide,
 -- MALGRÉ les entrées réelles ci-dessus : la preuve porte sur leur absence du
@@ -2098,7 +2125,7 @@ select is(tests.count_as(null, 'select count(*) from public.mes_connexions_recen
 -- 10) mes_connexions_recentes : ne renvoie que les connexions de l'appelant.
 -- Le compte exact (2, ni 0 ni 3) est la preuve : 0 dirait que la fonction est
 -- cassée (vacuité), 3 dirait qu'elle fuit les entrées d'agence.
-select is(tests.count_as('11111111-1111-1111-1111-111111111111',
+select is(tests.count_as('ba000000-0000-4000-8000-0000000004a1',
           'select count(*) from public.mes_connexions_recentes(10)'),
           2::bigint,
           'mes_connexions_recentes : ne renvoie que les connexions de l''appelant, jamais celles d''autrui');
