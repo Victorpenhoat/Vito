@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(232);
+select plan(240);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -2063,6 +2063,133 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           'select count(*) from public.mes_connexions_recentes(10)'),
           2::bigint,
           'mes_connexions_recentes : ne renvoie que les connexions de l''appelant, jamais celles d''autrui');
+
+-- ============================================================
+-- Lot 4 / tâche 5 — les trois fonctions de fabrique, et la porte du catalogue
+-- ============================================================
+-- find_or_create_vin crée un vin appartenant à auth.uid(). upsert_etablissement
+-- et cache_etablissement_photo écrivent dans le catalogue PARTAGÉ
+-- (etablissements) — et c'est tout leur intérêt ici : le lot 2 a gravé
+-- qu'aucune policy n'autorise un compte connecté à modifier ou effacer
+-- `etablissements` directement (assertions « un compte connecté ne modifie
+-- pas le catalogue » / « ni ne l'efface », plus haut dans ce fichier, sur la
+-- ligne prise par `order by id limit 1`). Restait à prouver l'AUTRE moitié :
+-- le catalogue EST écrivable, par la porte prévue. Sans cette preuve,
+-- « personne ne peut écrire » serait satisfait par un catalogue que personne
+-- ne peut alimenter — le filet dirait « sûr » là où l'application serait
+-- cassée.
+--
+-- Chaque fonction reçoit : anonyme refusé + effet légitime. find_or_create_vin
+-- et upsert_etablissement sont de VRAIS upserts (leur nom le dit) : un second
+-- appel identique doit RETROUVER la ligne, pas en créer une seconde — sans
+-- quoi « crée un vin/une fiche » serait vrai même si la moitié « or_create »
+-- (dédoublonnage) était cassée. D'où une assertion de plus par fonction.
+
+-- 1) find_or_create_vin : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.find_or_create_vin(''{"nom":"pgtap anon","couleur":"rouge"}''::jsonb)::text') $$,
+  'authentification requise',
+  'find_or_create_vin : un jeton sans identité est refusé');
+
+-- 2) et 3) find_or_create_vin : crée un vin appartenant à l'appelant, et un
+-- second appel IDENTIQUE retrouve la même ligne au lieu d'en créer une
+-- seconde (la clause `on conflict (user_id, lower(nom), millesime, domaine)`
+-- est tout l'intérêt du nom de la fonction — sans ce second appel, une
+-- régression qui la retirerait resterait invisible : le premier appel
+-- créerait toujours 1 ligne, seul le second en créerait 2).
+create function tests.find_or_create_vin_puis_compter(p_uid uuid, p_payload jsonb, p_nom text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.find_or_create_vin(p_payload);
+  reset role;
+  select count(*) into n from public.vins where user_id = p_uid and nom = p_nom;
+  return n;
+end $$;
+
+select is(tests.find_or_create_vin_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"nom":"Pgtap Cru","couleur":"rouge"}'::jsonb, 'Pgtap Cru'),
+          1::bigint,
+          'find_or_create_vin : crée bien un vin appartenant à l''appelant');
+
+select is(tests.find_or_create_vin_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"nom":"Pgtap Cru","couleur":"rouge"}'::jsonb, 'Pgtap Cru'),
+          1::bigint,
+          'find_or_create_vin : un second appel identique retrouve la même ligne, n''en crée pas une seconde');
+
+-- 4) upsert_etablissement : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.upsert_etablissement(''{"place_id":"pgtap-anon","nom":"x"}''::jsonb)::text') $$,
+  'authentification requise',
+  'upsert_etablissement : un jeton sans identité est refusé');
+
+-- 5) et 6) upsert_etablissement : insère une NOUVELLE fiche (place_id inédit),
+-- puis un second appel sur le MÊME place_id mais un nom différent MET À JOUR
+-- la même fiche au lieu d'en créer une seconde — la branche `on conflict
+-- (place_id) do update`, cœur de l'upsert, sans laquelle un second appel
+-- lèverait une violation d'unicité au lieu de mettre à jour.
+create function tests.upsert_etablissement_puis_compter(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.upsert_etablissement(p_payload);
+  reset role; -- lecture publique du catalogue (SELECT USING (true)) ; reset par cohérence avec l'idiome du fichier
+  select count(*) into n from public.etablissements where place_id = p_place_id and nom = p_nom;
+  return n;
+end $$;
+
+select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"place_id":"pgtap-place-1","nom":"Pgtap Resto","categorie":"resto"}'::jsonb,
+          'pgtap-place-1', 'Pgtap Resto'),
+          1::bigint,
+          'upsert_etablissement : un compte connecté insère bien une nouvelle fiche au catalogue');
+
+select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"place_id":"pgtap-place-1","nom":"Pgtap Resto Maj","categorie":"resto"}'::jsonb,
+          'pgtap-place-1', 'Pgtap Resto Maj'),
+          1::bigint,
+          'upsert_etablissement : un second appel sur le même place_id met à jour la même fiche, n''en crée pas une seconde');
+
+-- 7) cache_etablissement_photo : anonyme. Un uuid arbitraire suffit : le
+-- refus lève AVANT toute lecture d'etablissements (auth.uid() is null en tête
+-- de fonction, même forme que les 5 fonctions de la tâche 4).
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.cache_etablissement_photo(''00000000-0000-4000-8000-000000000000'', ''pgtap-ref-anon'')::text') $$,
+  'authentification requise',
+  'cache_etablissement_photo : un jeton sans identité est refusé');
+
+-- 8) LA PORTE DU CATALOGUE — l'assertion qui ferme la boucle avec le lot 2.
+-- PIÈGE ÉVITÉ ICI, vérifié par exécution : la forme la plus courte,
+-- `with u as (select public.cache_etablissement_photo(...)) select count(*)
+-- from etablissements where photo_ref = ...` SANS référencer `u` dans la
+-- requête externe, est exactement le motif que ce fichier proscrit partout
+-- ailleurs (cf. tête de section delier_client) — testée : elle rend 0, la
+-- fonction n'est JAMAIS appelée, le CTE est élagué. Remède identique : appel
+-- et comptage en deux instructions dans un helper dédié.
+-- Cible : la MÊME ligne (`order by id limit 1`) que les deux assertions du
+-- lot 2 ci-dessus ("un compte connecté ne modifie pas le catalogue" / "ni ne
+-- l'efface") — la preuve que l'écriture directe est refusée ET que la porte
+-- prévue fonctionne porte sur LA MÊME ligne.
+create function tests.cache_photo_puis_compter(p_uid uuid, p_etab uuid, p_ref text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.cache_etablissement_photo(p_etab, p_ref);
+  reset role;
+  select count(*) into n from public.etablissements where id = p_etab and photo_ref = p_ref;
+  return n;
+end $$;
+
+select is(tests.cache_photo_puis_compter('11111111-1111-1111-1111-111111111111',
+          (select id from public.etablissements order by id limit 1), 'pgtap-ref'),
+          1::bigint,
+          'cache_etablissement_photo : le catalogue s''écrit par la porte prévue, là où l''écriture directe est refusée');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
