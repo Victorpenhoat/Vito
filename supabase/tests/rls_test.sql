@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(174);
+select plan(197);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1364,6 +1364,186 @@ select is(
       and cmd is distinct from 'SELECT')::bigint,
   0::bigint,
   'etablissements : aucune policy autre que SELECT n''existe au catalogue');
+
+-- ── Lot 3 / les prédicats que rien n'exerçait ──────────────────────────────
+-- Cinq prédicats SECURITY DEFINER ne sont cités par aucune policy testée. Ils
+-- ne refusent pas, ils répondent : l'invariant est donc une PAIRE par prédicat.
+-- Un prédicat coincé à false est aussi grave qu'un coincé à true, et seule la
+-- paire attrape les deux — un seul « il rend false pour l'étranger » serait
+-- satisfait par un prédicat qui rend false pour tout le monde.
+
+-- is_agence() lit le même claim JWT « user_role » que is_admin() (posé en
+-- production par custom_access_token_hook, 00002 ; cf. tests.count_as_admin
+-- plus haut). tests.bool_as ne pose que sub/role et JAMAIS user_role : sans ce
+-- claim, is_agence() rend false pour TOUTE identité, agence comprise — le
+-- témoin « vrai pour l'agence » serait donc vert pour la mauvaise raison,
+-- exactement le prédicat coincé à false que cette section existe pour
+-- attraper. Et la négative n'est pas mieux lotie : sous bool_as elle dirait
+-- « faux sans claim », pas « faux pour un client », et son uuid ne serait que
+-- décoratif. D'où ce helper dédié — employé des DEUX côtés de chaque paire,
+-- même idiome que tests.count_as_admin.
+create function tests.bool_as_role(p_uid uuid, p_role text, p_sql text) returns boolean language plpgsql as $$
+declare b boolean;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  execute p_sql into b;
+  reset role;
+  return b;
+end $$;
+
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()'),
+          'is_agence : vrai pour le compte agence');
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_agence()'),
+          'is_agence : faux pour un client');
+
+-- is_concierge() a aujourd'hui le MÊME corps qu'is_agence() : même clause
+-- `in ('agence', 'admin')` sur le seul claim `user_role`. Elle ne consulte NI
+-- auth.uid() NI profiles — il n'existe donc pas de « compte sans profil » à
+-- éprouver, mais il existe bel et bien un témoin positif : le personnel
+-- agence. La paire ci-dessous éprouve exactement ce que le prédicat décide,
+-- un vrai claim de chaque bord — `agence` rend vrai, `client` rend faux.
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_concierge()'),
+          'is_concierge : vrai pour le personnel agence');
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()'),
+          'is_concierge : faux pour un client ordinaire');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''de110000-0000-4000-8000-000000000000'')'),
+          'is_premium : vrai pour le compte abonné');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_premium : faux pour un compte sans abonnement');
+
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
+          'est_mon_activite : vrai pour le propriétaire de l''activité');
+select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000',
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
+          'est_mon_activite : faux pour qui n''a pas créé l''activité');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''de110000-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : vrai pour un membre du groupe');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : faux pour un uuid étranger au groupe');
+
+-- ── Lot 3 / les déclencheurs ───────────────────────────────────────────────
+-- FIXTURES PROPRES À CE LOT, et c'est délibéré. Le lot 2 crée un voyage
+-- `bb…0001` et un groupe `bb…0002`, mais les SUPPRIME en fin de ses sections
+-- (c'est son témoin positif : le propriétaire, lui, peut supprimer). Ils
+-- n'existent donc plus à cet endroit du fichier — vérifié, la dernière
+-- occurrence de chacun est un DELETE. Seul le foyer `fa…0001` survit, parce que
+-- le lot 2 le re-crée pour ne pas vider les tables du Cercle.
+-- D'où la règle, encore : la ligne qu'on éprouve, on la crée.
+insert into public.voyages (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 groupe');
+
+-- Un déclencheur ne s'appelle pas : on éprouve son EFFET. Les trois verrous
+-- d'owner lèvent « owner_id immuable » — vérifié au catalogue. Chaque refus est
+-- apparié à une modification LÉGITIME qui doit passer : sans elle, « on ne peut
+-- pas changer l'owner » serait satisfait par une table qu'on ne peut pas
+-- modifier du tout.
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.voyages set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'voyages : le propriétaire ne peut pas se dessaisir du voyage');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.voyages set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyages : mais il peut le renommer — le verrou ne bloque que l''owner');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.depense_groupes set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'depense_groupes : le propriétaire ne peut pas se dessaisir du groupe');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.depense_groupes set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : mais il peut le renommer');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.familles set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'familles : le propriétaire ne peut pas se dessaisir du foyer');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.familles set nom = ''pgtap renomme'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : mais il peut le renommer — le verrou ne bloque que l''owner');
+
+-- conciergerie_lock_insert : le demandeur ne se répond pas à lui-même. On insère
+-- une demande EN PRÉTENDANT qu'elle est déjà confirmée et répondue ; le
+-- déclencheur doit remettre le statut à « nouvelle » et effacer la réponse.
+--
+-- L'identité est `demo` et non `client` : la policy d'insertion exige
+-- `is_premium(auth.uid())`, et seul demo l'est. C'est un invariant en soi —
+-- la conciergerie est réservée aux abonnés — d'où l'assertion qui suit.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, statut, reponse, date_resa, heure_resa, nombre_convives) select ''de110000-0000-4000-8000-000000000000'', ''resto'', e.id, ''pgtap'', ''confirmee'', ''je me reponds'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text || ''/'' || coalesce(reponse, ''(null)'')) select * from u'),
+          'nouvelle/(null)',
+          'conciergerie : une demande naît « nouvelle » et sans réponse, quoi qu''en dise le client');
+
+-- Témoin de l'autre bord : un compte NON abonné ne peut pas ouvrir de demande.
+-- Ce n'est PAS un garde-fou de vacuité — l'assertion ci-dessus lit sa valeur
+-- par RETURNING, donc un insert bloqué lèverait et la ferait tomber d'elle-même.
+-- C'est un invariant à part entière : la conciergerie est réservée aux
+-- abonnés. Le refus vient de la clause WITH CHECK, donc il LÈVE.
+select throws_ok(
+  $$ select tests.text_as('11111111-1111-1111-1111-111111111111',
+       'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, date_resa, heure_resa, nombre_convives) select ''11111111-1111-1111-1111-111111111111'', ''resto'', e.id, ''pgtap'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text) select * from u') $$,
+  '42501',
+  null,
+  'conciergerie : un compte non abonné ne peut pas ouvrir de demande');
+
+-- ── Lot 3 / handle_new_user : l'invariant tient par OMISSION ───────────────
+-- Le corps réel du déclencheur (migration 00001) n'insère que `id` et
+-- `display_name` — il ne mentionne JAMAIS la colonne `role`. Ce n'est donc PAS
+-- le déclencheur qui écarte un rôle réclamé aux métadonnées : c'est le
+-- `default 'client'` de la colonne `public.profiles.role` qui s'applique,
+-- faute de valeur fournie. L'invariant écrit en commentaire de la fonction
+-- tient aujourd'hui par cette omission, pas par une logique d'écartement.
+-- L'assertion qui suit garde donc le RÉSULTAT (le profil créé porte 'client'),
+-- quel que soit le mécanisme qui le produit. C'est délibéré : si demain le
+-- déclencheur se mettait à écrire `role` depuis les métadonnées — pour un
+-- flux d'invitation, par exemple — le défaut de colonne cesserait de
+-- s'appliquer et le rôle réclamé par le client pourrait passer. Cette
+-- assertion l'attraperait ; un test du mécanisme actuel (« le déclencheur
+-- écarte le rôle ») ne l'aurait pas fait, puisqu'il n'écarte rien.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-00000000000f', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-escalade@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb,
+        '{"role":"admin","display_name":"Escalade"}'::jsonb, now(), now());
+
+select is((select role::text from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'client',
+          'handle_new_user : le profil créé porte role = client, quel que soit le rôle réclamé aux métadonnées');
+select is((select display_name from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'Escalade',
+          'handle_new_user : mais le nom affiché, lui, est bien repris des métadonnées');
+
+-- ── Lot 3 / les fonctions de service : la barrière est le GRANT ────────────
+-- Ces deux fonctions suppriment des comptes et des recommandations, et n'ont
+-- AUCUN contrôle interne — c'est correct, puisqu'elles ne sont pas exécutables
+-- par `authenticated`. Mais leur sécurité ne tient alors qu'à une absence de
+-- privilège, qu'un `grant execute on all functions` effacerait sans bruit.
+select ok(not has_function_privilege('authenticated', 'public.purger_comptes_supprimes()', 'execute'),
+          'purger_comptes_supprimes : hors de portée d''un compte connecté');
+select ok(not has_function_privilege('authenticated', 'public.purger_recommandations()', 'execute'),
+          'purger_recommandations : hors de portée d''un compte connecté');
+-- Témoin : sans lui, les deux assertions ci-dessus seraient satisfaites par un
+-- has_function_privilege cassé qui rendrait false pour tout.
+select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
+          'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
