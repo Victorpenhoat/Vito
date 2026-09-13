@@ -1490,12 +1490,24 @@ select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client
 -- L'identité passée ne compte pas et c'est délibéré : ces deux prédicats ne
 -- lisent QUE le claim, jamais `auth.uid()`. Un seul uid, quatre claims.
 --
--- QUESTION DE PRODUIT, POUR LE PO, NON TRANCHÉE ICI : il n'existe aucun rôle
--- `concierge` dans public.app_role. Le prédicat se contente donc de dire
--- « agence ou admin », c'est-à-dire que TOUTE agence et TOUT admin sont
--- conciergerie. Si c'est voulu, c'est le NOM qui ment et il faudrait le dire ;
--- si ça ne l'est pas, c'est un défaut d'autorisation. Ce fichier grave l'état
--- réel et le signale ; il ne modifie aucune fonction de production.
+-- TRANCHÉ PAR LE PO (2026-09-13) : la duplication est DÉLIBÉRÉE. Il n'existe
+-- aucun rôle `concierge` dans public.app_role parce que la conciergerie de Vito
+-- est OPÉRÉE PAR LES AGENCES PARTENAIRES : « être concierge » veut bien dire
+-- « être une agence (ou un admin) ». Le nom du prédicat dit le rôle MÉTIER
+-- exercé, pas le rôle technique qui l'autorise. L'assertion ci-dessous n'est
+-- donc pas la trace d'un défaut en attente de correction : c'est la garde qui
+-- avertira le jour où quelqu'un fera diverger les deux sans le vouloir.
+-- Consigné aussi sur la fonction elle-même (migration 00070), pour qu'on cesse
+-- de « corriger » cette duplication à chaque relecture.
+--
+-- CE QUE CETTE DÉCISION NE TRANCHE PAS, et qui reste ouvert : les policies de
+-- `conciergerie_demandes` n'appliquent AUCUN cadrage par client — `select` et
+-- `delete` valent `user_id = auth.uid() OR is_concierge()`, `update` vaut
+-- `is_concierge()` seul, et `agence_clients` n'intervient nulle part. Une agence
+-- peut donc lire, modifier et supprimer les demandes de N'IMPORTE QUEL
+-- utilisateur, pas seulement de ses clients. « Les agences opèrent la
+-- conciergerie » n'implique pas « chaque agence voit tout le monde ». Question
+-- posée au PO, non tranchée, donc rien n'est modifié ici.
 select is(
   (select string_agg(tests.bool_as_role('22222222-2222-2222-2222-222222222222', c,
                                         'select public.is_concierge()')::text, '/' order by ord)
