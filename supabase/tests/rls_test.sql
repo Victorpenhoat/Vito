@@ -9,9 +9,11 @@ create schema if not exists tests;
 -- lignes de commentaire : `is(` + `throws_ok(` + `ok(` + `cmp_ok(` +
 -- `has_table(` + `lives_ok(`. Deux pièges MESURÉS, tombés sur ce chantier :
 --   · oublier `has_table(` (2 occurrences) — déjà tombé deux fois ;
---   · compter `ok(` naïvement : `custom_access_token_hook(` SE TERMINE par
---     « ook( », donc ses 6 appels hors commentaire sont comptés comme 6 `ok(`
---     fantômes. La grille naïve rend 257 là où le plan est à 251.
+--   · compter `ok(` naïvement. Il faut lui RETRANCHER tout ce qui se termine
+--     par « ok( » sans être une assertion : `throws_ok(` (42), `cmp_ok(` (3),
+--     `lives_ok(` (1) — et `custom_access_token_hook(` (4 hors commentaire),
+--     qui SE TERMINE par « ook( ». Soit 77 bruts − 50 = 27 nets.
+--     Compte de référence : 176 + 42 + 27 + 3 + 2 + 1 = 251.
 -- Vérification de référence, qui ne ment pas : lancer le fichier et compter
 -- les lignes `^ok ` de la sortie TAP.
 select plan(251);
@@ -250,6 +252,18 @@ begin
   reset role;
   return n;
 end $$;
+
+-- PRÉCONDITION POSÉE, PLUS SUBIE — troisième et dernier compte traité ainsi,
+-- après `client` et `admin` plus bas. Les assertions 34 et 35 comptent
+-- `public.profiles` SOUS RLS et exigent 1 : or si `free` appartient à un foyer,
+-- la policy famille lui rend AUSSI visibles les profils de ses co-membres, et
+-- le compte passe à 2. Mesuré : un run e2e qui inscrit `free` dans un foyer
+-- donne 247 ok / 4 not ok. Pas d'abort ici — la dégradation est nommée — mais
+-- quatre faux rouges sur une base locale partagée entre e2e et pgTAP, ce qui
+-- est exactement le motif « e2e contamine RLS » déjà payé deux fois.
+-- Cette ligne est un no-op hors contamination (vérifié : 251/251 sur base
+-- propre), et le fichier s'annulant en entier, elle est sans effet au-dehors.
+delete from public.famille_membres where profile_id = '44444444-4444-4444-8444-444444444444';
 
 -- 33) une demande de suppression s'enregistre…
 select is(tests.count_as('44444444-4444-4444-8444-444444444444',
@@ -1457,11 +1471,24 @@ select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client
 --   is_agence    := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
 --   is_concierge := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
 -- Un commentaire qui le dirait vieillirait en silence. L'assertion ci-dessous
--- le dit EN S'EXÉCUTANT : elle compare les deux prédicats sur les deux bords
--- du claim (agence et client) et rougira le jour où l'un des deux divergera —
--- exactement le jour où quelqu'un voudra le savoir. La forme « a/b » rend le
--- diagnostic lisible : have « true/false » vs want « false/false » nomme tout
--- de suite lequel des deux bords a bougé.
+-- le dit EN S'EXÉCUTANT, et rougira le jour où l'un des deux divergera —
+-- exactement le jour où quelqu'un voudra le savoir. La forme « a/b/c/d » rend
+-- le diagnostic lisible : have « true/true/false/false » vs want
+-- « true/false/false/false » nomme tout de suite QUEL bord a bougé.
+--
+-- ELLE COMPARE QUATRE CLAIMS, ET C'EST LE POINT. Une première version ne
+-- comparait que `agence` et `client`. Mesuré : elle restait VERTE (251/251)
+-- dans les deux sens qui comptent — `is_concierge` PERDANT `admin`, et
+-- `is_concierge` S'ÉLARGISSANT à un claim de plus. Le second cas est une
+-- ÉLÉVATION DE PRIVILÈGE (un compte `premium` devient conciergerie sans être
+-- agence) et le filet entier l'approuvait, SOCLE compris, pendant que le
+-- commentaire promettait le contraire. Les deux bords d'un intervalle ne
+-- suffisent pas quand c'est l'APPARTENANCE À UN ENSEMBLE qu'on éprouve : il
+-- faut un membre de chaque classe. D'où `admin` (membre non testé) et
+-- `premium` (non-membre autre que `client`).
+--
+-- L'identité passée ne compte pas et c'est délibéré : ces deux prédicats ne
+-- lisent QUE le claim, jamais `auth.uid()`. Un seul uid, quatre claims.
 --
 -- QUESTION DE PRODUIT, POUR LE PO, NON TRANCHÉE ICI : il n'existe aucun rôle
 -- `concierge` dans public.app_role. Le prédicat se contente donc de dire
@@ -1470,12 +1497,12 @@ select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client
 -- si ça ne l'est pas, c'est un défaut d'autorisation. Ce fichier grave l'état
 -- réel et le signale ; il ne modifie aucune fonction de production.
 select is(
-  tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_concierge()')::text
-    || '/' ||
-  tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()')::text,
-  tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()')::text
-    || '/' ||
-  tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_agence()')::text,
+  (select string_agg(tests.bool_as_role('22222222-2222-2222-2222-222222222222', c,
+                                        'select public.is_concierge()')::text, '/' order by ord)
+     from unnest(array['agence','admin','client','premium']) with ordinality as t(c, ord)),
+  (select string_agg(tests.bool_as_role('22222222-2222-2222-2222-222222222222', c,
+                                        'select public.is_agence()')::text, '/' order by ord)
+     from unnest(array['agence','admin','client','premium']) with ordinality as t(c, ord)),
   'is_concierge rend aujourd''hui exactement ce que rend is_agence : corps dupliqué, aucun rôle concierge distinct');
 
 select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
@@ -1625,23 +1652,47 @@ select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)',
 -- « coincé à false » que la section des prédicats existe pour attraper, mais
 -- une marche plus haut : à la source. Le hook est une fonction ordinaire,
 -- directement appelable ; rien ne justifiait qu'il reste dehors.
-select is(public.custom_access_token_hook(
-            jsonb_build_object('user_id', '22222222-2222-2222-2222-222222222222',
-                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+--
+-- PASSAGE PAR UN HELPER, ET NON APPEL DIRECT — même idiome que les sept gardes
+-- de vacuité. Un appel direct à `public.custom_access_token_hook(…)` LÈVE si la
+-- fonction disparaît (« function does not exist »), et `has_function_privilege`
+-- lève de même sur une signature inconnue : la transaction avorte, et les
+-- assertions suivantes — SOCLE compris — cessent d'exister. Or la disparition
+-- du hook est précisément l'accident de migration que cette section existe pour
+-- attraper, et c'est le seul « Bad plan » que ce fichier passe son temps à
+-- combattre ailleurs. Le helper interroge d'abord `to_regprocedure` et rend un
+-- message nommé plutôt que de laisser lever, et l'appel passe par `execute`
+-- pour ne pas lier la signature au moment de l'analyse.
+create function tests.hook_claim(p_user_id uuid, p_claims jsonb, p_lire text) returns text language plpgsql as $$
+declare v text;
+begin
+  if to_regprocedure('public.custom_access_token_hook(jsonb)') is null then
+    return 'custom_access_token_hook : LA FONCTION N''EXISTE PLUS — plus personne ne produit le claim user_role en production';
+  end if;
+  execute 'select public.custom_access_token_hook($1) -> ''claims'' ->> $2'
+    into v using jsonb_build_object('user_id', p_user_id, 'claims', p_claims), p_lire;
+  return v;
+end $$;
+
+create function tests.hook_privilege(p_role text) returns text language plpgsql as $$
+begin
+  if to_regprocedure('public.custom_access_token_hook(jsonb)') is null then
+    return 'custom_access_token_hook : LA FONCTION N''EXISTE PLUS';
+  end if;
+  return has_function_privilege(p_role, 'public.custom_access_token_hook(jsonb)', 'execute')::text;
+end $$;
+
+select is(tests.hook_claim('22222222-2222-2222-2222-222222222222', '{}'::jsonb, 'user_role'),
           'agence',
           'custom_access_token_hook : le compte agence reçoit le claim user_role = agence');
-select is(public.custom_access_token_hook(
-            jsonb_build_object('user_id', '11111111-1111-1111-1111-111111111111',
-                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+select is(tests.hook_claim('11111111-1111-1111-1111-111111111111', '{}'::jsonb, 'user_role'),
           'client',
           'custom_access_token_hook : un compte client reçoit le claim user_role = client');
 -- Aucun profil derrière cet uuid : la branche `else` du hook, celle qui évite
 -- qu'un jeton parte SANS claim user_role (auquel cas coalesce(…, '') ferait
 -- rendre false à is_agence, mais aussi n'importe quelle lecture du claim
 -- deviendrait un null silencieux).
-select is(public.custom_access_token_hook(
-            jsonb_build_object('user_id', 'deadbeef-0000-4000-8000-000000000000',
-                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+select is(tests.hook_claim('deadbeef-0000-4000-8000-000000000000', '{}'::jsonb, 'user_role'),
           'client',
           'custom_access_token_hook : un compte sans profil retombe sur client, jamais sur rien');
 
@@ -1650,21 +1701,19 @@ select is(public.custom_access_token_hook(
 -- `jsonb_set(event, '{claims}', …)` casserait tous les jetons de production
 -- (plus de `sub`, plus d'`aud`) et les trois assertions ci-dessus, qui ne
 -- regardent QUE user_role, resteraient vertes.
-select is(public.custom_access_token_hook(
-            jsonb_build_object('user_id', '11111111-1111-1111-1111-111111111111',
-                               'claims', jsonb_build_object('sub', 'x', 'aud', 'authenticated')))
-            -> 'claims' ->> 'aud',
+select is(tests.hook_claim('11111111-1111-1111-1111-111111111111',
+                          jsonb_build_object('sub', 'x', 'aud', 'authenticated'), 'aud'),
           'authenticated',
           'custom_access_token_hook : les claims déjà présents survivent à l''enrichissement');
 
 -- La barrière GRANT, même idiome que purger_* / mock_subscribe ci-dessus : ce
 -- hook décide d'un rôle, un compte connecté ne doit pas pouvoir l'appeler.
-select ok(not has_function_privilege('authenticated', 'public.custom_access_token_hook(jsonb)', 'execute'),
+select is(tests.hook_privilege('authenticated'), 'false',
           'custom_access_token_hook : hors de portée d''un compte connecté');
 -- Témoin : sans lui, le refus ci-dessus serait satisfait par un hook devenu
 -- inexistant ou exécutable par personne — cas où l'émission des jetons serait
 -- morte en production, et le test vert.
-select ok(has_function_privilege('supabase_auth_admin', 'public.custom_access_token_hook(jsonb)', 'execute'),
+select is(tests.hook_privilege('supabase_auth_admin'), 'true',
           'témoin : le rôle qui émet les jetons, lui, peut bien exécuter le hook');
 
 -- LIMITE DE CE QUI EST GRAVÉ ICI, à ne pas lire comme une dette soldée : ces
@@ -2017,7 +2066,7 @@ select throws_ok(
 -- (agence_id, client_id) do nothing` et rend 'ok' MÊME si le lien existait
 -- déjà. Le couple « rend ok » + « compte = 1 » est donc satisfaisable par un
 -- no-op, et ne tenait que par un fait externe consigné en commentaire (« ce
--- compte n'a jamais été lié »). Le helper lève si le lien EXISTE avant l'appel
+-- compte n'a jamais été lié »). Le helper rend un message d'erreur nommé si le lien EXISTE avant l'appel,
 -- et rend le texte que l'assertion compare : la ligne de comptage qui suit est
 -- inchangée, et le fait externe est devenu une vérification — vérification
 -- que le compte créé ci-dessus rend vraie PAR CONSTRUCTION, et non par
@@ -2146,7 +2195,7 @@ select throws_ok(
 
 -- 2) cancel_subscription : n'affecte que l'abonnement de l'appelant.
 -- Témoin positif intégré au helper : si l'appel n'a pas RÉELLEMENT annulé
--- l'abonnement de l'appelant, le helper lève lui-même — l'assertion ne peut
+-- l'abonnement de l'appelant, le helper rend un message nommé au lieu du compte — l'assertion ne peut
 -- donc pas rester verte sur un no-op. de110000 (démo) porte un abonnement actif
 -- du seed ; 55555555 (premium) sert de témoin, actif et jamais touché ici.
 create function tests.annuler_abonnement_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
@@ -2482,7 +2531,7 @@ select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-11111
 -- INCHANGÉ après, le nom mis à jour par-dessus. La valeur rendue porte les
 -- deux, en clair : un échec affiche `have: fiche recréée (… -> …), nom …`,
 -- qui NOMME le défaut au lieu de le faire deviner.
-create function tests.upsert_etablissement_maj_puis_verifier(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns text language plpgsql as $$
+create function tests.upsert_etablissement_maj_puis_verifier(p_uid uuid, p_payload jsonb, p_place_id text) returns text language plpgsql as $$
 declare id_avant uuid; id_apres uuid; nom_apres text;
 begin
   select id into id_avant from public.etablissements where place_id = p_place_id;
@@ -2507,7 +2556,7 @@ end $$;
 
 select is(tests.upsert_etablissement_maj_puis_verifier('11111111-1111-1111-1111-111111111111',
           '{"place_id":"pgtap-place-1","nom":"Pgtap Resto Maj","categorie":"resto"}'::jsonb,
-          'pgtap-place-1', 'Pgtap Resto Maj'),
+          'pgtap-place-1'),
           'même fiche, nom Pgtap Resto Maj',
           'upsert_etablissement : un second appel sur le même place_id met à jour la fiche EN PLACE — même id, nom remplacé');
 
