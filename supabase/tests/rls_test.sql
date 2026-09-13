@@ -997,6 +997,21 @@ values ('bb000000-0000-4000-8000-00000000000a',
 -- Foyer : on RÉUTILISE celui du lot 1 (familles.famille_membres porte un
 -- UNIQUE(profile_id), donc demo ne peut pas posséder deux foyers). On n'ajoute
 -- que le co-membre.
+--
+-- PRÉCONDITION POSÉE, PAS SUBIE. `famille_membres` porte un UNIQUE(profile_id)
+-- (mesuré : contrainte famille_membres_profile_id_key) : un compte n'appartient
+-- qu'à UN foyer. Cet insert était inconditionnel — un run e2e ou une session de
+-- dev qui plaçait `client` dans un autre foyer sur cette base PARTAGÉE le
+-- faisait LEVER, et le fichier avortait ici, à la ligne 1000, en emportant tout
+-- ce qui suit. Mesuré par simulation : 123 ok, 0 not ok, 168 ERROR, aucun
+-- verdict de plan — 128 assertions effacées, dont le SOCLE.
+--
+-- Le retrait préalable rend l'état déterministe : le fichier pose lui-même
+-- l'appartenance qu'il suppose au lieu de parier dessus. Il est sans
+-- conséquence hors transaction, le fichier s'annulant en entier (rollback).
+delete from public.famille_membres
+ where profile_id = '11111111-1111-1111-1111-111111111111';
+
 insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
@@ -2161,6 +2176,13 @@ select throws_ok(
 -- invisible : free serait la SEULE ligne non-owner de la table, sa suppression
 -- paraîtrait correcte quelle qu'en soit la cause exacte. admin (33333333),
 -- jusqu'ici hors de toute famille, sert de second témoin.
+-- Même précondition posée qu'à la ligne 1000, et pour la même mesure : cet
+-- insert était inconditionnel lui aussi, et un admin ambiant déjà membre d'un
+-- autre foyer le faisait LEVER (mesuré par simulation : 230 ok, 0 not ok,
+-- 41 ERROR — 21 assertions effacées, SOCLE compris).
+delete from public.famille_membres
+ where profile_id = '33333333-3333-3333-3333-333333333333';
+
 insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001', '33333333-3333-3333-3333-333333333333', 'membre');
 
