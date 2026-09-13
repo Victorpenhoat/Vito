@@ -8,7 +8,7 @@ import { CATEGORY_UI, type CategorieUi } from "@/features/places/domain/category
 
 const TONE: Record<RestoStatut, string> = {
   favori: "border-accent/25 bg-accent-50 text-ink",
-  a_tester: "border-current/20 bg-kpi-amber-bg text-ink",
+  a_tester: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   teste: "border-line bg-surface-hover text-muted",
 };
 

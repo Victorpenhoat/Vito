@@ -6,7 +6,7 @@ import { STATUTS_ACTIVITE } from "../domain/activite";
 
 const TEINTE: Record<string, string> = {
   en_cours: "border-kpi-green/30 bg-kpi-green-bg text-ink",
-  en_pause: "border-current/20 bg-kpi-amber-bg text-ink",
+  en_pause: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   terminee: "border-line bg-surface-hover text-muted",
 };
 

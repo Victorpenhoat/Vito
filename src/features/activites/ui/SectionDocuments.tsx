@@ -13,7 +13,7 @@ const TYPES = ["licence", "certificat_medical", "assurance", "autorisation", "re
 
 const TEINTE: Record<string, string> = {
   expire: "border-danger/30 bg-danger-bg text-danger",
-  bientot: "border-current/20 bg-kpi-amber-bg text-ink",
+  bientot: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   valide: "border-kpi-green/30 bg-kpi-green-bg text-ink",
 };
 

@@ -21,8 +21,8 @@ export type VoyageRow = {
 
 const CHIP_TONE: Record<VoyageChip, string> = {
   a_venir: "border-accent/25 bg-accent-50 text-ink",
-  en_cours: "border-current/20 bg-kpi-green-bg text-ink",
-  en_preparation: "border-current/20 bg-kpi-amber-bg text-ink",
+  en_cours: "border-kpi-green/25 bg-kpi-green-bg text-ink",
+  en_preparation: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   idees: "border-line bg-surface-hover text-muted",
   termines: "border-line bg-surface-hover text-muted",
 };

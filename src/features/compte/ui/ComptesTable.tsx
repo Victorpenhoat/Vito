@@ -15,9 +15,9 @@ type Ligne = {
 };
 
 const TON: Record<string, string> = {
-  actif: "border-current/20 bg-kpi-green-bg text-ink",
+  actif: "border-kpi-green/25 bg-kpi-green-bg text-ink",
   invite: "border-line bg-surface-hover text-muted",
-  suspendu: "border-current/20 bg-kpi-amber-bg text-ink",
+  suspendu: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   suppression: "border-danger/30 bg-danger/10 text-danger",
   administrateur: "border-accent/25 bg-accent-50 text-ink",
 };

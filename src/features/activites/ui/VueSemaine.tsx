@@ -113,7 +113,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                     Le retirer casse la compilation, pas le rendu. */}
                 {signaux.vacances && zone && (
                   <span data-testid="jour-vacances"
-                    className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
+                    className="inline-flex items-center gap-1 rounded-full border border-kpi-amber/25 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                     <Sun size={10} aria-hidden />
                     {t("semaine.vacances", { zone })}
                   </span>
@@ -179,7 +179,7 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                         </span>
                       )}
                       {!signaux.voyage && signaux.vacances && (
-                        <span data-testid="seance-vacances" className="rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
+                        <span data-testid="seance-vacances" className="rounded-full border border-kpi-amber/25 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                           {t("semaine.interrompue")}
                         </span>
                       )}

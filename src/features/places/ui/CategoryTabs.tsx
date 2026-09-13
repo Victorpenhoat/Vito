@@ -305,7 +305,7 @@ function RowExtras({ place: p, onglet, slugTeste, tr, onVisite }: {
       <div className="flex items-center justify-between gap-2 pb-3 pl-[84px] -mt-1.5">
         {p.origine_type && (
           <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-semibold ${
-            p.origine_type === "reco" ? "border-current/20 bg-kpi-amber-bg text-ink" : "border-line bg-surface-hover text-muted"
+            p.origine_type === "reco" ? "border-kpi-amber/25 bg-kpi-amber-bg text-ink" : "border-line bg-surface-hover text-muted"
           }`}>
             {p.origine_type === "reco"
               ? tr("origines.recoPar", { qui: p.origine_qui ?? "?" })

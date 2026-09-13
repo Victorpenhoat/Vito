@@ -77,8 +77,8 @@ export function PlanningCalendrier({
   const TEINTE: Record<string, string> = {
     a_venir: "border-accent/30 bg-accent-50 text-ink",
     en_cours: "border-kpi-green/30 bg-kpi-green-bg text-ink",
-    en_preparation: "border-current/20 bg-kpi-amber-bg text-ink",
-    idees: "border-current/20 bg-kpi-amber-bg text-ink",
+    en_preparation: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
+    idees: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
     termines: "border-line bg-surface-hover text-muted",
   };
 
@@ -88,7 +88,7 @@ export function PlanningCalendrier({
       <div className="flex flex-wrap items-center gap-2">
         {zone ? (
           <span data-testid="planning-zone"
-            className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-ink">
+            className="rounded-full border border-kpi-amber/25 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-ink">
             {t("zone", { zone })}
           </span>
         ) : (

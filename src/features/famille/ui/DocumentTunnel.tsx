@@ -190,7 +190,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             <input type="file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
               data-testid="tunnel-verso" className="sr-only"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) pickVerso(f); }} />
-            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold ${verso ? "border border-current/20 bg-kpi-green-bg text-ink" : "border border-line bg-surface text-muted"}`}>
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold ${verso ? "border border-kpi-green/25 bg-kpi-green-bg text-ink" : "border border-line bg-surface text-muted"}`}>
               {verso ? `${t("doc.verso")} ✓` : t("doc.verso")}
             </span>
           </label>
