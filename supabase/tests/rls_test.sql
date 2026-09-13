@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(209);
+select plan(222);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1647,6 +1647,205 @@ select is(tests.text_as('de110000-0000-4000-8000-000000000000',
 select is(tests.count_as('de110000-0000-4000-8000-000000000000',
           'select count(*) from public.depense_groupe_membres where groupe_id = ''dd000000-0000-4000-8000-000000000002'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
           0::bigint, 'unshare_groupe : et le retrait a réellement supprimé le membre');
+
+-- ── Lot 4 / le Cercle et l'agence ───────────────────────────────────────────
+-- Cinq fonctions, quatre natures. inviter_famille et retirer_membre_famille
+-- lèvent `non autorisé` pour qui n'est pas propriétaire du foyer ; lier_client
+-- et creer_voyage_pour_client lèvent `réservé aux agences` pour qui n'a pas le
+-- rôle agence (creer_voyage_pour_client lève en plus `client non lié`).
+-- delier_client, elle, NE LÈVE PAS : son delete est borné par
+-- `agence_id = auth.uid()`, donc la portée EST l'autorisation — un étranger
+-- n'obtient pas un refus, il n'affecte simplement rien. L'écrire en throws_ok
+-- serait faux ; elle est éprouvée par exécution, dans les deux sens.
+--
+-- PIÈGE VÉRIFIÉ PAR EXÉCUTION avant d'écrire ce bloc : la forme « with u as
+-- (select public.<fonction_à_effet>(...)) select count(*) from <table> where
+-- ... » — sans référencer `u` dans la requête externe — ne lève AUCUNE erreur
+-- mais n'appelle JAMAIS la fonction. `EXPLAIN` le confirme : le planificateur
+-- élague purement et simplement un CTE non référencé, y compris quand son
+-- corps appelle une fonction VOLATILE à effets de bord. Vérifié avec
+-- delier_client lui-même : la ligne agence_clients survit à l'agence, censée
+-- pourtant la supprimer — vacuité, la forme exacte que ce chantier traque.
+-- Remède déjà présent au lot 3 (tests.annuler_puis_compter, plus haut dans ce
+-- fichier, avec le même commentaire : « deux ordres distincts, et non un
+-- CTE ») : chaque assertion qui doit APPELER une fonction à effet PUIS en
+-- COMPTER l'effet le fait via un helper plpgsql dédié, appel et comptage en
+-- deux instructions distinctes dans le MÊME bloc, jamais dans la même requête.
+
+-- inviter_famille : un non-propriétaire n'invite pas dans le foyer d'autrui.
+-- Témoin : le propriétaire, lui, invite bien (assertion suivante). L'e-mail du
+-- refus n'a pas besoin d'exister : is_famille_owner lève AVANT toute recherche
+-- d'e-mail — 'personne@vito.test' n'est d'ailleurs celui d'aucun compte du
+-- seed (vérifié).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.inviter_famille(''fa000000-0000-4000-8000-000000000001'', ''personne@vito.test'')') $$,
+  'non autorisé',
+  'inviter_famille : un étranger n''invite pas dans le foyer d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.inviter_famille(''fa000000-0000-4000-8000-000000000001'', ''free@vito.test'')'),
+          'ok', 'inviter_famille : le propriétaire, lui, invite bien');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'' and profile_id = ''44444444-4444-4444-8444-444444444444'''),
+          1::bigint, 'inviter_famille : et l''invitation a réellement inscrit le membre');
+
+-- retirer_membre_famille : un non-propriétaire ne retire pas un membre du
+-- foyer d'autrui. Témoin : le propriétaire, lui, retire bien client (juste
+-- après). Contrairement à inviter_famille et lier_client, son retour (void) ne
+-- distinguerait rien de plus qu'un `''` constant, succès ou non — déjà relevé
+-- sur unshare_voyage/unshare_groupe au lot 4 / tâche 2. Plutôt que rejouer
+-- cette vérification creuse, appel et comptage sont faits ici dans le même
+-- helper, en deux instructions (cf. piège ci-dessus).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.retirer_membre_famille(''fa000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'retirer_membre_famille : un étranger ne retire pas un membre du foyer d''autrui');
+
+create function tests.retirer_membre_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.retirer_membre_famille('fa000000-0000-4000-8000-000000000001', '11111111-1111-1111-1111-111111111111');
+  reset role; -- le comptage passe hors RLS : c'est l'effet réel qu'on vérifie, pas ce que CET appelant en verrait
+  select count(*) into n from public.famille_membres
+   where famille_id = 'fa000000-0000-4000-8000-000000000001'
+     and profile_id = '11111111-1111-1111-1111-111111111111';
+  return n;
+end $$;
+
+select is(tests.retirer_membre_puis_compter('de110000-0000-4000-8000-000000000000'),
+          0::bigint, 'retirer_membre_famille : le propriétaire, lui, retire réellement le membre');
+
+-- delier_client ne LÈVE PAS pour un appelant sans droit : son delete est
+-- borné par `agence_id = auth.uid()`, donc la portée est l'autorisation. Un
+-- étranger n'obtient pas un refus, il n'affecte simplement rien. C'est une
+-- troisième forme d'invariant, et l'écrire en throws_ok serait faux.
+--
+-- Appel et comptage en deux instructions distinctes DANS le helper (cf. piège
+-- en tête de section) : la forme à une seule requête, vérifiée par exécution,
+-- laisse le lien intact pour l'étranger COMME pour l'agence — les deux
+-- assertions rendraient alors 1, vertes pour la mauvaise raison.
+create function tests.delier_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.delier_client('11111111-1111-1111-1111-111111111111');
+  reset role; -- le comptage passe hors RLS : sous étranger, agence_clients_select
+              -- masquerait la ligne d'autrui QUE LE LIEN AIT SURVÉCU OU NON —
+              -- comptage vu par l'étranger = 0 dans les DEUX cas, ce qui ne
+              -- prouverait rien. On veut l'état RÉEL de la table, pas ce que
+              -- cet appelant en verrait.
+  select count(*) into n from public.agence_clients
+   where agence_id = '22222222-2222-2222-2222-222222222222'
+     and client_id = '11111111-1111-1111-1111-111111111111';
+  return n;
+end $$;
+
+-- L'ORDRE EST IMPÉRATIF : l'étranger d'abord. Si l'agence déliait en premier,
+-- le lien n'existerait plus et la tentative de l'étranger serait verte pour la
+-- mauvaise raison — la forme exacte des huit vacuités déjà trouvées sur ce
+-- chantier.
+select is(tests.delier_puis_compter('deadbeef-0000-4000-8000-000000000000'),
+          1::bigint, 'delier_client : un étranger n''affecte pas le lien d''une agence');
+
+select is(tests.delier_puis_compter('22222222-2222-2222-2222-222222222222'),
+          0::bigint, 'delier_client : l''agence, elle, délie bien son client');
+
+-- Le lien est re-créé, et ce n'est pas une scorie : c'était, à cet endroit du
+-- fichier, la SEULE ligne d'`agence_clients` (posée par le lot 1), et le
+-- garde-fou de vacuité du socle exige que la table ne soit pas vide. La
+-- supprimer ferait rougir le socle sur une table que personne n'aurait
+-- touchée. Même situation que la section Cercle du lot 2, même remède.
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        '11111111-1111-1111-1111-111111111111');
+
+-- lier_client / creer_voyage_pour_client : réservé aux agences. is_agence()
+-- ne lit QUE le claim JWT `user_role` (cf. tests.bool_as_role, lot 3), jamais
+-- auth.uid() ni profiles.role. tests.text_as ne pose pas ce claim : sous lui,
+-- même l'agence réelle échouerait à 'réservé aux agences', et le refus serait
+-- vert pour la mauvaise raison — le prédicat coincé à false que le lot 3
+-- existe pour attraper. D'où ce jumeau de text_as, même idiome que
+-- bool_as_role, employé des DEUX côtés de chaque paire ci-dessous.
+create function tests.text_as_role(p_uid uuid, p_role text, p_sql text) returns text language plpgsql as $$
+declare v text;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  execute p_sql into v;
+  reset role;
+  return v;
+end $$;
+
+-- lier_client : un compte sans le rôle agence ne lie personne. Témoin :
+-- l'agence, elle, lie bien un nouveau client (assertion suivante) — free
+-- (44444444…), jamais encore lié, pour que l'effet soit une VRAIE insertion et
+-- non un `on conflict do nothing` silencieux sur le lien du lot 1.
+select throws_ok(
+  $$ select tests.text_as_role('11111111-1111-1111-1111-111111111111', 'client',
+       'select public.lier_client(''free@vito.test'')') $$,
+  'réservé aux agences',
+  'lier_client : un compte sans le rôle agence ne lie pas de client');
+
+select is(tests.text_as_role('22222222-2222-2222-2222-222222222222', 'agence',
+          'select public.lier_client(''free@vito.test'')'),
+          'ok', 'lier_client : l''agence, elle, lie bien un nouveau client');
+
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.agence_clients where agence_id = ''22222222-2222-2222-2222-222222222222'' and client_id = ''44444444-4444-4444-8444-444444444444'''),
+          1::bigint, 'lier_client : et la liaison a réellement inscrit le lien');
+
+-- creer_voyage_pour_client : DEUX raisons de lever, testées séparément.
+-- 1) réservé aux agences (même mécanisme que lier_client, ci-dessus).
+select throws_ok(
+  $$ select tests.text_as_role('11111111-1111-1111-1111-111111111111', 'client',
+       'select public.creer_voyage_pour_client(''11111111-1111-1111-1111-111111111111'', ''pgtap voyage'', ''Paris'', ''2027-01-01'', ''2027-01-10'', ''planifie'')::text') $$,
+  'réservé aux agences',
+  'creer_voyage_pour_client : un compte sans le rôle agence n''en crée pas');
+
+-- 2) client non lié : l'agence est bien l'agence, mais deadbeef… n'a aucune
+-- ligne dans agence_clients. La vérification ne dépend d'aucun compte réel
+-- derrière cet uuid, seulement de l'absence de lien.
+select throws_ok(
+  $$ select tests.text_as_role('22222222-2222-2222-2222-222222222222', 'agence',
+       'select public.creer_voyage_pour_client(''deadbeef-0000-4000-8000-000000000000'', ''pgtap voyage'', ''Paris'', ''2027-01-01'', ''2027-01-10'', ''planifie'')::text') $$,
+  'client non lié',
+  'creer_voyage_pour_client : l''agence ne crée pas pour un client non lié');
+
+-- Succès + effet, en un seul helper : creer_voyage_pour_client rend un uuid,
+-- sans sentinelle texte comparable à 'ok' comme inviter_famille/lier_client —
+-- un contrôle de retour séparé n'ajouterait rien à la preuve de l'effet. Même
+-- remède qu'au-dessus : appel et comptage en deux instructions dans le même
+-- helper. RISQUE MESURÉ : client (11111111…) n'est PAS premium et possède déjà
+-- 1 voyage (seed) ; enforce_voyage_limit ne refuse qu'à partir de 2 déjà
+-- présents, donc cet appel légitime passe. Client est de nouveau lié à
+-- l'agence à ce point du fichier (lien du lot 1, re-créé juste au-dessus après
+-- le test delier_client).
+create function tests.creer_voyage_puis_compter(p_uid uuid, p_role text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  perform public.creer_voyage_pour_client('11111111-1111-1111-1111-111111111111',
+    'pgtap voyage agence', 'Paris', current_date + 30, current_date + 33, 'planifie'::public.voyage_statut);
+  reset role; -- comptage hors RLS, même précaution que delier_puis_compter ci-dessus
+  select count(*) into n from public.voyages
+   where owner_id = '11111111-1111-1111-1111-111111111111'
+     and titre = 'pgtap voyage agence';
+  return n;
+end $$;
+
+select is(tests.creer_voyage_puis_compter('22222222-2222-2222-2222-222222222222', 'agence'),
+          1::bigint, 'creer_voyage_pour_client : l''agence, elle, crée bien le voyage pour son client lié');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
