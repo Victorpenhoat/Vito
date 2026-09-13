@@ -1774,8 +1774,13 @@ select is(tests.delier_puis_compter('22222222-2222-2222-2222-222222222222'),
 -- Le lien est re-créé, et ce n'est pas une scorie : c'était, à cet endroit du
 -- fichier, la SEULE ligne d'`agence_clients` (posée par le lot 1), et le
 -- garde-fou de vacuité du socle exige que la table ne soit pas vide. La
--- supprimer ferait rougir le socle sur une table que personne n'aurait
--- touchée. Même situation que la section Cercle du lot 2, même remède.
+-- supprimer laisserait la table telle que ce test l'a mutilée, et non telle
+-- qu'il l'a trouvée. Même situation que la section Cercle du lot 2, même remède.
+-- NUANCE MESURÉE depuis que le succès de creer_voyage_pour_client porte sur un
+-- client créé par ce lot : deux autres lignes (le lien posé par lier_client, et
+-- celui du client neuf) atteignent désormais le socle, qui reste donc vert sans
+-- cette re-création — vérifié par suppression, 240/240. Elle n'est plus le seul
+-- rempart contre la vacuité, mais elle reste la restitution de l'état d'entrée.
 insert into public.agence_clients (agence_id, client_id)
 values ('22222222-2222-2222-2222-222222222222',
         '11111111-1111-1111-1111-111111111111');
@@ -1837,27 +1842,48 @@ select throws_ok(
 -- sans sentinelle texte comparable à 'ok' comme inviter_famille/lier_client —
 -- un contrôle de retour séparé n'ajouterait rien à la preuve de l'effet. Même
 -- remède qu'au-dessus : appel et comptage en deux instructions dans le même
--- helper. RISQUE MESURÉ : client (11111111…) n'est PAS premium et possède déjà
--- 1 voyage (seed) ; enforce_voyage_limit ne refuse qu'à partir de 2 déjà
--- présents, donc cet appel légitime passe. Client est de nouveau lié à
--- l'agence à ce point du fichier (lien du lot 1, re-créé juste au-dessus après
--- le test delier_client).
-create function tests.creer_voyage_puis_compter(p_uid uuid, p_role text) returns bigint language plpgsql as $$
+-- helper.
+--
+-- LE CLIENT DE CETTE ASSERTION EST CRÉÉ ICI, ET CE N'EST PAS UN DOUBLON DU
+-- SEED. `enforce_voyage_limit` (déclencheur BEFORE INSERT sur voyages) refuse
+-- tout voyage à un compte non premium qui en possède déjà 2 ; `client`
+-- (11111111…) n'est pas premium et en possède déjà 1 au seed : marge d'UNE
+-- ligne. Or la défaillance ne serait pas un rouge, mais un ABORT DE
+-- TRANSACTION — mesuré : `ERROR: limite_voyages_free` puis « current
+-- transaction is aborted » sur les ~32 assertions suivantes, SOCLE compris, et
+-- un diagnostic dégénéré en « Bad plan » (cf. rapport). Un seul run e2e ou une
+-- session de dev sur cette base PARTAGÉE consommait cette marge. Un compte
+-- neuf possède 0 voyage par construction : la ligne que l'assertion éprouve,
+-- elle la crée. `handle_new_user` pose le profil que la FK d'agence_clients
+-- exige, et le lien d'agence est une fixture, pas un effet sous test.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004c1', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-client-agence@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Client Agence"}'::jsonb,
+        now(), now());
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        'ba000000-0000-4000-8000-0000000004c1');
+
+create function tests.creer_voyage_puis_compter(p_uid uuid, p_role text, p_client uuid) returns bigint language plpgsql as $$
 declare n bigint;
 begin
   perform set_config('request.jwt.claims',
     json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
   set local role authenticated;
-  perform public.creer_voyage_pour_client('11111111-1111-1111-1111-111111111111',
+  perform public.creer_voyage_pour_client(p_client,
     'pgtap voyage agence', 'Paris', current_date + 30, current_date + 33, 'planifie'::public.voyage_statut);
   reset role; -- comptage hors RLS, même précaution que delier_puis_compter ci-dessus
   select count(*) into n from public.voyages
-   where owner_id = '11111111-1111-1111-1111-111111111111'
+   where owner_id = p_client
      and titre = 'pgtap voyage agence';
   return n;
 end $$;
 
-select is(tests.creer_voyage_puis_compter('22222222-2222-2222-2222-222222222222', 'agence'),
+select is(tests.creer_voyage_puis_compter('22222222-2222-2222-2222-222222222222', 'agence',
+          'ba000000-0000-4000-8000-0000000004c1'),
           1::bigint, 'creer_voyage_pour_client : l''agence, elle, crée bien le voyage pour son client lié');
 
 -- ============================================================
