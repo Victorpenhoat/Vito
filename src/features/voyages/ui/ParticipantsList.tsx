@@ -145,7 +145,7 @@ export function ParticipantsList({ voyageId, participants, proches, comptes, auj
 
       {!ouvert ? (
         <button type="button" data-testid="participant-ajouter" onClick={() => setOuvert(true)}
-          className="inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-accent/40 bg-accent-50 px-3 py-1.5 text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+          className="inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-accent/40 bg-surface px-3 py-1.5 text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
           <UserPlus size={12} aria-hidden />
           {t("participants.ajouter")}
         </button>
@@ -187,7 +187,7 @@ export function ParticipantsList({ voyageId, participants, proches, comptes, auj
               <button key={v} type="button" data-testid={`type-${v}`} aria-pressed={type === v}
                 onClick={() => setType(v)}
                 className={`rounded-full border px-3 py-1 text-[11.5px] font-semibold ${
-                  type === v ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted"
+                  type === v ? "border-accent/30 bg-surface text-accent" : "border-line bg-surface-hover text-muted"
                 }`}>
                 {t(`participants.${v}`)}
               </button>

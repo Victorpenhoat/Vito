@@ -97,7 +97,7 @@ export function TotpSection() {
           <p className="mt-0.5 text-[11.5px] text-muted">{t("totp.explication")}</p>
         </div>
         {etat === "actif" && (
-          <span data-testid="totp-actif" className="shrink-0 rounded-full border border-current/20 bg-kpi-green-bg px-2 py-0.5 text-[10px] font-semibold text-kpi-green">
+          <span data-testid="totp-actif" className="shrink-0 rounded-full border border-current/20 bg-kpi-green-bg px-2 py-0.5 text-[10px] font-semibold text-ink">
             {t("totp.active")}
           </span>
         )}

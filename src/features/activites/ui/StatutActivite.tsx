@@ -5,8 +5,8 @@ import { changerStatutActivite } from "../data/actions";
 import { STATUTS_ACTIVITE } from "../domain/activite";
 
 const TEINTE: Record<string, string> = {
-  en_cours: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
-  en_pause: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+  en_cours: "border-kpi-green/30 bg-kpi-green-bg text-ink",
+  en_pause: "border-current/20 bg-kpi-amber-bg text-ink",
   terminee: "border-line bg-surface-hover text-muted",
 };
 

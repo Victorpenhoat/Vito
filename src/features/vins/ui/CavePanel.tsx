@@ -58,7 +58,7 @@ export function CavePanel({ vins, vinsConnus, tags, lieux }: {
           <button key={o} type="button" role="tab" aria-selected={onglet === o}
             data-testid={`cave-onglet-${o}`} onClick={() => setOnglet(o)}
             className={`rounded-full border px-3 py-1.5 text-[11.5px] font-semibold ${
-              onglet === o ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
+              onglet === o ? "border-accent/30 bg-surface text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
             }`}>
             {t(`cave.onglets.${o}`)}
             <span className="ml-1 opacity-70">{compte(o)}</span>
@@ -67,7 +67,7 @@ export function CavePanel({ vins, vinsConnus, tags, lieux }: {
         <button type="button" role="tab" aria-selected={onglet === "carte"}
           data-testid="cave-onglet-carte" onClick={() => setOnglet("carte")}
           className={`rounded-full border px-3 py-1.5 text-[11.5px] font-semibold ${
-            onglet === "carte" ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
+            onglet === "carte" ? "border-accent/30 bg-surface text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
           }`}>
           {t("cave.onglets.carte")}
         </button>
@@ -123,7 +123,7 @@ export function CavePanel({ vins, vinsConnus, tags, lieux }: {
                         .filter(Boolean).join(" · ")}
                     </span>
                     {v.a_retrouver && (
-                      <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
+                      <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-1.5 py-0.5 text-[10px] font-semibold text-ink">
                         {t("cave.onglets.a_retrouver")}
                       </span>
                     )}
@@ -209,7 +209,7 @@ function Facette({ label, value, options, onChange, testId }: {
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} data-testid={testId} aria-label={label}
       className={`rounded-full border px-2.5 py-1.5 text-[11.5px] font-semibold outline-none focus:outline-2 focus:outline-accent ${
-        value ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted"
+        value ? "border-accent/30 bg-accent-50 text-ink" : "border-line bg-surface-hover text-muted"
       }`}>
       <option value="">{label}</option>
       {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}

@@ -144,7 +144,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
                   )}
                   {pendant.length > 0 && (
                     <span data-testid="planning-pendant-vacances"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-kpi-amber-bg px-2 py-0.5 text-[10px] font-semibold text-kpi-amber">
+                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-kpi-amber-bg px-2 py-0.5 text-[10px] font-semibold text-ink">
                       {t("pendantVacances", { libelle: pendant.map((p) => p.libelle).join(", ") })}
                     </span>
                   )}

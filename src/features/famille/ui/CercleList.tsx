@@ -96,7 +96,7 @@ function Row({ proche: p, t, pinned = false }: { proche: Proche; t: ReturnType<t
         </span>
       </Link>
       {pinned ? (
-        <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2.5 py-0.5 text-[11px] font-semibold text-accent">{t("proches.epingle")}</span>
+        <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2.5 py-0.5 text-[11px] font-semibold text-ink">{t("proches.epingle")}</span>
       ) : p.phone ? (
         <span className="flex shrink-0 gap-2">
           <a href={`tel:${p.phone}`} aria-label={t("fiche.appeler")}

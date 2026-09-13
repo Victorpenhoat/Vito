@@ -15,11 +15,11 @@ type Ligne = {
 };
 
 const TON: Record<string, string> = {
-  actif: "border-current/20 bg-kpi-green-bg text-kpi-green",
+  actif: "border-current/20 bg-kpi-green-bg text-ink",
   invite: "border-line bg-surface-hover text-muted",
-  suspendu: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+  suspendu: "border-current/20 bg-kpi-amber-bg text-ink",
   suppression: "border-danger/30 bg-danger/10 text-danger",
-  administrateur: "border-accent/25 bg-accent-50 text-accent",
+  administrateur: "border-accent/25 bg-accent-50 text-ink",
 };
 
 // Liste des comptes (écran « Comptes »). Seules l'identité et l'état sont

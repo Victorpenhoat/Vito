@@ -303,7 +303,7 @@ export function DepensesVoyageBlock({
 
       {onglet === "depenses" && (!ouvert ? (
         <button type="button" data-testid="depense-ajouter" onClick={() => setOuvert(true)}
-          className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-accent-50 px-3 py-1.5 text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+          className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-surface px-3 py-1.5 text-[11.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
           + {t("ajouter")}
         </button>
       ) : (

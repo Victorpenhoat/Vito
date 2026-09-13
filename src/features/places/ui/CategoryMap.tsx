@@ -253,8 +253,8 @@ export function CategoryMap({ places, surbrillanceId, categorie = "resto", onZon
 
 function StatutChipLecture({ statut, tr }: { statut: RestoStatut; tr: ReturnType<typeof useTranslations> }) {
   const tone =
-    statut === "favori" ? "border-accent/25 bg-accent-50 text-accent"
-    : statut === "a_tester" ? "border-current/20 bg-kpi-amber-bg text-kpi-amber"
+    statut === "favori" ? "border-accent/25 bg-accent-50 text-ink"
+    : statut === "a_tester" ? "border-current/20 bg-kpi-amber-bg text-ink"
     : "border-line bg-surface-hover text-muted";
   return (
     <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[9.5px] font-semibold ${tone}`}>

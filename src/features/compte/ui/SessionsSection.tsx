@@ -49,7 +49,7 @@ export function SessionsSection({ sessions, connexions }: {
                   </span>
                 </span>
                 {s.courante ? (
-                  <span data-testid="session-courante" className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent">
+                  <span data-testid="session-courante" className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-ink">
                     {t("sessions.cetAppareil")}
                   </span>
                 ) : (

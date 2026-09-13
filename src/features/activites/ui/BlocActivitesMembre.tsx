@@ -47,7 +47,7 @@ export async function BlocActivitesMembre({ membreId }: { membreId: string }) {
         // Ce qui traîne se dit ici aussi : on ne vient pas sur cette fiche pour
         // découvrir un certificat expiré ailleurs.
         <Link href="/activites/alertes" data-testid="membre-activites-alertes"
-          className="mt-2 flex items-center justify-between gap-2 rounded-card border border-current/20 bg-kpi-amber-bg px-3 py-2 text-[12px] font-semibold text-kpi-amber">
+          className="mt-2 flex items-center justify-between gap-2 rounded-card border border-current/20 bg-surface px-3 py-2 text-[12px] font-semibold text-kpi-amber">
           {t("membre.aTraiter", { n: aTraiter.length })}
           <span className="shrink-0">{t("alertes.traiter")} →</span>
         </Link>

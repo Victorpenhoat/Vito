@@ -135,9 +135,9 @@ export function EtiquetteTunnel({ vinsConnus = [], onCree }: {
   const badge = (champ: keyof LabelFields) => {
     const niveau = confiance[champ];
     if (!niveau) return null;
-    const ton = niveau === "sur" ? "border-current/20 bg-kpi-green-bg text-kpi-green"
+    const ton = niveau === "sur" ? "border-current/20 bg-kpi-green-bg text-ink"
       : niveau === "probable" ? "border-line bg-surface-hover text-muted"
-      : "border-current/20 bg-kpi-amber-bg text-kpi-amber";
+      : "border-current/20 bg-kpi-amber-bg text-ink";
     return (
       <span data-testid={`confiance-${champ}`} className={`rounded-full border px-2 py-0.5 text-[9.5px] font-semibold ${ton}`}>
         {t(`etiquette.confiance.${niveau}`)}

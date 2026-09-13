@@ -113,14 +113,14 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                     Le retirer casse la compilation, pas le rendu. */}
                 {signaux.vacances && zone && (
                   <span data-testid="jour-vacances"
-                    className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
+                    className="inline-flex items-center gap-1 rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                     <Sun size={10} aria-hidden />
                     {t("semaine.vacances", { zone })}
                   </span>
                 )}
                 {signaux.voyage && (
                   <span data-testid="jour-voyage"
-                    className="inline-flex items-center gap-1 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-accent">
+                    className="inline-flex items-center gap-1 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                     <Plane size={10} aria-hidden />
                     {signaux.voyage.titre}
                   </span>
@@ -174,12 +174,12 @@ export async function VueSemaine({ semaine, aujourdhui }: {
                           suspendent seulement — un club ferme souvent, mais pas
                           toujours. On signale, on n'affirme pas. */}
                       {signaux.voyage && (
-                        <span data-testid="seance-manquee" className="rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-accent">
+                        <span data-testid="seance-manquee" className="rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                           {t("semaine.manquee", { voyage: signaux.voyage.titre })}
                         </span>
                       )}
                       {!signaux.voyage && signaux.vacances && (
-                        <span data-testid="seance-vacances" className="rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-kpi-amber">
+                        <span data-testid="seance-vacances" className="rounded-full border border-current/20 bg-kpi-amber-bg px-2 py-0.5 text-[10.5px] font-semibold text-ink">
                           {t("semaine.interrompue")}
                         </span>
                       )}

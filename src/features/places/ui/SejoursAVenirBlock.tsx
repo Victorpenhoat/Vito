@@ -54,7 +54,7 @@ export function SejoursAVenirBlock({
                 <span className="text-faint"> · {t(`reservation.etats.${etat}`)}</span>
               </span>
               <Link href={`/voyages/${r.voyageId}`} data-testid="sejour-reserve-voyage"
-                className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent hover:underline">
+                className="shrink-0 rounded-full border border-accent/25 bg-surface px-2 py-0.5 text-[10px] font-semibold text-accent hover:underline">
                 {t("visite.voyageLien", { titre: r.voyageTitre ?? "" })} →
               </Link>
               {aProposer && (

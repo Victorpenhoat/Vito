@@ -92,7 +92,7 @@ export function MaDegustationForm({ vinId, resume, tags, etablissementId, etabli
               <button key={tag.id} type="button" onClick={() => basculer(tag.id)}
                 data-testid={`tag-${tag.slug}`} aria-pressed={actif}
                 className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11.5px] font-semibold transition ${
-                  actif ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
+                  actif ? "border-accent/30 bg-surface text-accent" : "border-line bg-surface-hover text-muted hover:text-ink"
                 }`}>
                 {actif && <Check size={11} aria-hidden />}{tag.label}
               </button>
@@ -100,7 +100,7 @@ export function MaDegustationForm({ vinId, resume, tags, etablissementId, etabli
           })}
           {nouveaux.map((label) => (
             <span key={label} data-testid="tag-nouveau"
-              className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent-50 px-2.5 py-1 text-[11.5px] font-semibold text-accent">
+              className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent-50 px-2.5 py-1 text-[11.5px] font-semibold text-ink">
               {label}
               <button type="button" aria-label={t("retirerTag", { tag: label })}
                 onClick={() => setNouveaux((n) => n.filter((x) => x !== label))}>
@@ -165,7 +165,7 @@ export function MaDegustationForm({ vinId, resume, tags, etablissementId, etabli
                   <input type="radio" name="lieuType" value={l} checked={lieu === l}
                     onChange={() => setLieu(l)} className="peer sr-only" />
                   <span className={`block rounded-full border px-2.5 py-1 text-[11.5px] font-semibold ${
-                    lieu === l ? "border-accent/30 bg-accent-50 text-accent" : "border-line bg-surface-hover text-muted"
+                    lieu === l ? "border-accent/30 bg-accent-50 text-ink" : "border-line bg-surface-hover text-muted"
                   }`}>
                     {t(`lieux.${l}`)}
                   </span>

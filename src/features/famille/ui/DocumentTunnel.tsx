@@ -102,7 +102,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             ))}
             <button type="button" onClick={() => setDocType("autre")} aria-pressed={docType === "autre"}
               className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                docType === "autre" ? "bg-ink font-semibold text-app" : "border border-dashed border-accent/40 bg-accent-50 text-accent"
+                docType === "autre" ? "bg-ink font-semibold text-app" : "border border-dashed border-accent/40 bg-surface text-accent"
               }`}>
               <Plus size={11} aria-hidden />
               {t("tunnel.autreType")}
@@ -190,7 +190,7 @@ export function DocumentTunnel({ memberId }: { memberId: string }) {
             <input type="file" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
               data-testid="tunnel-verso" className="sr-only"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) pickVerso(f); }} />
-            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold ${verso ? "border border-current/20 bg-kpi-green-bg text-kpi-green" : "border border-line bg-surface text-muted"}`}>
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold ${verso ? "border border-current/20 bg-kpi-green-bg text-ink" : "border border-line bg-surface text-muted"}`}>
               {verso ? `${t("doc.verso")} ✓` : t("doc.verso")}
             </span>
           </label>
@@ -215,7 +215,7 @@ function StepIndicator({ step, t }: { step: "A" | "B" | "C" | "D"; t: ReturnType
     <ol className="hidden lg:flex items-center gap-2" aria-hidden="true">
       {steps.map((s, i) => (
         <li key={s.k} className="flex items-center gap-2">
-          <span className={`grid h-6 w-6 place-items-center rounded-full text-xs font-semibold ${i <= currentIdx ? "bg-accent text-on-fill" : "bg-accent-50 text-accent"}`}>{i + 1}</span>
+          <span className={`grid h-6 w-6 place-items-center rounded-full text-xs font-semibold ${i <= currentIdx ? "bg-accent text-on-fill" : "bg-accent-50 text-ink"}`}>{i + 1}</span>
           <span className={`text-sm ${i === currentIdx ? "text-ink font-medium" : "text-muted"}`}>{s.label}</span>
           {i < steps.length - 1 && <span className="mx-1 h-px w-6 bg-line" />}
         </li>

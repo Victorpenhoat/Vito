@@ -1,23 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
-const CSS = readFileSync(path.resolve(__dirname, "globals.css"), "utf8");
-
-/** Les déclarations `--role: valeur` d'un bloc, par son sélecteur d'ouverture. */
-export function rolesDuBloc(css: string, ouverture: string): Map<string, string> {
-  const debut = css.indexOf(ouverture);
-  if (debut === -1) throw new Error(`bloc introuvable : ${ouverture}`);
-  const accolade = css.indexOf("{", debut);
-  const fin = css.indexOf("\n}", accolade);
-  // Un commentaire peut citer un rôle (ex. « jadis : --hero-glow: … retiré »)
-  // sans le déclarer : on le retire avant d'extraire les déclarations actives,
-  // sinon ce rôle fantôme est pris pour une déclaration réelle.
-  const corps = css.slice(accolade + 1, fin).replace(/\/\*[\s\S]*?\*\//g, "");
-  const out = new Map<string, string>();
-  for (const m of corps.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/g)) out.set(m[1]!, m[2]!.trim());
-  return out;
-}
+import { CSS, rolesDuBloc, surFond, contraste } from "../test/couleurs";
 
 describe("la table des jetons", () => {
   const sombre = rolesDuBloc(CSS, ':root,\n[data-theme="dark"]');
@@ -47,39 +31,6 @@ describe("la table des jetons", () => {
     expect(couleurs.filter((c) => !exposes.has(c))).toEqual([]);
   });
 });
-
-const canal = (c: number) => {
-  const s = c / 255;
-  return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-};
-/** Luminance relative WCAG d'un `#rrggbb`. */
-export function luminance(hex: string): number {
-  const n = parseInt(hex.slice(1), 16);
-  return 0.2126 * canal((n >> 16) & 255) + 0.7152 * canal((n >> 8) & 255) + 0.0722 * canal(n & 255);
-}
-/**
- * Une couleur alpha composée sur son fond, rendue en `#rrggbb`.
- *
- * Sans elle, AUCUN seuil ne pouvait couvrir un fond teinté : `contraste`
- * n'accepte que `#rrggbb`, et les fonds de badge (`--kpi-green-bg`,
- * `--accent-50`…) sont en `rgba(…, .14)`. C'est ce trou de l'outil de mesure
- * qui a laissé un libellé teinté écrire à 4,17:1 en thème clair sans qu'aucun
- * test ne bronche.
- */
-export function surFond(couleur: string, fond: string): string {
-  const m = couleur.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/);
-  if (!m) return couleur;
-  const a = m[4] === undefined ? 1 : Number(m[4]);
-  const f = parseInt(fond.slice(1), 16);
-  const mele = (i: number, d: number) => Math.round(Number(m[i]) * a + ((f >> d) & 255) * (1 - a));
-  return "#" + ([[1, 16], [2, 8], [3, 0]] as const).map(([i, d]) => mele(i, d).toString(16).padStart(2, "0")).join("");
-}
-
-/** Rapport de contraste WCAG entre deux `#rrggbb`. */
-export function contraste(a: string, b: string): number {
-  const [haut, bas] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
-  return (haut + 0.05) / (bas + 0.05);
-}
 
 // Les seuils ne sont pas décoratifs : ce sont eux qui ont imposé de NE PAS
 // reprendre l'accent #6BA5FF de la maquette dans le thème clair, où il tombe

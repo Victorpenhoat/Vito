@@ -88,7 +88,7 @@ export function RecommanderButton({ proches, cible }: {
               <li key={p.id} className="flex items-center gap-2 border-b border-line-soft py-2">
                 <span className="min-w-0 flex-1 truncate text-[13.5px] text-ink">{p.nom}</span>
                 {envoyeA.includes(p.id) ? (
-                  <span data-testid="recommander-envoye" className="rounded-full bg-kpi-green-bg px-2.5 py-1 text-[10.5px] font-semibold text-kpi-green">
+                  <span data-testid="recommander-envoye" className="rounded-full bg-kpi-green-bg px-2.5 py-1 text-[10.5px] font-semibold text-ink">
                     {t("envoye")}
                   </span>
                 ) : (

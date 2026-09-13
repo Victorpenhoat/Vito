@@ -115,7 +115,7 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
 
   const chipCls = (active: boolean) =>
     `rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-      active ? "border border-current/20 bg-kpi-green-bg font-semibold text-kpi-green" : "border border-line bg-surface-hover text-muted"
+      active ? "border border-current/20 bg-kpi-green-bg font-semibold text-ink" : "border border-line bg-surface-hover text-muted"
     }`;
 
   return (
@@ -225,8 +225,8 @@ export function CategoryDiscovery({ places, statutDefaut, categorie = "resto" }:
                       <span className="flex items-center gap-2">
                         <span className="truncate font-serif text-base text-ink">{result.nom}</span>
                         <span data-testid="result-added" className={`shrink-0 rounded-full border px-2 py-0.5 text-[9.5px] font-semibold ${
-                          s === "favori" ? "border-accent/25 bg-accent-50 text-accent"
-                          : s === "a_tester" ? "border-current/20 bg-kpi-amber-bg text-kpi-amber"
+                          s === "favori" ? "border-accent/25 bg-accent-50 text-ink"
+                          : s === "a_tester" ? "border-current/20 bg-kpi-amber-bg text-ink"
                           : "border-line bg-surface-hover text-muted"
                         }`}>
                           {s === "favori" ? "♥ " : ""}{tr(`statut.${s}`)}

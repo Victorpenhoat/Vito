@@ -39,7 +39,7 @@ export function HebergementPicker({ choisi, onChoisir }: {
         <span className="shrink-0 text-[10.5px] text-accent/80">{t("hebergement.rejoindra")}</span>
         <button type="button" aria-label={t("hebergement.retirer")} data-testid="hebergement-retirer"
           onClick={() => onChoisir(null)}
-          className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/15 text-accent focus-visible:outline-2 focus-visible:outline-accent">
+          className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-surface text-accent focus-visible:outline-2 focus-visible:outline-accent">
           <X size={11} aria-hidden />
         </button>
       </div>
