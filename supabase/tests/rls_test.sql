@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(240);
+select plan(244);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1300,17 +1300,36 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           0::bigint, 'avis : personne ne lit l''avis d''un autre');
 
 -- etablissements : LE cas inversé. SELECT USING (true) pour tout compte
--- connecté — et AUCUNE policy d'écriture, relevé au catalogue. La RLS refuse
--- donc par défaut : le catalogue ne se modifie que par upsert_etablissement
--- (SECURITY DEFINER). C'est l'invariant que ce lot grave, parce qu'il ne tient
--- aujourd'hui qu'à une ABSENCE de policy — et une absence s'ajoute par
--- distraction.
-select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
-          0::bigint, 'etablissements : un compte connecté ne modifie pas le catalogue');
-select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
-          0::bigint, 'etablissements : ni ne l''efface');
+-- connecté — et AUCUNE policy d'écriture, relevé au catalogue. Le catalogue ne
+-- se modifie que par upsert_etablissement (SECURITY DEFINER).
+--
+-- CES DEUX ASSERTIONS ÉTAIENT ÉCRITES EN `is(…, 0)` ET ONT DÛ DEVENIR
+-- `throws_ok` : la migration 00069 a DÉPLACÉ la barrière. Avant elle, l'absence
+-- de policy d'écriture faisait rendre 0 ligne à l'UPDATE (refus silencieux de
+-- la RLS) ; depuis, le REVOKE arrête l'instruction plus tôt, au niveau du
+-- privilège, et elle LÈVE (42501). Un refus qui lève écrit avec `is` ne rougit
+-- pas : il AVORTE la transaction et emporte tout ce qui suit — mesuré ici même,
+-- 164 assertions exécutées sur 244 et un diagnostic « Bad plan » qui ne nomme
+-- rien. C'est la règle du fichier, payée une fois de plus : un refus se teste
+-- avec `throws_ok`, jamais avec un décompte.
+--
+-- CE QU'ON PERD, ET POURQUOI C'EST ACCEPTABLE. Ces deux lignes ne mesurent plus
+-- la RLS mais le GRANT — la couche RLS n'est tout simplement plus ATTEIGNABLE
+-- pour une écriture depuis un compte connecté, le privilège la précédant. La
+-- garantie « aucune policy d'écriture » reste portée par l'assertion
+-- déclarative ci-dessous, qui ne dépend d'aucune exécution ; et la garantie
+-- « le privilège est bien retiré » par les `has_table_privilege` du bloc GRANT.
+-- Les trois couches sont donc toujours éprouvées, chacune là où elle vit.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u') $$,
+  'permission denied for table etablissements',
+  'etablissements : un compte connecté ne modifie pas le catalogue');
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u') $$,
+  'permission denied for table etablissements',
+  'etablissements : ni ne l''efface');
 
 -- Les deux assertions ci-dessus ne sondent qu'UNE ligne (celle prise par
 -- `order by id limit 1`) : elles prouvent que l'écriture est refusée À
@@ -1544,6 +1563,36 @@ select ok(not has_function_privilege('authenticated', 'public.purger_recommandat
 -- has_function_privilege cassé qui rendrait false pour tout.
 select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
           'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
+
+-- ── Le référentiel partagé : la barrière est le GRANT, pas la policy ───────
+-- `etablissements` est en lecture seule pour les comptes connectés (00069) ;
+-- l'écriture passe par `upsert_etablissement`, SECURITY DEFINER.
+--
+-- POURQUOI CETTE GARDE NE FAIT PAS DOUBLON AVEC LA RLS. La table n'a
+-- aujourd'hui qu'une policy SELECT, donc la RLS refuse déjà les écritures —
+-- et une assertion qui tenterait un INSERT passerait pour cette raison, quel
+-- que soit le GRANT. Elle serait verte le jour où quelqu'un ajouterait une
+-- policy `FOR ALL` (le geste naturel : 30 tables du schéma en emploient une),
+-- alors même que ce jour-là le référentiel deviendrait écrivable par n'importe
+-- quel compte connecté. C'est donc le PRIVILÈGE qu'on éprouve, pas l'effet :
+-- la seule mesure qui survive à l'ajout d'une policy.
+--
+-- Et ce privilège est un REVOKE explicite, pas une absence : les DEFAULT
+-- PRIVILEGES de Supabase accordent `arwdDxtm` à `authenticated` sur toute
+-- table créée dans `public` (mesuré : 47 tables, INSERT sur 46). Une migration
+-- qui recréerait la table la rendrait écrivable sans que personne l'écrive.
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'INSERT'),
+          'etablissements : un compte connecté n''a pas le privilège d''y insérer');
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'UPDATE'),
+          'etablissements : ni celui d''y modifier une fiche');
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'DELETE'),
+          'etablissements : ni celui d''en supprimer une');
+-- Témoin : sans lui, les trois refus ci-dessus seraient satisfaits par un
+-- has_table_privilege cassé, ou par une table devenue inaccessible — cas où
+-- l'application entière serait morte et le test, vert. Même piège que le
+-- témoin `mock_subscribe` ci-dessus.
+select ok(has_table_privilege('authenticated', 'public.etablissements', 'SELECT'),
+          'témoin : le référentiel reste bien LISIBLE par un compte connecté');
 
 -- ── Lot 4 / décor des fonctions à effet ────────────────────────────────────
 -- Objets PROPRES à ce lot : ceux du lot 2 sont supprimés en fin de leurs
