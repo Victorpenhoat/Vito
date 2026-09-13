@@ -7,7 +7,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
+    // les scripts d'outillage ont aussi leur logique pure (décalage de ports d'une
+    // pile Supabase par worktree) : elle se teste comme le reste.
+    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.mjs"],
     globals: true,
     server: {
       deps: {

@@ -63,3 +63,6 @@ ds-bundle/
 
 # Superpowers : ledgers, rapports de revue et maquettes de brainstorm — scratch local
 .superpowers/
+
+# Pile Supabase propre au worktree (npm run supabase:worktree)
+.supabase-local/

@@ -15,6 +15,33 @@ npm run lint  # ESLint
 npm run build # build de production
 ```
 
+### Travailler dans un worktree : une pile Supabase à soi
+
+`supabase db reset` rejoue les migrations **du disque de celui qui lance la
+commande**. Tant que deux worktrees partagent une pile locale, le reset de l'un
+efface la migration en cours d'écriture de l'autre — c'est arrivé quatre fois
+en deux heures le 12 septembre 2026, dont deux fois par des commandes de
+courtoisie (« laisser la base propre en partant »). Le partage implicite rend
+la discipline insuffisante.
+
+Dans un worktree, avant tout autre chose :
+
+```bash
+cp ../../.env.local .        # les clés sont les mêmes ; seuls les ports changent
+npm run supabase:worktree    # génère .supabase-local/ (ignoré par git)
+npm run db:start             # démarre LA pile de ce worktree
+npm run db:reset             # migrations + seed
+```
+
+Le script dérive du nom du worktree un décalage de ports stable — le même
+worktree retrouve toujours sa pile — et met à jour son `.env.local`, y compris
+`E2E_PORT` : sans lui, deux worktrees qui lancent Playwright en même temps se
+disputent le port 3001, et le second teste l'application du premier.
+
+`db:start`, `db:reset`, `db:types` et `test:rls` visent automatiquement la
+bonne pile. Le checkout principal, lui, garde la pile par défaut (ports 543xx)
+et n'a rien à faire.
+
 ## Utilisateurs de test
 
 Ces comptes sont créés par `supabase/seed.sql` (mot de passe commun : **`password123`**).
