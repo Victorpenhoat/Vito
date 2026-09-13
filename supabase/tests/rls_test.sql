@@ -2452,11 +2452,55 @@ select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-11111
           '1',
           'upsert_etablissement : un compte connecté insère bien une nouvelle fiche au catalogue');
 
-select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
+-- LE SECOND APPEL NE SE MESURE PAS PAR UN COMPTAGE. `etablissements` porte un
+-- index UNIQUE sur `place_id` (mesuré : etablissements_place_id_key) : une fois
+-- la garde passée — elle exige que la fiche (place_id, nom) EXISTE — le
+-- `count(*) where place_id = 'pgtap-place-1'` vaut 1 PAR CONSTRUCTION DU
+-- SCHÉMA, quoi que fasse la fonction. « n'en crée pas une seconde » n'était
+-- plus une mesure, c'était une conséquence du DDL : tout le pouvoir
+-- discriminant était passé dans la garde.
+--
+-- Ce qui reste vrai à prouver, et que l'unicité de place_id n'interdit PAS,
+-- c'est que la fiche est mise à jour EN PLACE : un `delete` suivi d'un
+-- `insert` respecterait l'unicité, rendrait 1, et laisserait le même
+-- place_id — tout en changeant l'`id` de la fiche. Or cet `id` est la clé
+-- étrangère de tout le reste (favoris, visites, photos, famille_restos…) :
+-- une fiche recréée orphelinerait silencieusement ses références. C'est le
+-- seul défaut que le schéma ne garde pas, donc le seul qui mérite une
+-- assertion.
+--
+-- D'où la capture de l'`id` AVANT le second appel et l'exigence qu'il soit
+-- INCHANGÉ après, le nom mis à jour par-dessus. La valeur rendue porte les
+-- deux, en clair : un échec affiche `have: fiche recréée (… -> …), nom …`,
+-- qui NOMME le défaut au lieu de le faire deviner.
+create function tests.upsert_etablissement_maj_puis_verifier(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns text language plpgsql as $$
+declare id_avant uuid; id_apres uuid; nom_apres text;
+begin
+  select id into id_avant from public.etablissements where place_id = p_place_id;
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+  if id_avant is null then
+    return 'upsert_etablissement : aucune fiche à mettre à jour AVANT l''appel, la mise à jour en place ne prouverait rien : mutation vacueuse';
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.upsert_etablissement(p_payload);
+  reset role; -- lecture publique du catalogue (SELECT USING (true)) ; reset par cohérence avec l'idiome du fichier
+  select id, nom into id_apres, nom_apres from public.etablissements where place_id = p_place_id;
+  if id_apres is null then
+    return 'upsert_etablissement : la fiche a DISPARU après l''appel';
+  end if;
+  return case when id_apres = id_avant
+              then 'même fiche'
+              else 'fiche recréée (' || id_avant || ' -> ' || id_apres || ')'
+         end || ', nom ' || nom_apres;
+end $$;
+
+select is(tests.upsert_etablissement_maj_puis_verifier('11111111-1111-1111-1111-111111111111',
           '{"place_id":"pgtap-place-1","nom":"Pgtap Resto Maj","categorie":"resto"}'::jsonb,
           'pgtap-place-1', 'Pgtap Resto Maj'),
-          '1',
-          'upsert_etablissement : un second appel sur le même place_id met à jour la même fiche, n''en crée pas une seconde');
+          'même fiche, nom Pgtap Resto Maj',
+          'upsert_etablissement : un second appel sur le même place_id met à jour la fiche EN PLACE — même id, nom remplacé');
 
 -- 7) cache_etablissement_photo : anonyme. Un uuid arbitraire suffit : le
 -- refus lève AVANT toute lecture d'etablissements (auth.uid() is null en tête
