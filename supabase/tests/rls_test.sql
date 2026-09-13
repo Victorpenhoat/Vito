@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(197);
+select plan(209);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1561,6 +1561,81 @@ values ('dd000000-0000-4000-8000-000000000002',
 -- vivante à cet endroit. Un `insert … on conflict do nothing` aurait masqué
 -- une insertion qui n'insère rien, c'est-à-dire le motif exact des huit
 -- assertions creuses déjà trouvées sur ce chantier.
+
+-- ── Lot 4 / les fonctions de partage ───────────────────────────────────────
+-- Elles élargissent l'accès : ce sont celles qui peuvent, en silence, donner à
+-- quelqu'un ce qu'il ne devait pas avoir. Trois assertions chacune — le refus,
+-- le succès légitime, et l'effet réellement produit en base. L'ordre compte :
+-- le refus vient AVANT le succès (une fois partagé, le bénéficiaire devient
+-- membre et un unshare testé ensuite changerait de sens), et chaque fonction
+-- est suivie de son unshare sur le MÊME objet, dans cet ordre.
+
+-- share_voyage : un non-propriétaire ne partage pas le voyage d'autrui.
+-- Témoin : le propriétaire, lui, partage bien (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.share_voyage(''dd000000-0000-4000-8000-000000000001'', ''client@vito.test'')') $$,
+  'non autorisé',
+  'share_voyage : un non-propriétaire ne partage pas le voyage d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.share_voyage(''dd000000-0000-4000-8000-000000000001'', ''client@vito.test'')'),
+          'ok', 'share_voyage : le propriétaire, lui, partage');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''dd000000-0000-4000-8000-000000000001'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'share_voyage : et le partage a réellement inscrit le membre');
+
+-- unshare_voyage : un non-propriétaire ne retire pas un membre du voyage d'autrui.
+-- Témoin : le propriétaire, lui, retire bien le membre (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.unshare_voyage(''dd000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'unshare_voyage : un non-propriétaire ne retire pas un membre du voyage d''autrui');
+
+-- unshare_voyage rend void ; le cast ::text d'un void vaut '' (vérifié), donc
+-- l'absence d'exception se lit ici comme un succès explicite, pas seulement
+-- par déduction depuis l'effet en base mesuré juste après.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.unshare_voyage(''dd000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text'),
+          '', 'unshare_voyage : le propriétaire, lui, retire le membre');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''dd000000-0000-4000-8000-000000000001'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'unshare_voyage : et le retrait a réellement supprimé le membre');
+
+-- share_groupe : un non-propriétaire ne partage pas le groupe de dépenses d'autrui.
+-- Témoin : le propriétaire, lui, partage bien (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.share_groupe(''dd000000-0000-4000-8000-000000000002'', ''client@vito.test'')') $$,
+  'non autorisé',
+  'share_groupe : un non-propriétaire ne partage pas le groupe d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.share_groupe(''dd000000-0000-4000-8000-000000000002'', ''client@vito.test'')'),
+          'ok', 'share_groupe : le propriétaire, lui, partage');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupe_membres where groupe_id = ''dd000000-0000-4000-8000-000000000002'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'share_groupe : et le partage a réellement inscrit le membre');
+
+-- unshare_groupe : un non-propriétaire ne retire pas un membre du groupe d'autrui.
+-- Témoin : le propriétaire, lui, retire bien le membre (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.unshare_groupe(''dd000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'unshare_groupe : un non-propriétaire ne retire pas un membre du groupe d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.unshare_groupe(''dd000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'')::text'),
+          '', 'unshare_groupe : le propriétaire, lui, retire le membre');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupe_membres where groupe_id = ''dd000000-0000-4000-8000-000000000002'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'unshare_groupe : et le retrait a réellement supprimé le membre');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
