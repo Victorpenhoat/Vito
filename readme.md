@@ -65,5 +65,11 @@ npm run test:ci   # reproduit la CI en local : typecheck → lint → unit → e
 ```
 
 `test:ci` enchaîne les quatre étapes dans l'ordre — si l'une échoue, la chaîne s'arrête.
+
+`npm run test:rls` (pgTAP) exige une base dont l'état est connu : plusieurs assertions
+comptent les lignes du seed, et un run e2e passé avant les fait rougir sans cause réelle.
+Dans un worktree doté de sa pile, la commande remet donc la base à zéro toute seule ;
+sur la pile partagée du checkout principal, elle ne le fait **pas** — un reset y effacerait
+le travail d'une autre session — et le dit.
 La branche `main` est protégée et exige le check `quality` (qui exécute `test:ci`) : aucun
 déploiement en production n'est possible tant que la CI n'est pas verte.
