@@ -12,7 +12,14 @@ jobs:
       - run: npm ci
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # VERSION ÉPINGLÉE, NE PAS REMETTRE `latest`. Avec `latest`, l'action
+          # résout la version par un appel à l'API GitHub — appel non
+          # authentifié, donc soumis au quota partagé des runners. Mesuré en
+          # conditions réelles sur la PR #208 : « Failed to resolve latest
+          # Supabase CLI release: rate limit exceeded », job `quality` rouge en
+          # 32 s sur un faux motif, à relancer à la main. Une version exacte se
+          # télécharge sans cet appel. À remonter délibérément, pas par défaut.
+          version: 2.117.0
       - run: supabase start
       - run: |
           echo "NEXT_PUBLIC_SUPABASE_URL=$(supabase status -o env | grep '^API_URL=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"

@@ -5,7 +5,18 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(174);
+-- COMPTER LES ASSERTIONS DE CE FICHIER, sans se tromper. La grille est, hors
+-- lignes de commentaire : `is(` + `throws_ok(` + `ok(` + `cmp_ok(` +
+-- `has_table(` + `lives_ok(`. Deux pièges MESURÉS, tombés sur ce chantier :
+--   · oublier `has_table(` (2 occurrences) — déjà tombé deux fois ;
+--   · compter `ok(` naïvement. Il faut lui RETRANCHER tout ce qui se termine
+--     par « ok( » sans être une assertion : `throws_ok(` (42), `cmp_ok(` (3),
+--     `lives_ok(` (1) — et `custom_access_token_hook(` (4 hors commentaire),
+--     qui SE TERMINE par « ook( ». Soit 77 bruts − 50 = 27 nets.
+--     Compte de référence : 176 + 42 + 27 + 3 + 2 + 1 = 251.
+-- Vérification de référence, qui ne ment pas : lancer le fichier et compter
+-- les lignes `^ok ` de la sortie TAP.
+select plan(251);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -241,6 +252,18 @@ begin
   reset role;
   return n;
 end $$;
+
+-- PRÉCONDITION POSÉE, PLUS SUBIE — troisième et dernier compte traité ainsi,
+-- après `client` et `admin` plus bas. Les assertions 34 et 35 comptent
+-- `public.profiles` SOUS RLS et exigent 1 : or si `free` appartient à un foyer,
+-- la policy famille lui rend AUSSI visibles les profils de ses co-membres, et
+-- le compte passe à 2. Mesuré : un run e2e qui inscrit `free` dans un foyer
+-- donne 247 ok / 4 not ok. Pas d'abort ici — la dégradation est nommée — mais
+-- quatre faux rouges sur une base locale partagée entre e2e et pgTAP, ce qui
+-- est exactement le motif « e2e contamine RLS » déjà payé deux fois.
+-- Cette ligne est un no-op hors contamination (vérifié : 251/251 sur base
+-- propre), et le fichier s'annulant en entier, elle est sans effet au-dehors.
+delete from public.famille_membres where profile_id = '44444444-4444-4444-8444-444444444444';
 
 -- 33) une demande de suppression s'enregistre…
 select is(tests.count_as('44444444-4444-4444-8444-444444444444',
@@ -997,6 +1020,21 @@ values ('bb000000-0000-4000-8000-00000000000a',
 -- Foyer : on RÉUTILISE celui du lot 1 (familles.famille_membres porte un
 -- UNIQUE(profile_id), donc demo ne peut pas posséder deux foyers). On n'ajoute
 -- que le co-membre.
+--
+-- PRÉCONDITION POSÉE, PAS SUBIE. `famille_membres` porte un UNIQUE(profile_id)
+-- (mesuré : contrainte famille_membres_profile_id_key) : un compte n'appartient
+-- qu'à UN foyer. Cet insert était inconditionnel — un run e2e ou une session de
+-- dev qui plaçait `client` dans un autre foyer sur cette base PARTAGÉE le
+-- faisait LEVER, et le fichier avortait ici, à la ligne 1000, en emportant tout
+-- ce qui suit. Mesuré par simulation : 123 ok, 0 not ok, 168 ERROR, aucun
+-- verdict de plan — 128 assertions effacées, dont le SOCLE.
+--
+-- Le retrait préalable rend l'état déterministe : le fichier pose lui-même
+-- l'appartenance qu'il suppose au lieu de parier dessus. Il est sans
+-- conséquence hors transaction, le fichier s'annulant en entier (rollback).
+delete from public.famille_membres
+ where profile_id = '11111111-1111-1111-1111-111111111111';
+
 insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001',
         '11111111-1111-1111-1111-111111111111', 'membre');
@@ -1300,17 +1338,36 @@ select is(tests.count_as('11111111-1111-1111-1111-111111111111',
           0::bigint, 'avis : personne ne lit l''avis d''un autre');
 
 -- etablissements : LE cas inversé. SELECT USING (true) pour tout compte
--- connecté — et AUCUNE policy d'écriture, relevé au catalogue. La RLS refuse
--- donc par défaut : le catalogue ne se modifie que par upsert_etablissement
--- (SECURITY DEFINER). C'est l'invariant que ce lot grave, parce qu'il ne tient
--- aujourd'hui qu'à une ABSENCE de policy — et une absence s'ajoute par
--- distraction.
-select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
-          0::bigint, 'etablissements : un compte connecté ne modifie pas le catalogue');
-select is(tests.count_as('11111111-1111-1111-1111-111111111111',
-          'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u'),
-          0::bigint, 'etablissements : ni ne l''efface');
+-- connecté — et AUCUNE policy d'écriture, relevé au catalogue. Le catalogue ne
+-- se modifie que par upsert_etablissement (SECURITY DEFINER).
+--
+-- CES DEUX ASSERTIONS ÉTAIENT ÉCRITES EN `is(…, 0)` ET ONT DÛ DEVENIR
+-- `throws_ok` : la migration 00069 a DÉPLACÉ la barrière. Avant elle, l'absence
+-- de policy d'écriture faisait rendre 0 ligne à l'UPDATE (refus silencieux de
+-- la RLS) ; depuis, le REVOKE arrête l'instruction plus tôt, au niveau du
+-- privilège, et elle LÈVE (42501). Un refus qui lève écrit avec `is` ne rougit
+-- pas : il AVORTE la transaction et emporte tout ce qui suit — mesuré ici même,
+-- 164 assertions exécutées sur 244 et un diagnostic « Bad plan » qui ne nomme
+-- rien. C'est la règle du fichier, payée une fois de plus : un refus se teste
+-- avec `throws_ok`, jamais avec un décompte.
+--
+-- CE QU'ON PERD, ET POURQUOI C'EST ACCEPTABLE. Ces deux lignes ne mesurent plus
+-- la RLS mais le GRANT — la couche RLS n'est tout simplement plus ATTEIGNABLE
+-- pour une écriture depuis un compte connecté, le privilège la précédant. La
+-- garantie « aucune policy d'écriture » reste portée par l'assertion
+-- déclarative ci-dessous, qui ne dépend d'aucune exécution ; et la garantie
+-- « le privilège est bien retiré » par les `has_table_privilege` du bloc GRANT.
+-- Les trois couches sont donc toujours éprouvées, chacune là où elle vit.
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (update public.etablissements set nom = ''pgtap hack'' where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u') $$,
+  'permission denied for table etablissements',
+  'etablissements : un compte connecté ne modifie pas le catalogue');
+select throws_ok(
+  $$ select tests.count_as('11111111-1111-1111-1111-111111111111',
+       'with u as (delete from public.etablissements where id = (select id from public.etablissements order by id limit 1) returning 1) select count(*) from u') $$,
+  'permission denied for table etablissements',
+  'etablissements : ni ne l''efface');
 
 -- Les deux assertions ci-dessus ne sondent qu'UNE ligne (celle prise par
 -- `order by id limit 1`) : elles prouvent que l'écriture est refusée À
@@ -1364,6 +1421,1188 @@ select is(
       and cmd is distinct from 'SELECT')::bigint,
   0::bigint,
   'etablissements : aucune policy autre que SELECT n''existe au catalogue');
+
+-- ── Lot 3 / les prédicats que rien n'exerçait ──────────────────────────────
+-- Cinq prédicats SECURITY DEFINER ne sont cités par aucune policy testée. Ils
+-- ne refusent pas, ils répondent : l'invariant est donc une PAIRE par prédicat.
+-- Un prédicat coincé à false est aussi grave qu'un coincé à true, et seule la
+-- paire attrape les deux — un seul « il rend false pour l'étranger » serait
+-- satisfait par un prédicat qui rend false pour tout le monde.
+
+-- is_agence() lit le même claim JWT « user_role » que is_admin() (posé en
+-- production par custom_access_token_hook, 00002 ; cf. tests.count_as_admin
+-- plus haut). tests.bool_as ne pose que sub/role et JAMAIS user_role : sans ce
+-- claim, is_agence() rend false pour TOUTE identité, agence comprise — le
+-- témoin « vrai pour l'agence » serait donc vert pour la mauvaise raison,
+-- exactement le prédicat coincé à false que cette section existe pour
+-- attraper. Et la négative n'est pas mieux lotie : sous bool_as elle dirait
+-- « faux sans claim », pas « faux pour un client », et son uuid ne serait que
+-- décoratif. D'où ce helper dédié — employé des DEUX côtés de chaque paire,
+-- même idiome que tests.count_as_admin.
+create function tests.bool_as_role(p_uid uuid, p_role text, p_sql text) returns boolean language plpgsql as $$
+declare b boolean;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  execute p_sql into b;
+  reset role;
+  return b;
+end $$;
+
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()'),
+          'is_agence : vrai pour le compte agence');
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_agence()'),
+          'is_agence : faux pour un client');
+
+-- is_concierge() a aujourd'hui le MÊME corps qu'is_agence() : même clause
+-- `in ('agence', 'admin')` sur le seul claim `user_role`. Elle ne consulte NI
+-- auth.uid() NI profiles — il n'existe donc pas de « compte sans profil » à
+-- éprouver, mais il existe bel et bien un témoin positif : le personnel
+-- agence. La paire ci-dessous éprouve exactement ce que le prédicat décide,
+-- un vrai claim de chaque bord — `agence` rend vrai, `client` rend faux.
+select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_concierge()'),
+          'is_concierge : vrai pour le personnel agence');
+select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()'),
+          'is_concierge : faux pour un client ordinaire');
+
+-- LA DUPLICATION, GRAVÉE PLUTÔT QU'AFFIRMÉE. Mesuré : les deux corps sont
+-- BYTE-À-BYTE identiques —
+--   is_agence    := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
+--   is_concierge := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
+-- Un commentaire qui le dirait vieillirait en silence. L'assertion ci-dessous
+-- le dit EN S'EXÉCUTANT, et rougira le jour où l'un des deux divergera —
+-- exactement le jour où quelqu'un voudra le savoir. La forme « a/b/c/d » rend
+-- le diagnostic lisible : have « true/true/false/false » vs want
+-- « true/false/false/false » nomme tout de suite QUEL bord a bougé.
+--
+-- ELLE COMPARE QUATRE CLAIMS, ET C'EST LE POINT. Une première version ne
+-- comparait que `agence` et `client`. Mesuré : elle restait VERTE (251/251)
+-- dans les deux sens qui comptent — `is_concierge` PERDANT `admin`, et
+-- `is_concierge` S'ÉLARGISSANT à un claim de plus. Le second cas est une
+-- ÉLÉVATION DE PRIVILÈGE (un compte `premium` devient conciergerie sans être
+-- agence) et le filet entier l'approuvait, SOCLE compris, pendant que le
+-- commentaire promettait le contraire. Les deux bords d'un intervalle ne
+-- suffisent pas quand c'est l'APPARTENANCE À UN ENSEMBLE qu'on éprouve : il
+-- faut un membre de chaque classe. D'où `admin` (membre non testé) et
+-- `premium` (non-membre autre que `client`).
+--
+-- L'identité passée ne compte pas et c'est délibéré : ces deux prédicats ne
+-- lisent QUE le claim, jamais `auth.uid()`. Un seul uid, quatre claims.
+--
+-- QUESTION DE PRODUIT, POUR LE PO, NON TRANCHÉE ICI : il n'existe aucun rôle
+-- `concierge` dans public.app_role. Le prédicat se contente donc de dire
+-- « agence ou admin », c'est-à-dire que TOUTE agence et TOUT admin sont
+-- conciergerie. Si c'est voulu, c'est le NOM qui ment et il faudrait le dire ;
+-- si ça ne l'est pas, c'est un défaut d'autorisation. Ce fichier grave l'état
+-- réel et le signale ; il ne modifie aucune fonction de production.
+select is(
+  (select string_agg(tests.bool_as_role('22222222-2222-2222-2222-222222222222', c,
+                                        'select public.is_concierge()')::text, '/' order by ord)
+     from unnest(array['agence','admin','client','premium']) with ordinality as t(c, ord)),
+  (select string_agg(tests.bool_as_role('22222222-2222-2222-2222-222222222222', c,
+                                        'select public.is_agence()')::text, '/' order by ord)
+     from unnest(array['agence','admin','client','premium']) with ordinality as t(c, ord)),
+  'is_concierge rend aujourd''hui exactement ce que rend is_agence : corps dupliqué, aucun rôle concierge distinct');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''de110000-0000-4000-8000-000000000000'')'),
+          'is_premium : vrai pour le compte abonné');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_premium(''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_premium : faux pour un compte sans abonnement');
+
+select ok(tests.bool_as('11111111-1111-1111-1111-111111111111',
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
+          'est_mon_activite : vrai pour le propriétaire de l''activité');
+select ok(not tests.bool_as('deadbeef-0000-4000-8000-000000000000',
+          'select public.est_mon_activite((select id from public.activites where user_id = ''11111111-1111-1111-1111-111111111111'' order by id limit 1))'),
+          'est_mon_activite : faux pour qui n''a pas créé l''activité');
+
+select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''de110000-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : vrai pour un membre du groupe');
+select ok(not tests.bool_as('de110000-0000-4000-8000-000000000000',
+          'select public.is_groupe_membre((select id from public.depense_groupes where owner_id = ''de110000-0000-4000-8000-000000000000'' order by id limit 1), ''deadbeef-0000-4000-8000-000000000000'')'),
+          'is_groupe_membre : faux pour un uuid étranger au groupe');
+
+-- ── Lot 3 / les déclencheurs ───────────────────────────────────────────────
+-- FIXTURES PROPRES À CE LOT, et c'est délibéré. Le lot 2 crée un voyage
+-- `bb…0001` et un groupe `bb…0002`, mais les SUPPRIME en fin de ses sections
+-- (c'est son témoin positif : le propriétaire, lui, peut supprimer). Ils
+-- n'existent donc plus à cet endroit du fichier — vérifié, la dernière
+-- occurrence de chacun est un DELETE. Seul le foyer `fa…0001` survit, parce que
+-- le lot 2 le re-crée pour ne pas vider les tables du Cercle.
+-- D'où la règle, encore : la ligne qu'on éprouve, on la crée.
+insert into public.voyages (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('cc000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot3 groupe');
+
+-- Un déclencheur ne s'appelle pas : on éprouve son EFFET. Les trois verrous
+-- d'owner lèvent « owner_id immuable » — vérifié au catalogue. Chaque refus est
+-- apparié à une modification LÉGITIME qui doit passer : sans elle, « on ne peut
+-- pas changer l'owner » serait satisfait par une table qu'on ne peut pas
+-- modifier du tout.
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.voyages set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'voyages : le propriétaire ne peut pas se dessaisir du voyage');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.voyages set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'voyages : mais il peut le renommer — le verrou ne bloque que l''owner');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.depense_groupes set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'depense_groupes : le propriétaire ne peut pas se dessaisir du groupe');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.depense_groupes set titre = ''pgtap renomme'' where id = ''cc000000-0000-4000-8000-000000000002'' returning 1) select count(*) from u'),
+          1::bigint, 'depense_groupes : mais il peut le renommer');
+
+select throws_ok(
+  $$ select tests.count_as('de110000-0000-4000-8000-000000000000',
+       'with u as (update public.familles set owner_id = ''11111111-1111-1111-1111-111111111111'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u') $$,
+  'owner_id immuable',
+  'familles : le propriétaire ne peut pas se dessaisir du foyer');
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'with u as (update public.familles set nom = ''pgtap renomme'' where id = ''fa000000-0000-4000-8000-000000000001'' returning 1) select count(*) from u'),
+          1::bigint, 'familles : mais il peut le renommer — le verrou ne bloque que l''owner');
+
+-- conciergerie_lock_insert : le demandeur ne se répond pas à lui-même. On insère
+-- une demande EN PRÉTENDANT qu'elle est déjà confirmée et répondue ; le
+-- déclencheur doit remettre le statut à « nouvelle » et effacer la réponse.
+--
+-- L'identité est `demo` et non `client` : la policy d'insertion exige
+-- `is_premium(auth.uid())`, et seul demo l'est. C'est un invariant en soi —
+-- la conciergerie est réservée aux abonnés — d'où l'assertion qui suit.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, statut, reponse, date_resa, heure_resa, nombre_convives) select ''de110000-0000-4000-8000-000000000000'', ''resto'', e.id, ''pgtap'', ''confirmee'', ''je me reponds'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text || ''/'' || coalesce(reponse, ''(null)'')) select * from u'),
+          'nouvelle/(null)',
+          'conciergerie : une demande naît « nouvelle » et sans réponse, quoi qu''en dise le client');
+
+-- Témoin de l'autre bord : un compte NON abonné ne peut pas ouvrir de demande.
+-- Ce n'est PAS un garde-fou de vacuité — l'assertion ci-dessus lit sa valeur
+-- par RETURNING, donc un insert bloqué lèverait et la ferait tomber d'elle-même.
+-- C'est un invariant à part entière : la conciergerie est réservée aux
+-- abonnés. Le refus vient de la clause WITH CHECK, donc il LÈVE.
+select throws_ok(
+  $$ select tests.text_as('11111111-1111-1111-1111-111111111111',
+       'with u as (insert into public.conciergerie_demandes (user_id, type, etablissement_id, commentaire, date_resa, heure_resa, nombre_convives) select ''11111111-1111-1111-1111-111111111111'', ''resto'', e.id, ''pgtap'', ''2027-01-01'', ''20:00'', 2 from public.etablissements e order by e.id limit 1 returning statut::text) select * from u') $$,
+  '42501',
+  null,
+  'conciergerie : un compte non abonné ne peut pas ouvrir de demande');
+
+-- ── Lot 3 / handle_new_user : l'invariant tient par OMISSION ───────────────
+-- Le corps réel du déclencheur (migration 00001) n'insère que `id` et
+-- `display_name` — il ne mentionne JAMAIS la colonne `role`. Ce n'est donc PAS
+-- le déclencheur qui écarte un rôle réclamé aux métadonnées : c'est le
+-- `default 'client'` de la colonne `public.profiles.role` qui s'applique,
+-- faute de valeur fournie. L'invariant écrit en commentaire de la fonction
+-- tient aujourd'hui par cette omission, pas par une logique d'écartement.
+-- L'assertion qui suit garde donc le RÉSULTAT (le profil créé porte 'client'),
+-- quel que soit le mécanisme qui le produit. C'est délibéré : si demain le
+-- déclencheur se mettait à écrire `role` depuis les métadonnées — pour un
+-- flux d'invitation, par exemple — le défaut de colonne cesserait de
+-- s'appliquer et le rôle réclamé par le client pourrait passer. Cette
+-- assertion l'attraperait ; un test du mécanisme actuel (« le déclencheur
+-- écarte le rôle ») ne l'aurait pas fait, puisqu'il n'écarte rien.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-00000000000f', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-escalade@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb,
+        '{"role":"admin","display_name":"Escalade"}'::jsonb, now(), now());
+
+select is((select role::text from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'client',
+          'handle_new_user : le profil créé porte role = client, quel que soit le rôle réclamé aux métadonnées');
+select is((select display_name from public.profiles where id = 'ba000000-0000-4000-8000-00000000000f'),
+          'Escalade',
+          'handle_new_user : mais le nom affiché, lui, est bien repris des métadonnées');
+
+-- ── Lot 3 / les fonctions de service : la barrière est le GRANT ────────────
+-- Ces deux fonctions suppriment des comptes et des recommandations, et n'ont
+-- AUCUN contrôle interne — c'est correct, puisqu'elles ne sont pas exécutables
+-- par `authenticated`. Mais leur sécurité ne tient alors qu'à une absence de
+-- privilège, qu'un `grant execute on all functions` effacerait sans bruit.
+select ok(not has_function_privilege('authenticated', 'public.purger_comptes_supprimes()', 'execute'),
+          'purger_comptes_supprimes : hors de portée d''un compte connecté');
+select ok(not has_function_privilege('authenticated', 'public.purger_recommandations()', 'execute'),
+          'purger_recommandations : hors de portée d''un compte connecté');
+-- Témoin : sans lui, les deux assertions ci-dessus seraient satisfaites par un
+-- has_function_privilege cassé qui rendrait false pour tout.
+select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
+          'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
+
+-- ── Lot 5 / custom_access_token_hook : la source du claim dont tout dépend ──
+-- POURQUOI CETTE FONCTION MÉRITE D'ÊTRE DANS LE FILET. Tout ce fichier qui
+-- éprouve un rôle (is_admin, is_agence, is_concierge, les policies agence, les
+-- helpers tests.bool_as_role et tests.text_as_role) FABRIQUE lui-même le claim
+-- `user_role`, en cinq endroits. En production ce claim n'est fabriqué par
+-- personne d'autre que ce hook. Si le hook cessait de le poser, is_agence()
+-- rendrait false pour TOUT LE MONDE en prod — et le filet resterait vert d'un
+-- bout à l'autre, puisqu'il pose le claim à la main. C'est exactement le
+-- « coincé à false » que la section des prédicats existe pour attraper, mais
+-- une marche plus haut : à la source. Le hook est une fonction ordinaire,
+-- directement appelable ; rien ne justifiait qu'il reste dehors.
+--
+-- PASSAGE PAR UN HELPER, ET NON APPEL DIRECT — même idiome que les sept gardes
+-- de vacuité. Un appel direct à `public.custom_access_token_hook(…)` LÈVE si la
+-- fonction disparaît (« function does not exist »), et `has_function_privilege`
+-- lève de même sur une signature inconnue : la transaction avorte, et les
+-- assertions suivantes — SOCLE compris — cessent d'exister. Or la disparition
+-- du hook est précisément l'accident de migration que cette section existe pour
+-- attraper, et c'est le seul « Bad plan » que ce fichier passe son temps à
+-- combattre ailleurs. Le helper interroge d'abord `to_regprocedure` et rend un
+-- message nommé plutôt que de laisser lever, et l'appel passe par `execute`
+-- pour ne pas lier la signature au moment de l'analyse.
+create function tests.hook_claim(p_user_id uuid, p_claims jsonb, p_lire text) returns text language plpgsql as $$
+declare v text;
+begin
+  if to_regprocedure('public.custom_access_token_hook(jsonb)') is null then
+    return 'custom_access_token_hook : LA FONCTION N''EXISTE PLUS — plus personne ne produit le claim user_role en production';
+  end if;
+  execute 'select public.custom_access_token_hook($1) -> ''claims'' ->> $2'
+    into v using jsonb_build_object('user_id', p_user_id, 'claims', p_claims), p_lire;
+  return v;
+end $$;
+
+create function tests.hook_privilege(p_role text) returns text language plpgsql as $$
+begin
+  if to_regprocedure('public.custom_access_token_hook(jsonb)') is null then
+    return 'custom_access_token_hook : LA FONCTION N''EXISTE PLUS';
+  end if;
+  return has_function_privilege(p_role, 'public.custom_access_token_hook(jsonb)', 'execute')::text;
+end $$;
+
+select is(tests.hook_claim('22222222-2222-2222-2222-222222222222', '{}'::jsonb, 'user_role'),
+          'agence',
+          'custom_access_token_hook : le compte agence reçoit le claim user_role = agence');
+select is(tests.hook_claim('11111111-1111-1111-1111-111111111111', '{}'::jsonb, 'user_role'),
+          'client',
+          'custom_access_token_hook : un compte client reçoit le claim user_role = client');
+-- Aucun profil derrière cet uuid : la branche `else` du hook, celle qui évite
+-- qu'un jeton parte SANS claim user_role (auquel cas coalesce(…, '') ferait
+-- rendre false à is_agence, mais aussi n'importe quelle lecture du claim
+-- deviendrait un null silencieux).
+select is(tests.hook_claim('deadbeef-0000-4000-8000-000000000000', '{}'::jsonb, 'user_role'),
+          'client',
+          'custom_access_token_hook : un compte sans profil retombe sur client, jamais sur rien');
+
+-- Le hook ENRICHIT les claims, il ne les remplace pas. Sans cette assertion,
+-- un hook qui rendrait `jsonb_build_object('claims', …)` au lieu de
+-- `jsonb_set(event, '{claims}', …)` casserait tous les jetons de production
+-- (plus de `sub`, plus d'`aud`) et les trois assertions ci-dessus, qui ne
+-- regardent QUE user_role, resteraient vertes.
+select is(tests.hook_claim('11111111-1111-1111-1111-111111111111',
+                          jsonb_build_object('sub', 'x', 'aud', 'authenticated'), 'aud'),
+          'authenticated',
+          'custom_access_token_hook : les claims déjà présents survivent à l''enrichissement');
+
+-- La barrière GRANT, même idiome que purger_* / mock_subscribe ci-dessus : ce
+-- hook décide d'un rôle, un compte connecté ne doit pas pouvoir l'appeler.
+select is(tests.hook_privilege('authenticated'), 'false',
+          'custom_access_token_hook : hors de portée d''un compte connecté');
+-- Témoin : sans lui, le refus ci-dessus serait satisfait par un hook devenu
+-- inexistant ou exécutable par personne — cas où l'émission des jetons serait
+-- morte en production, et le test vert.
+select is(tests.hook_privilege('supabase_auth_admin'), 'true',
+          'témoin : le rôle qui émet les jetons, lui, peut bien exécuter le hook');
+
+-- LIMITE DE CE QUI EST GRAVÉ ICI, à ne pas lire comme une dette soldée : ces
+-- six assertions prouvent que la FONCTION se comporte bien, pas qu'elle est
+-- effectivement BRANCHÉE comme hook d'émission de jeton. Ce branchement vit
+-- dans la configuration Supabase (`auth.hook.custom_access_token`, côté GoTrue
+-- / config.toml / tableau de bord), hors de portée de pgTAP. S'il disparaissait,
+-- aucun jeton ne porterait plus user_role en production et TOUT ce qui précède
+-- resterait vert. La seule mesure possible de ce branchement est un test de
+-- bout en bout qui décode un vrai jeton émis.
+
+-- ── Le référentiel partagé : la barrière est le GRANT, pas la policy ───────
+-- `etablissements` est en lecture seule pour les comptes connectés (00069) ;
+-- l'écriture passe par `upsert_etablissement`, SECURITY DEFINER.
+--
+-- POURQUOI CETTE GARDE NE FAIT PAS DOUBLON AVEC LA RLS. La table n'a
+-- aujourd'hui qu'une policy SELECT, donc la RLS refuse déjà les écritures —
+-- et une assertion qui tenterait un INSERT passerait pour cette raison, quel
+-- que soit le GRANT. Elle serait verte le jour où quelqu'un ajouterait une
+-- policy `FOR ALL` (le geste naturel : 30 tables du schéma en emploient une),
+-- alors même que ce jour-là le référentiel deviendrait écrivable par n'importe
+-- quel compte connecté. C'est donc le PRIVILÈGE qu'on éprouve, pas l'effet :
+-- la seule mesure qui survive à l'ajout d'une policy.
+--
+-- Et ce privilège est un REVOKE explicite, pas une absence : les DEFAULT
+-- PRIVILEGES de Supabase accordent `arwdDxtm` à `authenticated` sur toute
+-- table créée dans `public` (mesuré : 47 tables, INSERT sur 46). Une migration
+-- qui recréerait la table la rendrait écrivable sans que personne l'écrive.
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'INSERT'),
+          'etablissements : un compte connecté n''a pas le privilège d''y insérer');
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'UPDATE'),
+          'etablissements : ni celui d''y modifier une fiche');
+select ok(not has_table_privilege('authenticated', 'public.etablissements', 'DELETE'),
+          'etablissements : ni celui d''en supprimer une');
+-- Témoin : sans lui, les trois refus ci-dessus seraient satisfaits par un
+-- has_table_privilege cassé, ou par une table devenue inaccessible — cas où
+-- l'application entière serait morte et le test, vert. Même piège que le
+-- témoin `mock_subscribe` ci-dessus.
+select ok(has_table_privilege('authenticated', 'public.etablissements', 'SELECT'),
+          'témoin : le référentiel reste bien LISIBLE par un compte connecté');
+
+-- ── Lot 4 / décor des fonctions à effet ────────────────────────────────────
+-- Objets PROPRES à ce lot : ceux du lot 2 sont supprimés en fin de leurs
+-- sections (c'est leur témoin positif), ceux du lot 3 servent aux verrous
+-- d'owner. Réutiliser les uns ou les autres ferait porter ces assertions sur
+-- des objets disparus ou déjà mutés.
+insert into public.voyages (id, owner_id, titre)
+values ('dd000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot4 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('dd000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot4 groupe');
+-- Pas d'insertion agence_clients ici — vérifié en base. Le lot 1 en pose une
+-- (agence → client) et le lot 2 la lit sans la supprimer : elle est encore
+-- vivante à cet endroit. Un `insert … on conflict do nothing` aurait masqué
+-- une insertion qui n'insère rien, c'est-à-dire le motif exact des huit
+-- assertions creuses déjà trouvées sur ce chantier.
+
+-- ── Lot 4 / les fonctions de partage ───────────────────────────────────────
+-- Elles élargissent l'accès : ce sont celles qui peuvent, en silence, donner à
+-- quelqu'un ce qu'il ne devait pas avoir. Trois assertions chacune — le refus,
+-- le succès légitime, et l'effet réellement produit en base. L'ordre compte :
+-- le refus vient AVANT le succès (une fois partagé, le bénéficiaire devient
+-- membre et un unshare testé ensuite changerait de sens), et chaque fonction
+-- est suivie de son unshare sur le MÊME objet, dans cet ordre.
+
+-- share_voyage : un non-propriétaire ne partage pas le voyage d'autrui.
+-- Témoin : le propriétaire, lui, partage bien (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.share_voyage(''dd000000-0000-4000-8000-000000000001'', ''client@vito.test'')') $$,
+  'non autorisé',
+  'share_voyage : un non-propriétaire ne partage pas le voyage d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.share_voyage(''dd000000-0000-4000-8000-000000000001'', ''client@vito.test'')'),
+          'ok', 'share_voyage : le propriétaire, lui, partage');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''dd000000-0000-4000-8000-000000000001'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'share_voyage : et le partage a réellement inscrit le membre');
+
+-- unshare_voyage : un non-propriétaire ne retire pas un membre du voyage d'autrui.
+-- Témoin : le propriétaire, lui, retire bien le membre (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.unshare_voyage(''dd000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'unshare_voyage : un non-propriétaire ne retire pas un membre du voyage d''autrui');
+
+-- unshare_voyage rend void ; le cast ::text d'un void vaut TOUJOURS '' (vérifié),
+-- succès ou échec silencieux confondus. Cette ligne n'établit donc que l'absence
+-- d'exception — jamais que le membre a été retiré, ce que seule l'assertion de
+-- comptage qui suit prouve (le compte y part de 1, posé par le share_voyage
+-- ci-dessus). On la garde quand même : elle distingue « la fonction a refusé en
+-- levant » de « la fonction a tourné sans rien faire », ce que le comptage seul
+-- ne distinguerait pas.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.unshare_voyage(''dd000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text'),
+          '', 'unshare_voyage : le propriétaire, lui, retire le membre');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.voyage_membres where voyage_id = ''dd000000-0000-4000-8000-000000000001'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'unshare_voyage : et le retrait a réellement supprimé le membre');
+
+-- share_groupe : un non-propriétaire ne partage pas le groupe de dépenses d'autrui.
+-- Témoin : le propriétaire, lui, partage bien (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.share_groupe(''dd000000-0000-4000-8000-000000000002'', ''client@vito.test'')') $$,
+  'non autorisé',
+  'share_groupe : un non-propriétaire ne partage pas le groupe d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.share_groupe(''dd000000-0000-4000-8000-000000000002'', ''client@vito.test'')'),
+          'ok', 'share_groupe : le propriétaire, lui, partage');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupe_membres where groupe_id = ''dd000000-0000-4000-8000-000000000002'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          1::bigint, 'share_groupe : et le partage a réellement inscrit le membre');
+
+-- unshare_groupe : un non-propriétaire ne retire pas un membre du groupe d'autrui.
+-- Témoin : le propriétaire, lui, retire bien le membre (assertion suivante).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.unshare_groupe(''dd000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'unshare_groupe : un non-propriétaire ne retire pas un membre du groupe d''autrui');
+
+-- unshare_groupe rend void ; le cast ::text d'un void vaut TOUJOURS '' (vérifié),
+-- succès ou échec silencieux confondus. Cette ligne n'établit donc que l'absence
+-- d'exception — jamais que le membre a été retiré, ce que seule l'assertion de
+-- comptage qui suit prouve (le compte y part de 1, posé par le share_groupe
+-- ci-dessus). On la garde quand même : elle distingue « la fonction a refusé en
+-- levant » de « la fonction a tourné sans rien faire », ce que le comptage seul
+-- ne distinguerait pas.
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.unshare_groupe(''dd000000-0000-4000-8000-000000000002'', ''11111111-1111-1111-1111-111111111111'')::text'),
+          '', 'unshare_groupe : le propriétaire, lui, retire le membre');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.depense_groupe_membres where groupe_id = ''dd000000-0000-4000-8000-000000000002'' and profile_id = ''11111111-1111-1111-1111-111111111111'''),
+          0::bigint, 'unshare_groupe : et le retrait a réellement supprimé le membre');
+
+-- ── Lot 4 / le Cercle et l'agence ───────────────────────────────────────────
+-- Cinq fonctions, quatre natures. inviter_famille et retirer_membre_famille
+-- lèvent `non autorisé` pour qui n'est pas propriétaire du foyer ; lier_client
+-- et creer_voyage_pour_client lèvent `réservé aux agences` pour qui n'a pas le
+-- rôle agence (creer_voyage_pour_client lève en plus `client non lié`).
+-- delier_client, elle, NE LÈVE PAS : son delete est borné par
+-- `agence_id = auth.uid()`, donc la portée EST l'autorisation — un étranger
+-- n'obtient pas un refus, il n'affecte simplement rien. L'écrire en throws_ok
+-- serait faux ; elle est éprouvée par exécution, dans les deux sens.
+--
+-- PIÈGE VÉRIFIÉ PAR EXÉCUTION avant d'écrire ce bloc : la forme « with u as
+-- (select public.<fonction_à_effet>(...)) select count(*) from <table> where
+-- ... » — sans référencer `u` dans la requête externe — ne lève AUCUNE erreur
+-- mais n'appelle JAMAIS la fonction. `EXPLAIN` le confirme : le planificateur
+-- élague purement et simplement un CTE non référencé, y compris quand son
+-- corps appelle une fonction VOLATILE à effets de bord. Vérifié avec
+-- delier_client lui-même : la ligne agence_clients survit à l'agence, censée
+-- pourtant la supprimer — vacuité, la forme exacte que ce chantier traque.
+-- Remède déjà présent au lot 3 (tests.annuler_puis_compter, plus haut dans ce
+-- fichier, avec le même commentaire : « deux ordres distincts, et non un
+-- CTE ») : chaque assertion qui doit APPELER une fonction à effet PUIS en
+-- COMPTER l'effet le fait via un helper plpgsql dédié, appel et comptage en
+-- deux instructions distinctes dans le MÊME bloc, jamais dans la même requête.
+
+-- inviter_famille : un non-propriétaire n'invite pas dans le foyer d'autrui.
+-- Témoin : le propriétaire, lui, invite bien (assertion suivante). L'e-mail du
+-- refus n'a pas besoin d'exister : is_famille_owner lève AVANT toute recherche
+-- d'e-mail — 'personne@vito.test' n'est d'ailleurs celui d'aucun compte du
+-- seed (vérifié).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.inviter_famille(''fa000000-0000-4000-8000-000000000001'', ''personne@vito.test'')') $$,
+  'non autorisé',
+  'inviter_famille : un étranger n''invite pas dans le foyer d''autrui');
+
+select is(tests.text_as('de110000-0000-4000-8000-000000000000',
+          'select public.inviter_famille(''fa000000-0000-4000-8000-000000000001'', ''free@vito.test'')'),
+          'ok', 'inviter_famille : le propriétaire, lui, invite bien');
+
+select is(tests.count_as('de110000-0000-4000-8000-000000000000',
+          'select count(*) from public.famille_membres where famille_id = ''fa000000-0000-4000-8000-000000000001'' and profile_id = ''44444444-4444-4444-8444-444444444444'''),
+          1::bigint, 'inviter_famille : et l''invitation a réellement inscrit le membre');
+
+-- retirer_membre_famille : un non-propriétaire ne retire pas un membre du
+-- foyer d'autrui. Témoin : le propriétaire, lui, retire bien client (juste
+-- après). Contrairement à inviter_famille et lier_client, son retour (void) ne
+-- distinguerait rien de plus qu'un `''` constant, succès ou non — déjà relevé
+-- sur unshare_voyage/unshare_groupe au lot 4 / tâche 2. Plutôt que rejouer
+-- cette vérification creuse, appel et comptage sont faits ici dans le même
+-- helper, en deux instructions (cf. piège ci-dessus).
+select throws_ok(
+  $$ select tests.text_as('deadbeef-0000-4000-8000-000000000000',
+       'select public.retirer_membre_famille(''fa000000-0000-4000-8000-000000000001'', ''11111111-1111-1111-1111-111111111111'')::text') $$,
+  'non autorisé',
+  'retirer_membre_famille : un étranger ne retire pas un membre du foyer d''autrui');
+
+-- L'IDIOME DES SEPT GARDES DE VACUITÉ — celle-ci est la première des sept,
+-- les six autres (lier_client, cancel_subscription, quitter_famille,
+-- revoquer_autres_sessions, mock_subscribe, upsert_etablissement) suivent
+-- exactement la même forme.
+--
+-- Ces gardes ont d'abord été écrites en `raise exception`. C'était le mode de
+-- défaillance que ce chantier a passé quatre lots à combattre ailleurs : une
+-- exception AVORTE la transaction, efface toutes les assertions suivantes —
+-- SOCLE compris — et dégénère en « Bad plan », le diagnostic que ce fichier
+-- dénonce lui-même. Une garde qui protège d'une assertion creuse ne doit pas
+-- coûter les 60 assertions d'après.
+--
+-- D'où la forme retenue, uniforme pour les sept : le helper rend du TEXTE,
+-- jamais un bigint.
+--   · comportement normal      → la valeur mesurée, convertie en texte ('0', '1', …)
+--   · précondition rompue      → le message d'explication, rendu et non levé
+-- L'assertion devient `is(tests.xxx(…), '0', '…')`. Un échec affiche alors
+-- `have: <le message> / want: 0` : UN rouge, sur SON assertion, nommé, et le
+-- reste du fichier continue de tourner.
+create function tests.retirer_membre_puis_compter(p_uid uuid) returns text language plpgsql as $$
+declare n bigint; n_avant bigint;
+begin
+  -- GARDE DE VACUITÉ, symétrique de celles des helpers de la tâche 4 : la ligne
+  -- retirée ici est la SEULE mutation du lot dont ce fichier n'est pas l'auteur
+  -- — elle vient de la re-création du Cercle (lot 2), 445 lignes plus haut.
+  -- Sans cette garde, l'assertion d'absence qui suit reste VERTE si la ligne
+  -- n'était simplement pas là : mesuré par substitution (un delete préalable sur
+  -- famille_membres laisse le fichier à 240/240, cf. rapport). Le compte AVANT
+  -- passe hors RLS, comme celui d'après, pour la même raison.
+  select count(*) into n_avant from public.famille_membres
+   where famille_id = 'fa000000-0000-4000-8000-000000000001'
+     and profile_id = '11111111-1111-1111-1111-111111111111';
+  if n_avant <> 1 then
+    return 'retirer_membre_famille : le membre n''était pas présent AVANT l''appel, le 0 qui suit ne prouverait aucun retrait : mutation vacueuse';
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.retirer_membre_famille('fa000000-0000-4000-8000-000000000001', '11111111-1111-1111-1111-111111111111');
+  reset role; -- le comptage passe hors RLS : c'est l'effet réel qu'on vérifie, pas ce que CET appelant en verrait
+  select count(*) into n from public.famille_membres
+   where famille_id = 'fa000000-0000-4000-8000-000000000001'
+     and profile_id = '11111111-1111-1111-1111-111111111111';
+  return n::text;
+end $$;
+
+select is(tests.retirer_membre_puis_compter('de110000-0000-4000-8000-000000000000'),
+          '0', 'retirer_membre_famille : le propriétaire, lui, retire réellement le membre');
+
+-- delier_client ne LÈVE PAS pour un appelant sans droit : son delete est
+-- borné par `agence_id = auth.uid()`, donc la portée est l'autorisation. Un
+-- étranger n'obtient pas un refus, il n'affecte simplement rien. C'est une
+-- troisième forme d'invariant, et l'écrire en throws_ok serait faux.
+--
+-- Appel et comptage en deux instructions distinctes DANS le helper (cf. piège
+-- en tête de section) : la forme à une seule requête, vérifiée par exécution,
+-- laisse le lien intact pour l'étranger COMME pour l'agence — les deux
+-- assertions rendraient alors 1, vertes pour la mauvaise raison.
+create function tests.delier_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.delier_client('11111111-1111-1111-1111-111111111111');
+  reset role; -- le comptage passe hors RLS : sous étranger, agence_clients_select
+              -- masquerait la ligne d'autrui QUE LE LIEN AIT SURVÉCU OU NON —
+              -- comptage vu par l'étranger = 0 dans les DEUX cas, ce qui ne
+              -- prouverait rien. On veut l'état RÉEL de la table, pas ce que
+              -- cet appelant en verrait.
+  select count(*) into n from public.agence_clients
+   where agence_id = '22222222-2222-2222-2222-222222222222'
+     and client_id = '11111111-1111-1111-1111-111111111111';
+  return n;
+end $$;
+
+-- L'ORDRE EST IMPÉRATIF : l'étranger d'abord. Si l'agence déliait en premier,
+-- le lien n'existerait plus et la tentative de l'étranger serait verte pour la
+-- mauvaise raison — la forme exacte des huit vacuités déjà trouvées sur ce
+-- chantier.
+select is(tests.delier_puis_compter('deadbeef-0000-4000-8000-000000000000'),
+          1::bigint, 'delier_client : un étranger n''affecte pas le lien d''une agence');
+
+select is(tests.delier_puis_compter('22222222-2222-2222-2222-222222222222'),
+          0::bigint, 'delier_client : l''agence, elle, délie bien son client');
+
+-- Le lien est re-créé, et ce n'est pas une scorie : c'était, à cet endroit du
+-- fichier, la SEULE ligne d'`agence_clients` (posée par le lot 1), et le
+-- garde-fou de vacuité du socle exige que la table ne soit pas vide. La
+-- supprimer laisserait la table telle que ce test l'a mutilée, et non telle
+-- qu'il l'a trouvée. Même situation que la section Cercle du lot 2, même remède.
+-- NUANCE MESURÉE depuis que le succès de creer_voyage_pour_client porte sur un
+-- client créé par ce lot : deux autres lignes (le lien posé par lier_client, et
+-- celui du client neuf) atteignent désormais le socle, qui reste donc vert sans
+-- cette re-création — vérifié par suppression, 240/240. Elle n'est plus le seul
+-- rempart contre la vacuité, mais elle reste la restitution de l'état d'entrée.
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        '11111111-1111-1111-1111-111111111111');
+
+-- lier_client / creer_voyage_pour_client : réservé aux agences. is_agence()
+-- ne lit QUE le claim JWT `user_role` (cf. tests.bool_as_role, lot 3), jamais
+-- auth.uid() ni profiles.role. tests.text_as ne pose pas ce claim : sous lui,
+-- même l'agence réelle échouerait à 'réservé aux agences', et le refus serait
+-- vert pour la mauvaise raison — le prédicat coincé à false que le lot 3
+-- existe pour attraper. D'où ce jumeau de text_as, même idiome que
+-- bool_as_role, employé des DEUX côtés de chaque paire ci-dessous.
+create function tests.text_as_role(p_uid uuid, p_role text, p_sql text) returns text language plpgsql as $$
+declare v text;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  execute p_sql into v;
+  reset role;
+  return v;
+end $$;
+
+-- LE CLIENT À LIER EST CRÉÉ ICI, ET CE N'EST PAS UN DOUBLON DU SEED — même
+-- raison qu'au bloc `creer_voyage_pour_client` plus bas. La garde du helper
+-- ci-dessous exige l'ABSENCE du lien avant l'appel ; adossée à un compte du
+-- seed (free@vito.test), cette précondition était la SEULE du fichier que le
+-- fichier ne posait pas lui-même. Mesuré : il suffisait qu'une session de dev
+-- saisisse free@vito.test dans le formulaire agence pour que le lien reste à
+-- demeure et que la suite RLS avorte DÉFINITIVEMENT — 211 ok, 53 instructions
+-- abandonnées, SOCLE compris. Un compte créé ici n'a aucun lien par
+-- construction : la ligne que l'assertion éprouve, elle la crée.
+-- `handle_new_user` pose le profil que la FK d'agence_clients exige, et
+-- lier_client résout son argument par l'e-mail (auth.users), d'où l'e-mail
+-- explicite.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004c2', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-client-a-lier@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Client A Lier"}'::jsonb,
+        now(), now());
+
+-- lier_client : un compte sans le rôle agence ne lie personne. Témoin :
+-- l'agence, elle, lie bien un nouveau client (assertion suivante), sur le
+-- compte créé juste au-dessus — pour que l'effet soit une VRAIE insertion et
+-- non un `on conflict do nothing` silencieux sur le lien du lot 1.
+select throws_ok(
+  $$ select tests.text_as_role('11111111-1111-1111-1111-111111111111', 'client',
+       'select public.lier_client(''pgtap-client-a-lier@vito.test'')') $$,
+  'réservé aux agences',
+  'lier_client : un compte sans le rôle agence ne lie pas de client');
+
+-- GARDE INTERNE plutôt qu'assertion nouvelle : lier_client fait `on conflict
+-- (agence_id, client_id) do nothing` et rend 'ok' MÊME si le lien existait
+-- déjà. Le couple « rend ok » + « compte = 1 » est donc satisfaisable par un
+-- no-op, et ne tenait que par un fait externe consigné en commentaire (« ce
+-- compte n'a jamais été lié »). Le helper rend un message d'erreur nommé si le lien EXISTE avant l'appel,
+-- et rend le texte que l'assertion compare : la ligne de comptage qui suit est
+-- inchangée, et le fait externe est devenu une vérification — vérification
+-- que le compte créé ci-dessus rend vraie PAR CONSTRUCTION, et non par
+-- l'humeur de la base.
+create function tests.lier_client_puis_texte(p_uid uuid, p_role text, p_email text, p_client uuid) returns text language plpgsql as $$
+declare v text; n_avant bigint;
+begin
+  select count(*) into n_avant from public.agence_clients
+   where agence_id = p_uid and client_id = p_client;
+  if n_avant <> 0 then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'lier_client : le lien existait DÉJÀ avant l''appel, le ''ok'' qui suit ne prouverait aucune insertion : mutation vacueuse';
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  select public.lier_client(p_email) into v;
+  reset role;
+  return v;
+end $$;
+
+select is(tests.lier_client_puis_texte('22222222-2222-2222-2222-222222222222', 'agence',
+          'pgtap-client-a-lier@vito.test', 'ba000000-0000-4000-8000-0000000004c2'),
+          'ok', 'lier_client : l''agence, elle, lie bien un nouveau client');
+
+select is(tests.count_as('22222222-2222-2222-2222-222222222222',
+          'select count(*) from public.agence_clients where agence_id = ''22222222-2222-2222-2222-222222222222'' and client_id = ''ba000000-0000-4000-8000-0000000004c2'''),
+          1::bigint, 'lier_client : et la liaison a réellement inscrit le lien');
+
+-- creer_voyage_pour_client : DEUX raisons de lever, testées séparément.
+-- 1) réservé aux agences (même mécanisme que lier_client, ci-dessus).
+select throws_ok(
+  $$ select tests.text_as_role('11111111-1111-1111-1111-111111111111', 'client',
+       'select public.creer_voyage_pour_client(''11111111-1111-1111-1111-111111111111'', ''pgtap voyage'', ''Paris'', ''2027-01-01'', ''2027-01-10'', ''planifie'')::text') $$,
+  'réservé aux agences',
+  'creer_voyage_pour_client : un compte sans le rôle agence n''en crée pas');
+
+-- 2) client non lié : l'agence est bien l'agence, mais deadbeef… n'a aucune
+-- ligne dans agence_clients. La vérification ne dépend d'aucun compte réel
+-- derrière cet uuid, seulement de l'absence de lien.
+select throws_ok(
+  $$ select tests.text_as_role('22222222-2222-2222-2222-222222222222', 'agence',
+       'select public.creer_voyage_pour_client(''deadbeef-0000-4000-8000-000000000000'', ''pgtap voyage'', ''Paris'', ''2027-01-01'', ''2027-01-10'', ''planifie'')::text') $$,
+  'client non lié',
+  'creer_voyage_pour_client : l''agence ne crée pas pour un client non lié');
+
+-- Succès + effet, en un seul helper : creer_voyage_pour_client rend un uuid,
+-- sans sentinelle texte comparable à 'ok' comme inviter_famille/lier_client —
+-- un contrôle de retour séparé n'ajouterait rien à la preuve de l'effet. Même
+-- remède qu'au-dessus : appel et comptage en deux instructions dans le même
+-- helper.
+--
+-- LE CLIENT DE CETTE ASSERTION EST CRÉÉ ICI, ET CE N'EST PAS UN DOUBLON DU
+-- SEED. `enforce_voyage_limit` (déclencheur BEFORE INSERT sur voyages) refuse
+-- tout voyage à un compte non premium qui en possède déjà 2 ; `client`
+-- (11111111…) n'est pas premium et en possède déjà 1 au seed : marge d'UNE
+-- ligne. Or la défaillance ne serait pas un rouge, mais un ABORT DE
+-- TRANSACTION — mesuré : `ERROR: limite_voyages_free` puis « current
+-- transaction is aborted » sur les ~32 assertions suivantes, SOCLE compris, et
+-- un diagnostic dégénéré en « Bad plan » (cf. rapport). Un seul run e2e ou une
+-- session de dev sur cette base PARTAGÉE consommait cette marge. Un compte
+-- neuf possède 0 voyage par construction : la ligne que l'assertion éprouve,
+-- elle la crée. `handle_new_user` pose le profil que la FK d'agence_clients
+-- exige, et le lien d'agence est une fixture, pas un effet sous test.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004c1', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-client-agence@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Client Agence"}'::jsonb,
+        now(), now());
+insert into public.agence_clients (agence_id, client_id)
+values ('22222222-2222-2222-2222-222222222222',
+        'ba000000-0000-4000-8000-0000000004c1');
+
+create function tests.creer_voyage_puis_compter(p_uid uuid, p_role text, p_client uuid) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
+  set local role authenticated;
+  perform public.creer_voyage_pour_client(p_client,
+    'pgtap voyage agence', 'Paris', current_date + 30, current_date + 33, 'planifie'::public.voyage_statut);
+  reset role; -- comptage hors RLS, même précaution que delier_puis_compter ci-dessus
+  select count(*) into n from public.voyages
+   where owner_id = p_client
+     and titre = 'pgtap voyage agence';
+  return n;
+end $$;
+
+select is(tests.creer_voyage_puis_compter('22222222-2222-2222-2222-222222222222', 'agence',
+          'ba000000-0000-4000-8000-0000000004c1'),
+          1::bigint, 'creer_voyage_pour_client : l''agence, elle, crée bien le voyage pour son client lié');
+
+-- ============================================================
+-- Lot 4 / tâche 4 — les cinq fonctions auto-portées
+-- ============================================================
+-- cancel_subscription, quitter_famille, revoquer_autres_sessions,
+-- mock_subscribe, mes_connexions_recentes agissent TOUTES sur auth.uid() —
+-- aucun argument ne désigne un compte cible. Il n'existe donc PAS d'appelant
+-- « non autorisé » pour elles : un étranger qui les appelle agit sur ses
+-- propres données (inexistantes ou vides), jamais sur celles d'un autre.
+-- Écrire un throws_ok d'autorisation serait FAUX — ce n'est pas leur frontière.
+--
+-- Leur invariant est double : (1) elles n'atteignent JAMAIS les données
+-- d'autrui, et (2) elles refusent l'anonyme. Le comportement anonyme n'est
+-- PAS uniforme — mesuré par exécution (un jeton `authenticated` SANS `sub`,
+-- donc `auth.uid()` réellement NULL dans le corps de la fonction, distinct du
+-- rôle Postgres `anon` que la GRANT bloque de toute façon en amont, avant
+-- même d'atteindre le corps) :
+--   cancel_subscription        -> lève 'authentification requise'
+--   quitter_famille             -> lève 'authentification requise'
+--   mock_subscribe               -> lève 'authentification requise'
+--   revoquer_autres_sessions    -> NE LÈVE PAS, rend 0
+--   mes_connexions_recentes     -> NE LÈVE PAS, rend un ensemble vide (0 ligne)
+-- Vérifié avec tests.count_as/text_as(NULL, …) : NULL comme p_uid pose
+-- {"sub": null, "role": "authenticated"} → auth.uid() = NULL, rôle Postgres
+-- authenticated (donc la GRANT laisse passer, et c'est bien le corps de la
+-- fonction qu'on mesure ici, pas la GRANT).
+
+-- 1) cancel_subscription : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.cancel_subscription()::text') $$,
+  'authentification requise',
+  'cancel_subscription : un jeton sans identité est refusé');
+
+-- 2) cancel_subscription : n'affecte que l'abonnement de l'appelant.
+-- Témoin positif intégré au helper : si l'appel n'a pas RÉELLEMENT annulé
+-- l'abonnement de l'appelant, le helper rend un message nommé au lieu du compte — l'assertion ne peut
+-- donc pas rester verte sur un no-op. de110000 (démo) porte un abonnement actif
+-- du seed ; 55555555 (premium) sert de témoin, actif et jamais touché ici.
+create function tests.annuler_abonnement_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.cancel_subscription();
+  reset role; -- comptage hors RLS, même précaution que delier_puis_compter plus haut
+  select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'canceled';
+  if n_soi <> 1 then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'cancel_subscription n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from public.subscriptions where user_id = p_temoin and status = 'active';
+  return n::text;
+end $$;
+
+select is(tests.annuler_abonnement_puis_compter('de110000-0000-4000-8000-000000000000',
+          '55555555-5555-4555-8555-555555555555'),
+          '1',
+          'cancel_subscription : n''annule que l''abonnement de l''appelant, jamais celui d''autrui');
+
+-- 3) quitter_famille : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.quitter_famille()::text') $$,
+  'authentification requise',
+  'quitter_famille : un jeton sans identité est refusé');
+
+-- 4) quitter_famille : ne retire que l'appelant.
+-- Fixture nécessaire : à ce point du fichier, free (44444444) est l'UNIQUE
+-- membre non-owner du foyer fa000000…0001 (task 3 l'a invité, task 3 a retiré
+-- client). Sans un SECOND membre non-owner, un bug qui oublierait le filtre
+-- `profile_id = auth.uid()` (tout en gardant `role <> 'owner'`) resterait
+-- invisible : free serait la SEULE ligne non-owner de la table, sa suppression
+-- paraîtrait correcte quelle qu'en soit la cause exacte. admin (33333333),
+-- jusqu'ici hors de toute famille, sert de second témoin.
+-- Même précondition posée qu'à la ligne 1000, et pour la même mesure : cet
+-- insert était inconditionnel lui aussi, et un admin ambiant déjà membre d'un
+-- autre foyer le faisait LEVER (mesuré par simulation : 230 ok, 0 not ok,
+-- 41 ERROR — 21 assertions effacées, SOCLE compris).
+delete from public.famille_membres
+ where profile_id = '33333333-3333-3333-3333-333333333333';
+
+insert into public.famille_membres (famille_id, profile_id, role)
+values ('fa000000-0000-4000-8000-000000000001', '33333333-3333-3333-3333-333333333333', 'membre');
+
+create function tests.quitter_famille_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.quitter_famille();
+  reset role;
+  select count(*) into n_soi from public.famille_membres where profile_id = p_uid;
+  if n_soi <> 0 then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'quitter_famille n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from public.famille_membres where profile_id = p_temoin;
+  return n::text;
+end $$;
+
+select is(tests.quitter_famille_puis_compter('44444444-4444-4444-8444-444444444444',
+          '33333333-3333-3333-3333-333333333333'),
+          '1',
+          'quitter_famille : ne retire que l''appelant, jamais un autre membre du foyer');
+
+-- DEUX IDENTITÉS CRÉÉES ICI, ET CE N'EST PAS UN DOUBLON DU SEED. Les quatre
+-- assertions qui suivent (sessions et journal d'audit) comptent des lignes de
+-- `auth.sessions` et `auth.audit_log_entries` — deux tables que toute connexion
+-- RÉELLE alimente et que rien ne nettoie. Adossées à `client@vito.test`, elles
+-- exigeaient EXACTEMENT 2 sur un compte que la suite e2e et le développement
+-- local connectent : une seule connexion simulée les faisait rougir toutes deux
+-- (mesuré, cf. rapport) — la classe de flakiness déjà payée deux fois sur ce
+-- projet (« e2e contamine RLS », « jamais de totaux absolus »). Les fonctions
+-- sous test étant AUTO-PORTÉES (elles n'agissent que sur auth.uid()), rien
+-- n'oblige à emprunter les comptes du seed : sur des identités que ce lot crée,
+-- sessions et historique ne contiennent que ce que le lot y met, quelle que
+-- soit la contamination. NE PAS les remplacer par `client`/`agence`.
+-- `handle_new_user` pose les profils ; la FK de auth.sessions exige les comptes.
+insert into auth.users (id, instance_id, aud, role, email, encrypted_password,
+                        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+                        created_at, updated_at)
+values ('ba000000-0000-4000-8000-0000000004a1', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-sessions@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Sessions"}'::jsonb,
+        now(), now()),
+       ('ba000000-0000-4000-8000-0000000004a2', '00000000-0000-0000-0000-000000000000',
+        'authenticated', 'authenticated', 'pgtap-sessions-temoin@vito.test', 'x', now(),
+        '{"provider":"email"}'::jsonb, '{"display_name":"Pgtap Sessions Témoin"}'::jsonb,
+        now(), now());
+
+-- Fixture posée AVANT l'assertion anonyme (pas seulement avant le self-only,
+-- ci-dessous) : sans sessions RÉELLES déjà présentes, « rend 0 » serait vrai
+-- aussi bien pour un refus qu'un compte authentifié n'ayant simplement aucune
+-- session à révoquer — vacuité mesurée par substitution (cf. rapport). Deux
+-- sessions pour l'appelant créé ci-dessus, une pour son témoin.
+insert into auth.sessions (id, user_id, created_at, updated_at) values
+  ('aaaaaaaa-0000-4000-8000-0000000005e1', 'ba000000-0000-4000-8000-0000000004a1', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e2', 'ba000000-0000-4000-8000-0000000004a1', now(), now()),
+  ('aaaaaaaa-0000-4000-8000-0000000005e3', 'ba000000-0000-4000-8000-0000000004a2', now(), now());
+
+-- 5) revoquer_autres_sessions : anonyme — NE LÈVE PAS, rend 0 (mesuré). Mais
+-- rendre 0 ne suffit pas à prouver le refus : un compte réel SANS session à
+-- révoquer rendrait aussi 0. La preuve porte donc sur l'EFFET, pas le retour :
+-- les deux sessions RÉELLES de l'appelant doivent survivre intactes à cet appel.
+create function tests.revoquer_sessions_anon_puis_compter() returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', null, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.revoquer_autres_sessions();
+  reset role;
+  select count(*) into n from auth.sessions where user_id = 'ba000000-0000-4000-8000-0000000004a1';
+  return n;
+end $$;
+
+select is(tests.revoquer_sessions_anon_puis_compter(),
+          2::bigint,
+          'revoquer_autres_sessions : un jeton sans identité ne révoque aucune session réelle (rend 0, ne lève pas)');
+
+-- 6) revoquer_autres_sessions : ne révoque que les sessions de l'appelant.
+-- Témoin positif intégré au helper (comme ci-dessus) : les 2 sessions de
+-- l'appelant doivent RÉELLEMENT disparaître, celle du témoin rester intacte.
+create function tests.revoquer_sessions_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
+declare n bigint; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.revoquer_autres_sessions();
+  reset role;
+  select count(*) into n_soi from auth.sessions where user_id = p_uid;
+  if n_soi <> 0 then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'revoquer_autres_sessions n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select count(*) into n from auth.sessions where user_id = p_temoin;
+  return n::text;
+end $$;
+
+select is(tests.revoquer_sessions_puis_compter('ba000000-0000-4000-8000-0000000004a1',
+          'ba000000-0000-4000-8000-0000000004a2'),
+          '1',
+          'revoquer_autres_sessions : ne révoque que les sessions de l''appelant, jamais celles d''autrui');
+
+-- 7) mock_subscribe : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.mock_subscribe(''monthly'')::text') $$,
+  'authentification requise',
+  'mock_subscribe : un jeton sans identité est refusé');
+
+-- 8) mock_subscribe : ne crée/majore que l'abonnement de l'appelant. client
+-- (11111111) n'a encore AUCUNE ligne subscriptions à ce point (seul de110000
+-- et 55555555 en portent une, et de110000 vient d'être annulée ci-dessus) :
+-- l'effet est une VRAIE insertion, pas un upsert sur une ligne déjà active.
+-- 55555555 (jamais touché dans cette tâche) sert de témoin — SON PERIOD
+-- ('yearly', posé par le seed), pas son statut : un compteur sur `status =
+-- ''active''` collapse à la même valeur (1) que l'appelant soit VRAIMENT
+-- isolé ou que p_temoin désigne l'appelant lui-même — vérifié par
+-- substitution, cf. rapport. `period` distingue les deux : si mock_subscribe
+-- touchait la ligne du témoin, son period deviendrait 'monthly' comme celui
+-- de l'appelant, jamais 'yearly'.
+create function tests.mock_subscribe_puis_compter(p_uid uuid, p_periode text, p_temoin uuid) returns text language plpgsql as $$
+declare v_periode text; n_soi bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.mock_subscribe(p_periode);
+  reset role;
+  select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'active';
+  if n_soi <> 1 then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'mock_subscribe n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  end if;
+  select period into v_periode from public.subscriptions where user_id = p_temoin;
+  return v_periode;
+end $$;
+
+select is(tests.mock_subscribe_puis_compter('11111111-1111-1111-1111-111111111111', 'monthly',
+          '55555555-5555-4555-8555-555555555555'),
+          'yearly',
+          'mock_subscribe : ne crée/majore que l''abonnement de l''appelant, jamais celui d''autrui');
+
+-- Fixture posée AVANT l'assertion anonyme, même raison que pour
+-- revoquer_autres_sessions ci-dessus : sans lignes RÉELLES déjà présentes,
+-- « rend 0 » serait vrai aussi bien pour un refus que pour un compte réel
+-- n'ayant simplement aucun historique — vacuité mesurée par substitution
+-- (cf. rapport). 2 entrées pour l'appelant créé plus haut, 1 pour son témoin —
+-- MÊMES identités que les sessions, et pour la même raison : le compte exact
+-- exigé plus bas ne survivrait pas à une connexion réelle de `client@vito.test`,
+-- que rien ne purge de auth.audit_log_entries.
+insert into auth.audit_log_entries (instance_id, id, payload, created_at, ip_address) values
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a1', 'action', 'login'), now(), ''),
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a1', 'action', 'logout'), now(), ''),
+  ('00000000-0000-0000-0000-000000000000', gen_random_uuid(),
+   json_build_object('actor_id', 'ba000000-0000-4000-8000-0000000004a2', 'action', 'login'), now(), '');
+
+-- 9) mes_connexions_recentes : anonyme — NE LÈVE PAS, rend un ensemble vide,
+-- MALGRÉ les entrées réelles ci-dessus : la preuve porte sur leur absence du
+-- résultat, pas sur un compte qui serait 0 faute d'historique.
+select is(tests.count_as(null, 'select count(*) from public.mes_connexions_recentes(10)'),
+          0::bigint,
+          'mes_connexions_recentes : un jeton sans identité ne voit aucune des connexions réelles existantes');
+
+-- 10) mes_connexions_recentes : ne renvoie que les connexions de l'appelant.
+-- Le compte exact (2, ni 0 ni 3) est la preuve : 0 dirait que la fonction est
+-- cassée (vacuité), 3 dirait qu'elle fuit les entrées d'agence.
+select is(tests.count_as('ba000000-0000-4000-8000-0000000004a1',
+          'select count(*) from public.mes_connexions_recentes(10)'),
+          2::bigint,
+          'mes_connexions_recentes : ne renvoie que les connexions de l''appelant, jamais celles d''autrui');
+
+-- ============================================================
+-- Lot 4 / tâche 5 — les trois fonctions de fabrique, et la porte du catalogue
+-- ============================================================
+-- find_or_create_vin crée un vin appartenant à auth.uid(). upsert_etablissement
+-- et cache_etablissement_photo écrivent dans le catalogue PARTAGÉ
+-- (etablissements) — et c'est tout leur intérêt ici : le lot 2 a gravé
+-- qu'aucune policy n'autorise un compte connecté à modifier ou effacer
+-- `etablissements` directement (assertions « un compte connecté ne modifie
+-- pas le catalogue » / « ni ne l'efface », plus haut dans ce fichier, sur la
+-- ligne prise par `order by id limit 1`). Restait à prouver l'AUTRE moitié :
+-- le catalogue EST écrivable, par la porte prévue. Sans cette preuve,
+-- « personne ne peut écrire » serait satisfait par un catalogue que personne
+-- ne peut alimenter — le filet dirait « sûr » là où l'application serait
+-- cassée.
+--
+-- Chaque fonction reçoit : anonyme refusé + effet légitime. find_or_create_vin
+-- et upsert_etablissement sont de VRAIS upserts (leur nom le dit) : un second
+-- appel identique doit RETROUVER la ligne, pas en créer une seconde — sans
+-- quoi « crée un vin/une fiche » serait vrai même si la moitié « or_create »
+-- (dédoublonnage) était cassée. D'où une assertion de plus par fonction.
+
+-- 1) find_or_create_vin : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.find_or_create_vin(''{"nom":"pgtap anon","couleur":"rouge"}''::jsonb)::text') $$,
+  'authentification requise',
+  'find_or_create_vin : un jeton sans identité est refusé');
+
+-- 2) et 3) find_or_create_vin : crée un vin appartenant à l'appelant, et un
+-- second appel IDENTIQUE retrouve la même ligne au lieu d'en créer une
+-- seconde (la clause `on conflict (user_id, lower(nom), millesime, domaine)`
+-- est tout l'intérêt du nom de la fonction — sans ce second appel, une
+-- régression qui la retirerait resterait invisible : le premier appel
+-- créerait toujours 1 ligne, seul le second en créerait 2).
+create function tests.find_or_create_vin_puis_compter(p_uid uuid, p_payload jsonb, p_nom text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.find_or_create_vin(p_payload);
+  reset role;
+  select count(*) into n from public.vins where user_id = p_uid and nom = p_nom;
+  return n;
+end $$;
+
+select is(tests.find_or_create_vin_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"nom":"Pgtap Cru","couleur":"rouge"}'::jsonb, 'Pgtap Cru'),
+          1::bigint,
+          'find_or_create_vin : crée bien un vin appartenant à l''appelant');
+
+select is(tests.find_or_create_vin_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"nom":"Pgtap Cru","couleur":"rouge"}'::jsonb, 'Pgtap Cru'),
+          1::bigint,
+          'find_or_create_vin : un second appel identique retrouve la même ligne, n''en crée pas une seconde');
+
+-- 4) upsert_etablissement : anonyme
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.upsert_etablissement(''{"place_id":"pgtap-anon","nom":"x"}''::jsonb)::text') $$,
+  'authentification requise',
+  'upsert_etablissement : un jeton sans identité est refusé');
+
+-- 5) et 6) upsert_etablissement : insère une NOUVELLE fiche (place_id inédit),
+-- puis un second appel sur le MÊME place_id mais un nom différent MET À JOUR
+-- la même fiche au lieu d'en créer une seconde — la branche `on conflict
+-- (place_id) do update`, cœur de l'upsert, sans laquelle un second appel
+-- lèverait une violation d'unicité au lieu de mettre à jour.
+create function tests.upsert_etablissement_puis_compter(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns text language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.upsert_etablissement(p_payload);
+  reset role; -- lecture publique du catalogue (SELECT USING (true)) ; reset par cohérence avec l'idiome du fichier
+  -- Le comptage porte sur `place_id` SEUL : c'est ce que le libellé affirme.
+  -- Avec `and nom = p_nom`, une seconde ligne INSÉRÉE sous le nouveau nom
+  -- rendrait 1 exactement comme une mise à jour en place — le filtre cachait
+  -- le cas même qu'il prétendait exclure. Le nom, lui, reste éprouvé : la
+  -- garde ci-dessous tombe si l'appel n'a pas RÉELLEMENT posé le nom attendu,
+  -- sans quoi « compte = 1 » serait vert sur une fonction qui n'écrit rien.
+  if not exists (select 1 from public.etablissements where place_id = p_place_id and nom = p_nom) then
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'upsert_etablissement n''a produit aucun effet mesurable sur la fiche : mutation vacueuse';
+  end if;
+  select count(*) into n from public.etablissements where place_id = p_place_id;
+  return n::text;
+end $$;
+
+select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
+          '{"place_id":"pgtap-place-1","nom":"Pgtap Resto","categorie":"resto"}'::jsonb,
+          'pgtap-place-1', 'Pgtap Resto'),
+          '1',
+          'upsert_etablissement : un compte connecté insère bien une nouvelle fiche au catalogue');
+
+-- LE SECOND APPEL NE SE MESURE PAS PAR UN COMPTAGE. `etablissements` porte un
+-- index UNIQUE sur `place_id` (mesuré : etablissements_place_id_key) : une fois
+-- la garde passée — elle exige que la fiche (place_id, nom) EXISTE — le
+-- `count(*) where place_id = 'pgtap-place-1'` vaut 1 PAR CONSTRUCTION DU
+-- SCHÉMA, quoi que fasse la fonction. « n'en crée pas une seconde » n'était
+-- plus une mesure, c'était une conséquence du DDL : tout le pouvoir
+-- discriminant était passé dans la garde.
+--
+-- Ce qui reste vrai à prouver, et que l'unicité de place_id n'interdit PAS,
+-- c'est que la fiche est mise à jour EN PLACE : un `delete` suivi d'un
+-- `insert` respecterait l'unicité, rendrait 1, et laisserait le même
+-- place_id — tout en changeant l'`id` de la fiche. Or cet `id` est la clé
+-- étrangère de tout le reste (favoris, visites, photos, famille_restos…) :
+-- une fiche recréée orphelinerait silencieusement ses références. C'est le
+-- seul défaut que le schéma ne garde pas, donc le seul qui mérite une
+-- assertion.
+--
+-- D'où la capture de l'`id` AVANT le second appel et l'exigence qu'il soit
+-- INCHANGÉ après, le nom mis à jour par-dessus. La valeur rendue porte les
+-- deux, en clair : un échec affiche `have: fiche recréée (… -> …), nom …`,
+-- qui NOMME le défaut au lieu de le faire deviner.
+create function tests.upsert_etablissement_maj_puis_verifier(p_uid uuid, p_payload jsonb, p_place_id text) returns text language plpgsql as $$
+declare id_avant uuid; id_apres uuid; nom_apres text;
+begin
+  select id into id_avant from public.etablissements where place_id = p_place_id;
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+  if id_avant is null then
+    return 'upsert_etablissement : aucune fiche à mettre à jour AVANT l''appel, la mise à jour en place ne prouverait rien : mutation vacueuse';
+  end if;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.upsert_etablissement(p_payload);
+  reset role; -- lecture publique du catalogue (SELECT USING (true)) ; reset par cohérence avec l'idiome du fichier
+  select id, nom into id_apres, nom_apres from public.etablissements where place_id = p_place_id;
+  if id_apres is null then
+    return 'upsert_etablissement : la fiche a DISPARU après l''appel';
+  end if;
+  return case when id_apres = id_avant
+              then 'même fiche'
+              else 'fiche recréée (' || id_avant || ' -> ' || id_apres || ')'
+         end || ', nom ' || nom_apres;
+end $$;
+
+select is(tests.upsert_etablissement_maj_puis_verifier('11111111-1111-1111-1111-111111111111',
+          '{"place_id":"pgtap-place-1","nom":"Pgtap Resto Maj","categorie":"resto"}'::jsonb,
+          'pgtap-place-1'),
+          'même fiche, nom Pgtap Resto Maj',
+          'upsert_etablissement : un second appel sur le même place_id met à jour la fiche EN PLACE — même id, nom remplacé');
+
+-- 7) cache_etablissement_photo : anonyme. Un uuid arbitraire suffit : le
+-- refus lève AVANT toute lecture d'etablissements (auth.uid() is null en tête
+-- de fonction, même forme que les 5 fonctions de la tâche 4).
+select throws_ok(
+  $$ select tests.text_as(null, 'select public.cache_etablissement_photo(''00000000-0000-4000-8000-000000000000'', ''pgtap-ref-anon'')::text') $$,
+  'authentification requise',
+  'cache_etablissement_photo : un jeton sans identité est refusé');
+
+-- 8) LA PORTE DU CATALOGUE — l'assertion qui ferme la boucle avec le lot 2.
+-- PIÈGE ÉVITÉ ICI, vérifié par exécution : la forme la plus courte,
+-- `with u as (select public.cache_etablissement_photo(...)) select count(*)
+-- from etablissements where photo_ref = ...` SANS référencer `u` dans la
+-- requête externe, est exactement le motif que ce fichier proscrit partout
+-- ailleurs (cf. tête de section delier_client) — testée : elle rend 0, la
+-- fonction n'est JAMAIS appelée, le CTE est élagué. Remède identique : appel
+-- et comptage en deux instructions dans un helper dédié.
+-- Cible : la MÊME ligne que les deux assertions du lot 2 ci-dessus ("un compte
+-- connecté ne modifie pas le catalogue" / "ni ne l'efface") — la preuve que
+-- l'écriture directe est refusée ET que la porte prévue fonctionne porte sur LA
+-- MÊME ligne. `order by id limit 1` NE SUFFIT PLUS À LE GARANTIR : `id` a pour
+-- défaut gen_random_uuid(), et upsert_etablissement vient d'insérer
+-- `pgtap-place-1` juste au-dessus — mesuré, 18 fiches au seed, donc environ un
+-- run sur 19 où la fiche pgtap porte l'uuid minimal et vole la cible. Le lot 2
+-- ayant couru AVANT cette insertion, sa ligne est la plus petite du catalogue
+-- HORS pgtap : l'exclure rétablit le bouclage, sans dépendre d'un place_id de
+-- seed que rien n'oblige à rester stable.
+create function tests.cache_photo_puis_compter(p_uid uuid, p_etab uuid, p_ref text) returns bigint language plpgsql as $$
+declare n bigint;
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
+  set local role authenticated;
+  perform public.cache_etablissement_photo(p_etab, p_ref);
+  reset role;
+  select count(*) into n from public.etablissements where id = p_etab and photo_ref = p_ref;
+  return n;
+end $$;
+
+select is(tests.cache_photo_puis_compter('11111111-1111-1111-1111-111111111111',
+          (select id from public.etablissements
+            where place_id is distinct from 'pgtap-place-1' order by id limit 1), 'pgtap-ref'),
+          1::bigint,
+          'cache_etablissement_photo : le catalogue s''écrit par la porte prévue, là où l''écriture directe est refusée');
 
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
