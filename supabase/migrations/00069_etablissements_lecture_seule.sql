@@ -1,0 +1,37 @@
+-- `etablissements` : rendre EFFECTIVE la lecture seule que 00005_grants.sql
+-- déclarait déjà en commentaire (« Référentiel partagé : lecture seule,
+-- écriture via la RPC security definer »).
+--
+-- CE QUI A ÉTÉ MESURÉ, et qui corrige deux affirmations de 00005 :
+--
+-- 1. Contrairement à ce qu'affirme le commentaire de 00005, Supabase accorde
+--    TOUJOURS ces privilèges automatiquement sur cette instance : les DEFAULT
+--    PRIVILEGES de `supabase_admin` sur le schéma `public` donnent `arwdDxtm`
+--    à `anon`, `authenticated` et `service_role` pour toute table créée. Le
+--    `grant select` de 00005 était donc redondant, et sans effet restrictif.
+--    Conséquence mesurée : `authenticated` porte des droits sur 47 tables du
+--    schéma, dont INSERT sur 46. La RLS est aujourd'hui la SEULE barrière.
+--    (`anon`, lui, est bien à zéro table : la 00025 a tenu.)
+--
+-- 2. La table n'est PAS écrivable pour autant : `etablissements` n'a qu'une
+--    policy `SELECT`, donc la RLS refuse déjà les écritures — mesuré sous une
+--    identité réelle, UPDATE affecte 0 ligne et INSERT lève
+--    « new row violates row-level security policy ». Ce REVOKE ne corrige donc
+--    aucune fuite ouverte : il ferme une faille LATENTE. Le jour où quelqu'un
+--    ajoutera une policy `FOR ALL` sur cette table — le geste naturel, et déjà
+--    employé sur 30 tables du schéma — le GRANT trop large la rendrait
+--    silencieusement écrivable par n'importe quel compte connecté.
+--
+-- CE QU'ON NE TOUCHE PAS. `tags` est déclaré « lecture seule » par le même
+-- commentaire de 00005, mais il est RÉELLEMENT écrit par les utilisateurs
+-- (tags personnels : src/features/restos/data/tagActions.ts, vins/actions.ts),
+-- la RLS les bornant à leurs propres lignes. Appliquer l'intention déclarée à
+-- `tags` casserait la fonctionnalité. Le commentaire de 00005 est périmé pour
+-- cette table, pas la table pour son commentaire.
+--
+-- POURQUOI LA RPC N'EST PAS AFFECTÉE. `upsert_etablissement` et
+-- `cache_etablissement_photo` sont `SECURITY DEFINER` : elles s'exécutent avec
+-- les droits de leur propriétaire, pas de l'appelant. Vérifié en transaction
+-- annulée — après ce REVOKE, la RPC écrit toujours sa ligne.
+
+revoke insert, update, delete, truncate on public.etablissements from authenticated;
