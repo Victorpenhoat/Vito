@@ -57,6 +57,24 @@ export function luminance(hex: string): number {
   const n = parseInt(hex.slice(1), 16);
   return 0.2126 * canal((n >> 16) & 255) + 0.7152 * canal((n >> 8) & 255) + 0.0722 * canal(n & 255);
 }
+/**
+ * Une couleur alpha composée sur son fond, rendue en `#rrggbb`.
+ *
+ * Sans elle, AUCUN seuil ne pouvait couvrir un fond teinté : `contraste`
+ * n'accepte que `#rrggbb`, et les fonds de badge (`--kpi-green-bg`,
+ * `--accent-50`…) sont en `rgba(…, .14)`. C'est ce trou de l'outil de mesure
+ * qui a laissé un libellé teinté écrire à 4,17:1 en thème clair sans qu'aucun
+ * test ne bronche.
+ */
+export function surFond(couleur: string, fond: string): string {
+  const m = couleur.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/);
+  if (!m) return couleur;
+  const a = m[4] === undefined ? 1 : Number(m[4]);
+  const f = parseInt(fond.slice(1), 16);
+  const mele = (i: number, d: number) => Math.round(Number(m[i]) * a + ((f >> d) & 255) * (1 - a));
+  return "#" + ([[1, 16], [2, 8], [3, 0]] as const).map(([i, d]) => mele(i, d).toString(16).padStart(2, "0")).join("");
+}
+
 /** Rapport de contraste WCAG entre deux `#rrggbb`. */
 export function contraste(a: string, b: string): number {
   const [haut, bas] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
@@ -84,6 +102,15 @@ const SEUILS: [string, string, number][] = [
   ["on-fill", "accent-active", 4.5],
   ["on-fill", "kpi-amber", 4.5],
   ["on-fill", "kpi-green", 4.5],
+  // Les badges teintés posent leur libellé sur un fond de la même couleur à
+  // 14 %. Écrit dans la couleur du ton, il tombe à 4,17–4,36:1 en thème clair —
+  // sous le seuil, sur des libellés de 10 à 11 px. En --ink il tient 11,79 à
+  // 16,66:1. Ces quatre lignes tiennent cette décision, et rien d'autre ne la
+  // tenait : les seuils ne couvraient que des fonds opaques.
+  ["ink", "kpi-green-bg", 4.5],
+  ["ink", "kpi-amber-bg", 4.5],
+  ["ink", "danger-bg", 4.5],
+  ["ink", "accent-50", 4.5],
 ];
 
 describe.each([
@@ -91,10 +118,13 @@ describe.each([
   ["clair", '[data-theme="light"]'],
 ])("contrastes du thème %s", (_nom, ouverture) => {
   const roles = rolesDuBloc(CSS, ouverture);
+  const surface = roles.get("surface")!;
   it.each(SEUILS)("%s sur %s tient %s:1", (avant, fond, seuil) => {
-    const [a, b] = [roles.get(avant)!, roles.get(fond)!];
-    expect(a, `--${avant} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
-    expect(b, `--${fond} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    // Un fond teinté est composé sur --surface avant d'être mesuré : c'est ce
+    // que l'œil voit, et `contraste` ne sait lire qu'une couleur opaque.
+    const [a, b] = [surFond(roles.get(avant)!, surface), surFond(roles.get(fond)!, surface)];
+    expect(a, `--${avant} illisible : ${roles.get(avant)}`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(b, `--${fond} illisible : ${roles.get(fond)}`).toMatch(/^#[0-9A-Fa-f]{6}$/);
     expect(contraste(a, b)).toBeGreaterThanOrEqual(seuil);
   });
 });

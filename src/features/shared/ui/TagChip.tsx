@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
-type TonChip = "defaut" | "selectionne" | "actif-doux" | "vide" | "ajout" | "suggere";
+type TonChip =
+  | "defaut" | "selectionne" | "actif-doux" | "vide" | "ajout" | "suggere"
+  | "succes" | "alerte" | "danger";
 
 // Relevé au canevas, bloc « Composants ». Le sélectionné pose --on-fill sur
 // --ink : 16,70:1. Le vide garde --faint sur --surface-hover (3,69:1), ce qui
@@ -13,10 +15,24 @@ type TonChip = "defaut" | "selectionne" | "actif-doux" | "vide" | "ajout" | "sug
 const TON: Record<TonChip, string> = {
   defaut: "border border-line bg-surface-hover text-muted hover:border-line-strong hover:text-ink",
   selectionne: "bg-ink font-semibold text-on-fill",
-  "actif-doux": "border border-accent/25 bg-accent-50 font-semibold text-accent",
+  // MESURÉ : --accent sur --accent-50 ne donne que 4,17:1 en thème clair, sous le
+  // seuil, sur des libellés de 10 à 11 px. Le texte passe en --ink (12,33 à
+  // 16,36:1) ; le ton reste porté par le fond et la bordure, comme StatTile.
+  "actif-doux": "border border-accent/25 bg-accent-50 font-semibold text-ink",
   vide: "border border-line-soft bg-surface-hover text-faint opacity-50",
-  ajout: "border border-dashed border-accent/40 bg-accent-50 text-accent",
+  // `ajout` souffrait de la MÊME paire, mais appelle un autre remède : ici
+  // l'accent EST l'affordance (« + Ajouter »), le passer en --ink l'effacerait.
+  // C'est donc le fond teinté qui s'en va — --accent sur --surface tient 4,78:1
+  // en clair, 7,02:1 en sombre — et la bordure tiretée porte toujours le signal.
+  ajout: "border border-dashed border-accent/40 bg-surface text-accent",
   suggere: "border border-line bg-surface text-muted hover:border-accent/30 hover:text-ink",
+
+  // Trois tons SÉMANTIQUES : un badge qui dit un état métier, pas une sélection.
+  // Même forme que StatTile — fond teinté, bordure teintée, texte --ink — parce
+  // que la forme teinte-sur-teinte échoue en thème clair (4,27 à 4,36:1).
+  succes: "border border-kpi-green/25 bg-kpi-green-bg text-ink",
+  alerte: "border border-kpi-amber/25 bg-kpi-amber-bg text-ink",
+  danger: "border border-danger/25 bg-danger-bg text-ink",
 };
 
 // Union discriminée : `libelleRetrait` est obligatoire avec `onRetirer`, interdit sans lui.
@@ -81,7 +97,14 @@ export function TagChip({
       {contenu}
     </button>
   ) : (
-    <span className={classe}>{contenu}</span>
+    // `testId` vaut aussi pour un chip qui décrit : il était posé sur la seule
+    // branche bouton, donc inerte sur la moitié des rendus — une prop publique
+    // documentée qui ne faisait rien. Les e2e ciblent des badges descriptifs
+    // (« demande-statut », « totp-actif », « session-courante »…) : sans cela,
+    // les migrer perdrait leurs points d'accroche en silence.
+    <span data-testid={testId} className={classe}>
+      {contenu}
+    </span>
   );
 
   if (!onRetirer) return principal;
