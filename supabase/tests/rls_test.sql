@@ -1841,7 +1841,26 @@ select throws_ok(
   'non autorisé',
   'retirer_membre_famille : un étranger ne retire pas un membre du foyer d''autrui');
 
-create function tests.retirer_membre_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
+-- L'IDIOME DES SEPT GARDES DE VACUITÉ — celle-ci est la première des sept,
+-- les six autres (lier_client, cancel_subscription, quitter_famille,
+-- revoquer_autres_sessions, mock_subscribe, upsert_etablissement) suivent
+-- exactement la même forme.
+--
+-- Ces gardes ont d'abord été écrites en `raise exception`. C'était le mode de
+-- défaillance que ce chantier a passé quatre lots à combattre ailleurs : une
+-- exception AVORTE la transaction, efface toutes les assertions suivantes —
+-- SOCLE compris — et dégénère en « Bad plan », le diagnostic que ce fichier
+-- dénonce lui-même. Une garde qui protège d'une assertion creuse ne doit pas
+-- coûter les 60 assertions d'après.
+--
+-- D'où la forme retenue, uniforme pour les sept : le helper rend du TEXTE,
+-- jamais un bigint.
+--   · comportement normal      → la valeur mesurée, convertie en texte ('0', '1', …)
+--   · précondition rompue      → le message d'explication, rendu et non levé
+-- L'assertion devient `is(tests.xxx(…), '0', '…')`. Un échec affiche alors
+-- `have: <le message> / want: 0` : UN rouge, sur SON assertion, nommé, et le
+-- reste du fichier continue de tourner.
+create function tests.retirer_membre_puis_compter(p_uid uuid) returns text language plpgsql as $$
 declare n bigint; n_avant bigint;
 begin
   -- GARDE DE VACUITÉ, symétrique de celles des helpers de la tâche 4 : la ligne
@@ -1855,7 +1874,7 @@ begin
    where famille_id = 'fa000000-0000-4000-8000-000000000001'
      and profile_id = '11111111-1111-1111-1111-111111111111';
   if n_avant <> 1 then
-    raise exception 'retirer_membre_famille : le membre n''était pas présent AVANT l''appel, le 0 qui suit ne prouverait aucun retrait : mutation vacueuse';
+    return 'retirer_membre_famille : le membre n''était pas présent AVANT l''appel, le 0 qui suit ne prouverait aucun retrait : mutation vacueuse';
   end if;
   perform set_config('request.jwt.claims',
     json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
@@ -1865,11 +1884,11 @@ begin
   select count(*) into n from public.famille_membres
    where famille_id = 'fa000000-0000-4000-8000-000000000001'
      and profile_id = '11111111-1111-1111-1111-111111111111';
-  return n;
+  return n::text;
 end $$;
 
 select is(tests.retirer_membre_puis_compter('de110000-0000-4000-8000-000000000000'),
-          0::bigint, 'retirer_membre_famille : le propriétaire, lui, retire réellement le membre');
+          '0', 'retirer_membre_famille : le propriétaire, lui, retire réellement le membre');
 
 -- delier_client ne LÈVE PAS pour un appelant sans droit : son delete est
 -- borné par `agence_id = auth.uid()`, donc la portée est l'autorisation. Un
@@ -1985,7 +2004,8 @@ begin
   select count(*) into n_avant from public.agence_clients
    where agence_id = p_uid and client_id = p_client;
   if n_avant <> 0 then
-    raise exception 'lier_client : le lien existait DÉJÀ avant l''appel, le ''ok'' qui suit ne prouverait aucune insertion : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'lier_client : le lien existait DÉJÀ avant l''appel, le ''ok'' qui suit ne prouverait aucune insertion : mutation vacueuse';
   end if;
   perform set_config('request.jwt.claims',
     json_build_object('sub', p_uid, 'role', 'authenticated', 'user_role', p_role)::text, true);
@@ -2105,7 +2125,7 @@ select throws_ok(
 -- l'abonnement de l'appelant, le helper lève lui-même — l'assertion ne peut
 -- donc pas rester verte sur un no-op. de110000 (démo) porte un abonnement actif
 -- du seed ; 55555555 (premium) sert de témoin, actif et jamais touché ici.
-create function tests.annuler_abonnement_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+create function tests.annuler_abonnement_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
 declare n bigint; n_soi bigint;
 begin
   perform set_config('request.jwt.claims',
@@ -2115,15 +2135,16 @@ begin
   reset role; -- comptage hors RLS, même précaution que delier_puis_compter plus haut
   select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'canceled';
   if n_soi <> 1 then
-    raise exception 'cancel_subscription n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'cancel_subscription n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
   end if;
   select count(*) into n from public.subscriptions where user_id = p_temoin and status = 'active';
-  return n;
+  return n::text;
 end $$;
 
 select is(tests.annuler_abonnement_puis_compter('de110000-0000-4000-8000-000000000000',
           '55555555-5555-4555-8555-555555555555'),
-          1::bigint,
+          '1',
           'cancel_subscription : n''annule que l''abonnement de l''appelant, jamais celui d''autrui');
 
 -- 3) quitter_famille : anonyme
@@ -2143,7 +2164,7 @@ select throws_ok(
 insert into public.famille_membres (famille_id, profile_id, role)
 values ('fa000000-0000-4000-8000-000000000001', '33333333-3333-3333-3333-333333333333', 'membre');
 
-create function tests.quitter_famille_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+create function tests.quitter_famille_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
 declare n bigint; n_soi bigint;
 begin
   perform set_config('request.jwt.claims',
@@ -2153,15 +2174,16 @@ begin
   reset role;
   select count(*) into n_soi from public.famille_membres where profile_id = p_uid;
   if n_soi <> 0 then
-    raise exception 'quitter_famille n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'quitter_famille n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
   end if;
   select count(*) into n from public.famille_membres where profile_id = p_temoin;
-  return n;
+  return n::text;
 end $$;
 
 select is(tests.quitter_famille_puis_compter('44444444-4444-4444-8444-444444444444',
           '33333333-3333-3333-3333-333333333333'),
-          1::bigint,
+          '1',
           'quitter_famille : ne retire que l''appelant, jamais un autre membre du foyer');
 
 -- DEUX IDENTITÉS CRÉÉES ICI, ET CE N'EST PAS UN DOUBLON DU SEED. Les quatre
@@ -2222,7 +2244,7 @@ select is(tests.revoquer_sessions_anon_puis_compter(),
 -- 6) revoquer_autres_sessions : ne révoque que les sessions de l'appelant.
 -- Témoin positif intégré au helper (comme ci-dessus) : les 2 sessions de
 -- l'appelant doivent RÉELLEMENT disparaître, celle du témoin rester intacte.
-create function tests.revoquer_sessions_puis_compter(p_uid uuid, p_temoin uuid) returns bigint language plpgsql as $$
+create function tests.revoquer_sessions_puis_compter(p_uid uuid, p_temoin uuid) returns text language plpgsql as $$
 declare n bigint; n_soi bigint;
 begin
   perform set_config('request.jwt.claims',
@@ -2232,15 +2254,16 @@ begin
   reset role;
   select count(*) into n_soi from auth.sessions where user_id = p_uid;
   if n_soi <> 0 then
-    raise exception 'revoquer_autres_sessions n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'revoquer_autres_sessions n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
   end if;
   select count(*) into n from auth.sessions where user_id = p_temoin;
-  return n;
+  return n::text;
 end $$;
 
 select is(tests.revoquer_sessions_puis_compter('ba000000-0000-4000-8000-0000000004a1',
           'ba000000-0000-4000-8000-0000000004a2'),
-          1::bigint,
+          '1',
           'revoquer_autres_sessions : ne révoque que les sessions de l''appelant, jamais celles d''autrui');
 
 -- 7) mock_subscribe : anonyme
@@ -2270,7 +2293,8 @@ begin
   reset role;
   select count(*) into n_soi from public.subscriptions where user_id = p_uid and status = 'active';
   if n_soi <> 1 then
-    raise exception 'mock_subscribe n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'mock_subscribe n''a produit aucun effet mesurable sur l''appelant : mutation vacueuse';
   end if;
   select period into v_periode from public.subscriptions where user_id = p_temoin;
   return v_periode;
@@ -2378,7 +2402,7 @@ select throws_ok(
 -- la même fiche au lieu d'en créer une seconde — la branche `on conflict
 -- (place_id) do update`, cœur de l'upsert, sans laquelle un second appel
 -- lèverait une violation d'unicité au lieu de mettre à jour.
-create function tests.upsert_etablissement_puis_compter(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns bigint language plpgsql as $$
+create function tests.upsert_etablissement_puis_compter(p_uid uuid, p_payload jsonb, p_place_id text, p_nom text) returns text language plpgsql as $$
 declare n bigint;
 begin
   perform set_config('request.jwt.claims',
@@ -2393,22 +2417,23 @@ begin
   -- garde ci-dessous tombe si l'appel n'a pas RÉELLEMENT posé le nom attendu,
   -- sans quoi « compte = 1 » serait vert sur une fonction qui n'écrit rien.
   if not exists (select 1 from public.etablissements where place_id = p_place_id and nom = p_nom) then
-    raise exception 'upsert_etablissement n''a produit aucun effet mesurable sur la fiche : mutation vacueuse';
+  -- Garde de vacuité : rend le message au lieu de lever (idiome des sept, cf. tests.retirer_membre_puis_compter).
+    return 'upsert_etablissement n''a produit aucun effet mesurable sur la fiche : mutation vacueuse';
   end if;
   select count(*) into n from public.etablissements where place_id = p_place_id;
-  return n;
+  return n::text;
 end $$;
 
 select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
           '{"place_id":"pgtap-place-1","nom":"Pgtap Resto","categorie":"resto"}'::jsonb,
           'pgtap-place-1', 'Pgtap Resto'),
-          1::bigint,
+          '1',
           'upsert_etablissement : un compte connecté insère bien une nouvelle fiche au catalogue');
 
 select is(tests.upsert_etablissement_puis_compter('11111111-1111-1111-1111-111111111111',
           '{"place_id":"pgtap-place-1","nom":"Pgtap Resto Maj","categorie":"resto"}'::jsonb,
           'pgtap-place-1', 'Pgtap Resto Maj'),
-          1::bigint,
+          '1',
           'upsert_etablissement : un second appel sur le même place_id met à jour la même fiche, n''en crée pas une seconde');
 
 -- 7) cache_etablissement_photo : anonyme. Un uuid arbitraire suffit : le
