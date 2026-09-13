@@ -1545,6 +1545,23 @@ select ok(not has_function_privilege('authenticated', 'public.purger_recommandat
 select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
           'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
 
+-- ── Lot 4 / décor des fonctions à effet ────────────────────────────────────
+-- Objets PROPRES à ce lot : ceux du lot 2 sont supprimés en fin de leurs
+-- sections (c'est leur témoin positif), ceux du lot 3 servent aux verrous
+-- d'owner. Réutiliser les uns ou les autres ferait porter ces assertions sur
+-- des objets disparus ou déjà mutés.
+insert into public.voyages (id, owner_id, titre)
+values ('dd000000-0000-4000-8000-000000000001',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot4 voyage');
+insert into public.depense_groupes (id, owner_id, titre)
+values ('dd000000-0000-4000-8000-000000000002',
+        'de110000-0000-4000-8000-000000000000', 'pgtap lot4 groupe');
+-- Pas d'insertion agence_clients ici — vérifié en base. Le lot 1 en pose une
+-- (agence → client) et le lot 2 la lit sans la supprimer : elle est encore
+-- vivante à cet endroit. Un `insert … on conflict do nothing` aurait masqué
+-- une insertion qui n'insère rien, c'est-à-dire le motif exact des huit
+-- assertions creuses déjà trouvées sur ce chantier.
+
 -- ============================================================
 -- SOCLE — balayages pilotés par le catalogue
 -- ============================================================
