@@ -5,6 +5,15 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
+-- COMPTER LES ASSERTIONS DE CE FICHIER, sans se tromper. La grille est, hors
+-- lignes de commentaire : `is(` + `throws_ok(` + `ok(` + `cmp_ok(` +
+-- `has_table(` + `lives_ok(`. Deux pièges MESURÉS, tombés sur ce chantier :
+--   · oublier `has_table(` (2 occurrences) — déjà tombé deux fois ;
+--   · compter `ok(` naïvement : `custom_access_token_hook(` SE TERMINE par
+--     « ook( », donc ses 6 appels hors commentaire sont comptés comme 6 `ok(`
+--     fantômes. La grille naïve rend 257 là où le plan est à 251.
+-- Vérification de référence, qui ne ment pas : lancer le fichier et compter
+-- les lignes `^ok ` de la sortie TAP.
 select plan(251);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
