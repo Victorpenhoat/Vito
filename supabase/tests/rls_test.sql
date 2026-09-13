@@ -1705,8 +1705,21 @@ select throws_ok(
   'retirer_membre_famille : un étranger ne retire pas un membre du foyer d''autrui');
 
 create function tests.retirer_membre_puis_compter(p_uid uuid) returns bigint language plpgsql as $$
-declare n bigint;
+declare n bigint; n_avant bigint;
 begin
+  -- GARDE DE VACUITÉ, symétrique de celles des helpers de la tâche 4 : la ligne
+  -- retirée ici est la SEULE mutation du lot dont ce fichier n'est pas l'auteur
+  -- — elle vient de la re-création du Cercle (lot 2), 445 lignes plus haut.
+  -- Sans cette garde, l'assertion d'absence qui suit reste VERTE si la ligne
+  -- n'était simplement pas là : mesuré par substitution (un delete préalable sur
+  -- famille_membres laisse le fichier à 240/240, cf. rapport). Le compte AVANT
+  -- passe hors RLS, comme celui d'après, pour la même raison.
+  select count(*) into n_avant from public.famille_membres
+   where famille_id = 'fa000000-0000-4000-8000-000000000001'
+     and profile_id = '11111111-1111-1111-1111-111111111111';
+  if n_avant <> 1 then
+    raise exception 'retirer_membre_famille : le membre n''était pas présent AVANT l''appel, le 0 qui suit ne prouverait aucun retrait : mutation vacueuse';
+  end if;
   perform set_config('request.jwt.claims',
     json_build_object('sub', p_uid, 'role', 'authenticated')::text, true);
   set local role authenticated;
