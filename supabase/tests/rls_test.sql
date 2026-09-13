@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(244);
+select plan(250);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1563,6 +1563,68 @@ select ok(not has_function_privilege('authenticated', 'public.purger_recommandat
 -- has_function_privilege cassé qui rendrait false pour tout.
 select ok(has_function_privilege('authenticated', 'public.mock_subscribe(text)', 'execute'),
           'témoin : une fonction destinée aux comptes connectés leur est bien accessible');
+
+-- ── Lot 5 / custom_access_token_hook : la source du claim dont tout dépend ──
+-- POURQUOI CETTE FONCTION MÉRITE D'ÊTRE DANS LE FILET. Tout ce fichier qui
+-- éprouve un rôle (is_admin, is_agence, is_concierge, les policies agence, les
+-- helpers tests.bool_as_role et tests.text_as_role) FABRIQUE lui-même le claim
+-- `user_role`, en cinq endroits. En production ce claim n'est fabriqué par
+-- personne d'autre que ce hook. Si le hook cessait de le poser, is_agence()
+-- rendrait false pour TOUT LE MONDE en prod — et le filet resterait vert d'un
+-- bout à l'autre, puisqu'il pose le claim à la main. C'est exactement le
+-- « coincé à false » que la section des prédicats existe pour attraper, mais
+-- une marche plus haut : à la source. Le hook est une fonction ordinaire,
+-- directement appelable ; rien ne justifiait qu'il reste dehors.
+select is(public.custom_access_token_hook(
+            jsonb_build_object('user_id', '22222222-2222-2222-2222-222222222222',
+                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+          'agence',
+          'custom_access_token_hook : le compte agence reçoit le claim user_role = agence');
+select is(public.custom_access_token_hook(
+            jsonb_build_object('user_id', '11111111-1111-1111-1111-111111111111',
+                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+          'client',
+          'custom_access_token_hook : un compte client reçoit le claim user_role = client');
+-- Aucun profil derrière cet uuid : la branche `else` du hook, celle qui évite
+-- qu'un jeton parte SANS claim user_role (auquel cas coalesce(…, '') ferait
+-- rendre false à is_agence, mais aussi n'importe quelle lecture du claim
+-- deviendrait un null silencieux).
+select is(public.custom_access_token_hook(
+            jsonb_build_object('user_id', 'deadbeef-0000-4000-8000-000000000000',
+                               'claims', '{}'::jsonb)) -> 'claims' ->> 'user_role',
+          'client',
+          'custom_access_token_hook : un compte sans profil retombe sur client, jamais sur rien');
+
+-- Le hook ENRICHIT les claims, il ne les remplace pas. Sans cette assertion,
+-- un hook qui rendrait `jsonb_build_object('claims', …)` au lieu de
+-- `jsonb_set(event, '{claims}', …)` casserait tous les jetons de production
+-- (plus de `sub`, plus d'`aud`) et les trois assertions ci-dessus, qui ne
+-- regardent QUE user_role, resteraient vertes.
+select is(public.custom_access_token_hook(
+            jsonb_build_object('user_id', '11111111-1111-1111-1111-111111111111',
+                               'claims', jsonb_build_object('sub', 'x', 'aud', 'authenticated')))
+            -> 'claims' ->> 'aud',
+          'authenticated',
+          'custom_access_token_hook : les claims déjà présents survivent à l''enrichissement');
+
+-- La barrière GRANT, même idiome que purger_* / mock_subscribe ci-dessus : ce
+-- hook décide d'un rôle, un compte connecté ne doit pas pouvoir l'appeler.
+select ok(not has_function_privilege('authenticated', 'public.custom_access_token_hook(jsonb)', 'execute'),
+          'custom_access_token_hook : hors de portée d''un compte connecté');
+-- Témoin : sans lui, le refus ci-dessus serait satisfait par un hook devenu
+-- inexistant ou exécutable par personne — cas où l'émission des jetons serait
+-- morte en production, et le test vert.
+select ok(has_function_privilege('supabase_auth_admin', 'public.custom_access_token_hook(jsonb)', 'execute'),
+          'témoin : le rôle qui émet les jetons, lui, peut bien exécuter le hook');
+
+-- LIMITE DE CE QUI EST GRAVÉ ICI, à ne pas lire comme une dette soldée : ces
+-- six assertions prouvent que la FONCTION se comporte bien, pas qu'elle est
+-- effectivement BRANCHÉE comme hook d'émission de jeton. Ce branchement vit
+-- dans la configuration Supabase (`auth.hook.custom_access_token`, côté GoTrue
+-- / config.toml / tableau de bord), hors de portée de pgTAP. S'il disparaissait,
+-- aucun jeton ne porterait plus user_role en production et TOUT ce qui précède
+-- resterait vert. La seule mesure possible de ce branchement est un test de
+-- bout en bout qui décode un vrai jeton émis.
 
 -- ── Le référentiel partagé : la barrière est le GRANT, pas la policy ───────
 -- `etablissements` est en lecture seule pour les comptes connectés (00069) ;
