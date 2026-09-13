@@ -5,7 +5,7 @@
 begin;
 create extension if not exists pgtap;
 create schema if not exists tests;
-select plan(250);
+select plan(251);
 
 -- Helpers : exécuter une requête sous une identité (role + claim JWT), puis réinitialiser
 -- même en cas d'erreur (le reset role doit toujours courir pour ne pas fuiter l'identité).
@@ -1427,6 +1427,32 @@ select ok(tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', '
           'is_concierge : vrai pour le personnel agence');
 select ok(not tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()'),
           'is_concierge : faux pour un client ordinaire');
+
+-- LA DUPLICATION, GRAVÉE PLUTÔT QU'AFFIRMÉE. Mesuré : les deux corps sont
+-- BYTE-À-BYTE identiques —
+--   is_agence    := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
+--   is_concierge := select coalesce(auth.jwt() ->> 'user_role', '') in ('agence', 'admin');
+-- Un commentaire qui le dirait vieillirait en silence. L'assertion ci-dessous
+-- le dit EN S'EXÉCUTANT : elle compare les deux prédicats sur les deux bords
+-- du claim (agence et client) et rougira le jour où l'un des deux divergera —
+-- exactement le jour où quelqu'un voudra le savoir. La forme « a/b » rend le
+-- diagnostic lisible : have « true/false » vs want « false/false » nomme tout
+-- de suite lequel des deux bords a bougé.
+--
+-- QUESTION DE PRODUIT, POUR LE PO, NON TRANCHÉE ICI : il n'existe aucun rôle
+-- `concierge` dans public.app_role. Le prédicat se contente donc de dire
+-- « agence ou admin », c'est-à-dire que TOUTE agence et TOUT admin sont
+-- conciergerie. Si c'est voulu, c'est le NOM qui ment et il faudrait le dire ;
+-- si ça ne l'est pas, c'est un défaut d'autorisation. Ce fichier grave l'état
+-- réel et le signale ; il ne modifie aucune fonction de production.
+select is(
+  tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_concierge()')::text
+    || '/' ||
+  tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_concierge()')::text,
+  tests.bool_as_role('22222222-2222-2222-2222-222222222222', 'agence', 'select public.is_agence()')::text
+    || '/' ||
+  tests.bool_as_role('11111111-1111-1111-1111-111111111111', 'client', 'select public.is_agence()')::text,
+  'is_concierge rend aujourd''hui exactement ce que rend is_agence : corps dupliqué, aucun rôle concierge distinct');
 
 select ok(tests.bool_as('de110000-0000-4000-8000-000000000000',
           'select public.is_premium(''de110000-0000-4000-8000-000000000000'')'),
