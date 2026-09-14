@@ -1,0 +1,32 @@
+-- `is_concierge()` : consigner l'INTENTION, là où on lit le code.
+--
+-- Le filet RLS a relevé que `is_concierge()` et `is_agence()` sont BYTE-À-BYTE
+-- identiques — tous deux `coalesce(auth.jwt() ->> 'user_role', '') in
+-- ('agence', 'admin')` — et qu'il n'existe aucun rôle `concierge` dans
+-- `public.app_role`. Un lecteur y voit naturellement un défaut : deux noms pour
+-- un seul concept, dont l'un ne correspond à rien dans le schéma.
+--
+-- DÉCISION DU PO (2026-09-13) : ce n'en est pas un. La conciergerie de Vito est
+-- OPÉRÉE PAR LES AGENCES PARTENAIRES. « Être concierge » veut donc bien dire
+-- « être une agence (ou un admin) », et la duplication est délibérée : le nom
+-- du prédicat dit le RÔLE MÉTIER exercé, pas le rôle technique qui l'autorise.
+--
+-- Ce commentaire existe pour qu'on cesse de « corriger » cette duplication à
+-- chaque relecture, et pour que le jour où un vrai rôle `concierge` apparaîtra,
+-- on sache que c'est ICI qu'il faut intervenir plutôt qu'ailleurs.
+-- L'équivalence des deux prédicats est éprouvée par `supabase/tests/rls_test.sql`
+-- (comparaison sur quatre claims) : si l'un diverge de l'autre, la suite rougit.
+--
+-- CE QUE CETTE DÉCISION NE TRANCHE PAS, et qui reste ouvert : les policies de
+-- `conciergerie_demandes` n'appliquent AUCUN cadrage par client. Mesuré :
+--   conciergerie_select | SELECT | user_id = auth.uid() OR is_concierge()
+--   conciergerie_update | UPDATE | is_concierge()
+--   conciergerie_delete | DELETE | user_id = auth.uid() OR is_concierge()
+-- Autrement dit, une agence peut lire, modifier et supprimer les demandes de
+-- N'IMPORTE QUEL utilisateur, y compris ceux qui ne sont pas ses clients —
+-- `agence_clients` n'intervient nulle part. « Les agences opèrent la
+-- conciergerie » n'implique pas « chaque agence voit tout le monde ». Question
+-- posée au PO, non tranchée ici, et donc non modifiée.
+
+comment on function public.is_concierge() is
+  'Duplique is_agence() DÉLIBÉRÉMENT : la conciergerie est opérée par les agences partenaires, donc « concierge » = « agence ou admin » (décision PO 2026-09-13). Il n''existe aucun rôle concierge dans app_role. Équivalence éprouvée par rls_test.sql. Ouvert : les policies de conciergerie_demandes ne cadrent pas par client — une agence voit les demandes de tous les utilisateurs, pas seulement des siens.';
