@@ -75,6 +75,24 @@ alors dans le journal, plutôt que de passer au vert sans avoir rien vérifié. 
 une chaîne de connexion complète — le contrôle interroge la base et rien d'autre, sans
 dépendre des droits d'un compte Supabase.
 
+`npm run config:derive -- <project-ref>` fait le même travail pour ce qui ne vit **pas**
+dans le dépôt : la configuration d'auth des projets distants. Il ne compare que les
+réglages dont un écart est une panne — aujourd'hui le hook `custom_access_token`, et rien
+d'autre : le `config.toml` local est un config de développement, il diffère légitimement
+du distant sur une douzaine de points, et un contrôle qui crierait dessus serait ignoré en
+une semaine. Le job `config-conforme` le lance sur la prod et le staging après chaque
+fusion sur `main` (variables `SUPABASE_PROJECT_REF` et `SUPABASE_STAGING_REF`).
+
+Pourquoi ce contrôle existe : le 14 septembre 2026, le hook était désactivé en production
+**et** en staging, vraisemblablement depuis toujours — donc `is_agence()`, `is_concierge()`
+et `is_admin()` rendaient `false` pour tout le monde, et aucun compte agence ou admin
+n'avait ses droits en production. Les 251 assertions du filet RLS ne pouvaient rien y
+faire : elles éprouvent le code, et c'est la configuration qui manquait.
+
+⚠️ Ne jamais réparer une dérive par `supabase config push` : il envoie **tout** le
+`config.toml` et écraserait le Site URL de production par `http://127.0.0.1:3000`. Le
+tableau de bord, réglage par réglage.
+
 `npm run test:rls` (pgTAP) exige une base dont l'état est connu : plusieurs assertions
 comptent les lignes du seed, et un run e2e passé avant les fait rougir sans cause réelle.
 Dans un worktree doté de sa pile, la commande remet donc la base à zéro toute seule ;
