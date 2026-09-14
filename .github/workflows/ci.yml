@@ -150,11 +150,35 @@ jobs:
           # Les deux projets sont interrogés même si le premier dérive : savoir que
           # la prod ET le staging ont le même trou vaut mieux que de l'apprendre en
           # deux fois. D'où l'agrégation plutôt qu'un `&&`.
-          echec=0
-          node scripts/config-derive.mjs "$REF_PROD" || echec=1
+          #
+          # ET ON GARDE LES TROIS ISSUES DU SCRIPT DISTINCTES — 0 conforme,
+          # 1 dérive, 2 « je n'ai pas pu demander ». Une première version écrasait
+          # les deux dernières avec `|| echec=1`, et le premier run réel l'a
+          # aussitôt puni : un jeton sans droits (« Your account does not have the
+          # necessary privileges ») s'affichait comme une dérive de configuration,
+          # envoyant chercher un réglage distant qui n'avait pas bougé. Le job
+          # rougit dans les deux cas — le silence serait pire — mais il doit dire
+          # LEQUEL, sinon il fait perdre le temps qu'il prétend faire gagner.
+          derive=0
+          muet=0
+          verifier() {
+            node scripts/config-derive.mjs "$1"
+            case $? in
+              0) ;;
+              2) muet=1 ;;
+              *) derive=1 ;;
+            esac
+          }
+          verifier "$REF_PROD"
           if [ -n "$REF_STAGING" ]; then
-            node scripts/config-derive.mjs "$REF_STAGING" || echec=1
+            verifier "$REF_STAGING"
           else
             echo "::notice title=Staging non couvert::Définir SUPABASE_STAGING_REF pour l'inclure."
           fi
-          exit $echec
+          if [ "$muet" = 1 ]; then
+            echo "::error title=Question non posée::Le contrôle n'a PAS pu interroger la configuration distante — ce n'est pas une dérive. Cause la plus fréquente : le jeton SUPABASE_ACCESS_TOKEN n'a pas les droits sur le projet (Account → Access Tokens, puis Settings → Secrets → Actions)."
+          fi
+          if [ "$derive" = 1 ]; then
+            echo "::error title=Dérive de configuration::Un réglage d'auth surveillé diverge entre le dépôt et un projet distant. Détail ci-dessus."
+          fi
+          [ "$muet" = 0 ] && [ "$derive" = 0 ]

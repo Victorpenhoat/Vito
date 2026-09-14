@@ -46,8 +46,21 @@ if (r.error || r.status !== 0) {
     console.error("la CLI Supabase ne connaît pas `config diff` — il faut la 2.117.0 ou plus");
     console.error("(la CI l'épingle ; en local, `npm i -g supabase@latest` ou `npx supabase`).");
   } else {
-    console.error((r.stderr || r.error?.message || "").trim().slice(0, 500));
-    console.error("\nIl faut un jeton de management — en CI, le secret SUPABASE_ACCESS_TOKEN.");
+    // LES DEUX FLUX, et stdout d'abord. Une première version n'imprimait que
+    // stderr et concluait « il faut un jeton » : au premier run réel, la vraie
+    // cause (« Your account does not have the necessary privileges ») était sur
+    // stdout et n'a jamais été montrée, pendant que le message accusait un secret
+    // qui, lui, était bien là. Un diagnostic qui cache la cause est pire que pas
+    // de diagnostic : il envoie chercher ailleurs.
+    const dit = (flux, texte) => {
+      const t = String(texte ?? "").trim();
+      if (t) console.error(`[${flux}] ${t.slice(0, 500)}`);
+    };
+    dit("sortie", r.stdout);
+    dit("erreur", r.stderr || r.error?.message);
+    console.error("\nCauses habituelles, dans l'ordre : le jeton n'a pas les DROITS sur ce");
+    console.error("projet (Account → Access Tokens) ; le jeton est absent ou périmé ; le");
+    console.error("project-ref est faux. En CI, c'est le secret SUPABASE_ACCESS_TOKEN.");
   }
   process.exit(2);
 }
