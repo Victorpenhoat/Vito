@@ -30,7 +30,8 @@
     "supabase:worktree": "node scripts/supabase-worktree.mjs",
     "db:start": "node scripts/supabase.mjs start",
     "db:reset": "node scripts/supabase.mjs db reset",
-    "prod:ecart": "node scripts/prod-ecart.mjs"
+    "prod:ecart": "node scripts/prod-ecart.mjs",
+    "config:derive": "node scripts/config-derive.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
