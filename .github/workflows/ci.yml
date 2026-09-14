@@ -96,17 +96,21 @@ jobs:
           version: 2.117.0
       - name: Comparer les migrations de main à celles de la production
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          REF: ${{ vars.SUPABASE_PROJECT_REF }}
+          # Chaîne de connexion complète : le contrôle parle à la BASE, et à
+          # rien d'autre. Le premier jet passait par `supabase link`, donc par
+          # l'API de gestion, donc par les droits du compte — mesuré le
+          # 2026-09-14 : « Your account does not have the necessary privileges
+          # to access this endpoint », pour lire une table de migrations. Une
+          # vérification qui dépend de privilèges dont elle n'a pas besoin
+          # tombe un jour pour une raison hors sujet.
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_DB_PASSWORD" ] || [ -z "$REF" ]; then
+          if [ -z "$SUPABASE_DB_URL" ]; then
             echo "::notice title=Garde-fou inactif::Ce contrôle ne peut pas interroger la production."
-            echo "Pour l'activer : secrets SUPABASE_ACCESS_TOKEN et SUPABASE_DB_PASSWORD,"
-            echo "variable SUPABASE_PROJECT_REF (Settings → Secrets and variables → Actions)."
+            echo "Pour l'activer : secret SUPABASE_DB_URL (Settings → Secrets and variables → Actions),"
+            echo "de la forme postgresql://postgres.<ref>:<mot de passe>@<hôte-pooler>:5432/postgres"
             exit 0
           fi
-          supabase link --project-ref "$REF"
           node scripts/prod-ecart.mjs
 
   # Le jumeau du précédent, pour ce qui ne vit PAS dans le dépôt : la configuration
