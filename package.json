@@ -29,7 +29,8 @@
     "check:all": "npm run typecheck && npm run lint && npm run knip && npm run audit:prod && npm run test && npm run test:e2e",
     "supabase:worktree": "node scripts/supabase-worktree.mjs",
     "db:start": "node scripts/supabase.mjs start",
-    "db:reset": "node scripts/supabase.mjs db reset"
+    "db:reset": "node scripts/supabase.mjs db reset",
+    "prod:ecart": "node scripts/prod-ecart.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
