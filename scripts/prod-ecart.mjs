@@ -10,14 +10,25 @@
 import { spawnSync } from "node:child_process";
 import { migrationsManquantes, messageEcart } from "./lib/migrations-ecart.mjs";
 
-const r = spawnSync("supabase", ["migration", "list", "--linked", "--output-format", "json"], {
-  encoding: "utf8",
-});
+// Deux façons de poser la question, et la première est la meilleure :
+//
+// `--db-url` parle à la base et à rien d'autre. `--linked` passe par l'API de
+// gestion de Supabase, donc par les DROITS DU COMPTE — mesuré le 2026-09-14 en
+// CI : « Your account does not have the necessary privileges to access this
+// endpoint », alors que la question posée ne regardait qu'une table de
+// migrations. Une vérification qui dépend de privilèges dont elle n'a pas
+// besoin est une vérification qui tombera un jour pour une raison hors sujet.
+const dbUrl = process.env.SUPABASE_DB_URL;
+const args = dbUrl
+  ? ["migration", "list", "--db-url", dbUrl, "--output-format", "json"]
+  : ["migration", "list", "--linked", "--output-format", "json"];
+
+const r = spawnSync("supabase", args, { encoding: "utf8" });
 if (r.error || r.status !== 0) {
   console.error("Impossible d'interroger la production :");
   console.error((r.stderr || r.error?.message || "").trim().slice(0, 500));
-  console.error("\nIl faut un projet lié (supabase/.temp/project-ref) et les identifiants");
-  console.error("de la base — en CI, les secrets SUPABASE_ACCESS_TOKEN et SUPABASE_DB_PASSWORD.");
+  console.error("\nIl faut soit SUPABASE_DB_URL (chaîne de connexion complète, la voie");
+  console.error("directe), soit un projet lié dans supabase/.temp/project-ref.");
   process.exit(2);
 }
 

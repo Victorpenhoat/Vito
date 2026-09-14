@@ -69,10 +69,11 @@ npm run test:ci   # reproduit la CI en local : typecheck → lint → unit → e
 `npm run prod:ecart` dit si la production a bien reçu les migrations de ce checkout —
 rien ne les pousse automatiquement, et une PR fusionnée part en production **avant** sa
 table tant que personne n'a lancé `npx supabase db push`. Le même contrôle tourne en CI
-après chaque fusion sur `main` (job `prod-a-jour`), mais il reste **inerte** tant que les
-secrets `SUPABASE_ACCESS_TOKEN` et `SUPABASE_DB_PASSWORD` et la variable
-`SUPABASE_PROJECT_REF` ne sont pas configurés dans les réglages GitHub du dépôt : il le
-dit alors dans le journal, plutôt que de passer au vert sans avoir rien vérifié.
+après chaque fusion sur `main` (job `prod-a-jour`), mais il reste **inerte** tant que le
+secret `SUPABASE_DB_URL` n'est pas configuré dans les réglages GitHub du dépôt : il le dit
+alors dans le journal, plutôt que de passer au vert sans avoir rien vérifié. Ce secret est
+une chaîne de connexion complète — le contrôle interroge la base et rien d'autre, sans
+dépendre des droits d'un compte Supabase.
 
 `npm run test:rls` (pgTAP) exige une base dont l'état est connu : plusieurs assertions
 comptent les lignes du seed, et un run e2e passé avant les fait rougir sans cause réelle.
