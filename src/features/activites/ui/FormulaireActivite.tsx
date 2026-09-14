@@ -29,7 +29,7 @@ export function FormulaireActivite({ membres, libelle }: {
   if (!ouvert) {
     return (
       <button type="button" data-testid="activite-ajouter" onClick={() => setOuvert(true)}
-        className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-accent-50 px-3.5 py-1.5 text-[12px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+        className="inline-flex self-start rounded-full border border-dashed border-accent/40 bg-surface px-3.5 py-1.5 text-[12px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
         + {libelle ?? t("nouvelle.ouvrir")}
       </button>
     );

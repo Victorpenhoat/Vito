@@ -7,7 +7,7 @@ import { ajouterPaiement, reglerPaiement } from "../data/actions";
 import { etatEcheance, ordonnerEcheances, totalRegle, type Paiement } from "../domain/fiche";
 
 const TEINTE: Record<string, string> = {
-  paye: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
+  paye: "border-kpi-green/30 bg-kpi-green-bg text-ink",
   en_retard: "border-danger/30 bg-danger-bg text-danger",
   a_venir: "border-line bg-surface-hover text-muted",
 };

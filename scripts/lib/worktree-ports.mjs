@@ -40,9 +40,29 @@ export function decalagePour(nom, occupes = []) {
  * motif plutôt que champ par champ.
  */
 export function configPatchee(texte, { projectId, decalage }) {
+  // Les ports APPLICATIFS comptent autant que ceux de la pile. `config.toml`
+  // énumère les origines autorisées — redirections d'authentification et
+  // origines WebAuthn — et n'y listait que 3000 et 3001. Un worktree servant
+  // sur 3009 voyait donc son lien magique refusé et ses passkeys rejetées :
+  // trois échecs e2e qui ressemblaient à des défauts du produit, et que j'ai
+  // d'abord pris pour tels. Mesuré le 2026-09-13.
+  const portE2e = 3001 + decalage / 100;
   return texte
     .replace(/^project_id = ".*"$/m, `project_id = "${projectId}"`)
-    .replace(/\b543(\d\d)\b/g, (_, fin) => String(54300 + decalage + Number(fin)));
+    .replace(/\b543(\d\d)\b/g, (_, fin) => String(54300 + decalage + Number(fin)))
+    .replace(
+      /^additional_redirect_urls = \[(.*)\]$/m,
+      (_, liste) =>
+        `additional_redirect_urls = [${liste}, "http://127.0.0.1:${portE2e}/**", "http://localhost:${portE2e}/**"]`,
+    )
+    .replace(
+      /^rp_origins = \[(.*)\]$/m,
+      (_, liste) => `rp_origins = [${liste}, "http://localhost:${portE2e}"]`,
+    )
+    // `site_url` donne l'HÔTE des liens envoyés par courriel. Laissé sur le port
+    // par défaut, le lien magique d'un worktree pointe vers un serveur qui n'y
+    // tourne pas, et le test suit le lien dans le vide.
+    .replace(/^site_url = ".*"$/m, `site_url = "http://127.0.0.1:${portE2e}"`);
 }
 
 /** Les ports de la pile par défaut, tels qu'ils sont écrits dans .env.local. */

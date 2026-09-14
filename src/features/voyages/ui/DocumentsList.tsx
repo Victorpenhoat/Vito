@@ -26,7 +26,7 @@ export function DocumentsList({ voyageId, documents, libellesReservations = {} }
           <span className="flex-1">
             {d.nom} <span className="text-faint text-sm">({ko(d.taille)})</span>
             {d.reservation_id && libellesReservations[d.reservation_id] && (
-              <span data-testid="document-rattache" className="ml-1.5 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent">
+              <span data-testid="document-rattache" className="ml-1.5 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-ink">
                 {t("rattache", { libelle: libellesReservations[d.reservation_id] ?? "" })}
               </span>
             )}

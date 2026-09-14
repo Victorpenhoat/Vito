@@ -19,6 +19,9 @@ export const TousLesEtats: Story = {
       <TagChip ton="ajout" onClick={() => {}}>+ Ajouter</TagChip>
       <TagChip ton="suggere" onClick={() => {}}>Occasion</TagChip>
       <TagChip onRetirer={() => {}} libelleRetrait="Retirer Terrasse">Terrasse</TagChip>
+      <TagChip ton="succes">Vérifié</TagChip>
+      <TagChip ton="alerte">Expire bientôt</TagChip>
+      <TagChip ton="danger">Expiré</TagChip>
     </div>
   ),
 };

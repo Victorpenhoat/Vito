@@ -17,8 +17,8 @@ export function ExpiryBadge({
 }) {
   const t = useTranslations("famille");
   const cls =
-    status === "valid" ? "bg-kpi-green-bg text-kpi-green"
-    : status === "soon" ? "bg-kpi-amber-bg text-kpi-amber"
+    status === "valid" ? "bg-kpi-green-bg text-ink"
+    : status === "soon" ? "bg-kpi-amber-bg text-ink"
     : "bg-danger-bg text-danger";
   const label =
     status === "valid" ? (year ? t("expiry.valideAnnee", { annee: year }) : t("expiry.valide"))

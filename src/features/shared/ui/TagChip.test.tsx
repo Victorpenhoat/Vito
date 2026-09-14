@@ -140,3 +140,30 @@ describe("TagChip — vérification des types (non exécutée)", () => {
     <TagChip libelleRetrait="Retirer">Terrasse</TagChip>;
   });
 });
+
+describe("TagChip — les tons sémantiques", () => {
+  // Un badge dit un état métier ; ce n'est pas un interrupteur. Sans ce test,
+  // ajouter `succes` à la liste des tons pressables passerait inaperçu et ferait
+  // annoncer « non pressé » sur un badge que personne ne peut presser.
+  it("ne portent jamais aria-pressed, même rendus cliquables", () => {
+    for (const ton of ["succes", "alerte", "danger"] as const) {
+      const { unmount } = render(
+        <TagChip ton={ton} onClick={() => {}} testId={`badge-${ton}`}>État</TagChip>,
+      );
+      expect(screen.getByTestId(`badge-${ton}`).hasAttribute("aria-pressed"), ton).toBe(false);
+      unmount();
+    }
+  });
+
+  // Le contraste de ces tons repose sur --ink, pas sur la couleur du ton : la
+  // forme teinte-sur-teinte tombe à 4,27–4,36:1 en thème clair. Les seuils de
+  // theme.test.ts tiennent la paire de jetons ; ce test-ci tient le fait qu'on
+  // l'emploie réellement, ce que le seuil ne peut pas voir.
+  it("écrivent en --ink, jamais dans la couleur du ton", () => {
+    for (const ton of ["succes", "alerte", "danger", "actif-doux"] as const) {
+      const { unmount } = render(<TagChip ton={ton} testId={`t-${ton}`}>État</TagChip>);
+      expect(screen.getByTestId(`t-${ton}`).className, ton).toContain("text-ink");
+      unmount();
+    }
+  });
+});

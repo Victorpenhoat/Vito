@@ -14,9 +14,9 @@ function etabNom(e: Etab): string {
 }
 
 const STATUT_CLASS: Record<string, string> = {
-  nouvelle: "bg-kpi-blue-bg text-kpi-blue",
-  en_cours: "bg-kpi-amber-bg text-kpi-amber",
-  confirmee: "bg-kpi-green-bg text-kpi-green",
+  nouvelle: "bg-kpi-blue-bg text-ink",
+  en_cours: "bg-kpi-amber-bg text-ink",
+  confirmee: "bg-kpi-green-bg text-ink",
   refusee: "bg-badge text-muted",
 };
 

@@ -248,7 +248,7 @@ export async function FicheResto({ etablissementId, category = "restaurant" }: {
                       {v.commentaire && <span className="text-faint"> · « {v.commentaire} »</span>}
                       {voyage && (
                         <Link href={`/voyages/${voyage.id}`} data-testid="sejour-voyage"
-                          className="ml-1.5 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent hover:underline">
+                          className="ml-1.5 rounded-full border border-accent/25 bg-surface px-2 py-0.5 text-[10px] font-semibold text-accent hover:underline">
                           {th("visite.voyageLien", { titre: voyage.titre })} →
                         </Link>
                       )}

@@ -4,8 +4,8 @@ import { getTranslations, getFormatter } from "next-intl/server";
 import type { ActiviteListe } from "../data/queries";
 
 const TEINTE_STATUT: Record<string, string> = {
-  en_cours: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
-  en_pause: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+  en_cours: "border-kpi-green/30 bg-kpi-green-bg text-ink",
+  en_pause: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   terminee: "border-line bg-surface-hover text-muted",
 };
 

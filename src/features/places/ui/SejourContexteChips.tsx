@@ -50,7 +50,7 @@ export function SejourContexteChips({ contexte, onChange }: {
 
   const chipCls = (actif: boolean) =>
     `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-      actif ? "border border-accent/30 bg-accent-50 font-semibold text-accent" : "border border-line bg-surface-hover text-muted"
+      actif ? "border border-accent/30 bg-accent-50 font-semibold text-ink" : "border border-line bg-surface-hover text-muted"
     }`;
 
   return (
@@ -132,7 +132,7 @@ function Calendrier({ plage, onJour, onSansDates }: {
                       aria-pressed={arrivee || depart}
                       className={`rounded-card py-1.5 text-[12px] focus-visible:outline-2 focus-visible:outline-accent ${
                         arrivee || depart ? "bg-accent font-semibold text-on-fill"
-                        : dedans ? "bg-accent-50 text-accent" : "text-ink hover:bg-surface-hover"
+                        : dedans ? "bg-accent-50 text-ink" : "text-ink hover:bg-surface-hover"
                       }`}>
                       {Number(jour.slice(8))}
                     </button>

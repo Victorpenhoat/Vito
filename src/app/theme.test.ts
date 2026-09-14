@@ -1,23 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
-const CSS = readFileSync(path.resolve(__dirname, "globals.css"), "utf8");
-
-/** Les déclarations `--role: valeur` d'un bloc, par son sélecteur d'ouverture. */
-export function rolesDuBloc(css: string, ouverture: string): Map<string, string> {
-  const debut = css.indexOf(ouverture);
-  if (debut === -1) throw new Error(`bloc introuvable : ${ouverture}`);
-  const accolade = css.indexOf("{", debut);
-  const fin = css.indexOf("\n}", accolade);
-  // Un commentaire peut citer un rôle (ex. « jadis : --hero-glow: … retiré »)
-  // sans le déclarer : on le retire avant d'extraire les déclarations actives,
-  // sinon ce rôle fantôme est pris pour une déclaration réelle.
-  const corps = css.slice(accolade + 1, fin).replace(/\/\*[\s\S]*?\*\//g, "");
-  const out = new Map<string, string>();
-  for (const m of corps.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/g)) out.set(m[1]!, m[2]!.trim());
-  return out;
-}
+import { CSS, rolesDuBloc, surFond, contraste } from "../test/couleurs";
 
 describe("la table des jetons", () => {
   const sombre = rolesDuBloc(CSS, ':root,\n[data-theme="dark"]');
@@ -48,21 +32,6 @@ describe("la table des jetons", () => {
   });
 });
 
-const canal = (c: number) => {
-  const s = c / 255;
-  return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-};
-/** Luminance relative WCAG d'un `#rrggbb`. */
-export function luminance(hex: string): number {
-  const n = parseInt(hex.slice(1), 16);
-  return 0.2126 * canal((n >> 16) & 255) + 0.7152 * canal((n >> 8) & 255) + 0.0722 * canal(n & 255);
-}
-/** Rapport de contraste WCAG entre deux `#rrggbb`. */
-export function contraste(a: string, b: string): number {
-  const [haut, bas] = [luminance(a), luminance(b)].sort((x, y) => y - x) as [number, number];
-  return (haut + 0.05) / (bas + 0.05);
-}
-
 // Les seuils ne sont pas décoratifs : ce sont eux qui ont imposé de NE PAS
 // reprendre l'accent #6BA5FF de la maquette dans le thème clair, où il tombe
 // à 2,48:1 sur blanc (2,34:1 sur le fond clair #F6F8FC) et échoue largement
@@ -84,6 +53,15 @@ const SEUILS: [string, string, number][] = [
   ["on-fill", "accent-active", 4.5],
   ["on-fill", "kpi-amber", 4.5],
   ["on-fill", "kpi-green", 4.5],
+  // Les badges teintés posent leur libellé sur un fond de la même couleur à
+  // 14 %. Écrit dans la couleur du ton, il tombe à 4,17–4,36:1 en thème clair —
+  // sous le seuil, sur des libellés de 10 à 11 px. En --ink il tient 11,79 à
+  // 16,66:1. Ces quatre lignes tiennent cette décision, et rien d'autre ne la
+  // tenait : les seuils ne couvraient que des fonds opaques.
+  ["ink", "kpi-green-bg", 4.5],
+  ["ink", "kpi-amber-bg", 4.5],
+  ["ink", "danger-bg", 4.5],
+  ["ink", "accent-50", 4.5],
 ];
 
 describe.each([
@@ -91,10 +69,13 @@ describe.each([
   ["clair", '[data-theme="light"]'],
 ])("contrastes du thème %s", (_nom, ouverture) => {
   const roles = rolesDuBloc(CSS, ouverture);
+  const surface = roles.get("surface")!;
   it.each(SEUILS)("%s sur %s tient %s:1", (avant, fond, seuil) => {
-    const [a, b] = [roles.get(avant)!, roles.get(fond)!];
-    expect(a, `--${avant} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
-    expect(b, `--${fond} absent`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    // Un fond teinté est composé sur --surface avant d'être mesuré : c'est ce
+    // que l'œil voit, et `contraste` ne sait lire qu'une couleur opaque.
+    const [a, b] = [surFond(roles.get(avant)!, surface), surFond(roles.get(fond)!, surface)];
+    expect(a, `--${avant} illisible : ${roles.get(avant)}`).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    expect(b, `--${fond} illisible : ${roles.get(fond)}`).toMatch(/^#[0-9A-Fa-f]{6}$/);
     expect(contraste(a, b)).toBeGreaterThanOrEqual(seuil);
   });
 });

@@ -9,7 +9,7 @@ import { EtatVide } from "@/features/activites/ui/EtatVide";
 const ICONE = { en_retard: AlertTriangle, proche: Clock, plus_tard: CalendarClock };
 const TEINTE = {
   en_retard: "border-danger/30 bg-danger-bg text-danger",
-  proche: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+  proche: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   plus_tard: "border-line bg-surface-hover text-muted",
 };
 

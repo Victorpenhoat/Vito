@@ -6,7 +6,7 @@ const TON: Record<Ton, { texte: string; pastille: string; filet: string }> = {
   // « Mes favoris » : ce qui appartient à l'utilisateur.
   accent: {
     texte: "text-accent",
-    pastille: "border border-accent/30 bg-accent-50 text-accent",
+    pastille: "border border-accent/30 bg-accent-50 text-ink",
     filet: "bg-accent/20",
   },
   // « Ailleurs · Google Places » : ce qui vient d'un tiers.

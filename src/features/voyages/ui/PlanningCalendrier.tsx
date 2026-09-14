@@ -75,10 +75,10 @@ export function PlanningCalendrier({
     format.dateTime(new Date(`${iso}T00:00:00Z`), { day: "numeric", month: "short", timeZone: "UTC" });
 
   const TEINTE: Record<string, string> = {
-    a_venir: "border-accent/30 bg-accent-50 text-accent",
-    en_cours: "border-kpi-green/30 bg-kpi-green-bg text-kpi-green",
-    en_preparation: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
-    idees: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+    a_venir: "border-accent/30 bg-accent-50 text-ink",
+    en_cours: "border-kpi-green/30 bg-kpi-green-bg text-ink",
+    en_preparation: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
+    idees: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
     termines: "border-line bg-surface-hover text-muted",
   };
 
@@ -88,7 +88,7 @@ export function PlanningCalendrier({
       <div className="flex flex-wrap items-center gap-2">
         {zone ? (
           <span data-testid="planning-zone"
-            className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-kpi-amber">
+            className="rounded-full border border-kpi-amber/25 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-ink">
             {t("zone", { zone })}
           </span>
         ) : (
@@ -96,7 +96,7 @@ export function PlanningCalendrier({
           // par défaut, plutôt que de laisser un calendrier muet qu'on prendrait
           // pour une panne.
           <Link href="/reglages" data-testid="planning-choisir-zone"
-            className="rounded-full border border-current/20 bg-kpi-amber-bg px-3 py-1 text-[11px] font-semibold text-kpi-amber hover:underline">
+            className="rounded-full border border-current/20 bg-surface px-3 py-1 text-[11px] font-semibold text-kpi-amber hover:underline">
             {t("choisirZone")}
           </Link>
         )}
@@ -144,7 +144,7 @@ export function PlanningCalendrier({
                     className={`rounded-card py-2 text-center text-[12.5px] ${
                       j.horsMois ? "text-faint/50"
                       : j.jour === aujourdhui ? "bg-accent font-semibold text-on-fill"
-                      : dansVacances(j.jour) ? "bg-kpi-amber-bg text-kpi-amber"
+                      : dansVacances(j.jour) ? "bg-kpi-amber-bg text-ink"
                       : "text-ink"
                     }`}>
                     {j.numero}
@@ -229,7 +229,7 @@ export function PlanningCalendrier({
                   <span className="ml-auto flex flex-wrap gap-1.5">
                     {dessus.map((v) => (
                       <Link key={v.id} href={`/voyages/${v.id}`} data-testid="periode-voyage"
-                        className="rounded-full border border-accent/25 bg-accent-50 px-2.5 py-0.5 text-[11px] font-semibold text-accent hover:underline">
+                        className="rounded-full border border-accent/25 bg-surface px-2.5 py-0.5 text-[11px] font-semibold text-accent hover:underline">
                         {v.titre}
                       </Link>
                     ))}

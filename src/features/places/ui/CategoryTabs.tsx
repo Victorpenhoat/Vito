@@ -134,7 +134,7 @@ export function CategoryTabs({ places, archived, tags, categorie = "resto", ongl
             placeholder={tr("rechercherPlaceholder")} libelleEffacer={t("effacer")}
             testId="places-search" />
           <button type="button" data-testid={config.trouverTestId} onClick={() => setRecherche(true)}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-accent/25 bg-accent-50 px-3.5 py-2.5 text-xs font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-accent/25 bg-surface px-3.5 py-2.5 text-xs font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent">
             <Plus size={13} aria-hidden />
             {tr("trouver")}
           </button>
@@ -305,7 +305,7 @@ function RowExtras({ place: p, onglet, slugTeste, tr, onVisite }: {
       <div className="flex items-center justify-between gap-2 pb-3 pl-[84px] -mt-1.5">
         {p.origine_type && (
           <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-semibold ${
-            p.origine_type === "reco" ? "border-current/20 bg-kpi-amber-bg text-kpi-amber" : "border-line bg-surface-hover text-muted"
+            p.origine_type === "reco" ? "border-kpi-amber/25 bg-kpi-amber-bg text-ink" : "border-line bg-surface-hover text-muted"
           }`}>
             {p.origine_type === "reco"
               ? tr("origines.recoPar", { qui: p.origine_qui ?? "?" })
@@ -313,7 +313,7 @@ function RowExtras({ place: p, onglet, slugTeste, tr, onVisite }: {
           </span>
         )}
         <button type="button" data-testid="marquer-visite" onClick={onVisite}
-          className="ml-auto shrink-0 rounded-full border border-current/20 bg-kpi-green-bg px-3 py-1 text-[10.5px] font-semibold text-kpi-green focus-visible:outline-2 focus-visible:outline-accent">
+          className="ml-auto shrink-0 rounded-full border border-current/20 bg-surface px-3 py-1 text-[10.5px] font-semibold text-kpi-green focus-visible:outline-2 focus-visible:outline-accent">
           ✓ {tr("visite.cta")}
         </button>
       </div>
@@ -340,7 +340,7 @@ function PasserFavoriButton({ listeItemId, label }: { listeItemId: string; label
       <input type="hidden" name="listeItemId" value={listeItemId} />
       <input type="hidden" name="statut" value="favori" />
       <button type="submit" data-testid="passer-favori" disabled={pending}
-        className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-3 py-1 text-[10.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60">
+        className="shrink-0 rounded-full border border-accent/25 bg-surface px-3 py-1 text-[10.5px] font-semibold text-accent focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60">
         ♥ {label}
       </button>
     </form>

@@ -51,13 +51,13 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
                 </span>
               )}
               {signaux.voyage && (
-                <span className="inline-flex items-center gap-0.5 rounded-full border border-accent/25 bg-accent-50 px-1.5 py-0.5 text-[9.5px] font-semibold text-accent">
+                <span className="inline-flex items-center gap-0.5 rounded-full border border-accent/25 bg-accent-50 px-1.5 py-0.5 text-[9.5px] font-semibold text-ink">
                   <Plane size={8} aria-hidden />
                   {signaux.voyage.titre}
                 </span>
               )}
               {signaux.vacances && (
-                <span className="inline-flex items-center gap-0.5 rounded-full border border-current/20 bg-kpi-amber-bg px-1.5 py-0.5 text-[9.5px] font-semibold text-kpi-amber">
+                <span className="inline-flex items-center gap-0.5 rounded-full border border-kpi-amber/25 bg-kpi-amber-bg px-1.5 py-0.5 text-[9.5px] font-semibold text-ink">
                   <Sun size={8} aria-hidden />
                   {t("semaine.vacancesCourt")}
                 </span>
@@ -110,7 +110,7 @@ export async function GrilleSemaine({ jours, aujourdhui, zone }: {
                     enConflit
                       ? "border-danger/40 bg-danger-bg text-danger"
                       : signaux.voyage
-                        ? "border-accent/30 bg-accent-50 text-accent"
+                        ? "border-accent/30 bg-accent-50 text-ink"
                         : "border-line bg-surface-hover text-ink"
                   }`}
                 >

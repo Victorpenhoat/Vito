@@ -20,9 +20,9 @@ export type VoyageRow = {
 };
 
 const CHIP_TONE: Record<VoyageChip, string> = {
-  a_venir: "border-accent/25 bg-accent-50 text-accent",
-  en_cours: "border-current/20 bg-kpi-green-bg text-kpi-green",
-  en_preparation: "border-current/20 bg-kpi-amber-bg text-kpi-amber",
+  a_venir: "border-accent/25 bg-accent-50 text-ink",
+  en_cours: "border-kpi-green/25 bg-kpi-green-bg text-ink",
+  en_preparation: "border-kpi-amber/25 bg-kpi-amber-bg text-ink",
   idees: "border-line bg-surface-hover text-muted",
   termines: "border-line bg-surface-hover text-muted",
 };
@@ -92,7 +92,7 @@ function Carte({ voyage: v, t, locale, today }: {
       <Link href={`/voyages/${v.id}`} className="block overflow-hidden rounded-card border border-line bg-surface focus-visible:outline-2 focus-visible:outline-accent">
         <VoyageCover photoRef={v.cover_photo_ref} url={v.cover_url} statut={v.statut} className="h-[150px]">
           {dans !== null && (
-            <span className="absolute left-3 top-3 rounded-full bg-accent/95 px-2.5 py-1 text-[10.5px] font-semibold text-on-fill">
+            <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10.5px] font-semibold text-on-fill">
               {t("dansNJours", { n: dans })}
             </span>
           )}

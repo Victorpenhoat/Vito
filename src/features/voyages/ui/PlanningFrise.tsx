@@ -41,7 +41,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
         // mieux vaut dire que le calendrier n'est pas encore renseigné. Sans
         // zone, le silence a une CAUSE et un remède — on les donne tous deux
         // plutôt que de laisser chercher la panne.
-        <p data-testid="planning-sans-vacances" className="rounded-card border border-current/20 bg-kpi-amber-bg px-3.5 py-2.5 text-[12.5px] text-ink">
+        <p data-testid="planning-sans-vacances" className="rounded-card border border-kpi-amber/25 bg-kpi-amber-bg px-3.5 py-2.5 text-[12.5px] text-ink">
           {t("calendrierAbsent")}
           {!zone && (
             <>
@@ -144,7 +144,7 @@ export async function PlanningFrise({ voyages, vacances, zone, autresZones = [],
                   )}
                   {pendant.length > 0 && (
                     <span data-testid="planning-pendant-vacances"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-kpi-amber-bg px-2 py-0.5 text-[10px] font-semibold text-kpi-amber">
+                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-kpi-amber-bg px-2 py-0.5 text-[10px] font-semibold text-ink">
                       {t("pendantVacances", { libelle: pendant.map((p) => p.libelle).join(", ") })}
                     </span>
                   )}

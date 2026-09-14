@@ -8,7 +8,12 @@ import { test, expect } from "@playwright/test";
 // Le serveur de test local est Mailpit (la section de config Supabase garde le
 // nom historique « inbucket ») : liste sur /api/v1/messages, contenu sur
 // /api/v1/message/{ID}.
-const MAILPIT = "http://127.0.0.1:54324";
+// L'adresse vient de l'environnement : un worktree a SA pile, donc son Mailpit
+// sur un autre port. Codée en dur, elle faisait lire au test la boîte de la pile
+// par défaut — vide — pendant que le courriel arrivait bien dans la sienne.
+// L'échec disait « aucun message reçu », ce qui envoie chercher du côté de
+// l'envoi plutôt que de la lecture.
+const MAILPIT = process.env.MAIL_MAILPIT_URL ?? "http://127.0.0.1:54324";
 
 type Message = { ID: string; To: { Address: string }[]; Created: string };
 

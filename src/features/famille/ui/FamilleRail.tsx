@@ -60,7 +60,7 @@ function RailRow({ proche: p, pathname, t, pinned = false }: {
             )}
           </span>
         </span>
-        {pinned && <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent">{t("proches.epingle")}</span>}
+        {pinned && <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-ink">{t("proches.epingle")}</span>}
       </Link>
     </li>
   );

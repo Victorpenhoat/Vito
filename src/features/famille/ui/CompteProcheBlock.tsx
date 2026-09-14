@@ -72,7 +72,7 @@ export function CompteProcheBlock({ familyMemberId, nom, rattache, invitation, l
 
   if (rattache) {
     return (
-      <p data-testid="compte-rattache" className="inline-flex items-center gap-1.5 rounded-full border border-kpi-green/25 bg-kpi-green-bg px-3 py-1.5 text-[11.5px] font-semibold text-kpi-green">
+      <p data-testid="compte-rattache" className="inline-flex items-center gap-1.5 rounded-full border border-kpi-green/25 bg-kpi-green-bg px-3 py-1.5 text-[11.5px] font-semibold text-ink">
         <UserCheck size={12} aria-hidden />
         {t("rattache")}
       </p>

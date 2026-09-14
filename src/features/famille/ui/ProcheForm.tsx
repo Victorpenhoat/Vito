@@ -59,7 +59,7 @@ export function ProcheForm({
             <span className="text-sm font-medium text-muted">{t("form.adresse")}</span>
             {relation !== "moi" && (
               <label className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10.5px] transition-colors has-focus-visible:outline-2 has-focus-visible:outline-accent ${
-                inherit ? "border-accent/25 bg-accent-50 font-semibold text-accent" : "border-line bg-surface-hover text-muted"
+                inherit ? "border-accent/25 bg-surface font-semibold text-accent" : "border-line bg-surface-hover text-muted"
               }`}>
                 <input type="checkbox" name="address_inherit" checked={inherit} onChange={(e) => setInherit(e.target.checked)} className="sr-only" />
                 {t("form.heriterFoyer")}

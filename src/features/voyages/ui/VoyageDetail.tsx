@@ -97,7 +97,7 @@ export async function VoyageDetail({ id }: { id: string }) {
           </div>
         </div>
         <div className="absolute inset-x-5 bottom-4 text-white">
-          <span className="rounded-full bg-accent/95 px-2.5 py-1 text-[10px] font-semibold text-on-fill">
+          <span className="rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold text-on-fill">
             {t(`chips.${chip}`)}{dans !== null ? ` · ${t("dansNJoursCourt", { n: dans })}` : ""}
           </span>
           <h1 className="mt-2 font-serif text-3xl font-medium md:text-4xl">{voyage.titre}</h1>
@@ -132,7 +132,7 @@ export async function VoyageDetail({ id }: { id: string }) {
               {membres.map((m) => (m.display_name ?? "").split(" ")[0]).filter(Boolean).join(", ")}
             </span>
             {isOwner && (
-              <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent">{t("fiche.organisateur")}</span>
+              <span className="shrink-0 rounded-full border border-accent/25 bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-ink">{t("fiche.organisateur")}</span>
             )}
           </div>
         </div>
@@ -275,7 +275,7 @@ export async function VoyageDetail({ id }: { id: string }) {
 async function ProchaineIcone({ type }: { type: string }) {
   const Icon = TYPE_ICONS[type] ?? Ticket;
   return (
-    <span className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-full bg-accent-50 text-accent">
+    <span className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-full bg-accent-50 text-ink">
       <Icon size={16} aria-hidden />
     </span>
   );
